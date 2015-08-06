@@ -1,0 +1,293 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="NOOCHModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="GeoLocations">
+    <Key>
+      <PropertyRef Name="LocationId" />
+    </Key>
+    <Property Name="LocationId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Latitude" Type="float" />
+    <Property Name="Longitude" Type="float" />
+    <Property Name="Altitude" Type="float" />
+    <Property Name="AddressLine1" Type="nvarchar" MaxLength="250" />
+    <Property Name="AddressLine2" Type="nvarchar" MaxLength="250" />
+    <Property Name="City" Type="nvarchar" MaxLength="100" />
+    <Property Name="State" Type="nvarchar" MaxLength="100" />
+    <Property Name="Country" Type="nvarchar" MaxLength="100" />
+    <Property Name="ZipCode" Type="nvarchar" MaxLength="10" />
+    <Property Name="DateCreated" Type="datetime" />
+  </EntityType>
+  <EntityType Name="Landlords">
+    <Key>
+      <PropertyRef Name="LandlordId" />
+    </Key>
+    <Property Name="LandlordId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="MemberId" Type="uniqueidentifier" />
+    <Property Name="Status" Type="varchar" MaxLength="50" />
+    <Property Name="Type" Type="varchar" MaxLength="50" />
+    <Property Name="SubType" Type="varchar" MaxLength="50" />
+    <Property Name="FirstName" Type="varchar" MaxLength="500" />
+    <Property Name="LastName" Type="varchar" MaxLength="500" />
+    <Property Name="DateOfBirth" Type="datetime" />
+    <Property Name="MobileNumber" Type="varchar" MaxLength="500" />
+    <Property Name="IsPhoneVerified" Type="bit" />
+    <Property Name="eMail" Type="varchar" MaxLength="500" />
+    <Property Name="IsEmailVerfieid" Type="bit" />
+    <Property Name="AddressLineOne" Type="varchar(max)" />
+    <Property Name="AddressLineTwo" Type="varchar(max)" />
+    <Property Name="City" Type="varchar(max)" />
+    <Property Name="State" Type="varchar(max)" />
+    <Property Name="Zip" Type="varchar(max)" />
+    <Property Name="Country" Type="varchar(max)" />
+    <Property Name="SSN" Type="varchar(max)" />
+    <Property Name="UserPic" Type="varchar(max)" />
+    <Property Name="IpAddresses" Type="varchar(max)" />
+    <Property Name="FBId" Type="varchar(max)" />
+    <Property Name="TwitterHandle" Type="varchar(max)" />
+    <Property Name="InstagramUrl" Type="varchar(max)" />
+    <Property Name="CompanyName" Type="varchar(max)" />
+    <Property Name="CompanyEIN" Type="varchar(max)" />
+    <Property Name="CompanyAddressLineOne" Type="varchar(max)" />
+    <Property Name="CompanyeAddressLineTwo" Type="varchar(max)" />
+    <Property Name="CompanyCity" Type="varchar(max)" />
+    <Property Name="CompanyState" Type="varchar(max)" />
+    <Property Name="CompaZip" Type="varchar(max)" />
+    <Property Name="DateCreated" Type="datetime" />
+    <Property Name="DateModified" Type="datetime" />
+    <Property Name="IsDeleted" Type="bit" />
+    <Property Name="WebAccessToken" Type="varchar(max)" />
+    <Property Name="LastSeenOn" Type="datetime" />
+  </EntityType>
+  <EntityType Name="MemberNotifications">
+    <Key>
+      <PropertyRef Name="NotificationId" />
+    </Key>
+    <Property Name="NotificationId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="MemberId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="FriendRequest" Type="bit" />
+    <Property Name="InviteRequestAccept" Type="bit" />
+    <Property Name="TransferSent" Type="bit" />
+    <Property Name="TransferReceived" Type="bit" />
+    <Property Name="TransferAttemptFailure" Type="bit" />
+    <Property Name="EmailFriendRequest" Type="bit" />
+    <Property Name="EmailInviteRequestAccept" Type="bit" />
+    <Property Name="EmailTransferSent" Type="bit" />
+    <Property Name="EmailTransferReceived" Type="bit" />
+    <Property Name="EmailTransferAttemptFailure" Type="bit" />
+    <Property Name="NoochToBank" Type="bit" />
+    <Property Name="BankToNooch" Type="bit" />
+    <Property Name="TransferUnclaimed" Type="bit" />
+    <Property Name="BankToNoochRequested" Type="bit" />
+    <Property Name="BankToNoochCompleted" Type="bit" />
+    <Property Name="NoochToBankRequested" Type="bit" />
+    <Property Name="NoochToBankCompleted" Type="bit" />
+    <Property Name="InviteReminder" Type="bit" />
+    <Property Name="LowBalance" Type="bit" />
+    <Property Name="ValidationRemainder" Type="bit" />
+    <Property Name="ProductUpdates" Type="bit" />
+    <Property Name="NewAndUpdate" Type="bit" />
+    <Property Name="DateCreated" Type="datetime" />
+    <Property Name="DateModified" Type="datetime" />
+  </EntityType>
+  <EntityType Name="MemberPrivacySettings">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="MemberId" Type="uniqueidentifier" />
+    <Property Name="ShowInSearch" Type="bit" />
+    <Property Name="AllowSharing" Type="bit" />
+    <Property Name="RequireImmediately" Type="bit" />
+    <Property Name="DateCreated" Type="datetime" />
+    <Property Name="DateModified" Type="datetime" />
+  </EntityType>
+  <EntityType Name="Members">
+    <Key>
+      <PropertyRef Name="MemberId" />
+    </Key>
+    <Property Name="MemberId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="Nooch_ID" Type="varchar" MaxLength="8" Nullable="false" />
+    <Property Name="FirstName" Type="nvarchar(max)" />
+    <Property Name="LastName" Type="nvarchar(max)" />
+    <Property Name="UDID1" Type="nvarchar" MaxLength="100" />
+    <Property Name="UserName" Type="nvarchar(max)" />
+    <Property Name="SecondaryEmail" Type="nvarchar" MaxLength="100" />
+    <Property Name="RecoveryEmail" Type="nvarchar" MaxLength="100" />
+    <Property Name="TertiaryEmail" Type="nvarchar" MaxLength="100" />
+    <Property Name="PinNumber" Type="nvarchar(max)" />
+    <Property Name="Password" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="ContactNumber" Type="nvarchar" MaxLength="500" />
+    <Property Name="Status" Type="varchar" MaxLength="20" Nullable="false" />
+    <Property Name="RememberMeEnabled" Type="bit" />
+    <Property Name="NoochAccountId" Type="uniqueidentifier" />
+    <Property Name="DateCreated" Type="datetime" />
+    <Property Name="DateModified" Type="datetime" />
+    <Property Name="ModifiedBy" Type="uniqueidentifier" />
+    <Property Name="InvalidLoginTime" Type="datetime" />
+    <Property Name="InvalidLoginAttemptCount" Type="int" />
+    <Property Name="InvalidPinAttemptCount" Type="int" />
+    <Property Name="InvalidPinAttemptTime" Type="datetime" />
+    <Property Name="DateOfBirth" Type="datetime" />
+    <Property Name="FacebookAccountLogin" Type="nvarchar" MaxLength="100" />
+    <Property Name="AllowPushNotifications" Type="bit" />
+    <Property Name="Photo" Type="nvarchar" MaxLength="500" />
+    <Property Name="FacebookPhoto" Type="nvarchar" MaxLength="500" />
+    <Property Name="UseFacebookPicture" Type="bit" />
+    <Property Name="ClearTransactionHistory" Type="bit" />
+    <Property Name="Address" Type="nvarchar" MaxLength="150" />
+    <Property Name="City" Type="nvarchar" MaxLength="150" />
+    <Property Name="State" Type="nvarchar" MaxLength="150" />
+    <Property Name="Zipcode" Type="nvarchar" MaxLength="150" />
+    <Property Name="Country" Type="nvarchar" MaxLength="150" />
+    <Property Name="NoOfTransfersByPackage" Type="int" />
+    <Property Name="FreeTransfers" Type="int" />
+    <Property Name="ShowInSearch" Type="bit" />
+    <Property Name="IsDeleted" Type="bit" />
+    <Property Name="Deposit" Type="varchar" MaxLength="150" />
+    <Property Name="InviteReminderDate" Type="datetime" />
+    <Property Name="UserNameLowerCase" Type="nvarchar(max)" />
+    <Property Name="TimeZoneKey" Type="nvarchar(max)" />
+    <Property Name="Address2" Type="nvarchar" MaxLength="150" />
+    <Property Name="TotalNoochTransfersCount" Type="int" />
+    <Property Name="TotalACHTransfersCount" Type="int" />
+    <Property Name="ValidatedDate" Type="datetime" />
+    <Property Name="ValidationFailedCount" Type="int" />
+    <Property Name="InviteCodeId" Type="uniqueidentifier" />
+    <Property Name="InviteCodeIdUsed" Type="uniqueidentifier" />
+    <Property Name="Type" Type="varchar" MaxLength="20" />
+    <Property Name="SSN" Type="varchar(max)" />
+    <Property Name="UpgradeDate" Type="date" />
+    <Property Name="IsVerifiedPhone" Type="bit" />
+    <Property Name="LastLocationLat" Type="decimal" Precision="18" Scale="15" />
+    <Property Name="LastLocationLng" Type="decimal" Precision="18" Scale="15" />
+    <Property Name="AccessToken" Type="varchar(max)" />
+    <Property Name="IsFrequencyOn" Type="bit" />
+    <Property Name="IsTriggerOn" Type="bit" />
+    <Property Name="WithdrawalFrequency" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="WithdrawalId" Type="uniqueidentifier" />
+    <Property Name="Allow2FactorAuthentication" Type="bit" />
+    <Property Name="IsOnline" Type="bit" />
+    <Property Name="SDNCheckDateTime" Type="datetime" />
+    <Property Name="AnyPriliminaryHit" Type="bit" />
+    <Property Name="ent_num" Type="bigint" />
+    <Property Name="IsRequiredImmediatley" Type="bit" />
+    <Property Name="DeviceToken" Type="varchar" MaxLength="250" />
+    <Property Name="trans_id" Type="varchar" MaxLength="250" />
+    <Property Name="user_key" Type="varchar" MaxLength="250" />
+    <Property Name="user_pass" Type="varchar" MaxLength="250" />
+    <Property Name="IsSDNSafe" Type="bit" />
+    <Property Name="AdminNotes" Type="varchar(max)" />
+    <Property Name="PhoneVerifiedOn" Type="datetime" />
+    <Property Name="VerificationDocumentPath" Type="varchar(max)" />
+  </EntityType>
+  <EntityType Name="Properties">
+    <Key>
+      <PropertyRef Name="PropertyId" />
+    </Key>
+    <Property Name="PropertyId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="PropStatus" Type="varchar" MaxLength="50" />
+    <Property Name="PropType" Type="varchar" MaxLength="50" />
+    <Property Name="PropName" Type="varchar" MaxLength="50" />
+    <Property Name="AddressLineOne" Type="varchar(max)" />
+    <Property Name="AddressLineTwo" Type="varchar(max)" />
+    <Property Name="City" Type="varchar(max)" />
+    <Property Name="State" Type="varchar(max)" />
+    <Property Name="Zip" Type="varchar(max)" />
+    <Property Name="ContactNumber" Type="varchar(max)" />
+    <Property Name="DefaultDueDate" Type="varchar" MaxLength="50" />
+    <Property Name="DateAdded" Type="datetime" />
+    <Property Name="DateModified" Type="datetime" />
+    <Property Name="LandlordId" Type="uniqueidentifier" />
+    <Property Name="MemberId" Type="uniqueidentifier" />
+    <Property Name="PropertyImage" Type="varchar(max)" />
+    <Property Name="IsSingleUnit" Type="bit" />
+    <Property Name="IsDeleted" Type="bit" />
+    <Property Name="DefaulBank" Type="uniqueidentifier" />
+  </EntityType>
+  <EntityType Name="PropertyUnits">
+    <Key>
+      <PropertyRef Name="UnitId" />
+    </Key>
+    <Property Name="UnitId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="PropertyId" Type="uniqueidentifier" />
+    <Property Name="UnitNumber" Type="varchar" MaxLength="50" />
+    <Property Name="UnitRent" Type="varchar" MaxLength="50" />
+    <Property Name="BankAccountId" Type="uniqueidentifier" />
+    <Property Name="DateAdded" Type="datetime" />
+    <Property Name="ModifiedOn" Type="datetime" />
+    <Property Name="LandlordId" Type="uniqueidentifier" />
+    <Property Name="MemberId" Type="uniqueidentifier" />
+    <Property Name="UnitImage" Type="varchar(max)" />
+    <Property Name="IsDeleted" Type="bit" />
+    <Property Name="IsHidden" Type="bit" />
+    <Property Name="IsOccupied" Type="bit" />
+    <Property Name="Status" Type="varchar(max)" />
+    <Property Name="DueDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="Tenants">
+    <Key>
+      <PropertyRef Name="TenantId" />
+    </Key>
+    <Property Name="TenantId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="FirstName" Type="varchar(max)" />
+    <Property Name="LastName" Type="varchar(max)" />
+    <Property Name="DateOfBirth" Type="datetime" />
+    <Property Name="DateAdded" Type="datetime" />
+    <Property Name="DateModified" Type="datetime" />
+    <Property Name="AddressLineOne" Type="varchar(max)" />
+    <Property Name="AddressLineTwo" Type="varchar(max)" />
+    <Property Name="City" Type="varchar(max)" />
+    <Property Name="State" Type="varchar(max)" />
+    <Property Name="Zip" Type="varchar(max)" />
+    <Property Name="PhoneNumber" Type="varchar(max)" />
+    <Property Name="IsPhoneVerfied" Type="bit" />
+    <Property Name="SSN" Type="varchar(max)" />
+    <Property Name="eMail" Type="varchar(max)" />
+    <Property Name="IsEmailVerified" Type="bit" />
+    <Property Name="IsDeleted" Type="bit" />
+    <Property Name="MemberId" Type="uniqueidentifier" />
+    <Property Name="BankAccountId" Type="uniqueidentifier" />
+    <Property Name="UserPic" Type="varchar(max)" />
+  </EntityType>
+  <Association Name="FK_MemberNotifications_Members">
+    <End Role="Members" Type="Self.Members" Multiplicity="1" />
+    <End Role="MemberNotifications" Type="Self.MemberNotifications" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Members">
+        <PropertyRef Name="MemberId" />
+      </Principal>
+      <Dependent Role="MemberNotifications">
+        <PropertyRef Name="MemberId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_MemberPrivacySettings_Members">
+    <End Role="Members" Type="Self.Members" Multiplicity="0..1" />
+    <End Role="MemberPrivacySettings" Type="Self.MemberPrivacySettings" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Members">
+        <PropertyRef Name="MemberId" />
+      </Principal>
+      <Dependent Role="MemberPrivacySettings">
+        <PropertyRef Name="MemberId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="NOOCHModelStoreContainer">
+    <EntitySet Name="GeoLocations" EntityType="Self.GeoLocations" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Landlords" EntityType="Self.Landlords" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="MemberNotifications" EntityType="Self.MemberNotifications" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="MemberPrivacySettings" EntityType="Self.MemberPrivacySettings" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Members" EntityType="Self.Members" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Properties" EntityType="Self.Properties" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PropertyUnits" EntityType="Self.PropertyUnits" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Tenants" EntityType="Self.Tenants" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_MemberNotifications_Members" Association="Self.FK_MemberNotifications_Members">
+      <End Role="Members" EntitySet="Members" />
+      <End Role="MemberNotifications" EntitySet="MemberNotifications" />
+    </AssociationSet>
+    <AssociationSet Name="FK_MemberPrivacySettings_Members" Association="Self.FK_MemberPrivacySettings_Members">
+      <End Role="Members" EntitySet="Members" />
+      <End Role="MemberPrivacySettings" EntitySet="MemberPrivacySettings" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

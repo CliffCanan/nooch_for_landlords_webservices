@@ -1,0 +1,881 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="NOOCHModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="GeoLocations">
+          <Key>
+            <PropertyRef Name="LocationId" />
+          </Key>
+          <Property Name="LocationId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Latitude" Type="float" />
+          <Property Name="Longitude" Type="float" />
+          <Property Name="Altitude" Type="float" />
+          <Property Name="AddressLine1" Type="nvarchar" MaxLength="250" />
+          <Property Name="AddressLine2" Type="nvarchar" MaxLength="250" />
+          <Property Name="City" Type="nvarchar" MaxLength="100" />
+          <Property Name="State" Type="nvarchar" MaxLength="100" />
+          <Property Name="Country" Type="nvarchar" MaxLength="100" />
+          <Property Name="ZipCode" Type="nvarchar" MaxLength="10" />
+          <Property Name="DateCreated" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Landlords">
+          <Key>
+            <PropertyRef Name="LandlordId" />
+          </Key>
+          <Property Name="LandlordId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="MemberId" Type="uniqueidentifier" />
+          <Property Name="Status" Type="varchar" MaxLength="50" />
+          <Property Name="Type" Type="varchar" MaxLength="50" />
+          <Property Name="SubType" Type="varchar" MaxLength="50" />
+          <Property Name="FirstName" Type="varchar" MaxLength="500" />
+          <Property Name="LastName" Type="varchar" MaxLength="500" />
+          <Property Name="DateOfBirth" Type="datetime" />
+          <Property Name="MobileNumber" Type="varchar" MaxLength="500" />
+          <Property Name="IsPhoneVerified" Type="bit" />
+          <Property Name="eMail" Type="varchar" MaxLength="500" />
+          <Property Name="IsEmailVerfieid" Type="bit" />
+          <Property Name="AddressLineOne" Type="varchar(max)" />
+          <Property Name="AddressLineTwo" Type="varchar(max)" />
+          <Property Name="City" Type="varchar(max)" />
+          <Property Name="State" Type="varchar(max)" />
+          <Property Name="Zip" Type="varchar(max)" />
+          <Property Name="Country" Type="varchar(max)" />
+          <Property Name="SSN" Type="varchar(max)" />
+          <Property Name="UserPic" Type="varchar(max)" />
+          <Property Name="IpAddresses" Type="varchar(max)" />
+          <Property Name="FBId" Type="varchar(max)" />
+          <Property Name="TwitterHandle" Type="varchar(max)" />
+          <Property Name="InstagramUrl" Type="varchar(max)" />
+          <Property Name="CompanyName" Type="varchar(max)" />
+          <Property Name="CompanyEIN" Type="varchar(max)" />
+          <Property Name="CompanyAddressLineOne" Type="varchar(max)" />
+          <Property Name="CompanyeAddressLineTwo" Type="varchar(max)" />
+          <Property Name="CompanyCity" Type="varchar(max)" />
+          <Property Name="CompanyState" Type="varchar(max)" />
+          <Property Name="CompaZip" Type="varchar(max)" />
+          <Property Name="DateCreated" Type="datetime" />
+          <Property Name="DateModified" Type="datetime" />
+          <Property Name="IsDeleted" Type="bit" />
+          <Property Name="WebAccessToken" Type="varchar(max)" />
+          <Property Name="LastSeenOn" Type="datetime" />
+        </EntityType>
+        <EntityType Name="MemberNotifications">
+          <Key>
+            <PropertyRef Name="NotificationId" />
+          </Key>
+          <Property Name="NotificationId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="MemberId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="FriendRequest" Type="bit" />
+          <Property Name="InviteRequestAccept" Type="bit" />
+          <Property Name="TransferSent" Type="bit" />
+          <Property Name="TransferReceived" Type="bit" />
+          <Property Name="TransferAttemptFailure" Type="bit" />
+          <Property Name="EmailFriendRequest" Type="bit" />
+          <Property Name="EmailInviteRequestAccept" Type="bit" />
+          <Property Name="EmailTransferSent" Type="bit" />
+          <Property Name="EmailTransferReceived" Type="bit" />
+          <Property Name="EmailTransferAttemptFailure" Type="bit" />
+          <Property Name="NoochToBank" Type="bit" />
+          <Property Name="BankToNooch" Type="bit" />
+          <Property Name="TransferUnclaimed" Type="bit" />
+          <Property Name="BankToNoochRequested" Type="bit" />
+          <Property Name="BankToNoochCompleted" Type="bit" />
+          <Property Name="NoochToBankRequested" Type="bit" />
+          <Property Name="NoochToBankCompleted" Type="bit" />
+          <Property Name="InviteReminder" Type="bit" />
+          <Property Name="LowBalance" Type="bit" />
+          <Property Name="ValidationRemainder" Type="bit" />
+          <Property Name="ProductUpdates" Type="bit" />
+          <Property Name="NewAndUpdate" Type="bit" />
+          <Property Name="DateCreated" Type="datetime" />
+          <Property Name="DateModified" Type="datetime" />
+        </EntityType>
+        <EntityType Name="MemberPrivacySettings">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MemberId" Type="uniqueidentifier" />
+          <Property Name="ShowInSearch" Type="bit" />
+          <Property Name="AllowSharing" Type="bit" />
+          <Property Name="RequireImmediately" Type="bit" />
+          <Property Name="DateCreated" Type="datetime" />
+          <Property Name="DateModified" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Members">
+          <Key>
+            <PropertyRef Name="MemberId" />
+          </Key>
+          <Property Name="MemberId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Nooch_ID" Type="varchar" MaxLength="8" Nullable="false" />
+          <Property Name="FirstName" Type="nvarchar(max)" />
+          <Property Name="LastName" Type="nvarchar(max)" />
+          <Property Name="UDID1" Type="nvarchar" MaxLength="100" />
+          <Property Name="UserName" Type="nvarchar(max)" />
+          <Property Name="SecondaryEmail" Type="nvarchar" MaxLength="100" />
+          <Property Name="RecoveryEmail" Type="nvarchar" MaxLength="100" />
+          <Property Name="TertiaryEmail" Type="nvarchar" MaxLength="100" />
+          <Property Name="PinNumber" Type="nvarchar(max)" />
+          <Property Name="Password" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="ContactNumber" Type="nvarchar" MaxLength="500" />
+          <Property Name="Status" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="RememberMeEnabled" Type="bit" />
+          <Property Name="NoochAccountId" Type="uniqueidentifier" />
+          <Property Name="DateCreated" Type="datetime" />
+          <Property Name="DateModified" Type="datetime" />
+          <Property Name="ModifiedBy" Type="uniqueidentifier" />
+          <Property Name="InvalidLoginTime" Type="datetime" />
+          <Property Name="InvalidLoginAttemptCount" Type="int" />
+          <Property Name="InvalidPinAttemptCount" Type="int" />
+          <Property Name="InvalidPinAttemptTime" Type="datetime" />
+          <Property Name="DateOfBirth" Type="datetime" />
+          <Property Name="FacebookAccountLogin" Type="nvarchar" MaxLength="100" />
+          <Property Name="AllowPushNotifications" Type="bit" />
+          <Property Name="Photo" Type="nvarchar" MaxLength="500" />
+          <Property Name="FacebookPhoto" Type="nvarchar" MaxLength="500" />
+          <Property Name="UseFacebookPicture" Type="bit" />
+          <Property Name="ClearTransactionHistory" Type="bit" />
+          <Property Name="Address" Type="nvarchar" MaxLength="150" />
+          <Property Name="City" Type="nvarchar" MaxLength="150" />
+          <Property Name="State" Type="nvarchar" MaxLength="150" />
+          <Property Name="Zipcode" Type="nvarchar" MaxLength="150" />
+          <Property Name="Country" Type="nvarchar" MaxLength="150" />
+          <Property Name="NoOfTransfersByPackage" Type="int" />
+          <Property Name="FreeTransfers" Type="int" />
+          <Property Name="ShowInSearch" Type="bit" />
+          <Property Name="IsDeleted" Type="bit" />
+          <Property Name="Deposit" Type="varchar" MaxLength="150" />
+          <Property Name="InviteReminderDate" Type="datetime" />
+          <Property Name="UserNameLowerCase" Type="nvarchar(max)" />
+          <Property Name="TimeZoneKey" Type="nvarchar(max)" />
+          <Property Name="Address2" Type="nvarchar" MaxLength="150" />
+          <Property Name="TotalNoochTransfersCount" Type="int" />
+          <Property Name="TotalACHTransfersCount" Type="int" />
+          <Property Name="ValidatedDate" Type="datetime" />
+          <Property Name="ValidationFailedCount" Type="int" />
+          <Property Name="InviteCodeId" Type="uniqueidentifier" />
+          <Property Name="InviteCodeIdUsed" Type="uniqueidentifier" />
+          <Property Name="Type" Type="varchar" MaxLength="20" />
+          <Property Name="SSN" Type="varchar(max)" />
+          <Property Name="UpgradeDate" Type="date" />
+          <Property Name="IsVerifiedPhone" Type="bit" />
+          <Property Name="LastLocationLat" Type="decimal" Precision="18" Scale="15" />
+          <Property Name="LastLocationLng" Type="decimal" Precision="18" Scale="15" />
+          <Property Name="AccessToken" Type="varchar(max)" />
+          <Property Name="IsFrequencyOn" Type="bit" />
+          <Property Name="IsTriggerOn" Type="bit" />
+          <Property Name="WithdrawalFrequency" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="WithdrawalId" Type="uniqueidentifier" />
+          <Property Name="Allow2FactorAuthentication" Type="bit" />
+          <Property Name="IsOnline" Type="bit" />
+          <Property Name="SDNCheckDateTime" Type="datetime" />
+          <Property Name="AnyPriliminaryHit" Type="bit" />
+          <Property Name="ent_num" Type="bigint" />
+          <Property Name="IsRequiredImmediatley" Type="bit" />
+          <Property Name="DeviceToken" Type="varchar" MaxLength="250" />
+          <Property Name="trans_id" Type="varchar" MaxLength="250" />
+          <Property Name="user_key" Type="varchar" MaxLength="250" />
+          <Property Name="user_pass" Type="varchar" MaxLength="250" />
+          <Property Name="IsSDNSafe" Type="bit" />
+          <Property Name="AdminNotes" Type="varchar(max)" />
+          <Property Name="PhoneVerifiedOn" Type="datetime" />
+          <Property Name="VerificationDocumentPath" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="Properties">
+          <Key>
+            <PropertyRef Name="PropertyId" />
+          </Key>
+          <Property Name="PropertyId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="PropStatus" Type="varchar" MaxLength="50" />
+          <Property Name="PropType" Type="varchar" MaxLength="50" />
+          <Property Name="PropName" Type="varchar" MaxLength="50" />
+          <Property Name="AddressLineOne" Type="varchar(max)" />
+          <Property Name="AddressLineTwo" Type="varchar(max)" />
+          <Property Name="City" Type="varchar(max)" />
+          <Property Name="State" Type="varchar(max)" />
+          <Property Name="Zip" Type="varchar(max)" />
+          <Property Name="ContactNumber" Type="varchar(max)" />
+          <Property Name="DefaultDueDate" Type="varchar" MaxLength="50" />
+          <Property Name="DateAdded" Type="datetime" />
+          <Property Name="DateModified" Type="datetime" />
+          <Property Name="LandlordId" Type="uniqueidentifier" />
+          <Property Name="MemberId" Type="uniqueidentifier" />
+          <Property Name="PropertyImage" Type="varchar(max)" />
+          <Property Name="IsSingleUnit" Type="bit" />
+          <Property Name="IsDeleted" Type="bit" />
+          <Property Name="DefaulBank" Type="uniqueidentifier" />
+        </EntityType>
+        <EntityType Name="PropertyUnits">
+          <Key>
+            <PropertyRef Name="UnitId" />
+          </Key>
+          <Property Name="UnitId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="PropertyId" Type="uniqueidentifier" />
+          <Property Name="UnitNumber" Type="varchar" MaxLength="50" />
+          <Property Name="UnitRent" Type="varchar" MaxLength="50" />
+          <Property Name="BankAccountId" Type="uniqueidentifier" />
+          <Property Name="DateAdded" Type="datetime" />
+          <Property Name="ModifiedOn" Type="datetime" />
+          <Property Name="LandlordId" Type="uniqueidentifier" />
+          <Property Name="MemberId" Type="uniqueidentifier" />
+          <Property Name="UnitImage" Type="varchar(max)" />
+          <Property Name="IsDeleted" Type="bit" />
+          <Property Name="IsHidden" Type="bit" />
+          <Property Name="IsOccupied" Type="bit" />
+          <Property Name="Status" Type="varchar(max)" />
+          <Property Name="DueDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Tenants">
+          <Key>
+            <PropertyRef Name="TenantId" />
+          </Key>
+          <Property Name="TenantId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="FirstName" Type="varchar(max)" />
+          <Property Name="LastName" Type="varchar(max)" />
+          <Property Name="DateOfBirth" Type="datetime" />
+          <Property Name="DateAdded" Type="datetime" />
+          <Property Name="DateModified" Type="datetime" />
+          <Property Name="AddressLineOne" Type="varchar(max)" />
+          <Property Name="AddressLineTwo" Type="varchar(max)" />
+          <Property Name="City" Type="varchar(max)" />
+          <Property Name="State" Type="varchar(max)" />
+          <Property Name="Zip" Type="varchar(max)" />
+          <Property Name="PhoneNumber" Type="varchar(max)" />
+          <Property Name="IsPhoneVerfied" Type="bit" />
+          <Property Name="SSN" Type="varchar(max)" />
+          <Property Name="eMail" Type="varchar(max)" />
+          <Property Name="IsEmailVerified" Type="bit" />
+          <Property Name="IsDeleted" Type="bit" />
+          <Property Name="MemberId" Type="uniqueidentifier" />
+          <Property Name="BankAccountId" Type="uniqueidentifier" />
+          <Property Name="UserPic" Type="varchar(max)" />
+        </EntityType>
+        <Association Name="FK_MemberNotifications_Members">
+          <End Role="Members" Type="Self.Members" Multiplicity="1" />
+          <End Role="MemberNotifications" Type="Self.MemberNotifications" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Members">
+              <PropertyRef Name="MemberId" />
+            </Principal>
+            <Dependent Role="MemberNotifications">
+              <PropertyRef Name="MemberId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MemberPrivacySettings_Members">
+          <End Role="Members" Type="Self.Members" Multiplicity="0..1" />
+          <End Role="MemberPrivacySettings" Type="Self.MemberPrivacySettings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Members">
+              <PropertyRef Name="MemberId" />
+            </Principal>
+            <Dependent Role="MemberPrivacySettings">
+              <PropertyRef Name="MemberId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="NOOCHModelStoreContainer">
+          <EntitySet Name="GeoLocations" EntityType="Self.GeoLocations" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Landlords" EntityType="Self.Landlords" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MemberNotifications" EntityType="Self.MemberNotifications" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MemberPrivacySettings" EntityType="Self.MemberPrivacySettings" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Members" EntityType="Self.Members" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Properties" EntityType="Self.Properties" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PropertyUnits" EntityType="Self.PropertyUnits" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tenants" EntityType="Self.Tenants" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_MemberNotifications_Members" Association="Self.FK_MemberNotifications_Members">
+            <End Role="Members" EntitySet="Members" />
+            <End Role="MemberNotifications" EntitySet="MemberNotifications" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MemberPrivacySettings_Members" Association="Self.FK_MemberPrivacySettings_Members">
+            <End Role="Members" EntitySet="Members" />
+            <End Role="MemberPrivacySettings" EntitySet="MemberPrivacySettings" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="NOOCHModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="GeoLocation">
+          <Key>
+            <PropertyRef Name="LocationId" />
+          </Key>
+          <Property Name="LocationId" Type="Guid" Nullable="false" />
+          <Property Name="Latitude" Type="Double" />
+          <Property Name="Longitude" Type="Double" />
+          <Property Name="Altitude" Type="Double" />
+          <Property Name="AddressLine1" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="AddressLine2" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="State" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Country" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ZipCode" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Landlord">
+          <Key>
+            <PropertyRef Name="LandlordId" />
+          </Key>
+          <Property Name="LandlordId" Type="Guid" Nullable="false" />
+          <Property Name="MemberId" Type="Guid" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SubType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FirstName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="LastName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="DateOfBirth" Type="DateTime" Precision="3" />
+          <Property Name="MobileNumber" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="IsPhoneVerified" Type="Boolean" />
+          <Property Name="eMail" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="IsEmailVerfieid" Type="Boolean" />
+          <Property Name="AddressLineOne" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="AddressLineTwo" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="City" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="State" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Zip" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Country" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="SSN" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="UserPic" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="IpAddresses" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="FBId" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="TwitterHandle" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="InstagramUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CompanyName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CompanyEIN" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CompanyAddressLineOne" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CompanyeAddressLineTwo" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CompanyCity" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CompanyState" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CompaZip" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="DateModified" Type="DateTime" Precision="3" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="WebAccessToken" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="LastSeenOn" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="MemberNotification">
+          <Key>
+            <PropertyRef Name="NotificationId" />
+          </Key>
+          <Property Name="NotificationId" Type="Guid" Nullable="false" />
+          <Property Name="MemberId" Type="Guid" Nullable="false" />
+          <Property Name="FriendRequest" Type="Boolean" />
+          <Property Name="InviteRequestAccept" Type="Boolean" />
+          <Property Name="TransferSent" Type="Boolean" />
+          <Property Name="TransferReceived" Type="Boolean" />
+          <Property Name="TransferAttemptFailure" Type="Boolean" />
+          <Property Name="EmailFriendRequest" Type="Boolean" />
+          <Property Name="EmailInviteRequestAccept" Type="Boolean" />
+          <Property Name="EmailTransferSent" Type="Boolean" />
+          <Property Name="EmailTransferReceived" Type="Boolean" />
+          <Property Name="EmailTransferAttemptFailure" Type="Boolean" />
+          <Property Name="NoochToBank" Type="Boolean" />
+          <Property Name="BankToNooch" Type="Boolean" />
+          <Property Name="TransferUnclaimed" Type="Boolean" />
+          <Property Name="BankToNoochRequested" Type="Boolean" />
+          <Property Name="BankToNoochCompleted" Type="Boolean" />
+          <Property Name="NoochToBankRequested" Type="Boolean" />
+          <Property Name="NoochToBankCompleted" Type="Boolean" />
+          <Property Name="InviteReminder" Type="Boolean" />
+          <Property Name="LowBalance" Type="Boolean" />
+          <Property Name="ValidationRemainder" Type="Boolean" />
+          <Property Name="ProductUpdates" Type="Boolean" />
+          <Property Name="NewAndUpdate" Type="Boolean" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="DateModified" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Member" Relationship="Self.FK_MemberNotifications_Members" FromRole="MemberNotifications" ToRole="Members" />
+        </EntityType>
+        <EntityType Name="MemberPrivacySetting">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MemberId" Type="Guid" />
+          <Property Name="ShowInSearch" Type="Boolean" />
+          <Property Name="AllowSharing" Type="Boolean" />
+          <Property Name="RequireImmediately" Type="Boolean" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="DateModified" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Member" Relationship="Self.FK_MemberPrivacySettings_Members" FromRole="MemberPrivacySettings" ToRole="Members" />
+        </EntityType>
+        <EntityType Name="Member">
+          <Key>
+            <PropertyRef Name="MemberId" />
+          </Key>
+          <Property Name="MemberId" Type="Guid" Nullable="false" />
+          <Property Name="Nooch_ID" Type="String" MaxLength="8" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="FirstName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="UDID1" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="UserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SecondaryEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="RecoveryEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="TertiaryEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PinNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ContactNumber" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="RememberMeEnabled" Type="Boolean" />
+          <Property Name="NoochAccountId" Type="Guid" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="DateModified" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="Guid" />
+          <Property Name="InvalidLoginTime" Type="DateTime" Precision="3" />
+          <Property Name="InvalidLoginAttemptCount" Type="Int32" />
+          <Property Name="InvalidPinAttemptCount" Type="Int32" />
+          <Property Name="InvalidPinAttemptTime" Type="DateTime" Precision="3" />
+          <Property Name="DateOfBirth" Type="DateTime" Precision="3" />
+          <Property Name="FacebookAccountLogin" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="AllowPushNotifications" Type="Boolean" />
+          <Property Name="Photo" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="FacebookPhoto" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="UseFacebookPicture" Type="Boolean" />
+          <Property Name="ClearTransactionHistory" Type="Boolean" />
+          <Property Name="Address" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="State" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Zipcode" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Country" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="NoOfTransfersByPackage" Type="Int32" />
+          <Property Name="FreeTransfers" Type="Int32" />
+          <Property Name="ShowInSearch" Type="Boolean" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="Deposit" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="InviteReminderDate" Type="DateTime" Precision="3" />
+          <Property Name="UserNameLowerCase" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TimeZoneKey" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Address2" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="TotalNoochTransfersCount" Type="Int32" />
+          <Property Name="TotalACHTransfersCount" Type="Int32" />
+          <Property Name="ValidatedDate" Type="DateTime" Precision="3" />
+          <Property Name="ValidationFailedCount" Type="Int32" />
+          <Property Name="InviteCodeId" Type="Guid" />
+          <Property Name="InviteCodeIdUsed" Type="Guid" />
+          <Property Name="Type" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="SSN" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="UpgradeDate" Type="DateTime" Precision="0" />
+          <Property Name="IsVerifiedPhone" Type="Boolean" />
+          <Property Name="LastLocationLat" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="LastLocationLng" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="AccessToken" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="IsFrequencyOn" Type="Boolean" />
+          <Property Name="IsTriggerOn" Type="Boolean" />
+          <Property Name="WithdrawalFrequency" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="WithdrawalId" Type="Guid" />
+          <Property Name="Allow2FactorAuthentication" Type="Boolean" />
+          <Property Name="IsOnline" Type="Boolean" />
+          <Property Name="SDNCheckDateTime" Type="DateTime" Precision="3" />
+          <Property Name="AnyPriliminaryHit" Type="Boolean" />
+          <Property Name="ent_num" Type="Int64" />
+          <Property Name="IsRequiredImmediatley" Type="Boolean" />
+          <Property Name="DeviceToken" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="trans_id" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="user_key" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="user_pass" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="IsSDNSafe" Type="Boolean" />
+          <Property Name="AdminNotes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="PhoneVerifiedOn" Type="DateTime" Precision="3" />
+          <Property Name="VerificationDocumentPath" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="MemberNotifications" Relationship="Self.FK_MemberNotifications_Members" FromRole="Members" ToRole="MemberNotifications" />
+          <NavigationProperty Name="MemberPrivacySettings" Relationship="Self.FK_MemberPrivacySettings_Members" FromRole="Members" ToRole="MemberPrivacySettings" />
+        </EntityType>
+        <EntityType Name="Property">
+          <Key>
+            <PropertyRef Name="PropertyId" />
+          </Key>
+          <Property Name="PropertyId" Type="Guid" Nullable="false" />
+          <Property Name="PropStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PropType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PropName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="AddressLineOne" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="AddressLineTwo" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="City" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="State" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Zip" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="ContactNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="DefaultDueDate" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateAdded" Type="DateTime" Precision="3" />
+          <Property Name="DateModified" Type="DateTime" Precision="3" />
+          <Property Name="LandlordId" Type="Guid" />
+          <Property Name="MemberId" Type="Guid" />
+          <Property Name="PropertyImage" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="IsSingleUnit" Type="Boolean" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="DefaulBank" Type="Guid" />
+        </EntityType>
+        <EntityType Name="PropertyUnit">
+          <Key>
+            <PropertyRef Name="UnitId" />
+          </Key>
+          <Property Name="UnitId" Type="Guid" Nullable="false" />
+          <Property Name="PropertyId" Type="Guid" />
+          <Property Name="UnitNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UnitRent" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="BankAccountId" Type="Guid" />
+          <Property Name="DateAdded" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedOn" Type="DateTime" Precision="3" />
+          <Property Name="LandlordId" Type="Guid" />
+          <Property Name="MemberId" Type="Guid" />
+          <Property Name="UnitImage" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="IsHidden" Type="Boolean" />
+          <Property Name="IsOccupied" Type="Boolean" />
+          <Property Name="Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="DueDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Tenant">
+          <Key>
+            <PropertyRef Name="TenantId" />
+          </Key>
+          <Property Name="TenantId" Type="Guid" Nullable="false" />
+          <Property Name="FirstName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="LastName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="DateOfBirth" Type="DateTime" Precision="3" />
+          <Property Name="DateAdded" Type="DateTime" Precision="3" />
+          <Property Name="DateModified" Type="DateTime" Precision="3" />
+          <Property Name="AddressLineOne" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="AddressLineTwo" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="City" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="State" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Zip" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="IsPhoneVerfied" Type="Boolean" />
+          <Property Name="SSN" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="eMail" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="IsEmailVerified" Type="Boolean" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="MemberId" Type="Guid" />
+          <Property Name="BankAccountId" Type="Guid" />
+          <Property Name="UserPic" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="FK_MemberNotifications_Members">
+          <End Role="Members" Type="Self.Member" Multiplicity="1" />
+          <End Role="MemberNotifications" Type="Self.MemberNotification" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Members">
+              <PropertyRef Name="MemberId" />
+            </Principal>
+            <Dependent Role="MemberNotifications">
+              <PropertyRef Name="MemberId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MemberPrivacySettings_Members">
+          <End Role="Members" Type="Self.Member" Multiplicity="0..1" />
+          <End Role="MemberPrivacySettings" Type="Self.MemberPrivacySetting" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Members">
+              <PropertyRef Name="MemberId" />
+            </Principal>
+            <Dependent Role="MemberPrivacySettings">
+              <PropertyRef Name="MemberId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="NOOCHEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="GeoLocations" EntityType="Self.GeoLocation" />
+          <EntitySet Name="Landlords" EntityType="Self.Landlord" />
+          <EntitySet Name="MemberNotifications" EntityType="Self.MemberNotification" />
+          <EntitySet Name="MemberPrivacySettings" EntityType="Self.MemberPrivacySetting" />
+          <EntitySet Name="Members" EntityType="Self.Member" />
+          <EntitySet Name="Properties" EntityType="Self.Property" />
+          <EntitySet Name="PropertyUnits" EntityType="Self.PropertyUnit" />
+          <EntitySet Name="Tenants" EntityType="Self.Tenant" />
+          <AssociationSet Name="FK_MemberNotifications_Members" Association="Self.FK_MemberNotifications_Members">
+            <End Role="Members" EntitySet="Members" />
+            <End Role="MemberNotifications" EntitySet="MemberNotifications" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MemberPrivacySettings_Members" Association="Self.FK_MemberPrivacySettings_Members">
+            <End Role="Members" EntitySet="Members" />
+            <End Role="MemberPrivacySettings" EntitySet="MemberPrivacySettings" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="NOOCHModelStoreContainer" CdmEntityContainer="NOOCHEntities">
+          <EntitySetMapping Name="GeoLocations">
+            <EntityTypeMapping TypeName="NOOCHModel.GeoLocation">
+              <MappingFragment StoreEntitySet="GeoLocations">
+                <ScalarProperty Name="LocationId" ColumnName="LocationId" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="Altitude" ColumnName="Altitude" />
+                <ScalarProperty Name="AddressLine1" ColumnName="AddressLine1" />
+                <ScalarProperty Name="AddressLine2" ColumnName="AddressLine2" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="Country" ColumnName="Country" />
+                <ScalarProperty Name="ZipCode" ColumnName="ZipCode" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Landlords">
+            <EntityTypeMapping TypeName="NOOCHModel.Landlord">
+              <MappingFragment StoreEntitySet="Landlords">
+                <ScalarProperty Name="LastSeenOn" ColumnName="LastSeenOn" />
+                <ScalarProperty Name="LandlordId" ColumnName="LandlordId" />
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="SubType" ColumnName="SubType" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="DateOfBirth" ColumnName="DateOfBirth" />
+                <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="IsPhoneVerified" ColumnName="IsPhoneVerified" />
+                <ScalarProperty Name="eMail" ColumnName="eMail" />
+                <ScalarProperty Name="IsEmailVerfieid" ColumnName="IsEmailVerfieid" />
+                <ScalarProperty Name="AddressLineOne" ColumnName="AddressLineOne" />
+                <ScalarProperty Name="AddressLineTwo" ColumnName="AddressLineTwo" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="Zip" ColumnName="Zip" />
+                <ScalarProperty Name="Country" ColumnName="Country" />
+                <ScalarProperty Name="SSN" ColumnName="SSN" />
+                <ScalarProperty Name="UserPic" ColumnName="UserPic" />
+                <ScalarProperty Name="IpAddresses" ColumnName="IpAddresses" />
+                <ScalarProperty Name="FBId" ColumnName="FBId" />
+                <ScalarProperty Name="TwitterHandle" ColumnName="TwitterHandle" />
+                <ScalarProperty Name="InstagramUrl" ColumnName="InstagramUrl" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="CompanyEIN" ColumnName="CompanyEIN" />
+                <ScalarProperty Name="CompanyAddressLineOne" ColumnName="CompanyAddressLineOne" />
+                <ScalarProperty Name="CompanyeAddressLineTwo" ColumnName="CompanyeAddressLineTwo" />
+                <ScalarProperty Name="CompanyCity" ColumnName="CompanyCity" />
+                <ScalarProperty Name="CompanyState" ColumnName="CompanyState" />
+                <ScalarProperty Name="CompaZip" ColumnName="CompaZip" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="WebAccessToken" ColumnName="WebAccessToken" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MemberNotifications">
+            <EntityTypeMapping TypeName="NOOCHModel.MemberNotification">
+              <MappingFragment StoreEntitySet="MemberNotifications">
+                <ScalarProperty Name="NotificationId" ColumnName="NotificationId" />
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="FriendRequest" ColumnName="FriendRequest" />
+                <ScalarProperty Name="InviteRequestAccept" ColumnName="InviteRequestAccept" />
+                <ScalarProperty Name="TransferSent" ColumnName="TransferSent" />
+                <ScalarProperty Name="TransferReceived" ColumnName="TransferReceived" />
+                <ScalarProperty Name="TransferAttemptFailure" ColumnName="TransferAttemptFailure" />
+                <ScalarProperty Name="EmailFriendRequest" ColumnName="EmailFriendRequest" />
+                <ScalarProperty Name="EmailInviteRequestAccept" ColumnName="EmailInviteRequestAccept" />
+                <ScalarProperty Name="EmailTransferSent" ColumnName="EmailTransferSent" />
+                <ScalarProperty Name="EmailTransferReceived" ColumnName="EmailTransferReceived" />
+                <ScalarProperty Name="EmailTransferAttemptFailure" ColumnName="EmailTransferAttemptFailure" />
+                <ScalarProperty Name="NoochToBank" ColumnName="NoochToBank" />
+                <ScalarProperty Name="BankToNooch" ColumnName="BankToNooch" />
+                <ScalarProperty Name="TransferUnclaimed" ColumnName="TransferUnclaimed" />
+                <ScalarProperty Name="BankToNoochRequested" ColumnName="BankToNoochRequested" />
+                <ScalarProperty Name="BankToNoochCompleted" ColumnName="BankToNoochCompleted" />
+                <ScalarProperty Name="NoochToBankRequested" ColumnName="NoochToBankRequested" />
+                <ScalarProperty Name="NoochToBankCompleted" ColumnName="NoochToBankCompleted" />
+                <ScalarProperty Name="InviteReminder" ColumnName="InviteReminder" />
+                <ScalarProperty Name="LowBalance" ColumnName="LowBalance" />
+                <ScalarProperty Name="ValidationRemainder" ColumnName="ValidationRemainder" />
+                <ScalarProperty Name="ProductUpdates" ColumnName="ProductUpdates" />
+                <ScalarProperty Name="NewAndUpdate" ColumnName="NewAndUpdate" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MemberPrivacySettings">
+            <EntityTypeMapping TypeName="NOOCHModel.MemberPrivacySetting">
+              <MappingFragment StoreEntitySet="MemberPrivacySettings">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="ShowInSearch" ColumnName="ShowInSearch" />
+                <ScalarProperty Name="AllowSharing" ColumnName="AllowSharing" />
+                <ScalarProperty Name="RequireImmediately" ColumnName="RequireImmediately" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Members">
+            <EntityTypeMapping TypeName="NOOCHModel.Member">
+              <MappingFragment StoreEntitySet="Members">
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="Nooch_ID" ColumnName="Nooch_ID" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="UDID1" ColumnName="UDID1" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="SecondaryEmail" ColumnName="SecondaryEmail" />
+                <ScalarProperty Name="RecoveryEmail" ColumnName="RecoveryEmail" />
+                <ScalarProperty Name="TertiaryEmail" ColumnName="TertiaryEmail" />
+                <ScalarProperty Name="PinNumber" ColumnName="PinNumber" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="RememberMeEnabled" ColumnName="RememberMeEnabled" />
+                <ScalarProperty Name="NoochAccountId" ColumnName="NoochAccountId" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="InvalidLoginTime" ColumnName="InvalidLoginTime" />
+                <ScalarProperty Name="InvalidLoginAttemptCount" ColumnName="InvalidLoginAttemptCount" />
+                <ScalarProperty Name="InvalidPinAttemptCount" ColumnName="InvalidPinAttemptCount" />
+                <ScalarProperty Name="InvalidPinAttemptTime" ColumnName="InvalidPinAttemptTime" />
+                <ScalarProperty Name="DateOfBirth" ColumnName="DateOfBirth" />
+                <ScalarProperty Name="FacebookAccountLogin" ColumnName="FacebookAccountLogin" />
+                <ScalarProperty Name="AllowPushNotifications" ColumnName="AllowPushNotifications" />
+                <ScalarProperty Name="Photo" ColumnName="Photo" />
+                <ScalarProperty Name="FacebookPhoto" ColumnName="FacebookPhoto" />
+                <ScalarProperty Name="UseFacebookPicture" ColumnName="UseFacebookPicture" />
+                <ScalarProperty Name="ClearTransactionHistory" ColumnName="ClearTransactionHistory" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="Zipcode" ColumnName="Zipcode" />
+                <ScalarProperty Name="Country" ColumnName="Country" />
+                <ScalarProperty Name="NoOfTransfersByPackage" ColumnName="NoOfTransfersByPackage" />
+                <ScalarProperty Name="FreeTransfers" ColumnName="FreeTransfers" />
+                <ScalarProperty Name="ShowInSearch" ColumnName="ShowInSearch" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="Deposit" ColumnName="Deposit" />
+                <ScalarProperty Name="InviteReminderDate" ColumnName="InviteReminderDate" />
+                <ScalarProperty Name="UserNameLowerCase" ColumnName="UserNameLowerCase" />
+                <ScalarProperty Name="TimeZoneKey" ColumnName="TimeZoneKey" />
+                <ScalarProperty Name="Address2" ColumnName="Address2" />
+                <ScalarProperty Name="TotalNoochTransfersCount" ColumnName="TotalNoochTransfersCount" />
+                <ScalarProperty Name="TotalACHTransfersCount" ColumnName="TotalACHTransfersCount" />
+                <ScalarProperty Name="ValidatedDate" ColumnName="ValidatedDate" />
+                <ScalarProperty Name="ValidationFailedCount" ColumnName="ValidationFailedCount" />
+                <ScalarProperty Name="InviteCodeId" ColumnName="InviteCodeId" />
+                <ScalarProperty Name="InviteCodeIdUsed" ColumnName="InviteCodeIdUsed" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="SSN" ColumnName="SSN" />
+                <ScalarProperty Name="UpgradeDate" ColumnName="UpgradeDate" />
+                <ScalarProperty Name="IsVerifiedPhone" ColumnName="IsVerifiedPhone" />
+                <ScalarProperty Name="LastLocationLat" ColumnName="LastLocationLat" />
+                <ScalarProperty Name="LastLocationLng" ColumnName="LastLocationLng" />
+                <ScalarProperty Name="AccessToken" ColumnName="AccessToken" />
+                <ScalarProperty Name="IsFrequencyOn" ColumnName="IsFrequencyOn" />
+                <ScalarProperty Name="IsTriggerOn" ColumnName="IsTriggerOn" />
+                <ScalarProperty Name="WithdrawalFrequency" ColumnName="WithdrawalFrequency" />
+                <ScalarProperty Name="WithdrawalId" ColumnName="WithdrawalId" />
+                <ScalarProperty Name="Allow2FactorAuthentication" ColumnName="Allow2FactorAuthentication" />
+                <ScalarProperty Name="IsOnline" ColumnName="IsOnline" />
+                <ScalarProperty Name="SDNCheckDateTime" ColumnName="SDNCheckDateTime" />
+                <ScalarProperty Name="AnyPriliminaryHit" ColumnName="AnyPriliminaryHit" />
+                <ScalarProperty Name="ent_num" ColumnName="ent_num" />
+                <ScalarProperty Name="IsRequiredImmediatley" ColumnName="IsRequiredImmediatley" />
+                <ScalarProperty Name="DeviceToken" ColumnName="DeviceToken" />
+                <ScalarProperty Name="trans_id" ColumnName="trans_id" />
+                <ScalarProperty Name="user_key" ColumnName="user_key" />
+                <ScalarProperty Name="user_pass" ColumnName="user_pass" />
+                <ScalarProperty Name="IsSDNSafe" ColumnName="IsSDNSafe" />
+                <ScalarProperty Name="AdminNotes" ColumnName="AdminNotes" />
+                <ScalarProperty Name="PhoneVerifiedOn" ColumnName="PhoneVerifiedOn" />
+                <ScalarProperty Name="VerificationDocumentPath" ColumnName="VerificationDocumentPath" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Properties">
+            <EntityTypeMapping TypeName="NOOCHModel.Property">
+              <MappingFragment StoreEntitySet="Properties">
+                <ScalarProperty Name="PropertyId" ColumnName="PropertyId" />
+                <ScalarProperty Name="PropStatus" ColumnName="PropStatus" />
+                <ScalarProperty Name="PropType" ColumnName="PropType" />
+                <ScalarProperty Name="PropName" ColumnName="PropName" />
+                <ScalarProperty Name="AddressLineOne" ColumnName="AddressLineOne" />
+                <ScalarProperty Name="AddressLineTwo" ColumnName="AddressLineTwo" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="Zip" ColumnName="Zip" />
+                <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
+                <ScalarProperty Name="DefaultDueDate" ColumnName="DefaultDueDate" />
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
+                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+                <ScalarProperty Name="LandlordId" ColumnName="LandlordId" />
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="PropertyImage" ColumnName="PropertyImage" />
+                <ScalarProperty Name="IsSingleUnit" ColumnName="IsSingleUnit" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="DefaulBank" ColumnName="DefaulBank" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PropertyUnits">
+            <EntityTypeMapping TypeName="NOOCHModel.PropertyUnit">
+              <MappingFragment StoreEntitySet="PropertyUnits">
+                <ScalarProperty Name="UnitId" ColumnName="UnitId" />
+                <ScalarProperty Name="PropertyId" ColumnName="PropertyId" />
+                <ScalarProperty Name="UnitNumber" ColumnName="UnitNumber" />
+                <ScalarProperty Name="UnitRent" ColumnName="UnitRent" />
+                <ScalarProperty Name="BankAccountId" ColumnName="BankAccountId" />
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="LandlordId" ColumnName="LandlordId" />
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="UnitImage" ColumnName="UnitImage" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsHidden" ColumnName="IsHidden" />
+                <ScalarProperty Name="IsOccupied" ColumnName="IsOccupied" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="DueDate" ColumnName="DueDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tenants">
+            <EntityTypeMapping TypeName="NOOCHModel.Tenant">
+              <MappingFragment StoreEntitySet="Tenants">
+                <ScalarProperty Name="TenantId" ColumnName="TenantId" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="DateOfBirth" ColumnName="DateOfBirth" />
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
+                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+                <ScalarProperty Name="AddressLineOne" ColumnName="AddressLineOne" />
+                <ScalarProperty Name="AddressLineTwo" ColumnName="AddressLineTwo" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="Zip" ColumnName="Zip" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="IsPhoneVerfied" ColumnName="IsPhoneVerfied" />
+                <ScalarProperty Name="SSN" ColumnName="SSN" />
+                <ScalarProperty Name="eMail" ColumnName="eMail" />
+                <ScalarProperty Name="IsEmailVerified" ColumnName="IsEmailVerified" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="BankAccountId" ColumnName="BankAccountId" />
+                <ScalarProperty Name="UserPic" ColumnName="UserPic" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
