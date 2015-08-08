@@ -140,97 +140,88 @@ namespace LanLordlAPIs.Controllers
                         if (lanlorddetails != null)
                         {
                             
-                            if (!String.IsNullOrEmpty( lanlorddetails.FirstName))
-                            {
-                                result.FirstName = CommonHelper.GetDecryptedData(lanlorddetails.FirstName);
-                            }
-                            if (!String.IsNullOrEmpty(lanlorddetails.LastName))
-                            {
-                                result.FirstName = CommonHelper.GetDecryptedData(lanlorddetails.LastName);
-                            }
-
-                            if (!String.IsNullOrEmpty(lanlorddetails.Type))
-                            {
-                                result.AccountType = lanlorddetails.Type;
-                            }
+                            result.FirstName = !String.IsNullOrEmpty( lanlorddetails.FirstName) ? CommonHelper.GetDecryptedData(lanlorddetails.FirstName) : "";
+                            result.LastName = !String.IsNullOrEmpty(lanlorddetails.LastName) ? CommonHelper.GetDecryptedData(lanlorddetails.LastName) : "";
+                            result.AccountType = !String.IsNullOrEmpty(lanlorddetails.Type) ? lanlorddetails.Type : "";
+                            result.SubType = !String.IsNullOrEmpty(lanlorddetails.SubType) ? lanlorddetails.SubType : "";
 
                             result.IsPhoneVerified = lanlorddetails.IsPhoneVerified != null;
                             result.IsEmailVerified = lanlorddetails.IsEmailVerfieid != null;
 
-                            if (lanlorddetails.DateOfBirth!=null)
-                            {
-                                result.DOB = Convert.ToDateTime(lanlorddetails.DateOfBirth).ToString("YYYY MMMM DD");
-                            }
+                            result.DOB = lanlorddetails.DateOfBirth!=null ? Convert.ToDateTime(lanlorddetails.DateOfBirth).ToString("d") : "";
 
-                            if (!String.IsNullOrEmpty(lanlorddetails.SSN))
-                            {
-                                result.SSN = CommonHelper.GetDecryptedData(lanlorddetails.SSN);
-                            }
-                            if (!String.IsNullOrEmpty(lanlorddetails.eMail))
-                            {
-                                result.UserEmail = CommonHelper.GetDecryptedData(lanlorddetails.eMail);
-                            }
 
-                            if (!String.IsNullOrEmpty(lanlorddetails.MobileNumber))
-                            {
-                                result.MobileNumber = CommonHelper.FormatPhoneNumber(lanlorddetails.MobileNumber);
-                            }
+                            result.SSN = !String.IsNullOrEmpty(lanlorddetails.SSN) ? CommonHelper.GetDecryptedData(lanlorddetails.SSN) : "";
+                            result.UserEmail = !String.IsNullOrEmpty(lanlorddetails.eMail) ? CommonHelper.GetDecryptedData(lanlorddetails.eMail) : "";
+
+                            result.MobileNumber = !String.IsNullOrEmpty(lanlorddetails.MobileNumber) ? CommonHelper.FormatPhoneNumber(lanlorddetails.MobileNumber) : "";
 
                             if (!String.IsNullOrEmpty(lanlorddetails.AddressLineOne))
                             {
                                 result.Address = CommonHelper.GetDecryptedData(lanlorddetails.AddressLineOne);
+                                result.AddressLine1 = CommonHelper.GetDecryptedData(lanlorddetails.AddressLineOne);
                             }
+                            else
+                            {
+                                result.AddressLine1 = "";
+                            }
+                          
                             if (!String.IsNullOrEmpty(lanlorddetails.AddressLineTwo))
                             {
-                                result.Address += " "+CommonHelper.GetDecryptedData(lanlorddetails.AddressLineOne);
+                                result.Address += " " + CommonHelper.GetDecryptedData(lanlorddetails.AddressLineTwo);
+                                result.AddressLine2 =  CommonHelper.GetDecryptedData(lanlorddetails.AddressLineTwo);
+                            }
+                            else
+                            {
+                                result.AddressLine2 = "";
                             }
                             if (!String.IsNullOrEmpty(lanlorddetails.City))
                             {
                                 result.Address += " " + CommonHelper.GetDecryptedData(lanlorddetails.City);
+                                result.City = CommonHelper.GetDecryptedData(lanlorddetails.City);
+                            }
+                            else
+                            {
+                                result.City = "";
                             }
 
                             if (!String.IsNullOrEmpty(lanlorddetails.State))
                             {
                                 result.Address += " " + CommonHelper.GetDecryptedData(lanlorddetails.State);
+                                result.AddState =  CommonHelper.GetDecryptedData(lanlorddetails.State);
                             }
-
+                            else
+                            {
+                                result.AddState = "";
+                            }
                             if (!String.IsNullOrEmpty(lanlorddetails.Zip))
                             {
                                 result.Address += " " + CommonHelper.GetDecryptedData(lanlorddetails.Zip);
+                                result.Zip =  CommonHelper.GetDecryptedData(lanlorddetails.Zip);
+                            }
+                            else
+                            {
+                                result.Zip = "";
                             }
                             if (!String.IsNullOrEmpty(lanlorddetails.Country))
                             {
                                 result.Address += " " + CommonHelper.GetDecryptedData(lanlorddetails.Country);
+                                result.Country =  CommonHelper.GetDecryptedData(lanlorddetails.Country);
                             }
+                            else
+                            {
+                                result.Country = "";
+                            }
+                            result.TwitterHandle = !String.IsNullOrEmpty(lanlorddetails.TwitterHandle) ? CommonHelper.GetDecryptedData(lanlorddetails.TwitterHandle) : "";
+                            result.FbUrl = !String.IsNullOrEmpty(lanlorddetails.FBId) ? lanlorddetails.FBId : "";
+                          
 
-                            if (!String.IsNullOrEmpty(lanlorddetails.TwitterHandle))
-                            {
-                                result.TwitterHandle = CommonHelper.GetDecryptedData(lanlorddetails.TwitterHandle);
-                            }
-                            if (!String.IsNullOrEmpty(lanlorddetails.FBId))
-                            {
-                                result.FbUrl = lanlorddetails.FBId;
-                            }
-                            if (!String.IsNullOrEmpty(lanlorddetails.FBId))
-                            {
-                                result.FbUrl = lanlorddetails.FBId;
-                            }
+                            result.InstaUrl = !String.IsNullOrEmpty(lanlorddetails.InstagramUrl) ? lanlorddetails.InstagramUrl : "";
 
-                            if (!String.IsNullOrEmpty(lanlorddetails.InstagramUrl))
-                            {
-                                result.InstaUrl = lanlorddetails.InstagramUrl;
-                            }
-
-                            if (!String.IsNullOrEmpty(lanlorddetails.CompanyName))
-                            {
-                                result.CompanyName = CommonHelper.GetDecryptedData(lanlorddetails.CompanyName);
-                            }
+                            result.CompanyName = !String.IsNullOrEmpty(lanlorddetails.CompanyName) ? CommonHelper.GetDecryptedData(lanlorddetails.CompanyName) : "";
 
 
-                            if (!String.IsNullOrEmpty(lanlorddetails.CompanyEIN))
-                            {
-                                result.CompanyEID =CommonHelper.GetDecryptedData( lanlorddetails.CompanyEIN);
-                            }
+                            result.CompanyEID = !String.IsNullOrEmpty(lanlorddetails.CompanyEIN) ? CommonHelper.GetDecryptedData( lanlorddetails.CompanyEIN) : "";
                             result.IsSuccess = true;
                             result.ErrorMessage = "OK";
                         }

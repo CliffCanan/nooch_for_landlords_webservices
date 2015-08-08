@@ -30,6 +30,7 @@ namespace LanLordlAPIs.Models.Output_Models
 
         //Account info
         public string AccountType { get; set; }
+        public string SubType { get; set; }
         public string VerificationType { get; set; }
 
 
@@ -53,5 +54,15 @@ namespace LanLordlAPIs.Models.Output_Models
 
         public bool IsPhoneVerified { get; set; }
         public bool IsEmailVerified { get; set; }
+
+        //Address
+        public string AddressLine1 { get; set; }
+        public string AddressLine2 { get; set; }
+
+        public string City { get; set; }
+        public string AddState { get; set; }
+        public string Country { get; set; }
+        public string Zip { get; set; }
+        
     }
 }
