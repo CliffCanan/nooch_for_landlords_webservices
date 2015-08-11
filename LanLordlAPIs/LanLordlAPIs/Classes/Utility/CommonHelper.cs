@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Web;
 using LanLordlAPIs.Classes.Crypto;
 using LanLordlAPIs.Models.db_Model;
+using System.Drawing;
 
 namespace LanLordlAPIs.Classes.Utility
 {
@@ -217,8 +220,34 @@ namespace LanLordlAPIs.Classes.Utility
             }
             return sourceNum;
         }
+        public static string GetValueFromConfig(string key)
+        {
+            return ConfigurationManager.AppSettings[key];
+        }
 
+        //to save image in directory and get url
+        public static string SaveByteArrayAsImage(string fileNametobeused, string base64String)
+        {
+            string ImageUrlMade = "";
+            byte[] bytes = Convert.FromBase64String(base64String);
+            string folderPath = GetValueFromConfig("PhotoPath");
 
+            Image image;
+            using (MemoryStream ms = new MemoryStream(bytes))
+            {
+                image = Image.FromStream(ms);
+            }
+            string fullpathtoSaveimage = Path.Combine(folderPath, fileNametobeused);
+            image.Save(fullpathtoSaveimage, System.Drawing.Imaging.ImageFormat.Png);
+            return fullpathtoSaveimage;
+        }
+        public static string GetMemberIdOfLandlord(Guid landlorID)
+        {
+            using (NOOCHEntities obj = new NOOCHEntities())
+            {
+                return (from c in obj.Landlords where c.LandlordId == landlorID select c.MemberId).SingleOrDefault().ToString();
+            }
+        }
     }
 
 

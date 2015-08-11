@@ -21,4 +21,37 @@ namespace LanLordlAPIs.Models.Input_Models
 
         
     }
+
+    public class AddNewPropertyClass
+    {
+        public string PropertyName { get; set; }
+        public string PropertyImage { get; set; }
+        public string Address { get; set; }
+        public string City { get; set; }
+        public string Zip { get; set; }
+
+        public string UnitsCount { get; set; }
+        public string Rent { get; set; }
+
+        public GetProfileDataInput User { get; set; }
+
+        public AddNewUnitClass[] Unit { get; set; }
+
+        public bool IsMultipleUnitsAdded { get; set; }
+        public bool IsPropertyImageAdded { get; set; }
+
+
+
+    }
+
+    public class AddNewUnitClass
+    {
+        public string UnitNum { get; set; }
+        public string Rent { get; set; }
+        public bool IsAddedWithProperty { get; set; }
+        
+
+
+    }
+
 }

@@ -15,6 +15,21 @@ namespace LanLordlAPIs.Models.Output_Models
         public string AccessToken { get; set; }
     }
 
+
+    public class CreatePropertyResultOutput
+    {
+
+        //auth token and validation result
+        public AccessTokenValidationOutput AuthTokenValidation { get; set; }
+
+
+
+        // if any exception
+        public bool IsSuccess { get; set; }
+        public string ErrorMessage { get; set; }
+    }
+
+
     public class UserProfileInfoResult
     {
 
