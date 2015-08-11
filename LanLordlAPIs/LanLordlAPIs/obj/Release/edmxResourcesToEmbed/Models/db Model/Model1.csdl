@@ -1,14 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Schema Namespace="NOOCHModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-  <EntityType Name="BankPicture">
-    <Key>
-      <PropertyRef Name="BankPictureId" />
-    </Key>
-    <Property Name="BankPictureId" Type="Guid" Nullable="false" />
-    <Property Name="BankPicture1" Type="Binary" MaxLength="Max" FixedLength="false" />
-    <Property Name="RoutingNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="BankName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-  </EntityType>
   <EntityType Name="GeoLocation">
     <Key>
       <PropertyRef Name="LocationId" />
@@ -64,6 +55,7 @@
     <Property Name="DateModified" Type="DateTime" Precision="3" />
     <Property Name="IsDeleted" Type="Boolean" />
     <Property Name="WebAccessToken" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="LastSeenOn" Type="DateTime" Precision="3" />
   </EntityType>
   <EntityType Name="MemberNotification">
     <Key>
@@ -285,7 +277,6 @@
     </ReferentialConstraint>
   </Association>
   <EntityContainer Name="NOOCHEntities" annotation:LazyLoadingEnabled="true">
-    <EntitySet Name="BankPictures" EntityType="Self.BankPicture" />
     <EntitySet Name="GeoLocations" EntityType="Self.GeoLocation" />
     <EntitySet Name="Landlords" EntityType="Self.Landlord" />
     <EntitySet Name="MemberNotifications" EntityType="Self.MemberNotification" />

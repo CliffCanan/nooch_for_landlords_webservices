@@ -1,14 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Schema Namespace="NOOCHModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-  <EntityType Name="BankPictures">
-    <Key>
-      <PropertyRef Name="BankPictureId" />
-    </Key>
-    <Property Name="BankPictureId" Type="uniqueidentifier" Nullable="false" />
-    <Property Name="BankPicture" Type="varbinary(max)" />
-    <Property Name="RoutingNumber" Type="varchar" MaxLength="50" />
-    <Property Name="BankName" Type="varchar" MaxLength="500" />
-  </EntityType>
   <EntityType Name="GeoLocations">
     <Key>
       <PropertyRef Name="LocationId" />
@@ -64,6 +55,7 @@
     <Property Name="DateModified" Type="datetime" />
     <Property Name="IsDeleted" Type="bit" />
     <Property Name="WebAccessToken" Type="varchar(max)" />
+    <Property Name="LastSeenOn" Type="datetime" />
   </EntityType>
   <EntityType Name="MemberNotifications">
     <Key>
@@ -281,7 +273,6 @@
     </ReferentialConstraint>
   </Association>
   <EntityContainer Name="NOOCHModelStoreContainer">
-    <EntitySet Name="BankPictures" EntityType="Self.BankPictures" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="GeoLocations" EntityType="Self.GeoLocations" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Landlords" EntityType="Self.Landlords" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="MemberNotifications" EntityType="Self.MemberNotifications" Schema="dbo" store:Type="Tables" />

@@ -212,7 +212,7 @@ namespace LanLordlAPIs.Controllers
                             {
                                 result.Country = "";
                             }
-                            result.TwitterHandle = !String.IsNullOrEmpty(lanlorddetails.TwitterHandle) ? CommonHelper.GetDecryptedData(lanlorddetails.TwitterHandle) : "";
+                            result.TwitterHandle = !String.IsNullOrEmpty(lanlorddetails.TwitterHandle) ? lanlorddetails.TwitterHandle: "";
                             result.FbUrl = !String.IsNullOrEmpty(lanlorddetails.FBId) ? lanlorddetails.FBId : "";
                           
 

@@ -1,16 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
   <EntityContainerMapping StorageEntityContainer="NOOCHModelStoreContainer" CdmEntityContainer="NOOCHEntities">
-    <EntitySetMapping Name="BankPictures">
-      <EntityTypeMapping TypeName="NOOCHModel.BankPicture">
-        <MappingFragment StoreEntitySet="BankPictures">
-          <ScalarProperty Name="BankPictureId" ColumnName="BankPictureId" />
-          <ScalarProperty Name="BankPicture1" ColumnName="BankPicture" />
-          <ScalarProperty Name="RoutingNumber" ColumnName="RoutingNumber" />
-          <ScalarProperty Name="BankName" ColumnName="BankName" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="GeoLocations">
       <EntityTypeMapping TypeName="NOOCHModel.GeoLocation">
         <MappingFragment StoreEntitySet="GeoLocations">
@@ -31,6 +21,7 @@
     <EntitySetMapping Name="Landlords">
       <EntityTypeMapping TypeName="NOOCHModel.Landlord">
         <MappingFragment StoreEntitySet="Landlords">
+          <ScalarProperty Name="LastSeenOn" ColumnName="LastSeenOn" />
           <ScalarProperty Name="LandlordId" ColumnName="LandlordId" />
           <ScalarProperty Name="MemberId" ColumnName="MemberId" />
           <ScalarProperty Name="Status" ColumnName="Status" />
