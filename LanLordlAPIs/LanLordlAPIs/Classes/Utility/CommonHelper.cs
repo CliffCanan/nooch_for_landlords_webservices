@@ -7,6 +7,7 @@ using System.Web;
 using LanLordlAPIs.Classes.Crypto;
 using LanLordlAPIs.Models.db_Model;
 using System.Drawing;
+using System.Web.Hosting;
 
 namespace LanLordlAPIs.Classes.Utility
 {
@@ -225,20 +226,32 @@ namespace LanLordlAPIs.Classes.Utility
             return ConfigurationManager.AppSettings[key];
         }
 
+
+        public static Image byteArrayToImage(byte[] byteArrayIn)
+        {
+            MemoryStream ms = new MemoryStream(byteArrayIn);
+            Image returnImage = Image.FromStream(ms);
+            return returnImage;
+        }
+
         //to save image in directory and get url
-        public static string SaveByteArrayAsImage(string fileNametobeused, string base64String)
+        public static string SaveBase64AsImage(string fileNametobeused, string base64String)
         {
             string ImageUrlMade = "";
             byte[] bytes = Convert.FromBase64String(base64String);
             string folderPath = GetValueFromConfig("PhotoPath");
 
-            Image image;
+            Image image = byteArrayToImage(bytes);
+            string fullpathtoSaveimage = "";
             using (MemoryStream ms = new MemoryStream(bytes))
             {
                 image = Image.FromStream(ms);
+                Bitmap bm = new Bitmap(image);
+                 fullpathtoSaveimage = Path.Combine(folderPath, fileNametobeused.Replace("-","_")+".png");
+                 fullpathtoSaveimage = HostingEnvironment.MapPath(fullpathtoSaveimage);
+                bm.Save(fullpathtoSaveimage, System.Drawing.Imaging.ImageFormat.Png);
             }
-            string fullpathtoSaveimage = Path.Combine(folderPath, fileNametobeused);
-            image.Save(fullpathtoSaveimage, System.Drawing.Imaging.ImageFormat.Png);
+            
             return fullpathtoSaveimage;
         }
         public static string GetMemberIdOfLandlord(Guid landlorID)

@@ -36,8 +36,9 @@ namespace LanLordlAPIs.Controllers
                         if (Property.IsPropertyImageAdded)
                         {
                             //getting image url from base64 string
+                            
                             propertyImagePath =
-                                CommonHelper.SaveByteArrayAsImage(landlordguidId.ToString() + "_property",
+                                CommonHelper.SaveBase64AsImage(landlordguidId.ToString() + "_property_" + Property.PropertyName.Trim(),
                                     Property.PropertyImage);
                         }
                         using (NOOCHEntities obj = new NOOCHEntities())
@@ -85,6 +86,7 @@ namespace LanLordlAPIs.Controllers
                                 obj.PropertyUnits.Add(pu);
                                 obj.SaveChanges();
                             }
+                            result.PropertyIdGenerated = prop.PropertyId.ToString();
                             result.IsSuccess = true;
                             result.ErrorMessage = "OK";
                         }
@@ -147,22 +149,16 @@ namespace LanLordlAPIs.Controllers
                 res.ValidationError = "Property Zip missing.";
                 return res;
             }
-            if (String.IsNullOrEmpty(inputData.Zip))
-            {
-                res.IsDataValid = false;
-                res.ValidationError = "Property Zip missing.";
-                return res;
-            }
+        
+            //if (String.IsNullOrEmpty(inputData.Rent))
+            //{
+            //    res.IsDataValid = false;
+            //    res.ValidationError = "Property Rent missing.";
+            //    return res;
+            //}
 
-            if (String.IsNullOrEmpty(inputData.Rent))
-            {
-                res.IsDataValid = false;
-                res.ValidationError = "Property Rent missing.";
-                return res;
-            }
-
-            if (inputData.IsMultipleUnitsAdded)
-            {
+            //if (inputData.IsMultipleUnitsAdded)
+            //{
                 if (inputData.Unit.Any(unitItem => String.IsNullOrEmpty(unitItem.UnitNum)))
                 {
                     res.IsDataValid = false;
@@ -175,7 +171,7 @@ namespace LanLordlAPIs.Controllers
                     res.ValidationError = "One or more unit(s) missing Rent in data provided.";
                     return res;
                 }
-            }
+            //}
             return res;
 
         }

@@ -7,3 +7,167 @@ INFO  2015-08-11 10:58:17,751 149471ms Logger                 Info              
 INFO  2015-08-11 10:59:01,708 193429ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
 INFO  2015-08-11 11:03:46,326 478047ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
 INFO  2015-08-11 11:18:44,611 1376331ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 13:03:10,896 14579ms Logger                 Info               - Landlords API -> Users -> Login. Login requested by [cliff@nooch.com]
+INFO  2015-08-12 13:03:35,488 39171ms Logger                 Info               - Landlords API -> Users -> Login. Login requested by [malkit.singh@venturepact.com]
+INFO  2015-08-12 13:03:43,792 47475ms Logger                 Info               - Landlords API -> Users -> Login. Login requested by [malkit.singh@venturepact.com]
+INFO  2015-08-12 14:31:46,841  8454ms Logger                 Info               - Landlords API -> Users -> Login. Login requested by [malkit.singh@venturepact.com]
+INFO  2015-08-12 14:31:49,224 10837ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 14:31:49,373 10986ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 14:32:00,295 21908ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 14:32:03,317 24929ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 14:36:58,118 319730ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 14:39:42,562 484175ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 14:44:45,710 787323ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 14:45:03,023 804635ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 14:46:48,954 910567ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 14:48:46,251 1027864ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 14:50:11,312 1112925ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 14:55:55,630 1457242ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 15:04:31,805 1973418ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 15:13:40,467 2522080ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 15:24:48,889 3190502ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 15:31:38,120 3599733ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 15:32:54,954 3676566ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 15:33:57,962 3739575ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 15:34:35,645 3777257ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 15:35:25,463 3827075ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 15:36:44,666 3906278ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 15:37:28,218 3949830ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 15:41:21,666 4183278ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 15:42:11,256 4232868ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 15:47:38,714 4560327ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 15:51:00,901 4762514ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-12 15:56:27,738 5089350ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 12:57:54,362  2713ms Logger                 Info               - Landlords API -> Users -> Login. Login requested by [malkit.singh@venturepact.com]
+INFO  2015-08-13 12:58:00,778  9128ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 12:58:01,030  9380ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 13:02:48,035 296385ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 13:03:04,835 313186ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 13:06:35,184 523534ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 13:15:21,125 1049475ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 13:15:26,973 1055324ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 13:27:40,433 1788783ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 13:34:22,059 2190409ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 13:34:23,612 2191962ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 13:34:48,254 2216604ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 13:37:33,815 2382165ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 13:37:41,153 2389504ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 13:37:43,097 2391448ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 13:43:17,427 2725777ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 16:09:01,079 11469430ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 16:14:10,749 11779099ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 16:19:55,727 12124077ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 16:19:56,777 12125127ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 16:30:48,735 12777085ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 16:37:54,596 13202946ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 16:40:01,124 13329475ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-13 16:41:20,243 13408593ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 10:19:32,333 182437ms Logger                 Info               - Landlords API -> Users -> Login. Login requested by [malkit.singh@venturepact.com]
+INFO  2015-08-14 10:19:35,369 185472ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 10:19:35,494 185598ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 10:19:41,105 191209ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 10:19:42,946 193050ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 10:41:16,398  3208ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 10:46:36,733 323543ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 10:51:21,684 608494ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 10:56:18,227 905037ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 11:02:01,791 1248601ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 12:18:22,062 5828873ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 12:19:45,736 5912546ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 12:22:17,599 26060ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+ERROR 2015-08-14 12:23:42,408 110870ms Logger                 Error              - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by- [ 21d4e1ee-865c-40dd-b841-15807546daae ] . Exception details [ System.Runtime.InteropServices.ExternalException (0x80004005): A generic error occurred in GDI+.
+   at System.Drawing.Image.Save(String filename, ImageCodecInfo encoder, EncoderParameters encoderParams)
+   at System.Drawing.Image.Save(String filename, ImageFormat format)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.SaveBase64AsImage(String fileNametobeused, String base64String) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 241
+   at LanLordlAPIs.Controllers.PropertiesController.GetUserInfo(AddNewPropertyClass Property) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\PropertiesController.cs:line 39 ]
+INFO  2015-08-14 12:31:29,485 577947ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+ERROR 2015-08-14 12:37:39,390 947852ms Logger                 Error              - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by- [ 21d4e1ee-865c-40dd-b841-15807546daae ] . Exception details [ System.Runtime.InteropServices.ExternalException (0x80004005): A generic error occurred in GDI+.
+   at System.Drawing.Image.Save(String filename, ImageCodecInfo encoder, EncoderParameters encoderParams)
+   at System.Drawing.Image.Save(String filename, ImageFormat format)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.SaveBase64AsImage(String fileNametobeused, String base64String) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 241
+   at LanLordlAPIs.Controllers.PropertiesController.GetUserInfo(AddNewPropertyClass Property) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\PropertiesController.cs:line 39 ]
+INFO  2015-08-14 12:39:46,294 1074755ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+ERROR 2015-08-14 12:39:46,386 1074847ms Logger                 Error              - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by- [ 21d4e1ee-865c-40dd-b841-15807546daae ] . Exception details [ System.Runtime.InteropServices.ExternalException (0x80004005): A generic error occurred in GDI+.
+   at System.Drawing.Image.Save(String filename, ImageCodecInfo encoder, EncoderParameters encoderParams)
+   at System.Drawing.Image.Save(String filename, ImageFormat format)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.SaveBase64AsImage(String fileNametobeused, String base64String) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 241
+   at LanLordlAPIs.Controllers.PropertiesController.GetUserInfo(AddNewPropertyClass Property) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\PropertiesController.cs:line 39 ]
+INFO  2015-08-14 12:40:13,754 1102215ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 12:41:01,082 1149544ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 12:42:23,395 1231857ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 12:42:41,459 1249921ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 12:43:03,515 1271976ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+ERROR 2015-08-14 12:49:41,940 1670402ms Logger                 Error              - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by- [ 21d4e1ee-865c-40dd-b841-15807546daae ] . Exception details [ System.Runtime.InteropServices.ExternalException (0x80004005): A generic error occurred in GDI+.
+   at System.Drawing.Image.Save(String filename, ImageCodecInfo encoder, EncoderParameters encoderParams)
+   at System.Drawing.Image.Save(String filename, ImageFormat format)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.SaveBase64AsImage(String fileNametobeused, String base64String) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 241
+   at LanLordlAPIs.Controllers.PropertiesController.GetUserInfo(AddNewPropertyClass Property) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\PropertiesController.cs:line 39 ]
+INFO  2015-08-14 12:50:05,198 1693660ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 12:52:43,785 20362ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+ERROR 2015-08-14 12:53:22,365 58942ms Logger                 Error              - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by- [ 21d4e1ee-865c-40dd-b841-15807546daae ] . Exception details [ System.Runtime.InteropServices.ExternalException (0x80004005): A generic error occurred in GDI+.
+   at System.Drawing.Image.Save(String filename, ImageCodecInfo encoder, EncoderParameters encoderParams)
+   at System.Drawing.Image.Save(String filename, ImageFormat format)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.SaveBase64AsImage(String fileNametobeused, String base64String) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 242
+   at LanLordlAPIs.Controllers.PropertiesController.GetUserInfo(AddNewPropertyClass Property) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\PropertiesController.cs:line 39 ]
+INFO  2015-08-14 13:16:13,236 1429813ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 13:23:29,485 14395ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 13:23:49,561 34471ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 13:24:14,469 59379ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 13:24:26,453 71363ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 14:35:29,586 77773ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 14:36:32,429 140616ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 15:49:03,329 94947ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 16:16:36,781 1511910ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-14 16:16:59,165 1534295ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+ERROR 2015-08-14 16:20:28,038 1743167ms Logger                 Error              - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by- [ 21d4e1ee-865c-40dd-b841-15807546daae ] . Exception details [ System.Runtime.InteropServices.ExternalException (0x80004005): A generic error occurred in GDI+.
+   at System.Drawing.Image.Save(String filename, ImageCodecInfo encoder, EncoderParameters encoderParams)
+   at System.Drawing.Image.Save(String filename, ImageFormat format)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.SaveBase64AsImage(String fileNametobeused, String base64String) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 252
+   at LanLordlAPIs.Controllers.PropertiesController.GetUserInfo(AddNewPropertyClass Property) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\PropertiesController.cs:line 40 ]
+ERROR 2015-08-14 16:20:28,827 1743956ms Logger                 Error              - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by- [ 21d4e1ee-865c-40dd-b841-15807546daae ] . Exception details [ System.Data.Entity.Infrastructure.DbUpdateException: An error occurred while updating the entries. See the inner exception for details. ---> System.Data.UpdateException: An error occurred while updating the entries. See the inner exception for details. ---> System.Data.SqlClient.SqlException: Violation of PRIMARY KEY constraint 'PK_PropertysUnits'. Cannot insert duplicate key in object 'dbo.PropertyUnits'. The duplicate key value is (00000000-0000-0000-0000-000000000000).
+The statement has been terminated.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   at System.Data.Mapping.Update.Internal.DynamicUpdateCommand.Execute(UpdateTranslator translator, EntityConnection connection, Dictionary`2 identifierValues, List`1 generatedValues)
+   at System.Data.Mapping.Update.Internal.UpdateTranslator.Update(IEntityStateManager stateManager, IEntityAdapter adapter)
+   --- End of inner exception stack trace ---
+   at System.Data.Mapping.Update.Internal.UpdateTranslator.Update(IEntityStateManager stateManager, IEntityAdapter adapter)
+   at System.Data.EntityClient.EntityAdapter.Update(IEntityStateManager entityCache)
+   at System.Data.Objects.ObjectContext.SaveChanges(SaveOptions options)
+   at System.Data.Entity.Internal.InternalContext.SaveChanges()
+   --- End of inner exception stack trace ---
+   at System.Data.Entity.Internal.InternalContext.SaveChanges()
+   at System.Data.Entity.Internal.LazyInternalContext.SaveChanges()
+   at System.Data.Entity.DbContext.SaveChanges()
+   at LanLordlAPIs.Controllers.PropertiesController.GetUserInfo(AddNewPropertyClass Property) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\PropertiesController.cs:line 87 ]
+INFO  2015-08-14 16:21:00,273 1775402ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+ERROR 2015-08-14 16:26:56,302 2131432ms Logger                 Error              - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by- [ 21d4e1ee-865c-40dd-b841-15807546daae ] . Exception details [ System.Data.Entity.Infrastructure.DbUpdateException: An error occurred while updating the entries. See the inner exception for details. ---> System.Data.UpdateException: An error occurred while updating the entries. See the inner exception for details. ---> System.Data.SqlClient.SqlException: Violation of PRIMARY KEY constraint 'PK_PropertysUnits'. Cannot insert duplicate key in object 'dbo.PropertyUnits'. The duplicate key value is (00000000-0000-0000-0000-000000000000).
+The statement has been terminated.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   at System.Data.Mapping.Update.Internal.DynamicUpdateCommand.Execute(UpdateTranslator translator, EntityConnection connection, Dictionary`2 identifierValues, List`1 generatedValues)
+   at System.Data.Mapping.Update.Internal.UpdateTranslator.Update(IEntityStateManager stateManager, IEntityAdapter adapter)
+   --- End of inner exception stack trace ---
+   at System.Data.Mapping.Update.Internal.UpdateTranslator.Update(IEntityStateManager stateManager, IEntityAdapter adapter)
+   at System.Data.EntityClient.EntityAdapter.Update(IEntityStateManager entityCache)
+   at System.Data.Objects.ObjectContext.SaveChanges(SaveOptions options)
+   at System.Data.Entity.Internal.InternalContext.SaveChanges()
+   --- End of inner exception stack trace ---
+   at System.Data.Entity.Internal.InternalContext.SaveChanges()
+   at System.Data.Entity.Internal.LazyInternalContext.SaveChanges()
+   at System.Data.Entity.DbContext.SaveChanges()
+   at LanLordlAPIs.Controllers.PropertiesController.GetUserInfo(AddNewPropertyClass Property) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\PropertiesController.cs:line 87 ]

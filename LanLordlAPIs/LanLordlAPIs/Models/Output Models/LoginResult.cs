@@ -27,6 +27,7 @@ namespace LanLordlAPIs.Models.Output_Models
         // if any exception
         public bool IsSuccess { get; set; }
         public string ErrorMessage { get; set; }
+        public string PropertyIdGenerated { get; set; }
     }
 
 
