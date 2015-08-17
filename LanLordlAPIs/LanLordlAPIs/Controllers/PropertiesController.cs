@@ -36,9 +36,9 @@ namespace LanLordlAPIs.Controllers
                         if (Property.IsPropertyImageAdded)
                         {
                             //getting image url from base64 string
-                            
+                            string fileName = Property.PropertyName.Trim().Replace("-", "_").Replace(" ","_") + ".png";
                             propertyImagePath =
-                                CommonHelper.SaveBase64AsImage(landlordguidId.ToString() + "_property_" + Property.PropertyName.Trim(),
+                                CommonHelper.SaveBase64AsImage(landlordguidId.ToString().Replace("-", "_") + "_property_" + fileName,
                                     Property.PropertyImage);
                         }
                         using (NOOCHEntities obj = new NOOCHEntities())
@@ -46,7 +46,7 @@ namespace LanLordlAPIs.Controllers
 
                             Property prop = new Property
                             {
-                                PropertyId = new Guid(),
+                                PropertyId = Guid.NewGuid(),
                                 PropType = Property.IsMultipleUnitsAdded ? "Multi Unit" : "Single Unit",
                                 PropStatus = "Not Published",
                                 PropName = Property.PropertyName.Trim(),
@@ -70,13 +70,22 @@ namespace LanLordlAPIs.Controllers
                             foreach (AddNewUnitClass unitItem in Property.Unit)
                             {
                                 PropertyUnit pu = new PropertyUnit();
-                                pu.UnitId = new Guid();
+                                pu.UnitId = Guid.NewGuid();
                                 pu.PropertyId = prop.PropertyId;
                                 pu.LandlordId = landlordguidId;
                                 pu.DateAdded = DateTime.Now;
                                 pu.IsDeleted = false;
                                 pu.Status = "Not Published";
-                                pu.UnitNumber = unitItem.UnitNum;
+
+                                if (prop.IsSingleUnit != true)
+                                {
+
+                                    pu.UnitNumber = unitItem.UnitNum;
+                                }
+                                else
+                                {
+                                    pu.UnitNumber = "1"; 
+                                }
                                 pu.UnitRent = unitItem.Rent;
                                 pu.IsHidden = true;
                                 pu.IsOccupied = false;
@@ -159,6 +168,11 @@ namespace LanLordlAPIs.Controllers
 
             //if (inputData.IsMultipleUnitsAdded)
             //{
+
+            if (inputData.IsMultipleUnitsAdded)
+            {
+
+
                 if (inputData.Unit.Any(unitItem => String.IsNullOrEmpty(unitItem.UnitNum)))
                 {
                     res.IsDataValid = false;
@@ -171,6 +185,16 @@ namespace LanLordlAPIs.Controllers
                     res.ValidationError = "One or more unit(s) missing Rent in data provided.";
                     return res;
                 }
+            }
+            else
+            {
+                if (inputData.Unit.Any(unitItem => String.IsNullOrEmpty(unitItem.Rent)))
+                {
+                    res.IsDataValid = false;
+                    res.ValidationError = "One or more unit(s) missing Rent in data provided.";
+                    return res;
+                }
+            }
             //}
             return res;
 

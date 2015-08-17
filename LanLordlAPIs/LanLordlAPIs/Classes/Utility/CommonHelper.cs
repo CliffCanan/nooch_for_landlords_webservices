@@ -237,9 +237,11 @@ namespace LanLordlAPIs.Classes.Utility
         //to save image in directory and get url
         public static string SaveBase64AsImage(string fileNametobeused, string base64String)
         {
-            string ImageUrlMade = "";
+            string filnameMade = "";
             byte[] bytes = Convert.FromBase64String(base64String);
             string folderPath = GetValueFromConfig("PhotoPath");
+
+            string PhotoUrl = GetValueFromConfig("PhotoUrl");
 
             Image image = byteArrayToImage(bytes);
             string fullpathtoSaveimage = "";
@@ -247,11 +249,22 @@ namespace LanLordlAPIs.Classes.Utility
             {
                 image = Image.FromStream(ms);
                 Bitmap bm = new Bitmap(image);
-                 fullpathtoSaveimage = Path.Combine(folderPath, fileNametobeused.Replace("-","_")+".png");
+                 fullpathtoSaveimage = Path.Combine(folderPath, fileNametobeused);
                  fullpathtoSaveimage = HostingEnvironment.MapPath(fullpathtoSaveimage);
+                 filnameMade = fileNametobeused ;
+
+                // checking if file with same name already exists
+                while (File.Exists(Path.Combine(folderPath, fileNametobeused)))
+                {
+                    filnameMade = fileNametobeused + "1";
+                    fullpathtoSaveimage = Path.Combine(folderPath, filnameMade);
+                    fullpathtoSaveimage = HostingEnvironment.MapPath(fullpathtoSaveimage);
+                }
+
                 bm.Save(fullpathtoSaveimage, System.Drawing.Imaging.ImageFormat.Png);
             }
-            
+
+            fullpathtoSaveimage = PhotoUrl + filnameMade;
             return fullpathtoSaveimage;
         }
         public static string GetMemberIdOfLandlord(Guid landlorID)
