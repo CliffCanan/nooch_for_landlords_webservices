@@ -36,7 +36,7 @@ namespace LanLordlAPIs.Controllers
                         if (Property.IsPropertyImageAdded)
                         {
                             //getting image url from base64 string
-                            string fileName = Property.PropertyName.Trim().Replace("-", "_").Replace(" ","_") + ".png";
+                            string fileName = Property.PropertyName.Trim().Replace("-", "_").Replace(" ", "_") + ".png";
                             propertyImagePath =
                                 CommonHelper.SaveBase64AsImage(landlordguidId.ToString().Replace("-", "_") + "_property_" + fileName,
                                     Property.PropertyImage);
@@ -84,7 +84,7 @@ namespace LanLordlAPIs.Controllers
                                 }
                                 else
                                 {
-                                    pu.UnitNumber = "1"; 
+                                    pu.UnitNumber = "1";
                                 }
                                 pu.UnitRent = unitItem.Rent;
                                 pu.IsHidden = true;
@@ -126,6 +126,97 @@ namespace LanLordlAPIs.Controllers
             }
         }
 
+        // To mark given property and sub units as active/inactive
+        [HttpPost]
+        [ActionName("SetPropertyStatus")]
+        public CreatePropertyResultOutput SetPropertyStatus(SetPropertyStatusClass Property)
+        {
+
+            CreatePropertyResultOutput result = new CreatePropertyResultOutput();
+            try
+            {
+                Logger.Info("Landlords API -> Properties -> SetPropertyStatus. SetPropertyStatus requested by [" +
+                            Property.User.LandlorId + "]");
+                Guid landlordguidId = new Guid(Property.User.LandlorId);
+                result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, Property.User.AccessToken);
+
+                if (result.AuthTokenValidation.IsTokenOk)
+                {
+
+                    if (!String.IsNullOrEmpty(Property.PropertyId))
+                    {
+                        Guid propId = new Guid(Property.PropertyId);
+                        using (NOOCHEntities obj = new NOOCHEntities())
+                        {
+                            var properTyInDb =
+                                (from c in obj.Properties where c.PropertyId == propId select c).FirstOrDefault();
+
+                            if (properTyInDb != null)
+                            {
+                                properTyInDb.PropStatus = Property.PropertyStatusToSet ? "Published" : "Not Published";
+                                obj.SaveChanges();
+
+
+                                // updating sub units
+
+                                var allUnits =
+                                    (from d in obj.PropertyUnits where d.PropertyId == propId select d).ToList();
+
+                                if (allUnits.Count > 0)
+                                {
+                                    foreach (PropertyUnit pu in allUnits)
+                                    {
+                                        if (Property.PropertyStatusToSet)
+                                        {
+                                            pu.Status = "Published";
+                                            pu.IsHidden = false;
+
+                                        }
+                                        else
+                                        {
+                                            pu.Status = "Not Published";
+                                            pu.IsHidden = true;
+                                        }
+                                        obj.SaveChanges();
+                                    }
+                                }
+                                result.IsSuccess = true;
+                                result.ErrorMessage = "OK";
+
+
+                            }
+                            else
+                            {
+                                // invalid property id or no data found
+                                result.IsSuccess = false;
+                                result.ErrorMessage = "No property found for given Id.";
+
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        // invalid data sent error
+                        result.IsSuccess = false;
+                        result.ErrorMessage = "No property Id passed. Retyr!";
+                    }
+
+
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Landlords API -> Properties -> SetPropertyStatus. SetPropertyStatus requested by- [ " +
+                             Property.User.LandlorId + " ] . Exception details [ " + ex + " ]");
+                result.IsSuccess = false;
+                result.ErrorMessage = "Error while updating property. Retry later!";
+                return result;
+
+            }
+        }
+
         private PropertyInputValidationResult IsPropertyDataInputValid(AddNewPropertyClass inputData)
         {
             PropertyInputValidationResult res = new PropertyInputValidationResult();
@@ -158,7 +249,7 @@ namespace LanLordlAPIs.Controllers
                 res.ValidationError = "Property Zip missing.";
                 return res;
             }
-        
+
             //if (String.IsNullOrEmpty(inputData.Rent))
             //{
             //    res.IsDataValid = false;

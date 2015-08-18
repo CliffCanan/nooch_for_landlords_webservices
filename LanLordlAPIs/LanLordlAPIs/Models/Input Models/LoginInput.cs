@@ -22,6 +22,19 @@ namespace LanLordlAPIs.Models.Input_Models
         
     }
 
+
+
+    public class SetPropertyStatusClass
+    {
+        public string PropertyId { get; set; }
+
+        public bool PropertyStatusToSet { get; set; }
+        
+        public GetProfileDataInput User { get; set; }
+
+        
+    }
+
     public class AddNewPropertyClass
     {
         public string PropertyName { get; set; }
@@ -39,8 +52,6 @@ namespace LanLordlAPIs.Models.Input_Models
 
         public bool IsMultipleUnitsAdded { get; set; }
         public bool IsPropertyImageAdded { get; set; }
-
-
 
     }
 
