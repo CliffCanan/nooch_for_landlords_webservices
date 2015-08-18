@@ -66,6 +66,15 @@ namespace LanLordlAPIs.Controllers
                             obj.Properties.Add(prop);
                             obj.SaveChanges();
 
+                            // setting type to single unit if only one item passed in property units
+                            if (Property.Unit.Length<2)
+                            {
+                                prop.IsSingleUnit = true;
+                                prop.PropType = "Single Unit";
+                                obj.SaveChanges();    
+                            }
+
+
                             // saving units... if any
                             foreach (AddNewUnitClass unitItem in Property.Unit)
                             {

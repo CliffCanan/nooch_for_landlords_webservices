@@ -293,3 +293,59 @@ INFO  2015-08-17 16:39:32,515 2770781ms Logger                 Info             
 INFO  2015-08-17 16:39:58,428 2796694ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
 INFO  2015-08-17 16:40:26,155 2824420ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
 INFO  2015-08-17 16:40:34,499 2832764ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 10:49:03,251   534ms Logger                 Info               - Landlords API -> Users -> Login. Login requested by [malkit.singh@venturepact.com]
+INFO  2015-08-18 10:49:07,214  4497ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 10:49:07,549  4832ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 10:50:02,010 59293ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 10:50:05,878 63161ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 10:50:55,551 112834ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 10:51:00,800 118083ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [True]
+ERROR 2015-08-18 10:51:00,801 118084ms Logger                 Error              - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by- [ True ] . Exception details [ System.FormatException: Guid should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).
+   at System.Guid.TryParseGuidWithNoStyle(String guidString, GuidResult& result)
+   at System.Guid.TryParseGuid(String g, GuidStyles flags, GuidResult& result)
+   at System.Guid..ctor(String g)
+   at LanLordlAPIs.Controllers.PropertiesController.GetUserInfo(AddNewPropertyClass Property) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\PropertiesController.cs:line 26 ]
+INFO  2015-08-18 10:51:05,758 123041ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 10:52:24,929 202212ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 10:52:27,229 204512ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 10:53:09,122 246405ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 10:53:13,627 250910ms Logger                 Info               - Landlords API -> Properties -> SetPropertyStatus. SetPropertyStatus requested by [B6c0SBIOIRjgLziiBzHPsUOUF1WHcEejzjbiLG++IuKeJEFW3cfgvQ05PPN9w30D]
+ERROR 2015-08-18 10:53:13,628 250911ms Logger                 Error              - Landlords API -> Properties -> SetPropertyStatus. SetPropertyStatus requested by- [ B6c0SBIOIRjgLziiBzHPsUOUF1WHcEejzjbiLG++IuKeJEFW3cfgvQ05PPN9w30D ] . Exception details [ System.FormatException: Guid should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).
+   at System.Guid.TryParseGuidWithNoStyle(String guidString, GuidResult& result)
+   at System.Guid.TryParseGuid(String g, GuidStyles flags, GuidResult& result)
+   at System.Guid..ctor(String g)
+   at LanLordlAPIs.Controllers.PropertiesController.SetPropertyStatus(SetPropertyStatusClass Property) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\PropertiesController.cs:line 140 ]
+INFO  2015-08-18 10:53:36,597 273880ms Logger                 Info               - Landlords API -> Properties -> SetPropertyStatus. SetPropertyStatus requested by [B6c0SBIOIRjgLziiBzHPsUOUF1WHcEejzjbiLG++IuKeJEFW3cfgvQ05PPN9w30D]
+ERROR 2015-08-18 10:53:36,598 273881ms Logger                 Error              - Landlords API -> Properties -> SetPropertyStatus. SetPropertyStatus requested by- [ B6c0SBIOIRjgLziiBzHPsUOUF1WHcEejzjbiLG++IuKeJEFW3cfgvQ05PPN9w30D ] . Exception details [ System.FormatException: Guid should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).
+   at System.Guid.TryParseGuidWithNoStyle(String guidString, GuidResult& result)
+   at System.Guid.TryParseGuid(String g, GuidStyles flags, GuidResult& result)
+   at System.Guid..ctor(String g)
+   at LanLordlAPIs.Controllers.PropertiesController.SetPropertyStatus(SetPropertyStatusClass Property) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\PropertiesController.cs:line 140 ]
+INFO  2015-08-18 10:53:39,212 276495ms Logger                 Info               - Landlords API -> Properties -> SetPropertyStatus. SetPropertyStatus requested by [B6c0SBIOIRjgLziiBzHPsUOUF1WHcEejzjbiLG++IuKeJEFW3cfgvQ05PPN9w30D]
+ERROR 2015-08-18 10:53:39,213 276496ms Logger                 Error              - Landlords API -> Properties -> SetPropertyStatus. SetPropertyStatus requested by- [ B6c0SBIOIRjgLziiBzHPsUOUF1WHcEejzjbiLG++IuKeJEFW3cfgvQ05PPN9w30D ] . Exception details [ System.FormatException: Guid should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).
+   at System.Guid.TryParseGuidWithNoStyle(String guidString, GuidResult& result)
+   at System.Guid.TryParseGuid(String g, GuidStyles flags, GuidResult& result)
+   at System.Guid..ctor(String g)
+   at LanLordlAPIs.Controllers.PropertiesController.SetPropertyStatus(SetPropertyStatusClass Property) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\PropertiesController.cs:line 140 ]
+INFO  2015-08-18 10:55:28,025 385307ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 10:55:36,671 393954ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 10:55:53,996 411279ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 10:57:09,832 487114ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 10:57:14,344 491627ms Logger                 Info               - Landlords API -> Properties -> SetPropertyStatus. SetPropertyStatus requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 10:57:25,871 503154ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 15:31:41,005   510ms Logger                 Info               - Landlords API -> Users -> Login. Login requested by [malkit.singh@venturepact.com]
+INFO  2015-08-18 15:31:44,808  4312ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 15:31:45,036  4540ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 15:31:46,953  6458ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 15:31:54,505 14009ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 15:32:34,123 53627ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 15:34:20,464   548ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 15:38:54,881   561ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 15:39:58,630 64310ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 15:40:10,302 75981ms Logger                 Info               - Landlords API -> Properties -> SetPropertyStatus. SetPropertyStatus requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 15:40:12,568 78247ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 15:44:13,354   520ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 15:46:06,842 114007ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 15:46:54,563 161729ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 15:48:01,486 228652ms Logger                 Info               - Landlords API -> Properties -> SetPropertyStatus. SetPropertyStatus requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-18 15:48:03,988 231154ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
