@@ -96,6 +96,9 @@ namespace LanLordlAPIs.Models.Output_Models
 
         public List<PropertyClassWithUnits> AllProperties { get; set; }
 
+        public string AllPropertysCount { get; set; }
+        public string AllTenantsCount { get; set; }
+
         
     }
 
@@ -123,6 +126,12 @@ namespace LanLordlAPIs.Models.Output_Models
         public string DefaulBank { get; set; }
 
         public List<PropertyUnitClass> AllUnits { get; set; }
+
+        public string UnitsCount { get; set; }
+
+        public string TenantsCount { get; set; }
+
+
     }
 
     public class PropertyClass

@@ -328,8 +328,13 @@ namespace LanLordlAPIs.Controllers
 
                                 }
                                 currentProperty.AllUnits = AllUnitsListPrepared;
+                                currentProperty.UnitsCount = AllUnitsListPrepared.Count.ToString();
+                                currentProperty.TenantsCount = "0";  // will add code to get count once we reach here... - Malkit
 
+                                
                                 AllPropertiesPreparedToDisp.Add(currentProperty);
+                                result.AllPropertysCount = AllUnitsListPrepared.Count.ToString();
+                                result.AllTenantsCount= "0";
 
 
 
