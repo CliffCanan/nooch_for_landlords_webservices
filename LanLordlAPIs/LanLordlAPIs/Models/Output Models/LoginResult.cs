@@ -81,4 +81,90 @@ namespace LanLordlAPIs.Models.Output_Models
         public string Zip { get; set; }
         
     }
+
+
+
+    public class GetAllPropertysResultClass
+    {
+        public AccessTokenValidationOutput AuthTokenValidation { get; set; }
+
+
+
+        // if any exception
+        public bool IsSuccess { get; set; }
+        public string ErrorMessage { get; set; }
+
+        public List<PropertyClassWithUnits> AllProperties { get; set; }
+
+        
+    }
+
+
+    public class PropertyClassWithUnits
+    {
+        public string PropertyId { get; set; }
+        public string PropStatus { get; set; }
+        public string PropType { get; set; }
+        public string PropName { get; set; }
+        public string AddressLineOne { get; set; }
+        public string AddressLineTwo { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string Zip { get; set; }
+        public string ContactNumber { get; set; }
+        public string DefaultDueDate { get; set; }
+        public string DateAdded { get; set; }
+        public string DateModified { get; set; }
+        public string LandlordId { get; set; }
+        public string MemberId { get; set; }
+        public string PropertyImage { get; set; }
+        public Nullable<bool> IsSingleUnit { get; set; }
+        public Nullable<bool> IsDeleted { get; set; }
+        public string DefaulBank { get; set; }
+
+        public List<PropertyUnitClass> AllUnits { get; set; }
+    }
+
+    public class PropertyClass
+    {
+        public string PropertyId { get; set; }
+        public string PropStatus { get; set; }
+        public string PropType { get; set; }
+        public string PropName { get; set; }
+        public string AddressLineOne { get; set; }
+        public string AddressLineTwo { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string Zip { get; set; }
+        public string ContactNumber { get; set; }
+        public string DefaultDueDate { get; set; }
+        public string DateAdded { get; set; }
+        public string DateModified { get; set; }
+        public string LandlordId { get; set; }
+        public string MemberId { get; set; }
+        public string PropertyImage { get; set; }
+        public Nullable<bool> IsSingleUnit { get; set; }
+        public Nullable<bool> IsDeleted { get; set; }
+        public string DefaulBank { get; set; }
+    }
+
+    public class PropertyUnitClass
+    {
+        public string UnitId { get; set; }
+        public string PropertyId { get; set; }
+        public string UnitNumber { get; set; }
+        public string UnitRent { get; set; }
+        public string BankAccountId { get; set; }
+        public string DateAdded { get; set; }
+        public string ModifiedOn { get; set; }
+        public string LandlordId { get; set; }
+        public string MemberId { get; set; }
+        public string UnitImage { get; set; }
+        public Nullable<bool> IsDeleted { get; set; }
+        public Nullable<bool> IsHidden { get; set; }
+        public Nullable<bool> IsOccupied { get; set; }
+        public string Status { get; set; }
+        public string DueDate { get; set; }
+    }
+
 }

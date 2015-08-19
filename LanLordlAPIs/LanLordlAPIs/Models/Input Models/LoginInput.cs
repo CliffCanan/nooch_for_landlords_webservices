@@ -18,7 +18,6 @@ namespace LanLordlAPIs.Models.Input_Models
     {
         public string LandlorId { get; set; }
         public string AccessToken { get; set; }
-
         
     }
 
@@ -29,10 +28,10 @@ namespace LanLordlAPIs.Models.Input_Models
         public string PropertyId { get; set; }
 
         public bool PropertyStatusToSet { get; set; }
-        
+
         public GetProfileDataInput User { get; set; }
 
-        
+
     }
 
     public class AddNewPropertyClass
@@ -60,7 +59,7 @@ namespace LanLordlAPIs.Models.Input_Models
         public string UnitNum { get; set; }
         public string Rent { get; set; }
         public bool IsAddedWithProperty { get; set; }
-        
+
 
 
     }

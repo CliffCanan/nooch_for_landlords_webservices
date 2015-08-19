@@ -67,11 +67,11 @@ namespace LanLordlAPIs.Controllers
                             obj.SaveChanges();
 
                             // setting type to single unit if only one item passed in property units
-                            if (Property.Unit.Length<2)
+                            if (Property.Unit.Length < 2)
                             {
                                 prop.IsSingleUnit = true;
                                 prop.PropType = "Single Unit";
-                                obj.SaveChanges();    
+                                obj.SaveChanges();
                             }
 
 
@@ -225,6 +225,150 @@ namespace LanLordlAPIs.Controllers
 
             }
         }
+
+
+        // to get all properties added by given user
+        [HttpPost]
+        [ActionName("LoadProperties")]
+        public GetAllPropertysResultClass LoadProperties(GetProfileDataInput Property)
+        {
+
+            GetAllPropertysResultClass result = new GetAllPropertysResultClass();
+            try
+            {
+                Logger.Info("Landlords API -> Properties -> LoadProperties. LoadProperties requested by [" +
+                            Property.LandlorId + "]");
+                Guid landlordguidId = new Guid(Property.LandlorId);
+                result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, Property.AccessToken);
+
+                if (result.AuthTokenValidation.IsTokenOk)
+                {
+
+
+                    Guid propId = new Guid(Property.LandlorId);
+                    using (NOOCHEntities obj = new NOOCHEntities())
+                    {
+                        var properTyInDb =
+                            (from c in obj.Properties
+                             where c.LandlordId == propId &&
+                                 (c.IsDeleted == false || c.IsDeleted == null)
+                             select c).ToList();
+
+                        if (properTyInDb.Count > 0)
+                        {
+
+                            List<PropertyClassWithUnits> AllPropertiesPreparedToDisp = new List<PropertyClassWithUnits>();
+                            foreach (Property prop in properTyInDb)
+                            {
+                                PropertyClassWithUnits currentProperty = new PropertyClassWithUnits();
+
+                                currentProperty.PropertyId = prop.PropertyId.ToString();
+                                currentProperty.PropStatus = prop.PropStatus ?? "";
+                                currentProperty.PropType = prop.PropType ?? "";
+                                currentProperty.PropName = prop.PropName ?? "";
+                                currentProperty.AddressLineOne = prop.AddressLineOne ?? "";
+                                currentProperty.AddressLineTwo = prop.AddressLineTwo ?? "";
+
+                                currentProperty.City = prop.City ?? "";
+                                currentProperty.Zip = prop.Zip ?? "";
+                                currentProperty.State = prop.State ?? "";
+                                currentProperty.ContactNumber = prop.ContactNumber ?? "";
+
+                                currentProperty.DefaultDueDate = prop.DefaultDueDate ?? "";
+                                currentProperty.DateAdded = prop.DateAdded != null ? Convert.ToDateTime(prop.DateAdded).ToShortDateString() : "";
+                                currentProperty.DateModified = prop.DateModified != null ? Convert.ToDateTime(prop.DateModified).ToShortDateString() : "";
+
+                                currentProperty.LandlordId = prop.LandlordId.ToString();
+                                currentProperty.MemberId = prop.MemberId != null ? prop.MemberId.ToString() : "";
+
+                                currentProperty.PropertyImage = prop.PropertyImage ?? "";
+
+                                currentProperty.IsSingleUnit = prop.IsSingleUnit;
+                                currentProperty.IsDeleted = prop.IsDeleted;
+
+                                currentProperty.DefaulBank = prop.DefaulBank != null ? prop.DefaulBank.ToString() : "";
+
+
+                                // raeding all units of this property
+                                var AllSubUnits = (from d in obj.PropertyUnits
+                                                   where d.PropertyId == prop.PropertyId &&
+                                                       (d.IsDeleted == false || d.IsDeleted == null)
+                                                   select d).ToList();
+                                List<PropertyUnitClass> AllUnitsListPrepared = new List<PropertyUnitClass>();
+
+                                foreach (PropertyUnit pUnit in AllSubUnits)
+                                {
+                                    PropertyUnitClass currentPUnit = new PropertyUnitClass();
+
+                                    currentPUnit.UnitId = pUnit.UnitId.ToString();
+                                    currentPUnit.PropertyId = pUnit.PropertyId.ToString();
+                                    currentPUnit.UnitNumber = pUnit.UnitNumber ?? "";
+
+                                    currentPUnit.UnitRent = pUnit.UnitRent ?? "";
+                                    currentPUnit.BankAccountId = pUnit.BankAccountId != null ? pUnit.BankAccountId.ToString() : "";
+                                    currentPUnit.DateAdded = pUnit.DateAdded != null ? Convert.ToDateTime(pUnit.DateAdded).ToShortDateString() : "";
+                                    currentPUnit.ModifiedOn = pUnit.ModifiedOn != null ? Convert.ToDateTime(pUnit.ModifiedOn).ToShortDateString() : "";
+
+
+                                    currentPUnit.LandlordId = pUnit.LandlordId != null ? pUnit.LandlordId.ToString() : "";
+                                    currentPUnit.MemberId = pUnit.MemberId != null ? pUnit.MemberId.ToString() : "";
+
+
+                                    currentPUnit.UnitImage = pUnit.UnitImage ?? "";
+                                    currentPUnit.IsDeleted = pUnit.IsDeleted;
+
+                                    currentPUnit.IsHidden = pUnit.IsHidden;
+                                    currentPUnit.IsOccupied = pUnit.IsOccupied;
+
+                                    currentPUnit.Status = pUnit.Status ?? "";
+
+                                    currentPUnit.DueDate = pUnit.DueDate != null ? Convert.ToDateTime(pUnit.DueDate).ToShortDateString() : "";
+
+                                    AllUnitsListPrepared.Add(currentPUnit);
+
+                                }
+                                currentProperty.AllUnits = AllUnitsListPrepared;
+
+                                AllPropertiesPreparedToDisp.Add(currentProperty);
+
+
+
+
+                            }
+
+                            result.AllProperties = AllPropertiesPreparedToDisp;
+
+                            result.IsSuccess = true;
+                            result.ErrorMessage = "OK";
+
+
+                        }
+                        else
+                        {
+                            // invalid property id or no data found
+                            result.IsSuccess = false;
+                            result.ErrorMessage = "No properties found for given Landlord.";
+
+                        }
+                    }
+
+
+
+
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Landlords API -> Properties -> LoadProperties. LoadProperties requested by- [ " +
+                             Property.LandlorId + " ] . Exception details [ " + ex + " ]");
+                result.IsSuccess = false;
+                result.ErrorMessage = "Error while getting properties list. Retry later!";
+                return result;
+
+            }
+        }
+
 
         private PropertyInputValidationResult IsPropertyDataInputValid(AddNewPropertyClass inputData)
         {
