@@ -227,6 +227,7 @@
           <Property Name="IsOccupied" Type="bit" />
           <Property Name="Status" Type="varchar(max)" />
           <Property Name="DueDate" Type="datetime" />
+          <Property Name="UnitNickName" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="Tenants">
           <Key>
@@ -252,6 +253,17 @@
           <Property Name="MemberId" Type="uniqueidentifier" />
           <Property Name="BankAccountId" Type="uniqueidentifier" />
           <Property Name="UserPic" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="UnitsOccupiedByTenants">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UnitId" Type="uniqueidentifier" />
+          <Property Name="TenantId" Type="uniqueidentifier" />
+          <Property Name="OccupiedOn" Type="datetime" />
+          <Property Name="IsDeleted" Type="bit" />
+          <Property Name="ModifiedOn" Type="datetime" />
         </EntityType>
         <Association Name="FK_MemberNotifications_Members">
           <End Role="Members" Type="Self.Members" Multiplicity="1" />
@@ -286,6 +298,7 @@
           <EntitySet Name="Properties" EntityType="Self.Properties" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PropertyUnits" EntityType="Self.PropertyUnits" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tenants" EntityType="Self.Tenants" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UnitsOccupiedByTenants" EntityType="Self.UnitsOccupiedByTenants" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_MemberNotifications_Members" Association="Self.FK_MemberNotifications_Members">
             <End Role="Members" EntitySet="Members" />
             <End Role="MemberNotifications" EntitySet="MemberNotifications" />
@@ -525,6 +538,7 @@
           <Property Name="IsOccupied" Type="Boolean" />
           <Property Name="Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="DueDate" Type="DateTime" Precision="3" />
+          <Property Name="UnitNickName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Tenant">
           <Key>
@@ -592,7 +606,19 @@
             <End Role="Members" EntitySet="Members" />
             <End Role="MemberPrivacySettings" EntitySet="MemberPrivacySettings" />
           </AssociationSet>
+          <EntitySet Name="UnitsOccupiedByTenants" EntityType="NOOCHModel.UnitsOccupiedByTenant" />
         </EntityContainer>
+        <EntityType Name="UnitsOccupiedByTenant">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UnitId" Type="Guid" />
+          <Property Name="TenantId" Type="Guid" />
+          <Property Name="OccupiedOn" Type="DateTime" Precision="3" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="ModifiedOn" Type="DateTime" Precision="3" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -811,6 +837,7 @@
           <EntitySetMapping Name="PropertyUnits">
             <EntityTypeMapping TypeName="NOOCHModel.PropertyUnit">
               <MappingFragment StoreEntitySet="PropertyUnits">
+                <ScalarProperty Name="UnitNickName" ColumnName="UnitNickName" />
                 <ScalarProperty Name="UnitId" ColumnName="UnitId" />
                 <ScalarProperty Name="PropertyId" ColumnName="PropertyId" />
                 <ScalarProperty Name="UnitNumber" ColumnName="UnitNumber" />
@@ -852,6 +879,18 @@
                 <ScalarProperty Name="MemberId" ColumnName="MemberId" />
                 <ScalarProperty Name="BankAccountId" ColumnName="BankAccountId" />
                 <ScalarProperty Name="UserPic" ColumnName="UserPic" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UnitsOccupiedByTenants">
+            <EntityTypeMapping TypeName="NOOCHModel.UnitsOccupiedByTenant">
+              <MappingFragment StoreEntitySet="UnitsOccupiedByTenants">
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="OccupiedOn" ColumnName="OccupiedOn" />
+                <ScalarProperty Name="TenantId" ColumnName="TenantId" />
+                <ScalarProperty Name="UnitId" ColumnName="UnitId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -227,6 +227,118 @@ namespace LanLordlAPIs.Controllers
         }
 
 
+
+        // to delete property  -- TBD with Cliff... what will happen if any unit is occupied .
+        [HttpPost]
+        [ActionName("DeleteProperty")]
+        public CreatePropertyResultOutput DeleteProperty(SetPropertyStatusClass Property)
+        {
+
+            CreatePropertyResultOutput result = new CreatePropertyResultOutput();
+            try
+            {
+                Logger.Info("Landlords API -> DeleteProperty -> DeleteProperty. SetPropertyStatus requested by [" +
+                            Property.User.LandlorId + "] and Property Id - [ " + Property.PropertyId + " ]");
+                Guid landlordguidId = new Guid(Property.User.LandlorId);
+                result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, Property.User.AccessToken);
+
+                if (result.AuthTokenValidation.IsTokenOk)
+                {
+
+                    if (!String.IsNullOrEmpty(Property.PropertyId))
+                    {
+                        Guid propId = new Guid(Property.PropertyId);
+                        using (NOOCHEntities obj = new NOOCHEntities())
+                        {
+                            var properTyInDb =
+                                (from c in obj.Properties where c.PropertyId == propId select c).FirstOrDefault();
+
+                            if (properTyInDb != null)
+                            {
+
+                                // checking units inside property
+
+                                var allUnits =
+                                    (from d in obj.PropertyUnits where d.PropertyId == propId select d).ToList();
+
+                                bool IsAnyocupiedUnitFound = false;
+                                if (allUnits.Count > 0)
+                                {
+                                    foreach (PropertyUnit pu in allUnits)
+                                    {
+                                        if (pu.IsOccupied == true && (pu.IsDeleted == false || pu.IsDeleted == null) && (pu.IsHidden == false || pu.IsDeleted == null))
+                                        {
+                                            IsAnyocupiedUnitFound = true;
+                                        }
+                                    }
+
+                                    if (!IsAnyocupiedUnitFound)
+                                    {
+                                        foreach (PropertyUnit pu in allUnits)
+                                        {
+                                            pu.IsDeleted = true;
+                                            pu.IsHidden = true;
+                                            obj.SaveChanges();
+                                        }
+
+                                        // code to mark property as deleted
+                                        properTyInDb.IsDeleted = true;
+                                        obj.SaveChanges();
+                                        result.IsSuccess = true;
+                                        result.ErrorMessage = "OK";
+                                    }
+                                    else
+                                    {
+                                        result.IsSuccess = false;
+                                        result.ErrorMessage = "Property can't be deleted as one or more units are occupied by Tenants.";
+                                    }
+                                }
+                                else
+                                {
+                                    // code to mark property as deleted
+                                    properTyInDb.IsDeleted = true;
+                                    obj.SaveChanges();
+                                    result.IsSuccess = true;
+                                    result.ErrorMessage = "OK";
+
+                                }
+
+
+
+                            }
+                            else
+                            {
+                                // invalid property id or no data found
+                                result.IsSuccess = false;
+                                result.ErrorMessage = "No property found for given Id.";
+
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        // invalid data sent error
+                        result.IsSuccess = false;
+                        result.ErrorMessage = "No property Id passed. Retyr!";
+                    }
+
+
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Landlords API -> Properties -> DeleteProperty. DeleteProperty requested by- [ " +
+                             Property.User.LandlorId + " ] . Exception details [ " + ex + " ]");
+                result.IsSuccess = false;
+                result.ErrorMessage = "Error while deleting property. Retry later!";
+                return result;
+
+            }
+        }
+
+
         // to get all properties added by given user
         [HttpPost]
         [ActionName("LoadProperties")]
@@ -331,10 +443,10 @@ namespace LanLordlAPIs.Controllers
                                 currentProperty.UnitsCount = AllUnitsListPrepared.Count.ToString();
                                 currentProperty.TenantsCount = "0";  // will add code to get count once we reach here... - Malkit
 
-                                
+
                                 AllPropertiesPreparedToDisp.Add(currentProperty);
                                 result.AllPropertysCount = AllUnitsListPrepared.Count.ToString();
-                                result.AllTenantsCount= "0";
+                                result.AllTenantsCount = "0";
 
 
 

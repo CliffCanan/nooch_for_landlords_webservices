@@ -33,5 +33,6 @@ namespace LanLordlAPIs.Models.db_Model
         public DbSet<Property> Properties { get; set; }
         public DbSet<PropertyUnit> PropertyUnits { get; set; }
         public DbSet<Tenant> Tenants { get; set; }
+        public DbSet<UnitsOccupiedByTenant> UnitsOccupiedByTenants { get; set; }
     }
 }
