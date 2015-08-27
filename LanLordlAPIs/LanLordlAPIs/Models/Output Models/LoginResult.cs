@@ -103,6 +103,72 @@ namespace LanLordlAPIs.Models.Output_Models
     }
 
 
+    public class GetPropertyDetailsPageDataResultClass
+    {
+        public AccessTokenValidationOutput AuthTokenValidation { get; set; }
+
+        // if any exception
+        public bool IsSuccess { get; set; }
+        public string ErrorMessage { get; set; }
+
+        public PropertyClassWithUnits PropertyDetails { get; set; }
+
+        public BankDetailsReusltClass BankAccountDetails { get; set; }
+
+        public bool IsBankAccountAdded { get; set; }
+        
+      
+        public string AllUnitsCount { get; set; }
+        public string AllTenantsCount { get; set; }
+
+        public string AllTenantsWithPassedDueDateCount { get; set; }
+
+
+        public List<TenantDetailsResultClass> TenantsListForThisProperty { get; set; }
+        public List<TenantDetailsResultClass> DefaulterTenants { get; set; }
+        
+    }
+
+    public class TenantDetailsResultClass
+    {
+        public string TenantId { get; set; }
+        public string UnitId { get; set; }
+
+        public string UnitRent { get; set; }
+        public string Name { get; set; }
+
+        public string ImageUrl { get; set; }
+
+        public string RentAmount { get; set; }
+        public string LastRentPaidOn { get; set; }
+
+        public bool IsRentPaidForThisMonth { get; set; }
+
+        public bool IsEmailVerified { get; set; }
+        public bool IsDocumentsVerified { get; set; }
+        public bool IsPhoneVerified { get; set; }
+        public bool IsBankAccountAdded { get; set; }
+
+
+    }
+    
+
+    public class BankDetailsReusltClass
+    {
+        public string BankName { get; set; }
+        public string BankIcon { get; set; }
+
+        public string BankAccountID { get; set; }
+
+        public string BankAccountNick { get; set; }
+
+        public string BankAccountNumString { get; set; }
+
+        
+    }
+    
+
+
     public class PropertyClassWithUnits
     {
         public string PropertyId { get; set; }

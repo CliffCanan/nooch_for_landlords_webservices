@@ -222,6 +222,7 @@
     <Property Name="IsOccupied" Type="bit" />
     <Property Name="Status" Type="varchar(max)" />
     <Property Name="DueDate" Type="datetime" />
+    <Property Name="UnitNickName" Type="varchar(max)" />
   </EntityType>
   <EntityType Name="Tenants">
     <Key>
@@ -247,6 +248,17 @@
     <Property Name="MemberId" Type="uniqueidentifier" />
     <Property Name="BankAccountId" Type="uniqueidentifier" />
     <Property Name="UserPic" Type="varchar(max)" />
+  </EntityType>
+  <EntityType Name="UnitsOccupiedByTenants">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UnitId" Type="uniqueidentifier" />
+    <Property Name="TenantId" Type="uniqueidentifier" />
+    <Property Name="OccupiedOn" Type="datetime" />
+    <Property Name="IsDeleted" Type="bit" />
+    <Property Name="ModifiedOn" Type="datetime" />
   </EntityType>
   <Association Name="FK_MemberNotifications_Members">
     <End Role="Members" Type="Self.Members" Multiplicity="1" />
@@ -281,6 +293,7 @@
     <EntitySet Name="Properties" EntityType="Self.Properties" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PropertyUnits" EntityType="Self.PropertyUnits" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Tenants" EntityType="Self.Tenants" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="UnitsOccupiedByTenants" EntityType="Self.UnitsOccupiedByTenants" Schema="dbo" store:Type="Tables" />
     <AssociationSet Name="FK_MemberNotifications_Members" Association="Self.FK_MemberNotifications_Members">
       <End Role="Members" EntitySet="Members" />
       <End Role="MemberNotifications" EntitySet="MemberNotifications" />

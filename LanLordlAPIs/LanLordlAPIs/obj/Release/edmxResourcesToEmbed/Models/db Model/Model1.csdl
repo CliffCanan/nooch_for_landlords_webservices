@@ -226,6 +226,7 @@
     <Property Name="IsOccupied" Type="Boolean" />
     <Property Name="Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
     <Property Name="DueDate" Type="DateTime" Precision="3" />
+    <Property Name="UnitNickName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
   </EntityType>
   <EntityType Name="Tenant">
     <Key>
@@ -293,5 +294,17 @@
       <End Role="Members" EntitySet="Members" />
       <End Role="MemberPrivacySettings" EntitySet="MemberPrivacySettings" />
     </AssociationSet>
+    <EntitySet Name="UnitsOccupiedByTenants" EntityType="NOOCHModel.UnitsOccupiedByTenant" />
   </EntityContainer>
+  <EntityType Name="UnitsOccupiedByTenant">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="UnitId" Type="Guid" />
+    <Property Name="TenantId" Type="Guid" />
+    <Property Name="OccupiedOn" Type="DateTime" Precision="3" />
+    <Property Name="IsDeleted" Type="Boolean" />
+    <Property Name="ModifiedOn" Type="DateTime" Precision="3" />
+  </EntityType>
 </Schema>

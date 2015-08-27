@@ -34,5 +34,6 @@ namespace LanLordlAPIs.Models.db_Model
         public Nullable<System.Guid> MemberId { get; set; }
         public Nullable<System.Guid> BankAccountId { get; set; }
         public string UserPic { get; set; }
+        public Nullable<bool> IsIdDocumentVerified { get; set; }
     }
 }

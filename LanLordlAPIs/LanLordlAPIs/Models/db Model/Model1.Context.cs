@@ -12,6 +12,9 @@ namespace LanLordlAPIs.Models.db_Model
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Objects;
+    using System.Data.Objects.DataClasses;
+    using System.Linq;
     
     public partial class NOOCHEntities : DbContext
     {
@@ -34,5 +37,24 @@ namespace LanLordlAPIs.Models.db_Model
         public DbSet<PropertyUnit> PropertyUnits { get; set; }
         public DbSet<Tenant> Tenants { get; set; }
         public DbSet<UnitsOccupiedByTenant> UnitsOccupiedByTenants { get; set; }
+        public DbSet<TenantsIdDocument> TenantsIdDocuments { get; set; }
+    
+        public virtual ObjectResult<Nullable<int>> GetTenantsCountInGivenPropertyId(string vPropertyId)
+        {
+            var vPropertyIdParameter = vPropertyId != null ?
+                new ObjectParameter("vPropertyId", vPropertyId) :
+                new ObjectParameter("vPropertyId", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("GetTenantsCountInGivenPropertyId", vPropertyIdParameter);
+        }
+    
+        public virtual ObjectResult<GetTenantsInGivenPropertyId_Result> GetTenantsInGivenPropertyId(string vPropertyId)
+        {
+            var vPropertyIdParameter = vPropertyId != null ?
+                new ObjectParameter("vPropertyId", vPropertyId) :
+                new ObjectParameter("vPropertyId", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetTenantsInGivenPropertyId_Result>("GetTenantsInGivenPropertyId", vPropertyIdParameter);
+        }
     }
 }

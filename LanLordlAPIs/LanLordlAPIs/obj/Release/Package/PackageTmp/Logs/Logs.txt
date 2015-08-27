@@ -428,3 +428,62 @@ INFO  2015-08-19 15:54:55,632 248515ms Logger                 Info              
 INFO  2015-08-19 15:54:57,555 250438ms Logger                 Info               - Landlords API -> Properties -> SetPropertyStatus. SetPropertyStatus requested by [21d4e1ee-865c-40dd-b841-15807546daae]
 INFO  2015-08-19 15:55:00,039 252921ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
 INFO  2015-08-19 15:55:00,943 253826ms Logger                 Info               - Landlords API -> Properties -> LoadProperties. LoadProperties requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:00:43,708   648ms Logger                 Info               - Landlords API -> Users -> Login. Login requested by [malkit.singh@venturepact.com]
+INFO  2015-08-24 12:00:47,865  4805ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:00:48,109  5049ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:01:05,444 22384ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:01:06,347 23287ms Logger                 Info               - Landlords API -> Properties -> LoadProperties. LoadProperties requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:01:34,621 51561ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:01:35,408 52348ms Logger                 Info               - Landlords API -> Properties -> LoadProperties. LoadProperties requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:05:09,338  6030ms Logger                 Info               - Landlords API -> Properties -> LoadProperties. LoadProperties requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:05:09,338  6030ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:15:57,395 654088ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:15:58,174 654867ms Logger                 Info               - Landlords API -> Properties -> LoadProperties. LoadProperties requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:20:39,530   505ms Logger                 Info               - Landlords API -> Users -> Login. Login requested by [malkit.singh@venturepact.com]
+INFO  2015-08-24 12:20:41,624  2599ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:20:42,051  3026ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:24:52,575 253549ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:24:53,496 254470ms Logger                 Info               - Landlords API -> Properties -> LoadProperties. LoadProperties requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:25:06,552 267527ms Logger                 Info               - Landlords API -> DeleteProperty -> DeleteProperty. SetPropertyStatus requested by [] and Property Id - [ 19692a90-8a53-4d7b-ad39-a6fcb634d9a9 ]
+ERROR 2015-08-24 12:25:06,555 267530ms Logger                 Error              - Landlords API -> Properties -> DeleteProperty. DeleteProperty requested by- [  ] . Exception details [ System.ArgumentNullException: Value cannot be null.
+Parameter name: g
+   at System.Guid..ctor(String g)
+   at LanLordlAPIs.Controllers.PropertiesController.DeleteProperty(SetPropertyStatusClass Property) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\PropertiesController.cs:line 242 ]
+INFO  2015-08-24 12:25:10,582 271557ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:25:10,688 271663ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:27:45,558  9758ms Logger                 Info               - Landlords API -> DeleteProperty -> DeleteProperty. SetPropertyStatus requested by [] and Property Id - [ 19692a90-8a53-4d7b-ad39-a6fcb634d9a9 ]
+ERROR 2015-08-24 12:27:45,630  9830ms Logger                 Error              - Landlords API -> Properties -> DeleteProperty. DeleteProperty requested by- [  ] . Exception details [ System.ArgumentNullException: Value cannot be null.
+Parameter name: g
+   at System.Guid..ctor(String g)
+   at LanLordlAPIs.Controllers.PropertiesController.DeleteProperty(SetPropertyStatusClass Property) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\PropertiesController.cs:line 242 ]
+INFO  2015-08-24 12:28:04,401 28601ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:28:05,180 29380ms Logger                 Info               - Landlords API -> Properties -> LoadProperties. LoadProperties requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:28:21,204 45404ms Logger                 Info               - Landlords API -> DeleteProperty -> DeleteProperty. SetPropertyStatus requested by [] and Property Id - [ 19692a90-8a53-4d7b-ad39-a6fcb634d9a9 ]
+ERROR 2015-08-24 12:28:21,240 45440ms Logger                 Error              - Landlords API -> Properties -> DeleteProperty. DeleteProperty requested by- [  ] . Exception details [ System.ArgumentNullException: Value cannot be null.
+Parameter name: g
+   at System.Guid..ctor(String g)
+   at LanLordlAPIs.Controllers.PropertiesController.DeleteProperty(SetPropertyStatusClass Property) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\PropertiesController.cs:line 242 ]
+INFO  2015-08-24 12:29:36,511 120711ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:29:37,058 121258ms Logger                 Info               - Landlords API -> Properties -> LoadProperties. LoadProperties requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:29:47,525 131725ms Logger                 Info               - Landlords API -> DeleteProperty -> DeleteProperty. SetPropertyStatus requested by [] and Property Id - [ 19692a90-8a53-4d7b-ad39-a6fcb634d9a9 ]
+ERROR 2015-08-24 12:29:47,572 131772ms Logger                 Error              - Landlords API -> Properties -> DeleteProperty. DeleteProperty requested by- [  ] . Exception details [ System.ArgumentNullException: Value cannot be null.
+Parameter name: g
+   at System.Guid..ctor(String g)
+   at LanLordlAPIs.Controllers.PropertiesController.DeleteProperty(SetPropertyStatusClass Property) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\PropertiesController.cs:line 242 ]
+INFO  2015-08-24 12:33:55,245 379445ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:33:56,475 380675ms Logger                 Info               - Landlords API -> Properties -> LoadProperties. LoadProperties requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:34:08,390 392591ms Logger                 Info               - Landlords API -> Users -> Login. Login requested by [malkit.singh@venturepact.com]
+INFO  2015-08-24 12:34:09,387 393588ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:34:09,555 393756ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:34:16,902 401102ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:34:17,806 402006ms Logger                 Info               - Landlords API -> Properties -> LoadProperties. LoadProperties requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:34:41,581 425782ms Logger                 Info               - Landlords API -> DeleteProperty -> DeleteProperty. SetPropertyStatus requested by [21d4e1ee-865c-40dd-b841-15807546daae] and Property Id - [ 19692a90-8a53-4d7b-ad39-a6fcb634d9a9 ]
+INFO  2015-08-24 12:36:36,560 540760ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:36:37,326 541526ms Logger                 Info               - Landlords API -> Properties -> LoadProperties. LoadProperties requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:37:38,325 602525ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:37:39,149 603350ms Logger                 Info               - Landlords API -> Properties -> LoadProperties. LoadProperties requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:37:49,121 613321ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:37:49,861 614062ms Logger                 Info               - Landlords API -> Properties -> LoadProperties. LoadProperties requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:38:16,190 640390ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:38:16,988 641188ms Logger                 Info               - Landlords API -> Properties -> LoadProperties. LoadProperties requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-08-24 12:38:25,275 649475ms Logger                 Info               - Landlords API -> DeleteProperty -> DeleteProperty. SetPropertyStatus requested by [21d4e1ee-865c-40dd-b841-15807546daae] and Property Id - [ 19692a90-8a53-4d7b-ad39-a6fcb634d9a9 ]

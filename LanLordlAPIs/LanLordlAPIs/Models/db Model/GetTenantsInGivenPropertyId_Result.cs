@@ -10,18 +10,20 @@
 namespace LanLordlAPIs.Models.db_Model
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class UnitsOccupiedByTenant
+    public partial class GetTenantsInGivenPropertyId_Result
     {
-        public int Id { get; set; }
-        public Nullable<System.Guid> UnitId { get; set; }
-        public Nullable<System.Guid> TenantId { get; set; }
-        public Nullable<System.DateTime> OccupiedOn { get; set; }
-        public Nullable<bool> IsDeleted { get; set; }
-        public Nullable<System.DateTime> ModifiedOn { get; set; }
+        public System.Guid TenantId { get; set; }
+        public System.Guid UnitId { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string UserPic { get; set; }
+        public string UnitRent { get; set; }
         public Nullable<System.DateTime> LastPaymentDate { get; set; }
-        public string LastPaymentAmount { get; set; }
         public Nullable<bool> IsPaymentDueForThisMonth { get; set; }
+        public Nullable<bool> IsPhoneVerfied { get; set; }
+        public Nullable<bool> IsEmailVerified { get; set; }
+        public Nullable<bool> IsIdDocumentVerified { get; set; }
+        public Nullable<System.Guid> BankAccountId { get; set; }
     }
 }

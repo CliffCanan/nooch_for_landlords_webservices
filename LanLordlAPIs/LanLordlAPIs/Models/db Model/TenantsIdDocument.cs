@@ -12,16 +12,17 @@ namespace LanLordlAPIs.Models.db_Model
     using System;
     using System.Collections.Generic;
     
-    public partial class UnitsOccupiedByTenant
+    public partial class TenantsIdDocument
     {
         public int Id { get; set; }
-        public Nullable<System.Guid> UnitId { get; set; }
-        public Nullable<System.Guid> TenantId { get; set; }
-        public Nullable<System.DateTime> OccupiedOn { get; set; }
+        public string Description { get; set; }
+        public string DocumentPath { get; set; }
+        public Nullable<System.DateTime> UploadedOn { get; set; }
         public Nullable<bool> IsDeleted { get; set; }
-        public Nullable<System.DateTime> ModifiedOn { get; set; }
-        public Nullable<System.DateTime> LastPaymentDate { get; set; }
-        public string LastPaymentAmount { get; set; }
-        public Nullable<bool> IsPaymentDueForThisMonth { get; set; }
+        public Nullable<System.Guid> TenantId { get; set; }
+        public Nullable<bool> IsVerified { get; set; }
+        public Nullable<System.DateTime> VerifiedOn { get; set; }
+        public Nullable<System.Guid> VerfiedBy { get; set; }
+        public string AdminNotes { get; set; }
     }
 }

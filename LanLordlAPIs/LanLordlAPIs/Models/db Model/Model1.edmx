@@ -253,6 +253,22 @@
           <Property Name="MemberId" Type="uniqueidentifier" />
           <Property Name="BankAccountId" Type="uniqueidentifier" />
           <Property Name="UserPic" Type="varchar(max)" />
+          <Property Name="IsIdDocumentVerified" Type="bit" />
+        </EntityType>
+        <EntityType Name="TenantsIdDocuments">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Description" Type="varchar(max)" />
+          <Property Name="DocumentPath" Type="varchar(max)" />
+          <Property Name="UploadedOn" Type="datetime" />
+          <Property Name="IsDeleted" Type="bit" />
+          <Property Name="TenantId" Type="uniqueidentifier" />
+          <Property Name="IsVerified" Type="bit" />
+          <Property Name="VerifiedOn" Type="datetime" />
+          <Property Name="VerfiedBy" Type="uniqueidentifier" />
+          <Property Name="AdminNotes" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="UnitsOccupiedByTenants">
           <Key>
@@ -264,6 +280,9 @@
           <Property Name="OccupiedOn" Type="datetime" />
           <Property Name="IsDeleted" Type="bit" />
           <Property Name="ModifiedOn" Type="datetime" />
+          <Property Name="LastPaymentDate" Type="datetime" />
+          <Property Name="LastPaymentAmount" Type="varchar" MaxLength="50" />
+          <Property Name="IsPaymentDueForThisMonth" Type="bit" />
         </EntityType>
         <Association Name="FK_MemberNotifications_Members">
           <End Role="Members" Type="Self.Members" Multiplicity="1" />
@@ -289,6 +308,12 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="GetTenantsCountInGivenPropertyId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="vPropertyId" Type="varchar(max)" Mode="In" />
+        </Function>
+        <Function Name="GetTenantsInGivenPropertyId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="vPropertyId" Type="varchar(max)" Mode="In" />
+        </Function>
         <EntityContainer Name="NOOCHModelStoreContainer">
           <EntitySet Name="GeoLocations" EntityType="Self.GeoLocations" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Landlords" EntityType="Self.Landlords" Schema="dbo" store:Type="Tables" />
@@ -298,6 +323,7 @@
           <EntitySet Name="Properties" EntityType="Self.Properties" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PropertyUnits" EntityType="Self.PropertyUnits" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tenants" EntityType="Self.Tenants" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TenantsIdDocuments" EntityType="Self.TenantsIdDocuments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UnitsOccupiedByTenants" EntityType="Self.UnitsOccupiedByTenants" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_MemberNotifications_Members" Association="Self.FK_MemberNotifications_Members">
             <End Role="Members" EntitySet="Members" />
@@ -564,6 +590,7 @@
           <Property Name="MemberId" Type="Guid" />
           <Property Name="BankAccountId" Type="Guid" />
           <Property Name="UserPic" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="IsIdDocumentVerified" Type="Boolean" />
         </EntityType>
         <Association Name="FK_MemberNotifications_Members">
           <End Role="Members" Type="Self.Member" Multiplicity="1" />
@@ -607,6 +634,13 @@
             <End Role="MemberPrivacySettings" EntitySet="MemberPrivacySettings" />
           </AssociationSet>
           <EntitySet Name="UnitsOccupiedByTenants" EntityType="NOOCHModel.UnitsOccupiedByTenant" />
+          <FunctionImport Name="GetTenantsCountInGivenPropertyId" ReturnType="Collection(Int32)">
+          <Parameter Name="vPropertyId" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="TenantsIdDocuments" EntityType="NOOCHModel.TenantsIdDocument" />
+          <FunctionImport Name="GetTenantsInGivenPropertyId" ReturnType="Collection(NOOCHModel.GetTenantsInGivenPropertyId_Result)">
+            <Parameter Name="vPropertyId" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="UnitsOccupiedByTenant">
           <Key>
@@ -618,7 +652,39 @@
           <Property Name="OccupiedOn" Type="DateTime" Precision="3" />
           <Property Name="IsDeleted" Type="Boolean" />
           <Property Name="ModifiedOn" Type="DateTime" Precision="3" />
+          <Property Name="LastPaymentDate" Type="DateTime" Precision="3" />
+          <Property Name="LastPaymentAmount" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IsPaymentDueForThisMonth" Type="Boolean" />
         </EntityType>
+        <EntityType Name="TenantsIdDocument">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="DocumentPath" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="UploadedOn" Type="DateTime" Precision="3" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="TenantId" Type="Guid" />
+          <Property Name="IsVerified" Type="Boolean" />
+          <Property Name="VerifiedOn" Type="DateTime" Precision="3" />
+          <Property Name="VerfiedBy" Type="Guid" />
+          <Property Name="AdminNotes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <ComplexType Name="GetTenantsInGivenPropertyId_Result">
+          <Property Type="Guid" Name="TenantId" Nullable="false" />
+          <Property Type="Guid" Name="UnitId" Nullable="false" />
+          <Property Type="String" Name="FirstName" Nullable="true" />
+          <Property Type="String" Name="LastName" Nullable="true" />
+          <Property Type="String" Name="UserPic" Nullable="true" />
+          <Property Type="String" Name="UnitRent" Nullable="true" MaxLength="50" />
+          <Property Type="DateTime" Name="LastPaymentDate" Nullable="true" Precision="23" />
+          <Property Type="Boolean" Name="IsPaymentDueForThisMonth" Nullable="true" />
+          <Property Type="Boolean" Name="IsPhoneVerfied" Nullable="true" />
+          <Property Type="Boolean" Name="IsEmailVerified" Nullable="true" />
+          <Property Type="Boolean" Name="IsIdDocumentVerified" Nullable="true" />
+          <Property Type="Guid" Name="BankAccountId" Nullable="true" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -859,6 +925,7 @@
           <EntitySetMapping Name="Tenants">
             <EntityTypeMapping TypeName="NOOCHModel.Tenant">
               <MappingFragment StoreEntitySet="Tenants">
+                <ScalarProperty Name="IsIdDocumentVerified" ColumnName="IsIdDocumentVerified" />
                 <ScalarProperty Name="TenantId" ColumnName="TenantId" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
                 <ScalarProperty Name="LastName" ColumnName="LastName" />
@@ -885,6 +952,9 @@
           <EntitySetMapping Name="UnitsOccupiedByTenants">
             <EntityTypeMapping TypeName="NOOCHModel.UnitsOccupiedByTenant">
               <MappingFragment StoreEntitySet="UnitsOccupiedByTenants">
+                <ScalarProperty Name="IsPaymentDueForThisMonth" ColumnName="IsPaymentDueForThisMonth" />
+                <ScalarProperty Name="LastPaymentAmount" ColumnName="LastPaymentAmount" />
+                <ScalarProperty Name="LastPaymentDate" ColumnName="LastPaymentDate" />
                 <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="OccupiedOn" ColumnName="OccupiedOn" />
@@ -894,6 +964,41 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetTenantsCountInGivenPropertyId" FunctionName="NOOCHModel.Store.GetTenantsCountInGivenPropertyId" />
+          <EntitySetMapping Name="TenantsIdDocuments">
+            <EntityTypeMapping TypeName="NOOCHModel.TenantsIdDocument">
+              <MappingFragment StoreEntitySet="TenantsIdDocuments">
+                <ScalarProperty Name="AdminNotes" ColumnName="AdminNotes" />
+                <ScalarProperty Name="VerfiedBy" ColumnName="VerfiedBy" />
+                <ScalarProperty Name="VerifiedOn" ColumnName="VerifiedOn" />
+                <ScalarProperty Name="IsVerified" ColumnName="IsVerified" />
+                <ScalarProperty Name="TenantId" ColumnName="TenantId" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="UploadedOn" ColumnName="UploadedOn" />
+                <ScalarProperty Name="DocumentPath" ColumnName="DocumentPath" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetTenantsInGivenPropertyId" FunctionName="NOOCHModel.Store.GetTenantsInGivenPropertyId">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="NOOCHModel.GetTenantsInGivenPropertyId_Result">
+                <ScalarProperty Name="TenantId" ColumnName="TenantId" />
+                <ScalarProperty Name="UnitId" ColumnName="UnitId" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="UserPic" ColumnName="UserPic" />
+                <ScalarProperty Name="UnitRent" ColumnName="UnitRent" />
+                <ScalarProperty Name="LastPaymentDate" ColumnName="LastPaymentDate" />
+                <ScalarProperty Name="IsPaymentDueForThisMonth" ColumnName="IsPaymentDueForThisMonth" />
+                <ScalarProperty Name="IsPhoneVerfied" ColumnName="IsPhoneVerfied" />
+                <ScalarProperty Name="IsEmailVerified" ColumnName="IsEmailVerified" />
+                <ScalarProperty Name="IsIdDocumentVerified" ColumnName="IsIdDocumentVerified" />
+                <ScalarProperty Name="BankAccountId" ColumnName="BankAccountId" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
