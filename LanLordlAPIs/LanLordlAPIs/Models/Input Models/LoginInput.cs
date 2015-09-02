@@ -36,11 +36,14 @@ namespace LanLordlAPIs.Models.Input_Models
 
     public class AddNewPropertyClass
     {
+        public string PropertyId { get; set; }
         public string PropertyName { get; set; }
         public string PropertyImage { get; set; }
         public string Address { get; set; }
         public string City { get; set; }
         public string Zip { get; set; }
+        public string State { get; set; }
+        public string ContactNumber { get; set; }
 
         public string UnitsCount { get; set; }
         public string Rent { get; set; }

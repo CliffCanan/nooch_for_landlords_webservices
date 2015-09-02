@@ -29,7 +29,7 @@ namespace LanLordlAPIs.Controllers
 
                 if (result.AuthTokenValidation.IsTokenOk)
                 {
-                    var validationResult = IsPropertyDataInputValid(Property);
+                    var validationResult = IsPropertyDataInputValid(Property, true);
                     if (validationResult.IsDataValid)
                     {
                         // all set.... data is ready to be saved in db
@@ -136,6 +136,88 @@ namespace LanLordlAPIs.Controllers
             }
         }
 
+
+
+        [HttpPost]
+        [ActionName("EditProperty")]
+        public CreatePropertyResultOutput EditProperty(AddNewPropertyClass Property)
+        {
+
+            CreatePropertyResultOutput result = new CreatePropertyResultOutput();
+            try
+            {
+                Logger.Info("Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [" +
+                            Property.User.LandlorId + "]");
+                Guid landlordguidId = new Guid(Property.User.LandlorId);
+                Guid propertyguidId = new Guid(Property.PropertyId);
+
+                result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, Property.User.AccessToken);
+
+                if (result.AuthTokenValidation.IsTokenOk)
+                {
+                    var validationResult = IsPropertyDataInputValid(Property, false);
+                    if (validationResult.IsDataValid)
+                    {
+
+                        using (NOOCHEntities obj = new NOOCHEntities())
+                        {
+
+                            var existingProp = (from c in obj.Properties where c.PropertyId == propertyguidId select c).FirstOrDefault();
+
+
+                            if (existingProp != null)
+                            {
+
+                                existingProp.PropName = Property.PropertyName.Trim();
+                                existingProp.AddressLineOne = Property.Address.Trim();
+                                existingProp.City = Property.City.Trim();
+                                existingProp.Zip = Property.Zip.Trim();
+                                existingProp.State= Property.State.Trim();
+                                existingProp.ContactNumber = Property.ContactNumber.Trim();
+
+
+                                obj.SaveChanges();
+
+
+                                result.IsSuccess = true;
+                                result.ErrorMessage = "OK";
+
+                            }
+                            else
+                            {
+                                result.IsSuccess = false;
+                                result.ErrorMessage = "Invalid property id passed.";
+                            }
+
+
+                        }
+
+
+                    }
+                    else
+                    {
+                        result.IsSuccess = false;
+                        result.ErrorMessage = validationResult.ValidationError;
+                    }
+
+                    return result;
+                }
+                else
+                {
+                    return result;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by- [ " + Property.User.LandlorId + " ] . Exception details [ " + ex + " ]");
+                result.IsSuccess = false;
+                result.ErrorMessage = "Error while creating property. Retry later!";
+                return result;
+
+            }
+        }
+
         // To mark given property and sub units as active/inactive
         [HttpPost]
         [ActionName("SetPropertyStatus")]
@@ -164,12 +246,12 @@ namespace LanLordlAPIs.Controllers
 
                             // checking units inside property
 
-                                var allUnits =
-                                    (from d in obj.PropertyUnits where d.PropertyId == propId select d).ToList();
+                            var allUnits =
+                                (from d in obj.PropertyUnits where d.PropertyId == propId select d).ToList();
 
 
 
-                            if (Property.PropertyStatusToSet==false)
+                            if (Property.PropertyStatusToSet == false)
                             {
                                 // query is to set hide property
 
@@ -200,7 +282,7 @@ namespace LanLordlAPIs.Controllers
 
                             }
 
-                               
+
 
 
 
@@ -212,8 +294,8 @@ namespace LanLordlAPIs.Controllers
 
                                 // updating sub units
 
-                                 allUnits =
-                                    (from d in obj.PropertyUnits where d.PropertyId == propId select d).ToList();
+                                allUnits =
+                                   (from d in obj.PropertyUnits where d.PropertyId == propId select d).ToList();
 
                                 if (allUnits.Count > 0)
                                 {
@@ -674,11 +756,11 @@ namespace LanLordlAPIs.Controllers
 
                             List<TenantDetailsResultClass> TenantsListForThisPropertyPrepared = new List<TenantDetailsResultClass>();
 
-                            if (AllTenantsOccupiedGivenPropertyUnits.Count>0)
+                            if (AllTenantsOccupiedGivenPropertyUnits.Count > 0)
                             {
                                 foreach (var v in AllTenantsOccupiedGivenPropertyUnits)
                                 {
-                                        TenantDetailsResultClass trc= new TenantDetailsResultClass();
+                                    TenantDetailsResultClass trc = new TenantDetailsResultClass();
                                     trc.TenantId = v.TenantId.ToString() ?? "";
                                     trc.UnitId = v.UnitId.ToString() ?? "";
                                     if (!String.IsNullOrEmpty(v.FirstName))
@@ -687,18 +769,18 @@ namespace LanLordlAPIs.Controllers
                                     }
                                     if (!String.IsNullOrEmpty(v.LastName))
                                     {
-                                        trc.Name = trc.Name+" "+CommonHelper.GetDecryptedData(v.LastName);
+                                        trc.Name = trc.Name + " " + CommonHelper.GetDecryptedData(v.LastName);
                                     }
 
                                     trc.ImageUrl = v.UserPic ?? "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAAB4CAMAAAAOusbgAAAAPFBMVEX///+4uLjr6+u1tbWysrL39/f7+/vg4OC7u7vm5ubMzMzt7e3BwcH09PT5+fm9vb3KysrW1tbR0dHZ2dlNTySgAAAC4ElEQVRoge2a25arIAyGRRDE8+H933XLjNNWu5WcqGvW+N/16luJSUh/yLJbt27d+ivq6jz3Ps/r4oNQm49DU6ovlc0wevsJauErZYzWapXWy6/Bpw68dY1+QtWT3s9tQqwN2Dfqim7mZBlvD7Eruk6CtfMZ9gttxgRBF1OMG9CV+Je2QxwbyI1wedvBQLgLeRAlF1BuiFkw23YC5XklV3IV5hDchTxLcQuFAisj1M/Agn4JuelEwA6HVVLJLrABS1W2Rwe8kB2f2zXogBdwzx8jOYErEvIEnlkb8MAGl6SIleaOr5oU8DJEPBM8U8EjE4w5Hl7F/cjocfkQcyMoeiJXlbzh1ZZUsMpZ4JoO5pV1Teb+WvBVqWYUF2//uaydGAOEuXfRTkWBc9FddUi0Vx2LWU9cBLjc61Yf2uzS7EzTGkrkT8xVC33WXfUXhhCySMCLKmRh60bIE7C4pV5rMRfEoywBqUQHzRjzZRK09yx8fulKxof4EZRsBM2mlQyzFMW5mZ3jFab1JJvnb3kVSbfWLo1XbquzoLWS9U838tXhulsO/JPwWIU78oB049LFW0+nW3Y/JbmTWII1keIyRj7s4vjiZ5Nw6Yz7AXpMLLUtV2TdaRu9o4WmtXWxwbGXURKDpIXcN+2D1hN7F2gp5q3AulfTuIHMamrczrMlc7wIR+cGMnn38viy2pCpf6ByolX9JJckd4/NJZKJfbQjE7qqEuCG5Q/LpZouexlkaTM8zL1Qg8TKJDoIt2lTXIBDIbqZdK13JIwfMgpV1rcM+FLXckb0u7SCfmWpVvoRtKVEv3AQ9Cvj3kCAyKCQBXv4AQb1ck2+DThWDxlf8pmG5TpBpmG5LojO+DkY8FiB9hghSo6vItQr8nMB7kbIF02nAlwV8Fe8/4LLGLdLwl3IsalJfX4RU/SNl08Fju0h0kfiAxybXWm6CbCGyG49L+BYI18GbvNESvn8+tatW7c+o3+CASXGSkLOCwAAAABJRU5ErkJggg==";  // will modify it after testing
-                                    trc.UnitRent = v.UnitRent?? "";
-                                    trc.LastRentPaidOn = v.LastPaymentDate.ToString()?? "";
+                                    trc.UnitRent = v.UnitRent ?? "";
+                                    trc.LastRentPaidOn = v.LastPaymentDate.ToString() ?? "";
 
-                                    trc.IsRentPaidForThisMonth = v.IsPaymentDueForThisMonth??false;
+                                    trc.IsRentPaidForThisMonth = v.IsPaymentDueForThisMonth ?? false;
                                     trc.IsPhoneVerified = v.IsPhoneVerfied ?? false;
 
                                     trc.IsEmailVerified = v.IsEmailVerified ?? false;
-                                    trc.IsDocumentsVerified = v.IsIdDocumentVerified?? false;
+                                    trc.IsDocumentsVerified = v.IsIdDocumentVerified ?? false;
 
                                     if (!String.IsNullOrEmpty(v.BankAccountId.ToString()))
                                     {
@@ -749,7 +831,7 @@ namespace LanLordlAPIs.Controllers
         }
 
 
-        private PropertyInputValidationResult IsPropertyDataInputValid(AddNewPropertyClass inputData)
+        private PropertyInputValidationResult IsPropertyDataInputValid(AddNewPropertyClass inputData, bool IsUnitsCheckRequired)
         {
             PropertyInputValidationResult res = new PropertyInputValidationResult();
             res.IsDataValid = true;
@@ -792,31 +874,39 @@ namespace LanLordlAPIs.Controllers
             //if (inputData.IsMultipleUnitsAdded)
             //{
 
-            if (inputData.IsMultipleUnitsAdded)
+
+            if (IsUnitsCheckRequired)
             {
 
 
-                if (inputData.Unit.Any(unitItem => String.IsNullOrEmpty(unitItem.UnitNum)))
+
+                if (inputData.IsMultipleUnitsAdded)
                 {
-                    res.IsDataValid = false;
-                    res.ValidationError = "One or more unit(s) number missing in data provided.";
-                    return res;
+
+
+                    if (inputData.Unit.Any(unitItem => String.IsNullOrEmpty(unitItem.UnitNum)))
+                    {
+                        res.IsDataValid = false;
+                        res.ValidationError = "One or more unit(s) number missing in data provided.";
+                        return res;
+                    }
+                    if (inputData.Unit.Any(unitItem => String.IsNullOrEmpty(unitItem.Rent)))
+                    {
+                        res.IsDataValid = false;
+                        res.ValidationError = "One or more unit(s) missing Rent in data provided.";
+                        return res;
+                    }
                 }
-                if (inputData.Unit.Any(unitItem => String.IsNullOrEmpty(unitItem.Rent)))
+                else
                 {
-                    res.IsDataValid = false;
-                    res.ValidationError = "One or more unit(s) missing Rent in data provided.";
-                    return res;
+                    if (inputData.Unit.Any(unitItem => String.IsNullOrEmpty(unitItem.Rent)))
+                    {
+                        res.IsDataValid = false;
+                        res.ValidationError = "One or more unit(s) missing Rent in data provided.";
+                        return res;
+                    }
                 }
-            }
-            else
-            {
-                if (inputData.Unit.Any(unitItem => String.IsNullOrEmpty(unitItem.Rent)))
-                {
-                    res.IsDataValid = false;
-                    res.ValidationError = "One or more unit(s) missing Rent in data provided.";
-                    return res;
-                }
+
             }
             //}
             return res;
