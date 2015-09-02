@@ -161,6 +161,49 @@ namespace LanLordlAPIs.Controllers
                             var properTyInDb =
                                 (from c in obj.Properties where c.PropertyId == propId select c).FirstOrDefault();
 
+
+                            // checking units inside property
+
+                                var allUnits =
+                                    (from d in obj.PropertyUnits where d.PropertyId == propId select d).ToList();
+
+
+
+                            if (Property.PropertyStatusToSet==false)
+                            {
+                                // query is to set hide property
+
+
+                                bool IsAnyocupiedUnitFound = false;
+                                if (allUnits.Count > 0)
+                                {
+                                    foreach (PropertyUnit pu in allUnits)
+                                    {
+                                        if (pu.IsOccupied == true && (pu.IsDeleted == false || pu.IsDeleted == null) &&
+                                            (pu.IsHidden == false || pu.IsDeleted == null))
+                                        {
+                                            IsAnyocupiedUnitFound = true;
+                                        }
+                                    }
+
+                                    if (IsAnyocupiedUnitFound)
+                                    {
+                                        result.IsSuccess = false;
+                                        result.ErrorMessage =
+                                            "Property can't be set to hidden as one or more units are occupied by Tenants.";
+                                        return result;
+                                    }
+
+                                }
+
+
+
+                            }
+
+                               
+
+
+
                             if (properTyInDb != null)
                             {
                                 properTyInDb.PropStatus = Property.PropertyStatusToSet ? "Published" : "Not Published";
@@ -169,7 +212,7 @@ namespace LanLordlAPIs.Controllers
 
                                 // updating sub units
 
-                                var allUnits =
+                                 allUnits =
                                     (from d in obj.PropertyUnits where d.PropertyId == propId select d).ToList();
 
                                 if (allUnits.Count > 0)
@@ -546,7 +589,7 @@ namespace LanLordlAPIs.Controllers
                             currentProperty.IsSingleUnit = properTyInDb.IsSingleUnit;
                             currentProperty.IsDeleted = properTyInDb.IsDeleted;
 
-                            currentProperty.DefaulBank = properTyInDb.DefaulBank != null ? properTyInDb.DefaulBank.ToString() : "";
+                            currentProperty.DefaulBank = properTyInDb.DefaulBank != null ? properTyInDb.DefaulBank.ToString() : ".";
                             if (currentProperty.DefaulBank != "")
                             {
                                 result.IsBankAccountAdded = true;
@@ -569,6 +612,8 @@ namespace LanLordlAPIs.Controllers
                             {
                                 result.IsBankAccountAdded = false;
                             }
+
+                            result.PropertyDetails = currentProperty;
 
                             // raeding all units of this property
                             var AllSubUnits = (from d in obj.PropertyUnits
@@ -620,7 +665,7 @@ namespace LanLordlAPIs.Controllers
 
                             currentProperty.AllUnits = AllUnitsListPrepared;
                             currentProperty.UnitsCount = AllUnitsListPrepared.Count.ToString();
-                            currentProperty.TenantsCount = obj.GetTenantsCountInGivenPropertyId(currentProperty.PropertyId).ToString();  // will add code to get count once we reach here... - Malkit
+                            currentProperty.TenantsCount = obj.GetTenantsCountInGivenPropertyId(currentProperty.PropertyId).FirstOrDefault().ToString();  // will add code to get count once we reach here... - Malkit
 
 
                             // getting tenants list for this property

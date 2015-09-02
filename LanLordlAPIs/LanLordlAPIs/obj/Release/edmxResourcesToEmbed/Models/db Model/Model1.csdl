@@ -252,6 +252,7 @@
     <Property Name="MemberId" Type="Guid" />
     <Property Name="BankAccountId" Type="Guid" />
     <Property Name="UserPic" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="IsIdDocumentVerified" Type="Boolean" />
   </EntityType>
   <Association Name="FK_MemberNotifications_Members">
     <End Role="Members" Type="Self.Member" Multiplicity="1" />
@@ -295,6 +296,13 @@
       <End Role="MemberPrivacySettings" EntitySet="MemberPrivacySettings" />
     </AssociationSet>
     <EntitySet Name="UnitsOccupiedByTenants" EntityType="NOOCHModel.UnitsOccupiedByTenant" />
+    <FunctionImport Name="GetTenantsCountInGivenPropertyId" ReturnType="Collection(Int32)">
+      <Parameter Name="vPropertyId" Mode="In" Type="String" />
+    </FunctionImport>
+    <EntitySet Name="TenantsIdDocuments" EntityType="NOOCHModel.TenantsIdDocument" />
+    <FunctionImport Name="GetTenantsInGivenPropertyId" ReturnType="Collection(NOOCHModel.GetTenantsInGivenPropertyId_Result)">
+      <Parameter Name="vPropertyId" Mode="In" Type="String" />
+    </FunctionImport>
   </EntityContainer>
   <EntityType Name="UnitsOccupiedByTenant">
     <Key>
@@ -306,5 +314,37 @@
     <Property Name="OccupiedOn" Type="DateTime" Precision="3" />
     <Property Name="IsDeleted" Type="Boolean" />
     <Property Name="ModifiedOn" Type="DateTime" Precision="3" />
+    <Property Name="LastPaymentDate" Type="DateTime" Precision="3" />
+    <Property Name="LastPaymentAmount" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="IsPaymentDueForThisMonth" Type="Boolean" />
   </EntityType>
+  <EntityType Name="TenantsIdDocument">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="DocumentPath" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="UploadedOn" Type="DateTime" Precision="3" />
+    <Property Name="IsDeleted" Type="Boolean" />
+    <Property Name="TenantId" Type="Guid" />
+    <Property Name="IsVerified" Type="Boolean" />
+    <Property Name="VerifiedOn" Type="DateTime" Precision="3" />
+    <Property Name="VerfiedBy" Type="Guid" />
+    <Property Name="AdminNotes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <ComplexType Name="GetTenantsInGivenPropertyId_Result">
+    <Property Type="Guid" Name="TenantId" Nullable="false" />
+    <Property Type="Guid" Name="UnitId" Nullable="false" />
+    <Property Type="String" Name="FirstName" Nullable="true" />
+    <Property Type="String" Name="LastName" Nullable="true" />
+    <Property Type="String" Name="UserPic" Nullable="true" />
+    <Property Type="String" Name="UnitRent" Nullable="true" MaxLength="50" />
+    <Property Type="DateTime" Name="LastPaymentDate" Nullable="true" Precision="23" />
+    <Property Type="Boolean" Name="IsPaymentDueForThisMonth" Nullable="true" />
+    <Property Type="Boolean" Name="IsPhoneVerfied" Nullable="true" />
+    <Property Type="Boolean" Name="IsEmailVerified" Nullable="true" />
+    <Property Type="Boolean" Name="IsIdDocumentVerified" Nullable="true" />
+    <Property Type="Guid" Name="BankAccountId" Nullable="true" />
+  </ComplexType>
 </Schema>

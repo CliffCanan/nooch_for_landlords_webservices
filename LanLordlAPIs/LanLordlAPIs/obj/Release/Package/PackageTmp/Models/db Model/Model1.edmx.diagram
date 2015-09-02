@@ -16,6 +16,7 @@
         <AssociationConnector Association="NOOCHModel.FK_MemberNotifications_Members" ManuallyRouted="false" />
         <AssociationConnector Association="NOOCHModel.FK_MemberPrivacySettings_Members" ManuallyRouted="false" />
         <EntityTypeShape EntityType="NOOCHModel.UnitsOccupiedByTenant" Width="1.5" PointX="10.375" PointY="6.75" />
+        <EntityTypeShape EntityType="NOOCHModel.TenantsIdDocument" Width="1.5" PointX="10.375" PointY="9.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -248,6 +248,22 @@
     <Property Name="MemberId" Type="uniqueidentifier" />
     <Property Name="BankAccountId" Type="uniqueidentifier" />
     <Property Name="UserPic" Type="varchar(max)" />
+    <Property Name="IsIdDocumentVerified" Type="bit" />
+  </EntityType>
+  <EntityType Name="TenantsIdDocuments">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Description" Type="varchar(max)" />
+    <Property Name="DocumentPath" Type="varchar(max)" />
+    <Property Name="UploadedOn" Type="datetime" />
+    <Property Name="IsDeleted" Type="bit" />
+    <Property Name="TenantId" Type="uniqueidentifier" />
+    <Property Name="IsVerified" Type="bit" />
+    <Property Name="VerifiedOn" Type="datetime" />
+    <Property Name="VerfiedBy" Type="uniqueidentifier" />
+    <Property Name="AdminNotes" Type="varchar(max)" />
   </EntityType>
   <EntityType Name="UnitsOccupiedByTenants">
     <Key>
@@ -259,6 +275,9 @@
     <Property Name="OccupiedOn" Type="datetime" />
     <Property Name="IsDeleted" Type="bit" />
     <Property Name="ModifiedOn" Type="datetime" />
+    <Property Name="LastPaymentDate" Type="datetime" />
+    <Property Name="LastPaymentAmount" Type="varchar" MaxLength="50" />
+    <Property Name="IsPaymentDueForThisMonth" Type="bit" />
   </EntityType>
   <Association Name="FK_MemberNotifications_Members">
     <End Role="Members" Type="Self.Members" Multiplicity="1" />
@@ -284,6 +303,12 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Function Name="GetTenantsCountInGivenPropertyId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="vPropertyId" Type="varchar(max)" Mode="In" />
+  </Function>
+  <Function Name="GetTenantsInGivenPropertyId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="vPropertyId" Type="varchar(max)" Mode="In" />
+  </Function>
   <EntityContainer Name="NOOCHModelStoreContainer">
     <EntitySet Name="GeoLocations" EntityType="Self.GeoLocations" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Landlords" EntityType="Self.Landlords" Schema="dbo" store:Type="Tables" />
@@ -293,6 +318,7 @@
     <EntitySet Name="Properties" EntityType="Self.Properties" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PropertyUnits" EntityType="Self.PropertyUnits" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Tenants" EntityType="Self.Tenants" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TenantsIdDocuments" EntityType="Self.TenantsIdDocuments" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="UnitsOccupiedByTenants" EntityType="Self.UnitsOccupiedByTenants" Schema="dbo" store:Type="Tables" />
     <AssociationSet Name="FK_MemberNotifications_Members" Association="Self.FK_MemberNotifications_Members">
       <End Role="Members" EntitySet="Members" />
