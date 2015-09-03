@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using LanLordlAPIs.Models.Output_Models;
 
 namespace LanLordlAPIs.Models.Input_Models
 {
@@ -23,6 +24,13 @@ namespace LanLordlAPIs.Models.Input_Models
 
 
 
+    public class EditPersonalInfoInputClass
+    {
+        public GetProfileDataInput DeviceInfo { get; set; }
+        public UserProfileInfoInputClass    UserInfo { get; set; }
+    }
+
+    
     public class SetPropertyStatusClass
     {
         public string PropertyId { get; set; }

@@ -112,7 +112,7 @@ namespace LanLordlAPIs.Controllers
         [ActionName("GetUserInfo")]
         public UserProfileInfoResult GetUserInfo(GetProfileDataInput User)
         {
-            
+
             UserProfileInfoResult result = new UserProfileInfoResult();
             try
             {
@@ -139,8 +139,8 @@ namespace LanLordlAPIs.Controllers
 
                         if (lanlorddetails != null)
                         {
-                            
-                            result.FirstName = !String.IsNullOrEmpty( lanlorddetails.FirstName) ? CommonHelper.GetDecryptedData(lanlorddetails.FirstName) : "";
+
+                            result.FirstName = !String.IsNullOrEmpty(lanlorddetails.FirstName) ? CommonHelper.GetDecryptedData(lanlorddetails.FirstName) : "";
                             result.LastName = !String.IsNullOrEmpty(lanlorddetails.LastName) ? CommonHelper.GetDecryptedData(lanlorddetails.LastName) : "";
                             result.AccountType = !String.IsNullOrEmpty(lanlorddetails.Type) ? lanlorddetails.Type : "";
                             result.SubType = !String.IsNullOrEmpty(lanlorddetails.SubType) ? lanlorddetails.SubType : "";
@@ -148,7 +148,7 @@ namespace LanLordlAPIs.Controllers
                             result.IsPhoneVerified = lanlorddetails.IsPhoneVerified != null;
                             result.IsEmailVerified = lanlorddetails.IsEmailVerfieid != null;
 
-                            result.DOB = lanlorddetails.DateOfBirth!=null ? Convert.ToDateTime(lanlorddetails.DateOfBirth).ToString("d") : "";
+                            result.DOB = lanlorddetails.DateOfBirth != null ? Convert.ToDateTime(lanlorddetails.DateOfBirth).ToString("d") : "";
 
 
                             result.SSN = !String.IsNullOrEmpty(lanlorddetails.SSN) ? CommonHelper.GetDecryptedData(lanlorddetails.SSN) : "";
@@ -165,11 +165,11 @@ namespace LanLordlAPIs.Controllers
                             {
                                 result.AddressLine1 = "";
                             }
-                          
+
                             if (!String.IsNullOrEmpty(lanlorddetails.AddressLineTwo))
                             {
                                 result.Address += " " + CommonHelper.GetDecryptedData(lanlorddetails.AddressLineTwo);
-                                result.AddressLine2 =  CommonHelper.GetDecryptedData(lanlorddetails.AddressLineTwo);
+                                result.AddressLine2 = CommonHelper.GetDecryptedData(lanlorddetails.AddressLineTwo);
                             }
                             else
                             {
@@ -188,7 +188,7 @@ namespace LanLordlAPIs.Controllers
                             if (!String.IsNullOrEmpty(lanlorddetails.State))
                             {
                                 result.Address += " " + CommonHelper.GetDecryptedData(lanlorddetails.State);
-                                result.AddState =  CommonHelper.GetDecryptedData(lanlorddetails.State);
+                                result.AddState = CommonHelper.GetDecryptedData(lanlorddetails.State);
                             }
                             else
                             {
@@ -197,7 +197,7 @@ namespace LanLordlAPIs.Controllers
                             if (!String.IsNullOrEmpty(lanlorddetails.Zip))
                             {
                                 result.Address += " " + CommonHelper.GetDecryptedData(lanlorddetails.Zip);
-                                result.Zip =  CommonHelper.GetDecryptedData(lanlorddetails.Zip);
+                                result.Zip = CommonHelper.GetDecryptedData(lanlorddetails.Zip);
                             }
                             else
                             {
@@ -206,22 +206,22 @@ namespace LanLordlAPIs.Controllers
                             if (!String.IsNullOrEmpty(lanlorddetails.Country))
                             {
                                 result.Address += " " + CommonHelper.GetDecryptedData(lanlorddetails.Country);
-                                result.Country =  CommonHelper.GetDecryptedData(lanlorddetails.Country);
+                                result.Country = CommonHelper.GetDecryptedData(lanlorddetails.Country);
                             }
                             else
                             {
                                 result.Country = "";
                             }
-                            result.TwitterHandle = !String.IsNullOrEmpty(lanlorddetails.TwitterHandle) ? lanlorddetails.TwitterHandle: "";
+                            result.TwitterHandle = !String.IsNullOrEmpty(lanlorddetails.TwitterHandle) ? lanlorddetails.TwitterHandle : "";
                             result.FbUrl = !String.IsNullOrEmpty(lanlorddetails.FBId) ? lanlorddetails.FBId : "";
-                          
+
 
                             result.InstaUrl = !String.IsNullOrEmpty(lanlorddetails.InstagramUrl) ? lanlorddetails.InstagramUrl : "";
 
                             result.CompanyName = !String.IsNullOrEmpty(lanlorddetails.CompanyName) ? CommonHelper.GetDecryptedData(lanlorddetails.CompanyName) : "";
 
 
-                            result.CompanyEID = !String.IsNullOrEmpty(lanlorddetails.CompanyEIN) ? CommonHelper.GetDecryptedData( lanlorddetails.CompanyEIN) : "";
+                            result.CompanyEID = !String.IsNullOrEmpty(lanlorddetails.CompanyEIN) ? CommonHelper.GetDecryptedData(lanlorddetails.CompanyEIN) : "";
                             result.IsSuccess = true;
                             result.ErrorMessage = "OK";
                         }
@@ -245,7 +245,7 @@ namespace LanLordlAPIs.Controllers
 
             catch (Exception ex)
             {
-                Logger.Error("Landlords API -> Users -> GetUserInfo. Error while GetUserInfo request from LandlorgId  - [ " + User.LandlorId+ " ] . Exception details [ " + ex + " ]");
+                Logger.Error("Landlords API -> Users -> GetUserInfo. Error while GetUserInfo request from LandlorgId  - [ " + User.LandlorId + " ] . Exception details [ " + ex + " ]");
                 result.IsSuccess = false;
                 result.ErrorMessage = "Error while logging on. Retry.";
                 return result;
@@ -255,6 +255,257 @@ namespace LanLordlAPIs.Controllers
 
         }
 
+        [HttpPost]
+        [ActionName("EditUserInfo")]
+        public CreatePropertyResultOutput EditUserInfo(EditPersonalInfoInputClass User)
+        {
+            CreatePropertyResultOutput result = new CreatePropertyResultOutput();
+            try
+            {
 
+                Guid landlordguidId = new Guid(User.DeviceInfo.LandlorId);
+                result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, User.DeviceInfo.AccessToken);
+
+                if (result.AuthTokenValidation.IsTokenOk)
+                {
+                    // valid access token continue with edit
+
+                    using (NOOCHEntities obj = new NOOCHEntities())
+                    {
+                        //reading details from db
+                        var lanlorddetails =
+                       (from c in obj.Landlords
+
+                        where c.LandlordId == landlordguidId
+                        select
+                            c
+                    ).FirstOrDefault();
+
+                        if (lanlorddetails != null)
+                        {
+                            if (User.UserInfo.InfoType == "Personal")
+                            {
+                                #region Editing Personal Info
+                                if (String.IsNullOrEmpty(User.UserInfo.FullName))
+                                {
+                                    result.IsSuccess = false;
+                                    result.ErrorMessage = "Name missing.";
+                                    return result;
+                                }
+
+                                string firstName = "", lastName = "";
+                                string[] nameAftetSplit = User.UserInfo.FullName.Trim().ToLower().Split(' ');
+
+                                if (nameAftetSplit.Length > 1)
+                                {
+                                    firstName = nameAftetSplit[0];
+
+                                    for (int i = 1; i < nameAftetSplit.Length - 1; i++)
+                                    {
+                                        lastName += nameAftetSplit[i] + " ";
+                                    }
+
+                                    //if (String.IsNullOrEmpty(User.UserInfo.MobileNumber))
+                                    //{
+                                    //    result.IsSuccess = false;
+                                    //    result.ErrorMessage = "Contact number missing.";
+                                    //    return result;
+                                    //}
+
+                                    if (String.IsNullOrEmpty(User.UserInfo.DOB))
+                                    {
+                                        result.IsSuccess = false;
+                                        result.ErrorMessage = "Date of birth missing.";
+                                        return result;
+                                    }
+
+                                    if (String.IsNullOrEmpty(User.UserInfo.SSN))
+                                    {
+                                        result.IsSuccess = false;
+                                        result.ErrorMessage = "SSN number missing.";
+                                        return result;
+                                    }
+
+                                    // have everything now.....going to store in db
+                                    lanlorddetails.FirstName = CommonHelper.GetEncryptedData(firstName);
+                                    lanlorddetails.LastName = CommonHelper.GetEncryptedData(lastName);
+                                    lanlorddetails.DateOfBirth = Convert.ToDateTime(User.UserInfo.DOB);
+                                    lanlorddetails.DateModified = DateTime.Now;
+                                    lanlorddetails.SSN = CommonHelper.GetEncryptedData(User.UserInfo.SSN);
+
+                                    obj.SaveChanges();
+
+
+                                    result.IsSuccess = true;
+                                    result.ErrorMessage = "OK";
+
+
+                                }
+                                else
+                                {
+                                    result.IsSuccess = false;
+                                    result.ErrorMessage = "Last or First Name missing.";
+                                    return result;
+                                }
+                                #endregion
+                            }
+                            if (User.UserInfo.InfoType == "Company")
+                            {
+                                #region Editing Personal Info
+                                if (String.IsNullOrEmpty(User.UserInfo.CompanyName))
+                                {
+                                    result.IsSuccess = false;
+                                    result.ErrorMessage = "Company name missing.";
+                                    return result;
+                                }
+                                if (String.IsNullOrEmpty(User.UserInfo.CompanyEID))
+                                {
+                                    result.IsSuccess = false;
+                                    result.ErrorMessage = "Company EIN missing.";
+                                    return result;
+                                }
+
+                                // have everything now.....going to store in db
+                                lanlorddetails.CompanyName = CommonHelper.GetEncryptedData(User.UserInfo.CompanyName);
+                                lanlorddetails.CompanyEIN = CommonHelper.GetEncryptedData(User.UserInfo.CompanyEID);
+                                lanlorddetails.DateModified = DateTime.Now;
+
+
+                                obj.SaveChanges();
+
+
+                                result.IsSuccess = true;
+                                result.ErrorMessage = "OK";
+
+
+                                #endregion
+                            }
+                            if (User.UserInfo.InfoType == "Contact")
+                            {
+                                #region Editing Personal Info
+                                if (String.IsNullOrEmpty(User.UserInfo.UserEmail))
+                                {
+                                    result.IsSuccess = false;
+                                    result.ErrorMessage = "eMail missing.";
+                                    return result;
+                                }
+
+                                if (String.IsNullOrEmpty(User.UserInfo.MobileNumber))
+                                {
+                                    result.IsSuccess = false;
+                                    result.ErrorMessage = "Contact number missing.";
+                                    return result;
+                                }
+
+                                if (String.IsNullOrEmpty(User.UserInfo.AddressLine1))
+                                {
+                                    result.IsSuccess = false;
+                                    result.ErrorMessage = "Address missing.";
+                                    return result;
+                                }
+
+
+
+                                string userEmailNew =
+                                    CommonHelper.GetEncryptedData(User.UserInfo.UserEmail.ToLower().Trim());
+                                // checking if given email is already registered or not
+                                                var lanlorddetailsbyEmail =
+                                     (from c in obj.Landlords
+
+                                      where c.eMail == userEmailNew && c.LandlordId != landlordguidId
+                                      select
+                                          c
+                                  ).FirstOrDefault();
+
+                                if (lanlorddetailsbyEmail != null)
+                                {
+                                    result.IsSuccess = false;
+                                    result.ErrorMessage = "User with given email already exists.";
+                                    return result;
+                                }
+
+
+                                // have everything now.....going to store in db
+                                lanlorddetails.DateModified = DateTime.Now;
+
+                                if (lanlorddetails.eMail != userEmailNew)
+                                {
+                                    lanlorddetails.IsEmailVerfieid = false;
+                                    lanlorddetails.eMail = userEmailNew;
+                                }
+
+                                if (!String.IsNullOrEmpty(User.UserInfo.TwitterHandle))
+                                {
+                                    lanlorddetails.TwitterHandle = User.UserInfo.TwitterHandle;
+                                }
+
+                                lanlorddetails.AddressLineOne = CommonHelper.GetEncryptedData(User.UserInfo.AddressLine1);
+
+
+                                obj.SaveChanges();
+
+
+                                result.IsSuccess = true;
+                                result.ErrorMessage = "OK";
+
+
+                                #endregion
+                            }
+
+                            if (User.UserInfo.InfoType == "Social")
+                            {
+                                #region Editing Personal Info
+                               
+
+                                // have everything now.....going to store in db
+                                lanlorddetails.DateModified = DateTime.Now;
+
+                                
+
+                                if (!String.IsNullOrEmpty(User.UserInfo.TwitterHandle))
+                                {
+                                    lanlorddetails.TwitterHandle = User.UserInfo.TwitterHandle;
+                                }
+                                if (!String.IsNullOrEmpty(User.UserInfo.FbUrl))
+                                {
+                                    lanlorddetails.FBId = User.UserInfo.FbUrl;
+                                }
+                                if (!String.IsNullOrEmpty(User.UserInfo.InstaUrl))
+                                {
+                                    lanlorddetails.InstagramUrl = User.UserInfo.InstaUrl;
+                                }
+
+                                obj.SaveChanges();
+
+
+                                result.IsSuccess = true;
+                                result.ErrorMessage = "OK";
+
+
+                                #endregion
+                            }
+                        }
+                        else
+                        {
+                            result.IsSuccess = false;
+                            result.ErrorMessage = "Given landlor doesn't exists in system.";
+                        }
+                    }
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.ErrorMessage = result.AuthTokenValidation.ErrorMessage;
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.Info("Landlords API -> Users -> EditUserInfo. EditUserInfo exception[" + ex.ToString() + "]");
+                return result;
+
+            }
+        }
     }
 }

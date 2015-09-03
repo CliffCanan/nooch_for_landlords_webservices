@@ -31,6 +31,54 @@ namespace LanLordlAPIs.Models.Output_Models
     }
 
 
+
+
+    public class UserProfileInfoInputClass
+    {
+
+
+        //Account info
+        public string AccountType { get; set; }
+        public string SubType { get; set; }
+        public string VerificationType { get; set; }
+
+
+        //Personel info
+        public string DOB { get; set; }
+        public string SSN { get; set; }
+
+        public string UserEmail { get; set; }
+
+        public string FullName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+
+        public string MobileNumber { get; set; }
+        public string Address { get; set; }
+        public string TwitterHandle { get; set; }
+        public string FbUrl { get; set; }
+        public string InstaUrl { get; set; }
+
+        public string CompanyName { get; set; }
+        public string CompanyEID { get; set; }
+
+        public bool IsPhoneVerified { get; set; }
+        public bool IsEmailVerified { get; set; }
+
+        //Address
+        public string AddressLine1 { get; set; }
+        public string AddressLine2 { get; set; }
+
+        public string City { get; set; }
+        public string AddState { get; set; }
+        public string Country { get; set; }
+        public string Zip { get; set; }
+
+        public string InfoType { get; set; }
+
+    }
+
+
     public class UserProfileInfoResult
     {
 
