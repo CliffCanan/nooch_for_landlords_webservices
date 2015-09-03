@@ -300,7 +300,7 @@ namespace LanLordlAPIs.Controllers
                                 {
                                     firstName = nameAftetSplit[0];
 
-                                    for (int i = 1; i < nameAftetSplit.Length - 1; i++)
+                                    for (int i = 1; i < nameAftetSplit.Length ; i++)
                                     {
                                         lastName += nameAftetSplit[i] + " ";
                                     }
@@ -328,7 +328,7 @@ namespace LanLordlAPIs.Controllers
 
                                     // have everything now.....going to store in db
                                     lanlorddetails.FirstName = CommonHelper.GetEncryptedData(firstName);
-                                    lanlorddetails.LastName = CommonHelper.GetEncryptedData(lastName);
+                                    lanlorddetails.LastName = CommonHelper.GetEncryptedData(lastName.Trim());
                                     lanlorddetails.DateOfBirth = Convert.ToDateTime(User.UserInfo.DOB);
                                     lanlorddetails.DateModified = DateTime.Now;
                                     lanlorddetails.SSN = CommonHelper.GetEncryptedData(User.UserInfo.SSN);
@@ -484,6 +484,7 @@ namespace LanLordlAPIs.Controllers
 
                                 #endregion
                             }
+
                         }
                         else
                         {
@@ -503,6 +504,8 @@ namespace LanLordlAPIs.Controllers
             catch (Exception ex)
             {
                 Logger.Info("Landlords API -> Users -> EditUserInfo. EditUserInfo exception[" + ex.ToString() + "]");
+                result.IsSuccess = false;
+                result.ErrorMessage = "Server error";
                 return result;
 
             }
