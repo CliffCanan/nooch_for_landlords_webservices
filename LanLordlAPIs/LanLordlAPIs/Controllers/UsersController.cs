@@ -434,6 +434,19 @@ namespace LanLordlAPIs.Controllers
                                     lanlorddetails.eMail = userEmailNew;
                                 }
 
+                                if (String.IsNullOrEmpty(User.UserInfo.MobileNumber))
+                                {
+                                    if (lanlorddetails.MobileNumber.Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", "") != User.UserInfo.MobileNumber.Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", ""))
+                                    {
+                                        lanlorddetails.MobileNumber = User.UserInfo.MobileNumber.Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", "");
+                                        
+                                    }
+                                    
+                                }
+
+
+
+
                                 if (!String.IsNullOrEmpty(User.UserInfo.TwitterHandle))
                                 {
                                     lanlorddetails.TwitterHandle = User.UserInfo.TwitterHandle;
