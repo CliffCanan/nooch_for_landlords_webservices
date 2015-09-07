@@ -1,5 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Schema Namespace="NOOCHModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="AuthenticationTokens">
+    <Key>
+      <PropertyRef Name="TokenId" />
+    </Key>
+    <Property Name="TokenId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="MemberId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="IsActivated" Type="bit" Nullable="false" />
+    <Property Name="DateGenerated" Type="datetime" />
+    <Property Name="DateModified" Type="datetime" />
+    <Property Name="FriendRequestId" Type="uniqueidentifier" />
+    <Property Name="VerifiedOn" Type="datetime" />
+  </EntityType>
   <EntityType Name="GeoLocations">
     <Key>
       <PropertyRef Name="LocationId" />
@@ -15,6 +27,19 @@
     <Property Name="Country" Type="nvarchar" MaxLength="100" />
     <Property Name="ZipCode" Type="nvarchar" MaxLength="10" />
     <Property Name="DateCreated" Type="datetime" />
+  </EntityType>
+  <EntityType Name="InviteCodes">
+    <Key>
+      <PropertyRef Name="InviteCodeId" />
+    </Key>
+    <Property Name="InviteCodeId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="code" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="count" Type="int" Nullable="false" />
+    <Property Name="totalAllowed" Type="int" Nullable="false" />
+    <Property Name="AdminNotes" Type="varchar(max)" />
+    <Property Name="CreatedOn" Type="datetime" />
+    <Property Name="ModifiedOn" Type="datetime" />
+    <Property Name="CreatedBy" Type="uniqueidentifier" />
   </EntityType>
   <EntityType Name="Landlords">
     <Key>
@@ -310,7 +335,9 @@
     <Parameter Name="vPropertyId" Type="varchar(max)" Mode="In" />
   </Function>
   <EntityContainer Name="NOOCHModelStoreContainer">
+    <EntitySet Name="AuthenticationTokens" EntityType="Self.AuthenticationTokens" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="GeoLocations" EntityType="Self.GeoLocations" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="InviteCodes" EntityType="Self.InviteCodes" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Landlords" EntityType="Self.Landlords" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="MemberNotifications" EntityType="Self.MemberNotifications" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="MemberPrivacySettings" EntityType="Self.MemberPrivacySettings" Schema="dbo" store:Type="Tables" />

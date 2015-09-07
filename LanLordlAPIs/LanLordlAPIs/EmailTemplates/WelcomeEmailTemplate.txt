@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta name="viewport" content="width=device-width, initial scale=1.0"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Email Address Confirmed</title>
+	<style> 
+		@import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,600);
+		p {margin: 1em 0}
+		img {outline:none; text-decoration:none; -ms-interpolation-mode: bicubic;}
+		a img {border:0;}
+		table {font-family: "Open Sans","Roboto",Helvetica,sans-serif;}
+		table td {border-collapse: collapse;}
+		@media only screen and (min-device-width: 440px) {
+			table[class="shell"] {width:380px !important;}
+			table[class="innerShell"] {width:380px !important;}
+			table[class="greyShell"] {width:372px !important;}
+		}
+	</style>
+</head>
+
+<body style="margin:0px; padding:0px; width:100%; line-height:140%;">
+
+<table class="shell" border="0" cellpadding="0" cellspacing="0" style="width:350px; overflow:auto; display:block; margin:0px auto; padding:0px; font-family: 'Open Sans','Roboto',Helvetica,sans-serif; font-size:16px; color:#313233;">
+	<tbody>
+	<tr>
+	<td align="center">
+		<!--Header-->
+		<table class="innerShell" border="0" cellpadding="0" cellspacing="0" style="width:350px;">
+			<tbody>
+				<tr>
+					<td align="center" width="100%" valign="top" style="height: 44px;">
+						<span style="display:block; font-size:8px; color:#939393; text-align:center; margin:0 auto; width:100%;>Welcome to Nooch!</span>
+						<a style="text-decoration:none;" href="https://www.nooch.com"><img src="https://www.nooch.com/email/autoemails/logoheader.png" style="width:83px; margin:10px auto 0; display:block;"/></a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<!--End Header-->
+
+		<!--Grey Box-->
+		<table class="greyShell" align="center" border="0" cellpadding="0" cellspacing="0" bgcolor="#f8f8f8" style="width:343px;overflow:hidden;table-layout:fixed;margin:5px auto;background-color:#f8f8f8;-webkit-border-radius:8px;border-radius:8px;padding:10px 0px;">
+			<tbody>
+
+				<!-- Intro: Hi Firstname + Rainbow Bar -->
+				<tr>
+					<td align="left">
+						<div style="width:95%; margin: 4px auto 0px;">
+							Hi <strong>$FirstName$ $LastName$</strong>,<br/>
+							<img src="https://www.nooch.com/email/autoemails/minirainbowbar.png" style="margin-top:6px; margin-bottom:10px; height:3px; max-height:3px; width:80%;"/><br/>
+						</div>
+					</td>
+				</tr>
+				<!-- Colored Background Box -->
+				<tr>
+					<td width="100%" align="center">
+						<table align="center" border="0" cellpadding="0" cellspacing="0" bgcolor="#3fabe1" style="width:92%;border-radius:8px;overflow:hidden;table-layout:fixed;letter-spacing:.3px; box-shadow:0px 7px 12px -6px #0C394F;text-shadow:0px 1px #1b7bab;">
+							<tbody>
+								<tr>
+									<td align="center">
+										<table align="center" border="0" cellpadding="0" cellspacing="0" style="width:95%; color:white;">
+											<tbody>
+												<tr>
+													<td height="30" align="center"> </td>
+												</tr>
+												<tr>
+													<td align="center" height="35" style="color:white;font-size:30px;font-weight:600;line-height:1.3">
+														<div style="overflow:hidden;">Welcome Aboard!</div>
+													</td>
+												</tr>
+												<tr>
+													<td height="30" align="center"> </td>
+												</tr>
+												<tr>
+													<td align="center" style="color:white;font-size:15px;line-height:1.4;letter-spacing:0;">
+														<div style="overflow:hidden;width:95%;font-size:17px;"><strong>Your email address has been confirmed successfully. Nooch forth!</strong></div>
+													</td>
+												</tr>
+												<tr>
+													<td height="30" align="center"> </td>
+												</tr>
+											</tbody>
+										</table>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td height="20" align="center"> </td>
+				</tr>
+				<tr>
+					<td align="center" width="100%">
+						<table align="center" border="0" cellpadding="0" cellspacing="0" style="width:94%;border-radius:8px;overflow:hidden;table-layout:fixed;letter-spacing:.2px;">
+							<tbody>
+								</tr>
+									<td align="center" width="100%">
+										<div style="max-width:500px; margin:15px auto; text-align: center;">
+											<p style="font-size:20px;font-weight:600;margin-bottom:12px;color:#222;">Send Money To Any Phone Number</p>
+											<a href="nooch://"><img src="https://www.nooch.com/email/marketing/selectRecip_phoneEntry.gif" width="88%" style="max-width:280px" alt="Enter Any Phone Numbe GIFr"></a>
+											<p style="margin-bottom:8px;">Now you can send a payment or make a request to any cell phone number, even if the person doesn't have Nooch. Or send to any contact in your address book, whether you have their email address on just their phone number.</p>
+											<p><a style="color:#3fabe1;font-weight:600;" href="nooch://">Open Nooch Now</a></p>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</td>
+				</tr>
+				<!-- Questions or Comments? -->
+				<tr>
+					<td height="20" align="center"> </td>
+				</tr>
+				<tr>
+					<td width="100%" align="center">
+						<div style="width:95%; margin: 20px auto 20px;">
+							<strong>Questions or Comments?</strong><br/>
+							<img src="https://www.nooch.com/email/autoemails/minirainbowbar.png" style="margin-top:10px; margin-bottom:10px; height:3px; max-height:3px; width:80%;"/>
+							<div style="font-size:15px;">
+								<p style="margin-top:0px;">Contact us any time at <a style="text-decoration:none; color:#3fabe1;" href="mailto:support@nooch.com">support@nooch.com</a> and we will be happy to help you.</p>
+								<p>Or check out some <a style="text-decoration:none; color:#3fabe1;" href="https://www.nooch.com/faq">FAQs</a> or the <a style="text-decoration:none; color:#3fabe1;" href="http://support.nooch.com">Nooch Support Center</a>.</p>
+							</div>
+							<img src="https://www.nooch.com/email/autoemails/minirainbowbar.png" style="margin-top:5px; margin-bottom:10px; height:3px; max-height:3px; width:80%;"/>
+							<div style="font-size:17px;">
+								<span style="display:block;margin-bottom:8px;">Happy Nooching!</span>
+								<span style="display:block;">-<strong> Team Nooch</strong></span>
+							</div>
+						</div>
+					</td>
+				</tr>
+				<!-- Social -->
+				<tr>
+					<td align="center">
+						<table style="width:100%;text-align:center;">
+							<tbody>
+								<tr>
+									<td align="center">
+										<a href="https://www.facebook.com/NoochMoney" style="border:none;text-decoration:none; color:#3fabe1;">
+											<img src="https://www.nooch.com/email/autoemails/facebook-circle.png" style="width:40px;" alt="Like Facebook"/>
+										</a>
+									</td>
+									<td align="center">
+										<a href="https://www.twitter.com/NoochMoney" style="border:none;text-decoration:none; color:#3fabe1;">
+											<img src="https://www.nooch.com/email/autoemails/twitter-circle.png" style="width:40px;" alt="Follow Nooch"/>
+										</a>
+									</td>
+									<td align="center">
+										<a href="http://instagram.com/noochmoney/" style="border:none;text-decoration:none; color:#3fabe1;">
+											<img src="https://www.nooch.com/email/autoemails/instagram-circle.png" style="width:40px;" alt="Nooch on Instagram"/>
+										</a>
+									</td>
+									<td align="center">
+										<a href="https://plus.google.com/103970776778749256696/posts" style="border:none;text-decoration:none; color:#3fabe1;">
+											<img src="https://www.nooch.com/email/autoemails/gplus-circle.png" style="width:40px;" alt="Nooch on G+"/>
+										</a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</td>
+	</tr>
+	<tr>
+		<td height="20" align="center"> </td>
+	</tr>
+	</tbody>
+</table>
+</body>
+</html>

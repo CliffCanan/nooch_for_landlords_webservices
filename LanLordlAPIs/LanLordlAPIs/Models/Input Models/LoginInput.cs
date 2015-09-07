@@ -30,6 +30,14 @@ namespace LanLordlAPIs.Models.Input_Models
         public UserProfileInfoInputClass    UserInfo { get; set; }
     }
 
+
+
+    public class RegisterLandlordInput
+    {
+        public string FirstName { get; set; }public string LastName { get; set; }
+        public string eMail  { get; set; }public string Password { get; set; }
+
+    }
     
     public class SetPropertyStatusClass
     {

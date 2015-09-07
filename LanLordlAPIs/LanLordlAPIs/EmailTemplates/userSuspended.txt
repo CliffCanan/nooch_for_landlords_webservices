@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta name="viewport" content="width=device-width, initial scale=1.0"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Nooch Account Suspended</title>
+	<style> 
+		@import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,600);
+		p {margin: 1em 0}
+		img {outline:none; text-decoration:none; -ms-interpolation-mode: bicubic;}
+		a img {border:0;}
+		table {font-family: "Open Sans","Roboto",Helvetica,sans-serif;}
+		table td {border-collapse: collapse;}
+		@media only screen and (min-device-width: 440px) {
+			table[class="shell"] {width:380px !important;}
+			table[class="innerShell"] {width:380px !important;}
+			table[class="greyShell"] {width:372px !important;}
+		}
+	</style>
+</head>
+
+<body style="margin:0px; padding:0px; width:100%; line-height:140%;">
+
+<table class="shell" border="0" cellpadding="0" cellspacing="0" style="width:360px; overflow:auto; display:block; margin:0px auto; padding:0px; font-family: 'Open Sans','Roboto',Helvetica,sans-serif; font-size:15px; color:#313233;">
+	<tbody>
+	<tr>
+	<td align="center">
+		<!--Header-->
+		<table class="innerShell" border="0" cellpadding="0" cellspacing="0" style="width:330px;">
+			<tbody>
+				<tr>
+					<td align="center" width="100%" valign="top" style="height: 44px;">
+						<a style="text-decoration:none;" href="https://www.nooch.com"><img src="https://www.nooch.com/email/autoemails/logoheader.png" style="width:83px; margin:10px auto 0; display:block;" /></a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<!--End Header-->
+
+		<!--Grey Box-->
+		<table class="greyShell" align="center" border="0" cellpadding="0" cellspacing="0" bgcolor="#f8f8f8" style="width:344px;;overflow:hidden;table-layout:fixed;margin:5px auto;background-color:#f8f8f8;-webkit-border-radius:8px;border-radius:8px;padding:10px 0px;">
+			<tbody>
+
+				<!-- Intro: Hi Firstname + Rainbow Bar -->
+				<tr>
+					<td align="left">
+						<div style="width:95%; margin: 4px auto 0px;">
+							Hi <strong>$FirstName$</strong>,<br/>
+							<img src="https://www.nooch.com/email/autoemails/minirainbowbar.png" style="margin-top:6px; margin-bottom:10px; height:3px; max-height:3px; width:80%;"/><br/>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td width="100%" align="center">
+						<!-- Colored Background Box -->
+						<table align="center" border="0" cellpadding="0" cellspacing="0" bgcolor="#e02d33" style="color:white; text-shadow:0px 1px #be1c21;width:70%;-webkit-border-radius:8px;border-radius:8px;overflow:hidden;table-layout:fixed;letter-spacing:.2px;box-shadow:0px 5px 7px -6px #510c0e;text-align:center;">
+							<tbody>
+								<tr>
+									<td height="10" align="center"> </td>
+								</tr>
+								<tr>													
+									<td align="center" height="30" style="color:#e02d33;font-size:22px;">
+										<div style="width:30px;height:30px;background:white;-webkit-border-radius:15px;border-radius:15px;border:1px solid white;line-height:28px;text-align:center;">!</div>
+									</td>
+								</tr>
+								<tr>
+									<td height="10" align="center"> </td>
+								</tr>
+								<tr>
+									<td align="center" height="25" style="color:white;font-size:20px;font-weight:600;line-height:1.3">
+										<div style="overflow:hidden;">Account Suspended</div>
+									</td>
+								</tr>
+								<tr>
+									<td height="10" align="center"> </td>
+								</tr>
+							</tbody>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td height="15" align="center"> </td>
+				</tr>
+				<tr>
+					<td align="center">
+						<table style="width:94%;text-align:center;">
+							<tbody>
+							<tr>
+								<td align="left" style="line-height:1.4;letter-spacing:0;">
+									<div style="overflow:hidden;width:98%;">Looks like your Nooch account has been temporarily suspended. This can happen for any of several reasons, but most commonly because:
+										<ul style="font-size:14.5px;">
+											<li>you disputed a transfer sent by your account</li>
+											<li>someone else disputed a transfer they sent to you</li>
+											<li>your password or PIN was entered too many times incorrectly</li>
+										</ul>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" style="line-height:1.4;letter-spacing:0;">
+									<div style="overflow:hidden;width:98%;">Someone from out support team may reach out to you to ask for additional information.  While we investigate, your account will have limited functionality to make sure there are no unauthorized transactions on your account.</div>
+								</td>
+							</tr>
+							<tr>
+								<td height="10" align="center"> </td>
+							</tr>
+							<tr>
+								<td align="left" style="line-height:1.4;letter-spacing:0;">
+									<div style="overflow:hidden;width:98%;">Please understand that Nooch's system does this to protect all accounts from fraud, mistakes, or any other mischief.  We want Nooch to be the safest way to send money to anyone, and that means taking a cautious approach when it comes to security.</div>
+								</td>
+							</tr>
+							<tr>
+								<td height="10" align="center"> </td>
+							</tr>
+							<tr>
+								<td align="left" style="line-height:1.4;letter-spacing:0;">
+									<div style="overflow:hidden;width:98%;">If you feel that your account was suspended in error, or would like any additional information, please <a style="text-decoration:none; color:#3fabe1;" href="mailto:suspendedaccount@nooch.com">contact us</a> any time.</div>
+								</td>
+							</tr>
+							<tr>
+								<td height="10" align="center"> </td>
+							</tr>
+							<tr>
+								<td align="left" style="line-height:1.4;letter-spacing:0;">
+									<div style="font-size:15px;">
+										<span style="display:block;">-<strong> Team Nooch</strong></span>
+									</div>
+								</td>
+							</tr>
+							</tbody>
+						</table>
+					</td>
+				</tr>
+
+				<!-- Questions or Comments? -->
+				<tr>
+					<td height="10" align="center"> </td>
+				</tr>
+				<tr>
+					<td width="100%" align="center">
+						<div style="width:95%; margin: 20px auto 20px;">
+							<span style="font-size:16px;"><strong>Questions or Comments?</strong></span>
+							<br/>
+							<img src="https://www.nooch.com/email/autoemails/minirainbowbar.png" style="margin-top:10px; margin-bottom:10px; height:3px; max-height:3px; width:80%;"/>
+							<div style="font-size:15px;">
+								<p style="margin-top:0px;">Contact us any time at <a style="text-decoration:none; color:#3fabe1;" href="mailto:support@nooch.com">support@nooch.com</a> and we will be happy to help you.</p>
+								<p>Or check out some <a style="text-decoration:none; color:#3fabe1;" href="https://www.nooch.com/faq">FAQs</a> or the <a style="text-decoration:none; color:#3fabe1;" href="http://support.nooch.com">Nooch Support Center</a>.</p>
+							</div>
+							<img src="https://www.nooch.com/email/autoemails/minirainbowbar.png" style="margin-top:5px; margin-bottom:10px; height:3px; max-height:3px; width:80%;"/>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</td>
+	</tr>
+	<tr>
+		<td height="20" align="center"> </td>
+	</tr>
+	</tbody>
+</table>
+</body>
+</html>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Services.Protocols;
 using LanLordlAPIs.Classes.Utility;
 using LanLordlAPIs.Models.db_Model;
 using LanLordlAPIs.Models.Input_Models;
@@ -300,7 +301,7 @@ namespace LanLordlAPIs.Controllers
                                 {
                                     firstName = nameAftetSplit[0];
 
-                                    for (int i = 1; i < nameAftetSplit.Length ; i++)
+                                    for (int i = 1; i < nameAftetSplit.Length; i++)
                                     {
                                         lastName += nameAftetSplit[i] + " ";
                                     }
@@ -409,13 +410,13 @@ namespace LanLordlAPIs.Controllers
                                 string userEmailNew =
                                     CommonHelper.GetEncryptedData(User.UserInfo.UserEmail.ToLower().Trim());
                                 // checking if given email is already registered or not
-                                                var lanlorddetailsbyEmail =
-                                     (from c in obj.Landlords
+                                var lanlorddetailsbyEmail =
+                     (from c in obj.Landlords
 
-                                      where c.eMail == userEmailNew && c.LandlordId != landlordguidId
-                                      select
-                                          c
-                                  ).FirstOrDefault();
+                      where c.eMail == userEmailNew && c.LandlordId != landlordguidId
+                      select
+                          c
+                  ).FirstOrDefault();
 
                                 if (lanlorddetailsbyEmail != null)
                                 {
@@ -439,9 +440,9 @@ namespace LanLordlAPIs.Controllers
                                     if (lanlorddetails.MobileNumber.Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", "") != User.UserInfo.MobileNumber.Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", ""))
                                     {
                                         lanlorddetails.MobileNumber = User.UserInfo.MobileNumber.Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", "");
-                                        
+
                                     }
-                                    
+
                                 }
 
 
@@ -468,12 +469,12 @@ namespace LanLordlAPIs.Controllers
                             if (User.UserInfo.InfoType == "Social")
                             {
                                 #region Editing Personal Info
-                               
+
 
                                 // have everything now.....going to store in db
                                 lanlorddetails.DateModified = DateTime.Now;
 
-                                
+
 
                                 if (!String.IsNullOrEmpty(User.UserInfo.TwitterHandle))
                                 {
@@ -523,5 +524,309 @@ namespace LanLordlAPIs.Controllers
 
             }
         }
+
+
+
+        [HttpPost]
+        [ActionName("RegisterLandlord")]
+        public RegisterLandlordResult RegisterLandlord(RegisterLandlordInput llDetails)
+        {
+            RegisterLandlordResult result = new RegisterLandlordResult();
+
+            try
+            {
+                // checking if lanlord exists for given account
+                CheckAndRegisterLandlordByEmailResult ll = CommonHelper.checkAndRegisterLandlordByemailId(llDetails.eMail);
+
+                if (ll.IsSuccess && ll.ErrorMessage == "No user found.")
+                {
+                    // checking if member exists with given email id
+                    CheckAndRegisterMemberByEmailResult mem =
+                        CommonHelper.CheckIfMemberExistsWithGivenEmailId(llDetails.eMail);
+
+                    if (mem.IsSuccess && mem.ErrorMessage == "No user found.")
+                    {
+                        #region New Member details and landlord details being saved in db here.
+                        // need to make new entry in member table first
+                        var userNameLowerCase = llDetails.eMail.Trim().ToLower();
+                        string noochRandomId = CommonHelper.GetRandomNoochId();
+                        if (noochRandomId == null)
+                        {
+                            result.IsSuccess = false;
+                            result.ErrorMessage = "Some duplicate values are being generated at server. Retry later! ";
+                            return result;
+
+                        }
+
+                        #region region
+                        using (NOOCHEntities obj = new NOOCHEntities())
+                        {
+                            #region Member object
+                            string randomPin = CommonHelper.GetRandomPinNumber();
+                            var member = new Member
+                            {
+                                Nooch_ID = noochRandomId,
+                                MemberId = Guid.NewGuid(),
+                                UserName = CommonHelper.GetEncryptedData(llDetails.eMail),
+                                FirstName = CommonHelper.GetEncryptedData(llDetails.FirstName),
+                                LastName = CommonHelper.GetEncryptedData(llDetails.LastName),
+                                SecondaryEmail = llDetails.eMail,
+                                RecoveryEmail = llDetails.eMail,
+                                Password = CommonHelper.GetEncryptedData(llDetails.Password),
+                                PinNumber = CommonHelper.GetEncryptedData(randomPin),
+                                Status = Constants.STATUS_REGISTERED,
+
+                                IsDeleted = false,
+                                DateCreated = DateTime.Now,
+                                UserNameLowerCase = CommonHelper.GetEncryptedData(userNameLowerCase),
+                                FacebookAccountLogin = null,
+                                InviteCodeIdUsed = null,
+                                Type = "Personal",
+
+                                Address = CommonHelper.GetEncryptedData(" "),   // some blanks as default
+                                State = CommonHelper.GetEncryptedData(" "),
+                                City = CommonHelper.GetEncryptedData(" "),
+                                Zipcode = CommonHelper.GetEncryptedData(" "),
+                                ContactNumber = CommonHelper.GetEncryptedData(" ")
+
+                            };
+                            #endregion
+
+                            obj.Members.Add(member);
+                            try
+                            {
+
+                                obj.SaveChanges();
+
+                                CommonHelper.setReferralCode(member.MemberId);
+                                var tokenId = Guid.NewGuid();
+                                #region Verification email
+
+                                //send registration email to member with autogenerated token 
+                                var link = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
+                                    "/Registration/Activation.aspx?tokenId=" + tokenId);
+                                var fromAddress = CommonHelper.GetValueFromConfig("welcomeMail");
+                                // Add any tokens you want to find/replace within your template file
+                                var tokens = new Dictionary<string, string>
+                            {
+                                {
+                                    Constants.PLACEHOLDER_FIRST_NAME,
+                                    CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(member.FirstName))
+                                },
+                                {
+                                    Constants.PLACEHOLDER_LAST_NAME,
+                                    CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(member.LastName))
+                                },
+                                {Constants.PLACEHOLDER_OTHER_LINK, link}
+                            };
+                                try
+                                {
+                                    CommonHelper.SendEmail(Constants.TEMPLATE_REGISTRATION,
+                                        fromAddress, llDetails.eMail.Trim(),
+                                        "Confirm your email on Nooch",
+                                        tokens, null);
+
+                                    Logger.Info("MemberDataAccess - Registration mail sent to [" + llDetails.eMail.Trim() +
+                                                           "].");
+                                }
+                                catch (Exception)
+                                {
+                                    // to revert the member record when mail is not sent successfully.
+                                    Logger.Error("MemberDataAccess - Member activation mail NOT sent to [" +
+                                                           llDetails.eMail.Trim() + "].");
+                                }
+
+                                #endregion
+
+
+                                #region PinNumber email
+
+                                // emailing temp pin number
+                                var tokens2 = new Dictionary<string, string>
+                            {
+                                {
+                                    Constants.PLACEHOLDER_FIRST_NAME,
+                                    CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(member.FirstName))
+                                },
+                                {Constants.PLACEHOLDER_PINNUMBER, CommonHelper.GetDecryptedData(randomPin)}
+                            };
+                                try
+                                {
+                                    //CommonHelper.SendEmail("pinSetForNewUser", MailPriority.High,
+                                    //    fromAddress, NewUserEmail, null,
+                                    //    "Your temporary Nooch PIN", null,
+                                    //    tokens2, null, null, null);
+
+
+                                    CommonHelper.SendEmail("pinSetForNewUser",
+                                        fromAddress, llDetails.eMail.Trim(),
+                                        "Your temporary Nooch PIN",
+                                        tokens2, null);
+
+
+                                }
+                                catch (Exception)
+                                {
+                                    Logger.Error("MemberDataAccess - Member temp pin mail not sent to [" +
+                                                           userNameLowerCase + "].");
+                                }
+
+                                #endregion
+
+
+                                #region AuthenticationToken
+
+                                var requestId = Guid.Empty;
+                                // save the token details into authentication tokens table  
+                                var token = new AuthenticationToken
+                                {
+                                    TokenId = tokenId,
+                                    MemberId = member.MemberId,
+                                    IsActivated = false,
+                                    DateGenerated = DateTime.Now,
+                                    FriendRequestId = requestId
+                                };
+                                obj.AuthenticationTokens.Add(token);
+                                obj.SaveChanges();
+
+
+                                #endregion
+
+
+                                #region Notification Settings
+
+                                var memberNotification = new MemberNotification
+                                {
+                                    NotificationId = Guid.NewGuid(),
+
+
+                                    MemberId = member.MemberId,
+                                    FriendRequest = true,
+                                    InviteRequestAccept = true,
+                                    TransferSent = true,
+                                    TransferReceived = true,
+                                    TransferAttemptFailure = true,
+                                    NoochToBank = true,
+                                    BankToNooch = true,
+
+                                    EmailFriendRequest = true,
+                                    EmailInviteRequestAccept = true,
+                                    EmailTransferSent = true,
+                                    EmailTransferReceived = true,
+                                    EmailTransferAttemptFailure = true,
+                                    TransferUnclaimed = true,
+                                    BankToNoochRequested = true,
+                                    BankToNoochCompleted = true,
+                                    NoochToBankRequested = true,
+                                    NoochToBankCompleted = true,
+                                    InviteReminder = true,
+                                    LowBalance = true,
+                                    ValidationRemainder = true,
+                                    ProductUpdates = true,
+                                    NewAndUpdate = true,
+                                    DateCreated = DateTime.Now
+                                };
+
+                                obj.MemberNotifications.Add(memberNotification);
+
+                                #endregion
+
+                                #region Privacy Settings
+
+
+                                var memberPrivacySettings = new MemberPrivacySetting
+                                {
+                                    MemberId = member.MemberId,
+
+                                    AllowSharing = true,
+                                    ShowInSearch = true,
+                                    DateCreated = DateTime.Now
+                                };
+                                obj.MemberPrivacySettings.Add(memberPrivacySettings);
+
+                                #endregion
+
+
+                                // finally making an entry in 
+                                Landlord l = CommonHelper.AddNewLandlordEntryInDb(llDetails.FirstName,
+                                    llDetails.LastName, llDetails.eMail, llDetails.Password, false, false,
+                                    member.MemberId);
+
+                                if (l != null)
+                                {
+                                    result.IsSuccess = true;
+                                    result.ErrorMessage = "OK";
+                                    return result;
+                                }
+                                else
+                                {
+                                    // exception while creating account
+                                    result.IsSuccess = false;
+                                    result.ErrorMessage = "Server error. Retry later! ";
+                                    return result;
+                                }
+
+                            }
+                            catch (Exception)
+                            {
+
+                                result.IsSuccess = false;
+                                result.ErrorMessage = "Some duplicate values are being generated at server. Retry later! ";
+                                return result;
+                            }
+
+
+                        }
+                        #endregion 
+                        #endregion
+                        
+
+                    }
+                    else
+                    {
+                        // mem already exists
+                        #region new landlord but existing member
+                        // finally making an entry in 
+                        Landlord l = CommonHelper.AddNewLandlordEntryInDb(llDetails.FirstName,
+                            llDetails.LastName, llDetails.eMail, llDetails.Password, true, true,
+                            mem.MemberDetails.MemberId);
+
+                        if (l != null)
+                        {
+                            result.IsSuccess = true;
+                            result.ErrorMessage = "OK";
+                            
+                            return result;
+                        }
+                        else
+                        {
+                            // exception while creating account
+                            result.IsSuccess = false;
+                            result.ErrorMessage = "Server error. Retry later! ";
+                            return result;
+                        }
+                        #endregion
+
+                    }
+
+
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.ErrorMessage = ll.ErrorMessage;
+                    return result;
+                }
+            }
+            catch (Exception ec)
+            {
+                Logger.Error("RegisterLandlord error while making account for " + llDetails.eMail);
+                result.IsSuccess = false;
+                result.ErrorMessage = "Server Error.";
+                return result;
+
+            }
+        }
+
     }
 }

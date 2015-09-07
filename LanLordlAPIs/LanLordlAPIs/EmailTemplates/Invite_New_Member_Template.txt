@@ -1,0 +1,29 @@
+<html>
+	<body>
+	  Hi,<br/>
+
+	  <img align="center" src="$NoochLogo$" /><br/><br/>
+	 
+          I'd like to send you money through this
+	  awesome app, Nooch. Sign up now(it's free) and 
+          start receiving money today. <br/>
+
+          Nooch is a revolutionary P2P money
+	  transfer system that will be the simplest,
+          quickest and easiest way to send friends
+          money so you'll never have to carry cash
+          again. <br/><br/>
+ 	 <img align="center" src="$AppstoreLogo$" /><br/><br/>
+	
+
+          Need some cash, Get Nooched! <br/><br/>
+
+	  If you are already a nooch member, please <a href="$ExistingUser$">Login</a><br/><br/>
+				
+			  else<br/>
+
+	  please <a href="$NewUser$">Sign up</a><br/><br/> to become a nooch member.
+
+          <a href="$NoochHomePage$">www.nooch.com</a>
+	</body>
+</html>

@@ -5,6 +5,18 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="NOOCHModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AuthenticationTokens">
+          <Key>
+            <PropertyRef Name="TokenId" />
+          </Key>
+          <Property Name="TokenId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="MemberId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="IsActivated" Type="bit" Nullable="false" />
+          <Property Name="DateGenerated" Type="datetime" />
+          <Property Name="DateModified" Type="datetime" />
+          <Property Name="FriendRequestId" Type="uniqueidentifier" />
+          <Property Name="VerifiedOn" Type="datetime" />
+        </EntityType>
         <EntityType Name="GeoLocations">
           <Key>
             <PropertyRef Name="LocationId" />
@@ -20,6 +32,19 @@
           <Property Name="Country" Type="nvarchar" MaxLength="100" />
           <Property Name="ZipCode" Type="nvarchar" MaxLength="10" />
           <Property Name="DateCreated" Type="datetime" />
+        </EntityType>
+        <EntityType Name="InviteCodes">
+          <Key>
+            <PropertyRef Name="InviteCodeId" />
+          </Key>
+          <Property Name="InviteCodeId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="code" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="count" Type="int" Nullable="false" />
+          <Property Name="totalAllowed" Type="int" Nullable="false" />
+          <Property Name="AdminNotes" Type="varchar(max)" />
+          <Property Name="CreatedOn" Type="datetime" />
+          <Property Name="ModifiedOn" Type="datetime" />
+          <Property Name="CreatedBy" Type="uniqueidentifier" />
         </EntityType>
         <EntityType Name="Landlords">
           <Key>
@@ -315,7 +340,9 @@
           <Parameter Name="vPropertyId" Type="varchar(max)" Mode="In" />
         </Function>
         <EntityContainer Name="NOOCHModelStoreContainer">
+          <EntitySet Name="AuthenticationTokens" EntityType="Self.AuthenticationTokens" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GeoLocations" EntityType="Self.GeoLocations" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="InviteCodes" EntityType="Self.InviteCodes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Landlords" EntityType="Self.Landlords" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MemberNotifications" EntityType="Self.MemberNotifications" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MemberPrivacySettings" EntityType="Self.MemberPrivacySettings" Schema="dbo" store:Type="Tables" />
@@ -639,8 +666,10 @@
           </FunctionImport>
           <EntitySet Name="TenantsIdDocuments" EntityType="NOOCHModel.TenantsIdDocument" />
           <FunctionImport Name="GetTenantsInGivenPropertyId" ReturnType="Collection(NOOCHModel.GetTenantsInGivenPropertyId_Result)">
-            <Parameter Name="vPropertyId" Mode="In" Type="String" />
+          <Parameter Name="vPropertyId" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="InviteCodes" EntityType="NOOCHModel.InviteCode" />
+          <EntitySet Name="AuthenticationTokens" EntityType="NOOCHModel.AuthenticationToken" />
         </EntityContainer>
         <EntityType Name="UnitsOccupiedByTenant">
           <Key>
@@ -685,6 +714,31 @@
           <Property Type="Boolean" Name="IsIdDocumentVerified" Nullable="true" />
           <Property Type="Guid" Name="BankAccountId" Nullable="true" />
         </ComplexType>
+        <EntityType Name="InviteCode">
+          <Key>
+            <PropertyRef Name="InviteCodeId" />
+          </Key>
+          <Property Name="InviteCodeId" Type="Guid" Nullable="false" />
+          <Property Name="code" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="count" Type="Int32" Nullable="false" />
+          <Property Name="totalAllowed" Type="Int32" Nullable="false" />
+          <Property Name="AdminNotes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedOn" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedOn" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="Guid" />
+        </EntityType>
+        <EntityType Name="AuthenticationToken">
+          <Key>
+            <PropertyRef Name="TokenId" />
+          </Key>
+          <Property Name="TokenId" Type="Guid" Nullable="false" />
+          <Property Name="MemberId" Type="Guid" Nullable="false" />
+          <Property Name="IsActivated" Type="Boolean" Nullable="false" />
+          <Property Name="DateGenerated" Type="DateTime" Precision="3" />
+          <Property Name="DateModified" Type="DateTime" Precision="3" />
+          <Property Name="FriendRequestId" Type="Guid" />
+          <Property Name="VerifiedOn" Type="DateTime" Precision="3" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -999,6 +1053,33 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="InviteCodes">
+            <EntityTypeMapping TypeName="NOOCHModel.InviteCode">
+              <MappingFragment StoreEntitySet="InviteCodes">
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="AdminNotes" ColumnName="AdminNotes" />
+                <ScalarProperty Name="totalAllowed" ColumnName="totalAllowed" />
+                <ScalarProperty Name="count" ColumnName="count" />
+                <ScalarProperty Name="code" ColumnName="code" />
+                <ScalarProperty Name="InviteCodeId" ColumnName="InviteCodeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AuthenticationTokens">
+            <EntityTypeMapping TypeName="NOOCHModel.AuthenticationToken">
+              <MappingFragment StoreEntitySet="AuthenticationTokens">
+                <ScalarProperty Name="VerifiedOn" ColumnName="VerifiedOn" />
+                <ScalarProperty Name="FriendRequestId" ColumnName="FriendRequestId" />
+                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+                <ScalarProperty Name="DateGenerated" ColumnName="DateGenerated" />
+                <ScalarProperty Name="IsActivated" ColumnName="IsActivated" />
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="TokenId" ColumnName="TokenId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

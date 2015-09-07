@@ -1,0 +1,53 @@
+<html>
+<body style="width: 600px; overflow: auto; display: block; margin: 0px; padding: 0px;">
+            <!--Header-->
+            <div style="width: 100%; height: 90px; display: block;">
+                <a href="http://www.nooch.com"><img src="http://www.nooch.com/email/autoemails/logoheader.png" alt="Nooch" style="position: absolute; margin-top: 10px; margin-left: 30px; display: block;" /></a>
+            </div>
+            <!--End Header-->
+            <!--Content-->
+            <div style="width: 100%; display: block; overflow: auto; padding-top: 0px; padding-bottom: 20px;">
+                <!--Grey Box-->
+                <div style="width: 560px; margin-left: 20px; margin-right: 20px; background-color: #f1f0f0; border-radius: 10px;
+                 font-family: Helvetica, Arial, sans-serif; font-size: 24px; color: #524b48; padding-top: 5px; padding-bottom: 20px;">
+                    <div style="margin: 20px;">        
+                        <!--Subheading 1-->
+                        Hi <strong>$FirstName$</strong>,<br>
+                        <img src="http://www.nooch.com/email/autoemails/minirainbowbar.png" alt="bar" style="position: absolute; margin-top: 5px;" /><br>
+                        <span style="font-size: 17px;">Your disputed transaction has been resolved!<br><br>
+                                                       <blockquote><strong>Dispute Tracking ID:  $TransactionId$<!--TRANSACTION ID--><br>
+                                                       Transfer Amount:  $Transfer_Amount$<!--TRANSACTION AMOUNT--><br>
+                                                       Transfer Date:  $Date$<!--TRANSACTION DATE--><br>
+                                                       Recipient: $RecipientsFirstName$<!--RECIPIENT NAME--><br>
+													   Notes: $Notes$<!--NOTES--></strong></blockquote><br>
+                                                       If you feel that this has not been resolved properly please contact us at <a style="color: #3fabe1; text-decoration: none;" href="mailto:dispute@nooch.com">dispute@nooch.com</a> and provide us with your dispute tracking ID number listed above along with your issue.</span><br><br>                        
+                        <!--Subheading 2-->
+                        <br>Questions and Comments<br>
+                        <img src="http://www.nooch.com/email/autoemails/minirainbowbar.png" alt="bar" style="position: absolute; margin-top: 5px;" /><br>
+                        <span style="font-size: 17px;">If you have any questions about Nooch do not hesitate to contact us
+                                                       at <a href="mailto:support@nooch.com" style="text-decoration: none; color: #3fabe1;">support@Nooch.com</a> and we will be happy to help you however we can.
+                                                        You can also check out our <a href="www.support.nooch.com" style="text-decoration: none; color: #3fabe1;">Support Center</a>. Our goal is for you to feel safe
+                                                       making transactions using Nooch and we want to make sure that
+                                                       you are as informed as possible.</span><br><br>
+
+                        <!--Subheading 3-->
+                        <br>Happy Nooching!<br>
+                        <img src="http://www.nooch.com/email/autoemails/minirainbowbar.png" alt="bar" style="position: absolute; margin-top: 5px;" /><br>
+                        <span style="font-size: 17px;">Sincerely,<br><strong>Team Nooch</strong></span>
+                    </div>
+
+					<!--Social-->
+            
+						<a href="https://www.facebook.com/NoochMoney" style="margin-left: 65px; border: none; text-decoration: none;">
+							<img src="http://www.nooch.com/email/autoemails/facebook.png"/></a>
+						<a href="https://www.twitter.com/NoochMoney" style="margin-left: 70px; border: none; text-decoration: none;">
+							<img src="http://www.nooch.com/email/autoemails/twitter.png"/></a>
+						<a href="http://instagram.com/noochmoney/" style="margin-left: 80px; border: none; text-decoration: none;">
+							<img src="http://www.nooch.com/email/autoemails/instagram.png"/></a>
+						<a href="https://plus.google.com/103970776778749256696/posts" style="margin-left: 75px; border: none; text-decoration: none;">
+							<img src="http://www.nooch.com/email/autoemails/gplus.png"/></a>
+                </div>
+            </div>
+            <!--End Content-->
+</body>
+</html>

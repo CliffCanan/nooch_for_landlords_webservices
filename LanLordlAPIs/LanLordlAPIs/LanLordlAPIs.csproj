@@ -188,16 +188,27 @@
     <Compile Include="Classes\Crypto\CryptographyBase.cs" />
     <Compile Include="Classes\Utility\CommonHelper.cs" />
     <Compile Include="Classes\Utility\Logger.cs" />
+    <Compile Include="Constants.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Constants.resx</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PropertiesController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\db Model\AuthenticationToken.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\db Model\GeoLocation.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\db Model\GetTenantsInGivenPropertyId_Result.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\db Model\InviteCode.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\db Model\Landlord.cs">
@@ -243,12 +254,63 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Input Models\LoginInput.cs" />
+    <Compile Include="Models\Output Models\CheckAndRegisterLandlordByEmailResult.cs" />
     <Compile Include="Models\Output Models\LoginResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="EmailTemplates\AdminPasswordMailTemplate.txt" />
+    <Content Include="EmailTemplates\bankEmailVerification.txt" />
+    <Content Include="EmailTemplates\bankEmailVerificationNoLink.txt" />
+    <Content Include="EmailTemplates\disputeRaised.txt" />
+    <Content Include="EmailTemplates\DisputeResolvedMailTemplate.txt" />
+    <Content Include="EmailTemplates\EmailToInvitorAfterSignup.txt" />
+    <Content Include="EmailTemplates\FBFriendJoinedNoochEmailTemplate.txt" />
+    <Content Include="EmailTemplates\ForgotPasswordTemplate.txt" />
+    <Content Include="EmailTemplates\ForgotPinNoTemplate.txt" />
+    <Content Include="EmailTemplates\img\settings-bank.png" />
+    <Content Include="EmailTemplates\InviteReminder.txt" />
+    <Content Include="EmailTemplates\InviteRequestAccept.txt" />
+    <Content Include="EmailTemplates\Invite_New_Member_Template.txt" />
+    <Content Include="EmailTemplates\NewBankAccountTemplate.txt" />
+    <Content Include="EmailTemplates\passwordChanged.txt" />
+    <Content Include="EmailTemplates\PinNumberMailTemplate.txt" />
+    <Content Include="EmailTemplates\pinSetForNewUser.txt" />
+    <Content Include="EmailTemplates\profileIncomplete.txt" />
+    <Content Include="EmailTemplates\referralCodeRequested.txt" />
+    <Content Include="EmailTemplates\RegistrationTemplate.txt" />
+    <Content Include="EmailTemplates\requestCancelledToRecipient.txt" />
+    <Content Include="EmailTemplates\requestCancelledToSender.txt" />
+    <Content Include="EmailTemplates\requestDeniedToRecipient.txt" />
+    <Content Include="EmailTemplates\requestDeniedToSender.txt" />
+    <Content Include="EmailTemplates\requestPaidToRecipient.txt" />
+    <Content Include="EmailTemplates\requestPaidToSender.txt" />
+    <Content Include="EmailTemplates\requestReceivedToExistingUser.txt" />
+    <Content Include="EmailTemplates\requestReceivedtoNewUser.txt" />
+    <Content Include="EmailTemplates\requestReminderToExistingUser.txt" />
+    <Content Include="EmailTemplates\requestReminderToNewUser.txt" />
+    <Content Include="EmailTemplates\requestSent.txt" />
+    <Content Include="EmailTemplates\SendReferralCodeTemplate.txt" />
+    <Content Include="EmailTemplates\TransactionHistoryTemplate.txt" />
+    <Content Include="EmailTemplates\transferAcceptedToRecipient.txt" />
+    <Content Include="EmailTemplates\transferAcceptedToSender.txt" />
+    <Content Include="EmailTemplates\TransferAttemptFailure.txt" />
+    <Content Include="EmailTemplates\transferCancelledToRecipient.txt" />
+    <Content Include="EmailTemplates\transferCancelledToSender.txt" />
+    <Content Include="EmailTemplates\transferFailure.txt" />
+    <Content Include="EmailTemplates\TransferReceived.txt" />
+    <Content Include="EmailTemplates\transferReceivedNewUser.txt" />
+    <Content Include="EmailTemplates\transferReminderToRecipient.txt" />
+    <Content Include="EmailTemplates\TransferSent.txt" />
+    <Content Include="EmailTemplates\transferSentToNonMember.txt" />
+    <Content Include="EmailTemplates\transferToNewUserRejected_ToRecipient.txt" />
+    <Content Include="EmailTemplates\transferToNewUserRejected_ToSender.txt" />
+    <Content Include="EmailTemplates\transferUnclaimedSender.txt" />
+    <Content Include="EmailTemplates\userSuspended.txt" />
+    <Content Include="EmailTemplates\ValidationRemainder.txt" />
+    <Content Include="EmailTemplates\WelcomeEmailTemplate.txt" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -315,6 +377,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Constants.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Constants.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

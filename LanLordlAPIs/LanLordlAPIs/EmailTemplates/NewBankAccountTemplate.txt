@@ -1,0 +1,17 @@
+<html>
+
+<body>
+Hi <strong> $FirstName$ $LastName$,</strong><br/><br/>
+
+			A $BankName$ account was just added to your Nooch account. To verify you own this account, we made two small (<$1.00) deposits into this bank account which you should see within 1 business day.
+			<br/>
+			Please check your bank statement for these two transactions from "Nooch Inc." Then enter the amounts in the Nooch app and you can begin funding your Nooch transactions with this bank account.<br/><br/>
+     
+	-Nooch
+	<br/>
+	<br/>
+	PS. If you did not add this bank account or believe your Nooch account may be compromised, please contact us immediately.
+
+</body>
+
+</html>

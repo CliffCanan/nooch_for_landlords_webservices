@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Invite Reminder</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<style> 
+		@import url(http://fonts.googleapis.com/css?family=Open+Sans:300,600,400);
+		body {width:500px;overflow:auto;display:block;margin:0px auto;padding:0px; font-family: 'Open Sans','Roboto',Helvetica,sans-serif; font-size:16px; color:#524b48;}
+		.rnbwBar {position:absolute; margin-top:6px; height:3px; width:280px;}
+		#socialShell > div {display:inline-block; width:24%; text-align:center;}
+		#socialShell a {border:none;}
+		.btn {color: #ffffff;display:block; margin: 0 auto; font-family:'Open Sans','Roboto',Helvetica,sans-serif; font-size:18px; line-height:1.428571429; font-weight:600; text-align:center; letter-spacing:.5px; text-transform:uppercase; text-shadow:0 1px #2093cd; vertical-align:middle; cursor:pointer; width:60%;background-image:none; border:1px solid #29a1de; white-space:nowrap; padding:10px 5px; background-color:#3fabe1; border-radius:8px; -webkit-user-select: none; -moz-user-select:none; -ms-user-select:none; -o-user-select:none; user-select:none; }
+		.btn:hover,.btn:focus,.btn-primary:active,.btn-primary.active {background-color: #219ad6;border-color: #1b7dae;}
+		a {text-decoration:none; color:#3fabe1;}
+	</style>
+</head>
+
+<body>
+
+	<!--Header-->
+	<div style="width:100%; height: 44px; margin-bottom:10px;">
+		<a href="http://www.nooch.com"><img src="http://www.nooch.com/email/autoemails/logoheader.png" alt="Nooch" style="width:83px; position:absolute; margin-top:10px; margin-left:30px; display:block;" /></a>
+    </div>
+    <!--End Header-->
+
+    <!--Content-->
+    <div style="width:100%; overflow:auto;">
+
+		<!--Grey Box-->
+		<div style="width:320px; margin:5px auto;background-color:#f8f8f8;border-radius:8px;padding:10px 0px;">
+			<div style="width:300px; margin: 5px auto 0px;">
+				Hi <strong>$FirstName$</strong>,<br/>	
+				<img src="http://www.nooch.com/email/autoemails/minirainbowbar.png" alt="nooch bar" class="rnbwBar"><br/>
+			</div>
+			<div style="width:300px; margin: 0px auto 20px;">
+				<div style="font-size:14px;">
+					<p style="margin-top:0px;">Your friend $FriendFirstName$ $FriendLastName$ </p>
+					
+				</div>
+				<div>
+					<a href="AppStore" class="btn">$Other_Link$</a>
+				</div>
+			</div>
+
+			<!-- Questions or Comments? -->
+			<div style="width:300px; margin: 30px auto 20px;">
+				<strong>Questions or Comments?</strong><br/>
+				<img src="http://www.nooch.com/email/autoemails/minirainbowbar.png" alt="nooch bar" class="rnbwBar"/><br/>
+				<div style="font-size:14px;">
+					<p style="margin-top:0px;">Contact us any time at <a href="mailto:support@nooch.com">support@nooch.com</a> and we will be happy to help you.</p>
+					<p>Or check out some <a href="https://www.nooch.com/faq">FAQs</a> or the <a href="www.support.nooch.com">Nooch Support Center</a>.</p>
+				</div>
+				<br/><strong>Happy Nooching!</strong><br/>
+				<img src="http://www.nooch.com/email/autoemails/minirainbowbar.png" alt="nooch bar" class="rnbwBar"/><br/>
+				-<strong> Team Nooch</strong></span>
+			</div>
+			<!-- Social -->
+			<div id="socialShell">
+				<div>
+					<a href="https://www.facebook.com/NoochMoney">
+						<img src="http://www.nooch.com/email/autoemails/facebook.png" alt="Like Facebook"/>
+					</a>
+				</div>
+				<div>
+					<a href="https://www.twitter.com/NoochMoney">
+						<img src="http://www.nooch.com/email/autoemails/twitter.png" alt="Follow Nooch"/>
+					</a>
+				</div>
+				<div>
+					<a href="http://instagram.com/noochmoney/">
+						<img src="http://www.nooch.com/email/autoemails/instagram.png" alt="Nooch on Instagram"/>
+					</a>
+				</div>
+				<div>
+					<a href="https://plus.google.com/103970776778749256696/posts">
+						<img src="http://www.nooch.com/email/autoemails/gplus.png" alt="Nooch on G+"/>
+					</a>
+				</div>
+			</div>
+		</div>
+    </div>
+</body>
+</html>

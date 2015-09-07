@@ -1,0 +1,15 @@
+<html>
+
+<body>
+Hi <strong> $FirstName$ $LastName$,</strong><br/>
+
+          You have non verified bank accounts. Please verify it.
+
+	<br/><br/>
+	Regards<br/>
+	 Nooch Admin
+
+
+</body>
+
+</html>

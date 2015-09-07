@@ -290,4 +290,19 @@ namespace LanLordlAPIs.Models.Output_Models
         public string DueDate { get; set; }
     }
 
+
+    public class RegisterLandlordResult
+    {
+
+        //auth token and validation result
+        public AccessTokenValidationOutput AuthTokenValidation { get; set; }
+
+
+
+        // if any exception
+        public bool IsSuccess { get; set; }
+        public string ErrorMessage { get; set; }
+        
+    }
+
 }
