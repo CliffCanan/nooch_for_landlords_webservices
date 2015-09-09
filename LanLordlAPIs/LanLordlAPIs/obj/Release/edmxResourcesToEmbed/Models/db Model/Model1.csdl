@@ -303,6 +303,8 @@
     <FunctionImport Name="GetTenantsInGivenPropertyId" ReturnType="Collection(NOOCHModel.GetTenantsInGivenPropertyId_Result)">
       <Parameter Name="vPropertyId" Mode="In" Type="String" />
     </FunctionImport>
+    <EntitySet Name="InviteCodes" EntityType="NOOCHModel.InviteCode" />
+    <EntitySet Name="AuthenticationTokens" EntityType="NOOCHModel.AuthenticationToken" />
   </EntityContainer>
   <EntityType Name="UnitsOccupiedByTenant">
     <Key>
@@ -347,4 +349,29 @@
     <Property Type="Boolean" Name="IsIdDocumentVerified" Nullable="true" />
     <Property Type="Guid" Name="BankAccountId" Nullable="true" />
   </ComplexType>
+  <EntityType Name="InviteCode">
+    <Key>
+      <PropertyRef Name="InviteCodeId" />
+    </Key>
+    <Property Name="InviteCodeId" Type="Guid" Nullable="false" />
+    <Property Name="code" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="count" Type="Int32" Nullable="false" />
+    <Property Name="totalAllowed" Type="Int32" Nullable="false" />
+    <Property Name="AdminNotes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="CreatedOn" Type="DateTime" Precision="3" />
+    <Property Name="ModifiedOn" Type="DateTime" Precision="3" />
+    <Property Name="CreatedBy" Type="Guid" />
+  </EntityType>
+  <EntityType Name="AuthenticationToken">
+    <Key>
+      <PropertyRef Name="TokenId" />
+    </Key>
+    <Property Name="TokenId" Type="Guid" Nullable="false" />
+    <Property Name="MemberId" Type="Guid" Nullable="false" />
+    <Property Name="IsActivated" Type="Boolean" Nullable="false" />
+    <Property Name="DateGenerated" Type="DateTime" Precision="3" />
+    <Property Name="DateModified" Type="DateTime" Precision="3" />
+    <Property Name="FriendRequestId" Type="Guid" />
+    <Property Name="VerifiedOn" Type="DateTime" Precision="3" />
+  </EntityType>
 </Schema>

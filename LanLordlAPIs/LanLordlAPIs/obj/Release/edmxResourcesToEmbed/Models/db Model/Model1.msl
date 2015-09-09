@@ -309,5 +309,32 @@
         </ComplexTypeMapping>
       </ResultMapping>
     </FunctionImportMapping>
+    <EntitySetMapping Name="InviteCodes">
+      <EntityTypeMapping TypeName="NOOCHModel.InviteCode">
+        <MappingFragment StoreEntitySet="InviteCodes">
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+          <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+          <ScalarProperty Name="AdminNotes" ColumnName="AdminNotes" />
+          <ScalarProperty Name="totalAllowed" ColumnName="totalAllowed" />
+          <ScalarProperty Name="count" ColumnName="count" />
+          <ScalarProperty Name="code" ColumnName="code" />
+          <ScalarProperty Name="InviteCodeId" ColumnName="InviteCodeId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="AuthenticationTokens">
+      <EntityTypeMapping TypeName="NOOCHModel.AuthenticationToken">
+        <MappingFragment StoreEntitySet="AuthenticationTokens">
+          <ScalarProperty Name="VerifiedOn" ColumnName="VerifiedOn" />
+          <ScalarProperty Name="FriendRequestId" ColumnName="FriendRequestId" />
+          <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+          <ScalarProperty Name="DateGenerated" ColumnName="DateGenerated" />
+          <ScalarProperty Name="IsActivated" ColumnName="IsActivated" />
+          <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+          <ScalarProperty Name="TokenId" ColumnName="TokenId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
   </EntityContainerMapping>
 </Mapping>

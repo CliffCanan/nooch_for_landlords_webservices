@@ -473,6 +473,9 @@ namespace LanLordlAPIs.Classes.Utility
 
 
 
+
+
+
         public static Member getMemberByEmailId(string eMailID)
         {
             using (NOOCHEntities obj = new NOOCHEntities())
@@ -507,9 +510,12 @@ namespace LanLordlAPIs.Classes.Utility
                     var existingMemberDetails = (from c in obj.Landlords where c.eMail == email && c.IsDeleted == false select c).FirstOrDefault();
                     if (existingMemberDetails != null)
                     {
+
                         result.IsSuccess = false;
                         result.ErrorMessage = "Landlord already exists with given eMail id.";
                         result.LanlordDetails = existingMemberDetails;
+                        
+                        
                     }
                     else
                     {
@@ -553,7 +559,7 @@ namespace LanLordlAPIs.Classes.Utility
                     ll.Status = "Landlord";
                     ll.Status = "Basic";
                     ll.MemberId = memberGuid;
-
+                    ll.IsDeleted = false;
                     obj.Landlords.Add(ll);
                     obj.SaveChanges();
 
@@ -589,7 +595,8 @@ namespace LanLordlAPIs.Classes.Utility
                 string content = string.Empty;
                 if (!String.IsNullOrEmpty(templateName))
                 {
-                    template = GetEmailTemplate(String.Concat(HostingEnvironment.MapPath(GetValueFromConfig("EmailTemplatesPath")), templateName, ".txt"));
+                    //template = GetEmailTemplate(HostingEnvironment.MapPath(String.Concat(GetValueFromConfig("EmailTemplatesPath"), templateName, ".txt")));
+                    template = GetEmailTemplate(String.Concat(GetValueFromConfig("EmailTemplatesPath"), templateName, ".txt"));
                     content = template;
 
                     // Replace tokens in the message body and subject line

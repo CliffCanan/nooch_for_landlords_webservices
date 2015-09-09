@@ -648,7 +648,7 @@ namespace LanLordlAPIs.Controllers
                                     Constants.PLACEHOLDER_FIRST_NAME,
                                     CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(member.FirstName))
                                 },
-                                {Constants.PLACEHOLDER_PINNUMBER, CommonHelper.GetDecryptedData(randomPin)}
+                                {Constants.PLACEHOLDER_PINNUMBER, randomPin}
                             };
                                 try
                                 {
@@ -784,6 +784,13 @@ namespace LanLordlAPIs.Controllers
                     }
                     else
                     {
+
+
+                        
+
+                        
+
+
                         // mem already exists
                         #region new landlord but existing member
                         // finally making an entry in 

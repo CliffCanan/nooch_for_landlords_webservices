@@ -917,3 +917,15 @@ INFO  2015-09-04 14:59:07,651 46466ms Logger                 Info               
 INFO  2015-09-04 14:59:07,810 46625ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
 INFO  2015-09-04 14:59:10,049 48864ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
 INFO  2015-09-04 14:59:10,142 48957ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-09-09 14:27:01,569 69617ms Logger                 Info               - MemberDataAccess - Registration mail sent to [malkit@ymail.com].
+ERROR 2015-09-09 14:27:02,578 70626ms Logger                 Error              - Exception occured on decryptionLength of the data to decrypt is invalid.
+ERROR 2015-09-09 14:27:02,580 70628ms Logger                 Error              - Stack trace   at System.Security.Cryptography.RijndaelManagedTransform.TransformFinalBlock(Byte[] inputBuffer, Int32 inputOffset, Int32 inputCount)
+   at System.Security.Cryptography.CryptoStream.FlushFinalBlock()
+   at System.Security.Cryptography.CryptoStream.Dispose(Boolean disposing)
+   at System.IO.Stream.Close()
+   at System.IO.Stream.Dispose()
+   at LanLordlAPIs.Classes.Crypto.AES.Decrypt(String cipherText, String password, String salt, AESHashAlgorithm hashAlgorithm, Int32 passwordIterations, String initialVector, AESKeySize keySize) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Crypto\AES.cs:line 113
+ERROR 2015-09-09 14:46:34,910 298517ms Logger                 Error              - checkAndRegisterLandlordByemailId while checking 
+ERROR 2015-09-09 14:53:55,456 739064ms Logger                 Error              - RegisterLandlord error while making account for 
+ERROR 2015-09-09 14:55:18,627 822234ms Logger                 Error              - RegisterLandlord error while making account for 
+INFO  2015-09-09 15:03:50,944 1334552ms Logger                 Info               - MemberDataAccess - Registration mail sent to [malkit@ymail.com].
