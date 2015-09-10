@@ -539,6 +539,58 @@ namespace LanLordlAPIs.Classes.Utility
 
 
 
+      
+
+
+
+        public static bool SendPasswordMail(Member member, string primaryMail)
+        {
+            try
+            {
+                var fromAddress = GetValueFromConfig("adminMail");
+
+                var tokens = new Dictionary<string, string>
+                {
+                    {
+                        Constants.PLACEHOLDER_FIRST_NAME,
+                        CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(member.FirstName)) + " " +
+                        CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(member.LastName))
+                    },
+                    {Constants.PLACEHOLDER_LAST_NAME, CommonHelper.GetDecryptedData(member.LastName)},
+                    {
+                        Constants.PLACEHOLDER_PASSWORDLINK,
+                        String.Concat(GetValueFromConfig("ApplicationURL"),
+                            "/ForgotPassword/ResetPassword.aspx?memberId=" + member.MemberId)
+                    }
+                };
+
+                //code to make entry in db
+                using (var noochConnection = new NOOCHEntities())
+                {
+                    var entity = new PasswordResetRequest
+                    {
+                        RequestedOn = DateTime.Now,
+                        MemberId = member.MemberId
+                    };
+
+                    int result = 0;
+                    noochConnection.PasswordResetRequests.Add(entity);
+
+                    result = noochConnection.SaveChanges();
+                }
+
+                return SendEmail(Constants.TEMPLATE_FORGOT_PASSWORD,  fromAddress,
+                    primaryMail, "Reset your Nooch password", tokens
+                    , null);
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+
+
         public static Landlord AddNewLandlordEntryInDb(string firstName, string lastName, string eMail, string passWord, bool eMailSatusToSet, bool phoneStatusToSet, Guid memberGuid)
         {
 
@@ -556,8 +608,8 @@ namespace LanLordlAPIs.Classes.Utility
                     ll.IsEmailVerfieid = eMailSatusToSet;
                     ll.IsPhoneVerified = phoneStatusToSet;
                     ll.Status = "Active";
-                    ll.Status = "Landlord";
-                    ll.Status = "Basic";
+                    ll.Type = "Landlord";
+                    ll.SubType= "Basic";
                     ll.MemberId = memberGuid;
                     ll.IsDeleted = false;
                     obj.Landlords.Add(ll);

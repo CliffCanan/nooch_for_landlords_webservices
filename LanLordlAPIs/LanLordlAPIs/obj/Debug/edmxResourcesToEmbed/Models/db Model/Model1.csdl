@@ -182,6 +182,7 @@
     <Property Name="VerificationDocumentPath" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
     <NavigationProperty Name="MemberNotifications" Relationship="Self.FK_MemberNotifications_Members" FromRole="Members" ToRole="MemberNotifications" />
     <NavigationProperty Name="MemberPrivacySettings" Relationship="Self.FK_MemberPrivacySettings_Members" FromRole="Members" ToRole="MemberPrivacySettings" />
+    <NavigationProperty Name="PasswordResetRequests" Relationship="NOOCHModel.FK_PasswordResetRequests_Members" FromRole="Member" ToRole="PasswordResetRequest" />
   </EntityType>
   <EntityType Name="Property">
     <Key>
@@ -305,6 +306,11 @@
     </FunctionImport>
     <EntitySet Name="InviteCodes" EntityType="NOOCHModel.InviteCode" />
     <EntitySet Name="AuthenticationTokens" EntityType="NOOCHModel.AuthenticationToken" />
+    <EntitySet Name="PasswordResetRequests" EntityType="NOOCHModel.PasswordResetRequest" />
+    <AssociationSet Name="FK_PasswordResetRequests_Members" Association="NOOCHModel.FK_PasswordResetRequests_Members">
+      <End Role="Member" EntitySet="Members" />
+      <End Role="PasswordResetRequest" EntitySet="PasswordResetRequests" />
+    </AssociationSet>
   </EntityContainer>
   <EntityType Name="UnitsOccupiedByTenant">
     <Key>
@@ -374,4 +380,25 @@
     <Property Name="FriendRequestId" Type="Guid" />
     <Property Name="VerifiedOn" Type="DateTime" Precision="3" />
   </EntityType>
+  <EntityType Name="PasswordResetRequest">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="MemberId" Type="Guid" />
+    <Property Name="RequestedOn" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="Member" Relationship="NOOCHModel.FK_PasswordResetRequests_Members" FromRole="PasswordResetRequest" ToRole="Member" />
+  </EntityType>
+  <Association Name="FK_PasswordResetRequests_Members">
+    <End Type="NOOCHModel.Member" Role="Member" Multiplicity="0..1" />
+    <End Type="NOOCHModel.PasswordResetRequest" Role="PasswordResetRequest" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Member">
+        <PropertyRef Name="MemberId" />
+      </Principal>
+      <Dependent Role="PasswordResetRequest">
+        <PropertyRef Name="MemberId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
 </Schema>

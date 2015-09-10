@@ -204,6 +204,14 @@
     <Property Name="PhoneVerifiedOn" Type="datetime" />
     <Property Name="VerificationDocumentPath" Type="varchar(max)" />
   </EntityType>
+  <EntityType Name="PasswordResetRequests">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="MemberId" Type="uniqueidentifier" />
+    <Property Name="RequestedOn" Type="datetime" />
+  </EntityType>
   <EntityType Name="Properties">
     <Key>
       <PropertyRef Name="PropertyId" />
@@ -328,6 +336,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_PasswordResetRequests_Members">
+    <End Role="Members" Type="Self.Members" Multiplicity="0..1" />
+    <End Role="PasswordResetRequests" Type="Self.PasswordResetRequests" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Members">
+        <PropertyRef Name="MemberId" />
+      </Principal>
+      <Dependent Role="PasswordResetRequests">
+        <PropertyRef Name="MemberId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Function Name="GetTenantsCountInGivenPropertyId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
     <Parameter Name="vPropertyId" Type="varchar(max)" Mode="In" />
   </Function>
@@ -342,6 +362,7 @@
     <EntitySet Name="MemberNotifications" EntityType="Self.MemberNotifications" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="MemberPrivacySettings" EntityType="Self.MemberPrivacySettings" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Members" EntityType="Self.Members" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PasswordResetRequests" EntityType="Self.PasswordResetRequests" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Properties" EntityType="Self.Properties" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PropertyUnits" EntityType="Self.PropertyUnits" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Tenants" EntityType="Self.Tenants" Schema="dbo" store:Type="Tables" />
@@ -354,6 +375,10 @@
     <AssociationSet Name="FK_MemberPrivacySettings_Members" Association="Self.FK_MemberPrivacySettings_Members">
       <End Role="Members" EntitySet="Members" />
       <End Role="MemberPrivacySettings" EntitySet="MemberPrivacySettings" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PasswordResetRequests_Members" Association="Self.FK_PasswordResetRequests_Members">
+      <End Role="Members" EntitySet="Members" />
+      <End Role="PasswordResetRequests" EntitySet="PasswordResetRequests" />
     </AssociationSet>
   </EntityContainer>
 </Schema>

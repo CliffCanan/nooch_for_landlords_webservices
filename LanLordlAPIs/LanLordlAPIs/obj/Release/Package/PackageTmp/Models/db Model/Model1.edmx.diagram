@@ -19,6 +19,8 @@
         <EntityTypeShape EntityType="NOOCHModel.TenantsIdDocument" Width="1.5" PointX="10.375" PointY="9.75" />
         <EntityTypeShape EntityType="NOOCHModel.InviteCode" Width="1.5" PointX="12.375" PointY="0.75" />
         <EntityTypeShape EntityType="NOOCHModel.AuthenticationToken" Width="1.5" PointX="12.375" PointY="4.75" />
+        <EntityTypeShape EntityType="NOOCHModel.PasswordResetRequest" Width="1.5" PointX="3" PointY="15.625" />
+        <AssociationConnector Association="NOOCHModel.FK_PasswordResetRequests_Members" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

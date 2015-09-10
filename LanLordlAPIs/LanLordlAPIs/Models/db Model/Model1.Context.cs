@@ -40,6 +40,7 @@ namespace LanLordlAPIs.Models.db_Model
         public DbSet<TenantsIdDocument> TenantsIdDocuments { get; set; }
         public DbSet<InviteCode> InviteCodes { get; set; }
         public DbSet<AuthenticationToken> AuthenticationTokens { get; set; }
+        public DbSet<PasswordResetRequest> PasswordResetRequests { get; set; }
     
         public virtual ObjectResult<Nullable<int>> GetTenantsCountInGivenPropertyId(string vPropertyId)
         {

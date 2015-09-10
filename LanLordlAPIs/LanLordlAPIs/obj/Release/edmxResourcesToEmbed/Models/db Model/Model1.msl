@@ -336,5 +336,14 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="PasswordResetRequests">
+      <EntityTypeMapping TypeName="NOOCHModel.PasswordResetRequest">
+        <MappingFragment StoreEntitySet="PasswordResetRequests">
+          <ScalarProperty Name="RequestedOn" ColumnName="RequestedOn" />
+          <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
   </EntityContainerMapping>
 </Mapping>

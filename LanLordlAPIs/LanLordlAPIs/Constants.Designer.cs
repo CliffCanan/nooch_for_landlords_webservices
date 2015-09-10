@@ -88,6 +88,15 @@ namespace LanLordlAPIs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to $PasswordLink$.
+        /// </summary>
+        internal static string PLACEHOLDER_PASSWORDLINK {
+            get {
+                return ResourceManager.GetString("PLACEHOLDER_PASSWORDLINK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to $PinNumber$.
         /// </summary>
         internal static string PLACEHOLDER_PINNUMBER {
@@ -102,6 +111,15 @@ namespace LanLordlAPIs {
         internal static string STATUS_REGISTERED {
             get {
                 return ResourceManager.GetString("STATUS_REGISTERED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ForgotPasswordTemplate.
+        /// </summary>
+        internal static string TEMPLATE_FORGOT_PASSWORD {
+            get {
+                return ResourceManager.GetString("TEMPLATE_FORGOT_PASSWORD", resourceCulture);
             }
         }
         

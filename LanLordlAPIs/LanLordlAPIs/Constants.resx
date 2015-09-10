@@ -126,11 +126,17 @@
   <data name="PLACEHOLDER_OTHER_LINK" xml:space="preserve">
     <value>$Other_Link$</value>
   </data>
+  <data name="PLACEHOLDER_PASSWORDLINK" xml:space="preserve">
+    <value>$PasswordLink$</value>
+  </data>
   <data name="PLACEHOLDER_PINNUMBER" xml:space="preserve">
     <value>$PinNumber$</value>
   </data>
   <data name="STATUS_REGISTERED" xml:space="preserve">
     <value>Registered</value>
+  </data>
+  <data name="TEMPLATE_FORGOT_PASSWORD" xml:space="preserve">
+    <value>ForgotPasswordTemplate</value>
   </data>
   <data name="TEMPLATE_REGISTRATION" xml:space="preserve">
     <value>RegistrationTemplate</value>

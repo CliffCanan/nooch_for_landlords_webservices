@@ -238,6 +238,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Model1.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\db Model\PasswordResetRequest.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\db Model\Property.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -254,6 +257,7 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Input Models\LoginInput.cs" />
+    <Compile Include="Models\Input Models\PasswordResetInputClass.cs" />
     <Compile Include="Models\Output Models\CheckAndRegisterLandlordByEmailResult.cs" />
     <Compile Include="Models\Output Models\LoginResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

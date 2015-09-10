@@ -49,7 +49,7 @@ namespace LanLordlAPIs.Controllers
                     var userCheckResult = (from c in obj.Landlords
                                            join d in obj.Members on c.MemberId equals d.MemberId
                                            where d.UserName == userNameEncrypted && d.Password == passEncrypted
-                                                 && d.IsDeleted == false && c.IsDeleted == false && c.Status == "Active"
+                                                 && d.IsDeleted == false && c.IsDeleted == false && (c.Status != "Suspended" || c.Status != "Temporarily_Blocked")
                                            select
                                                new
                                                {
@@ -642,34 +642,29 @@ namespace LanLordlAPIs.Controllers
                                 #region PinNumber email
 
                                 // emailing temp pin number
-                                var tokens2 = new Dictionary<string, string>
-                            {
-                                {
-                                    Constants.PLACEHOLDER_FIRST_NAME,
-                                    CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(member.FirstName))
-                                },
-                                {Constants.PLACEHOLDER_PINNUMBER, randomPin}
-                            };
-                                try
-                                {
-                                    //CommonHelper.SendEmail("pinSetForNewUser", MailPriority.High,
-                                    //    fromAddress, NewUserEmail, null,
-                                    //    "Your temporary Nooch PIN", null,
-                                    //    tokens2, null, null, null);
+                                //    var tokens2 = new Dictionary<string, string>
+                                //{
+                                //    {
+                                //        Constants.PLACEHOLDER_FIRST_NAME,
+                                //        CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(member.FirstName))
+                                //    },
+                                //    {Constants.PLACEHOLDER_PINNUMBER, randomPin}
+                                //};
+                                //    try
+                                //    {
+
+                                //        CommonHelper.SendEmail("pinSetForNewUser",
+                                //            fromAddress, llDetails.eMail.Trim(),
+                                //            "Your temporary Nooch PIN",
+                                //            tokens2, null);
 
 
-                                    CommonHelper.SendEmail("pinSetForNewUser",
-                                        fromAddress, llDetails.eMail.Trim(),
-                                        "Your temporary Nooch PIN",
-                                        tokens2, null);
-
-
-                                }
-                                catch (Exception)
-                                {
-                                    Logger.Error("MemberDataAccess - Member temp pin mail not sent to [" +
-                                                           userNameLowerCase + "].");
-                                }
+                                //    }
+                                //    catch (Exception)
+                                //    {
+                                //        Logger.Error("MemberDataAccess - Member temp pin mail not sent to [" +
+                                //                               userNameLowerCase + "].");
+                                //    }
 
                                 #endregion
 
@@ -777,18 +772,18 @@ namespace LanLordlAPIs.Controllers
 
 
                         }
-                        #endregion 
                         #endregion
-                        
+                        #endregion
+
 
                     }
                     else
                     {
 
 
-                        
 
-                        
+
+
 
 
                         // mem already exists
@@ -802,7 +797,7 @@ namespace LanLordlAPIs.Controllers
                         {
                             result.IsSuccess = true;
                             result.ErrorMessage = "OK";
-                            
+
                             return result;
                         }
                         else
@@ -831,6 +826,59 @@ namespace LanLordlAPIs.Controllers
                 result.IsSuccess = false;
                 result.ErrorMessage = "Server Error.";
                 return result;
+
+            }
+        }
+
+
+
+        [HttpPost]
+        [ActionName("ResetPassword")]
+
+        public PasswordResetOutputClass ResetPassword(PasswordResetInputClass userName)
+        {
+
+            PasswordResetOutputClass res = new PasswordResetOutputClass();
+
+
+            var getMember = CommonHelper.getMemberByEmailId(userName.eMail);
+
+            try
+            {
+                if (getMember != null)
+                {
+                    bool status = CommonHelper.SendPasswordMail(getMember, userName.eMail);
+
+                    if (status)
+                    {
+                        res.IsSuccess = true;
+                        res.ErrorMessage = "Your reset password link has been sent to your mail successfully.";
+                        return res;
+                    }
+                    else
+                    {
+                        res.IsSuccess = false;
+                        res.ErrorMessage = "Problem occured while sending mail.";
+
+                        return res;
+                    }
+
+
+                }
+                else
+                {
+                    res.IsSuccess = false;
+                    res.ErrorMessage = "Problem occured while sending mail.";
+
+                    return res;
+                }
+            }
+            catch (Exception)
+            {
+                res.IsSuccess = false;
+                res.ErrorMessage = "Problem occured while sending mail.";
+
+                return res;
 
             }
         }

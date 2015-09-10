@@ -18,6 +18,7 @@ namespace LanLordlAPIs.Models.db_Model
         {
             this.MemberNotifications = new HashSet<MemberNotification>();
             this.MemberPrivacySettings = new HashSet<MemberPrivacySetting>();
+            this.PasswordResetRequests = new HashSet<PasswordResetRequest>();
         }
     
         public System.Guid MemberId { get; set; }
@@ -97,5 +98,6 @@ namespace LanLordlAPIs.Models.db_Model
     
         public virtual ICollection<MemberNotification> MemberNotifications { get; set; }
         public virtual ICollection<MemberPrivacySetting> MemberPrivacySettings { get; set; }
+        public virtual ICollection<PasswordResetRequest> PasswordResetRequests { get; set; }
     }
 }

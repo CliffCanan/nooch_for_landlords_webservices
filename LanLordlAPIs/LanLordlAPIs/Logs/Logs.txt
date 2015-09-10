@@ -929,3 +929,18 @@ ERROR 2015-09-09 14:46:34,910 298517ms Logger                 Error             
 ERROR 2015-09-09 14:53:55,456 739064ms Logger                 Error              - RegisterLandlord error while making account for 
 ERROR 2015-09-09 14:55:18,627 822234ms Logger                 Error              - RegisterLandlord error while making account for 
 INFO  2015-09-09 15:03:50,944 1334552ms Logger                 Info               - MemberDataAccess - Registration mail sent to [malkit@ymail.com].
+INFO  2015-09-10 14:33:24,451  2648ms Logger                 Info               - MemberDataAccess - Registration mail sent to [malkit@ymail.com].
+INFO  2015-09-10 14:36:09,182 60595ms Logger                 Info               - MemberDataAccess - Registration mail sent to [malkit@ymail.com].
+INFO  2015-09-10 14:37:16,786 128199ms Logger                 Info               - Landlords API -> Users -> Login. Login requested by [malkit@ymail.com]
+INFO  2015-09-10 14:37:37,691 149104ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [2a7752aa-17c6-4fee-872c-fd84ae54f9f6]
+INFO  2015-09-10 14:37:37,877 149290ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [2a7752aa-17c6-4fee-872c-fd84ae54f9f6]
+ERROR 2015-09-10 15:34:31,189 717266ms Logger                 Error              - UtilityDataAccess -> SendEmail ERROR -> [Template: ForgotPasswordTemplate], [ToAddress: malkit@ymail.com],  [Exception: System.ArgumentNullException: Value cannot be null.
+Parameter name: address
+   at System.Net.Mail.MailAddress..ctor(String address, String displayName, Encoding displayNameEncoding)
+   at System.Net.Mail.MailAddress..ctor(String address, String displayName)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.SendEmail(String templateName, String fromAddress, String toAddress, String subject, IEnumerable`1 replacements, String bodyText) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 681]
+ERROR 2015-09-10 15:35:30,279 776355ms Logger                 Error              - UtilityDataAccess -> SendEmail ERROR -> [Template: ForgotPasswordTemplate], [ToAddress: malkit@ymail.com],  [Exception: System.ArgumentNullException: Value cannot be null.
+Parameter name: address
+   at System.Net.Mail.MailAddress..ctor(String address, String displayName, Encoding displayNameEncoding)
+   at System.Net.Mail.MailAddress..ctor(String address, String displayName)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.SendEmail(String templateName, String fromAddress, String toAddress, String subject, IEnumerable`1 replacements, String bodyText) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 681]
