@@ -560,7 +560,7 @@ namespace LanLordlAPIs.Classes.Utility
                     {
                         Constants.PLACEHOLDER_PASSWORDLINK,
                         String.Concat(GetValueFromConfig("ApplicationURL"),
-                            "/ForgotPassword/ResetPassword.aspx?memberId=" + member.MemberId)
+                            "/ForgotPassword/ResetPasswordLandlords.aspx?memberId=" + member.MemberId)
                     }
                 };
 
