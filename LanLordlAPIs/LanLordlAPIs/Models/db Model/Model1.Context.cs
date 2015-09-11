@@ -51,13 +51,13 @@ namespace LanLordlAPIs.Models.db_Model
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("GetTenantsCountInGivenPropertyId", vPropertyIdParameter);
         }
     
-        public virtual ObjectResult<GetTenantsInGivenPropertyId_Result> GetTenantsInGivenPropertyId(string vPropertyId)
+        public virtual ObjectResult<GetTenantsInGivenPropertyId_Result1> GetTenantsInGivenPropertyId(string vPropertyId)
         {
             var vPropertyIdParameter = vPropertyId != null ?
                 new ObjectParameter("vPropertyId", vPropertyId) :
                 new ObjectParameter("vPropertyId", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetTenantsInGivenPropertyId_Result>("GetTenantsInGivenPropertyId", vPropertyIdParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetTenantsInGivenPropertyId_Result1>("GetTenantsInGivenPropertyId", vPropertyIdParameter);
         }
     }
 }

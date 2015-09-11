@@ -791,6 +791,9 @@ namespace LanLordlAPIs.Controllers
                                         trc.IsBankAccountAdded = false;
                                     }
 
+                                    trc.UnitNumber = v.UnitNumber;
+                                    trc.TenantEmail = CommonHelper.GetDecryptedData(v.TenantEmail);
+
                                     TenantsListForThisPropertyPrepared.Add(trc);
                                 }
                             }

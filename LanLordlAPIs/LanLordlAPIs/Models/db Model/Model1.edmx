@@ -691,9 +691,6 @@
           <Parameter Name="vPropertyId" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="TenantsIdDocuments" EntityType="NOOCHModel.TenantsIdDocument" />
-          <FunctionImport Name="GetTenantsInGivenPropertyId" ReturnType="Collection(NOOCHModel.GetTenantsInGivenPropertyId_Result)">
-          <Parameter Name="vPropertyId" Mode="In" Type="String" />
-          </FunctionImport>
           <EntitySet Name="InviteCodes" EntityType="NOOCHModel.InviteCode" />
           <EntitySet Name="AuthenticationTokens" EntityType="NOOCHModel.AuthenticationToken" />
           <EntitySet Name="PasswordResetRequests" EntityType="NOOCHModel.PasswordResetRequest" />
@@ -701,6 +698,9 @@
             <End Role="Member" EntitySet="Members" />
             <End Role="PasswordResetRequest" EntitySet="PasswordResetRequests" />
           </AssociationSet>
+          <FunctionImport Name="GetTenantsInGivenPropertyId" ReturnType="Collection(NOOCHModel.GetTenantsInGivenPropertyId_Result1)">
+            <Parameter Name="vPropertyId" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="UnitsOccupiedByTenant">
           <Key>
@@ -791,6 +791,22 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="GetTenantsInGivenPropertyId_Result1">
+          <Property Type="Guid" Name="TenantId" Nullable="false" />
+          <Property Type="Guid" Name="UnitId" Nullable="false" />
+          <Property Type="String" Name="FirstName" Nullable="true" />
+          <Property Type="String" Name="LastName" Nullable="true" />
+          <Property Type="String" Name="UserPic" Nullable="true" />
+          <Property Type="String" Name="UnitRent" Nullable="true" MaxLength="50" />
+          <Property Type="DateTime" Name="LastPaymentDate" Nullable="true" Precision="23" />
+          <Property Type="Boolean" Name="IsPaymentDueForThisMonth" Nullable="true" />
+          <Property Type="Boolean" Name="IsPhoneVerfied" Nullable="true" />
+          <Property Type="Boolean" Name="IsEmailVerified" Nullable="true" />
+          <Property Type="Boolean" Name="IsIdDocumentVerified" Nullable="true" />
+          <Property Type="Guid" Name="BankAccountId" Nullable="true" />
+          <Property Type="String" Name="UnitNumber" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="TenantEmail" Nullable="true" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1087,24 +1103,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="GetTenantsInGivenPropertyId" FunctionName="NOOCHModel.Store.GetTenantsInGivenPropertyId">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="NOOCHModel.GetTenantsInGivenPropertyId_Result">
-                <ScalarProperty Name="TenantId" ColumnName="TenantId" />
-                <ScalarProperty Name="UnitId" ColumnName="UnitId" />
-                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
-                <ScalarProperty Name="LastName" ColumnName="LastName" />
-                <ScalarProperty Name="UserPic" ColumnName="UserPic" />
-                <ScalarProperty Name="UnitRent" ColumnName="UnitRent" />
-                <ScalarProperty Name="LastPaymentDate" ColumnName="LastPaymentDate" />
-                <ScalarProperty Name="IsPaymentDueForThisMonth" ColumnName="IsPaymentDueForThisMonth" />
-                <ScalarProperty Name="IsPhoneVerfied" ColumnName="IsPhoneVerfied" />
-                <ScalarProperty Name="IsEmailVerified" ColumnName="IsEmailVerified" />
-                <ScalarProperty Name="IsIdDocumentVerified" ColumnName="IsIdDocumentVerified" />
-                <ScalarProperty Name="BankAccountId" ColumnName="BankAccountId" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <EntitySetMapping Name="InviteCodes">
             <EntityTypeMapping TypeName="NOOCHModel.InviteCode">
               <MappingFragment StoreEntitySet="InviteCodes">
@@ -1141,6 +1139,26 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetTenantsInGivenPropertyId" FunctionName="NOOCHModel.Store.GetTenantsInGivenPropertyId">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="NOOCHModel.GetTenantsInGivenPropertyId_Result1">
+                <ScalarProperty Name="TenantId" ColumnName="TenantId" />
+                <ScalarProperty Name="UnitId" ColumnName="UnitId" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="UserPic" ColumnName="UserPic" />
+                <ScalarProperty Name="UnitRent" ColumnName="UnitRent" />
+                <ScalarProperty Name="LastPaymentDate" ColumnName="LastPaymentDate" />
+                <ScalarProperty Name="IsPaymentDueForThisMonth" ColumnName="IsPaymentDueForThisMonth" />
+                <ScalarProperty Name="IsPhoneVerfied" ColumnName="IsPhoneVerfied" />
+                <ScalarProperty Name="IsEmailVerified" ColumnName="IsEmailVerified" />
+                <ScalarProperty Name="IsIdDocumentVerified" ColumnName="IsIdDocumentVerified" />
+                <ScalarProperty Name="BankAccountId" ColumnName="BankAccountId" />
+                <ScalarProperty Name="UnitNumber" ColumnName="UnitNumber" />
+                <ScalarProperty Name="TenantEmail" ColumnName="TenantEmail" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

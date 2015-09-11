@@ -182,6 +182,10 @@ namespace LanLordlAPIs.Models.Output_Models
         public string TenantId { get; set; }
         public string UnitId { get; set; }
 
+
+        public string UnitNumber { get; set; }
+        public string TenantEmail { get; set; }
+
         public string UnitRent { get; set; }
         public string Name { get; set; }
 
