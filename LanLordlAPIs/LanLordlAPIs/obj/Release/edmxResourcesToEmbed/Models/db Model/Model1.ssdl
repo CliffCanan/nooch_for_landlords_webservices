@@ -348,11 +348,20 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Function Name="GetPropertiesCountForGivenLandlord" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="vLandlordId" Type="varchar(max)" Mode="In" />
+  </Function>
+  <Function Name="GetTenantsCountForGivenLandlord" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="vLandlordId" Type="varchar(max)" Mode="In" />
+  </Function>
   <Function Name="GetTenantsCountInGivenPropertyId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
     <Parameter Name="vPropertyId" Type="varchar(max)" Mode="In" />
   </Function>
   <Function Name="GetTenantsInGivenPropertyId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
     <Parameter Name="vPropertyId" Type="varchar(max)" Mode="In" />
+  </Function>
+  <Function Name="GetUnitsCountForGivenLandlord" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="vLandlordId" Type="varchar(max)" Mode="In" />
   </Function>
   <EntityContainer Name="NOOCHModelStoreContainer">
     <EntitySet Name="AuthenticationTokens" EntityType="Self.AuthenticationTokens" Schema="dbo" store:Type="Tables" />

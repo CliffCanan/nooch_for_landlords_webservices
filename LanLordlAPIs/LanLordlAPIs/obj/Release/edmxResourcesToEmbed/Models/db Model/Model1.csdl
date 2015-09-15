@@ -311,6 +311,15 @@
     <FunctionImport Name="GetTenantsInGivenPropertyId" ReturnType="Collection(NOOCHModel.GetTenantsInGivenPropertyId_Result1)">
       <Parameter Name="vPropertyId" Mode="In" Type="String" />
     </FunctionImport>
+    <FunctionImport Name="GetPropertiesCountForGivenLandlord" ReturnType="Collection(Int32)">
+      <Parameter Name="vLandlordId" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="GetTenantsCountForGivenLandlord" ReturnType="Collection(Int32)">
+      <Parameter Name="vLandlordId" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="GetUnitsCountForGivenLandlord" ReturnType="Collection(Int32)">
+      <Parameter Name="vLandlordId" Mode="In" Type="String" />
+    </FunctionImport>
   </EntityContainer>
   <EntityType Name="UnitsOccupiedByTenant">
     <Key>

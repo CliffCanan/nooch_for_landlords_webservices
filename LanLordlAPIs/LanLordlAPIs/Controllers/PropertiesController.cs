@@ -33,7 +33,7 @@ namespace LanLordlAPIs.Controllers
                     if (validationResult.IsDataValid)
                     {
                         // all set.... data is ready to be saved in db
-                        string propertyImagePath = "no_image";
+                        string propertyImagePath = CommonHelper.GetValueFromConfig("PhotoUrl") + "propertyDefault.png";
                         if (Property.IsPropertyImageAdded)
                         {
                             //getting image url from base64 string
@@ -747,7 +747,7 @@ namespace LanLordlAPIs.Controllers
 
                             currentProperty.AllUnits = AllUnitsListPrepared;
                             currentProperty.UnitsCount = AllUnitsListPrepared.Count.ToString();
-                            currentProperty.TenantsCount = obj.GetTenantsCountInGivenPropertyId(currentProperty.PropertyId).FirstOrDefault().ToString();  // will add code to get count once we reach here... - Malkit
+                            currentProperty.TenantsCount = obj.GetTenantsCountInGivenPropertyId(currentProperty.PropertyId).FirstOrDefault().ToString();
 
 
                             // getting tenants list for this property

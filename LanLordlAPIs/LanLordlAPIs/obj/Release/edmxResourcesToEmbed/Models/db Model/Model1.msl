@@ -347,5 +347,8 @@
         </ComplexTypeMapping>
       </ResultMapping>
     </FunctionImportMapping>
+    <FunctionImportMapping FunctionImportName="GetPropertiesCountForGivenLandlord" FunctionName="NOOCHModel.Store.GetPropertiesCountForGivenLandlord" />
+    <FunctionImportMapping FunctionImportName="GetTenantsCountForGivenLandlord" FunctionName="NOOCHModel.Store.GetTenantsCountForGivenLandlord" />
+    <FunctionImportMapping FunctionImportName="GetUnitsCountForGivenLandlord" FunctionName="NOOCHModel.Store.GetUnitsCountForGivenLandlord" />
   </EntityContainerMapping>
 </Mapping>

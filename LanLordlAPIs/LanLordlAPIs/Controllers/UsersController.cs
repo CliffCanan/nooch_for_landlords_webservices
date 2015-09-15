@@ -223,6 +223,10 @@ namespace LanLordlAPIs.Controllers
 
 
                             result.CompanyEID = !String.IsNullOrEmpty(lanlorddetails.CompanyEIN) ? CommonHelper.GetDecryptedData(lanlorddetails.CompanyEIN) : "";
+                            result.UserImageUrl = lanlorddetails.UserPic;
+                            result.TenantsCount = obj.GetTenantsCountForGivenLandlord(User.LandlorId).SingleOrDefault().ToString();
+                            result.PropertiesCount= obj.GetPropertiesCountForGivenLandlord(User.LandlorId).SingleOrDefault().ToString();
+                            result.UnitsCount = obj.GetUnitsCountForGivenLandlord(User.LandlorId).SingleOrDefault().ToString();
                             result.IsSuccess = true;
                             result.ErrorMessage = "OK";
                         }

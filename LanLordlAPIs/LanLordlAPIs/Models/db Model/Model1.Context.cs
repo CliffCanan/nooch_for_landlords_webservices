@@ -59,5 +59,32 @@ namespace LanLordlAPIs.Models.db_Model
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetTenantsInGivenPropertyId_Result1>("GetTenantsInGivenPropertyId", vPropertyIdParameter);
         }
+    
+        public virtual ObjectResult<Nullable<int>> GetPropertiesCountForGivenLandlord(string vLandlordId)
+        {
+            var vLandlordIdParameter = vLandlordId != null ?
+                new ObjectParameter("vLandlordId", vLandlordId) :
+                new ObjectParameter("vLandlordId", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("GetPropertiesCountForGivenLandlord", vLandlordIdParameter);
+        }
+    
+        public virtual ObjectResult<Nullable<int>> GetTenantsCountForGivenLandlord(string vLandlordId)
+        {
+            var vLandlordIdParameter = vLandlordId != null ?
+                new ObjectParameter("vLandlordId", vLandlordId) :
+                new ObjectParameter("vLandlordId", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("GetTenantsCountForGivenLandlord", vLandlordIdParameter);
+        }
+    
+        public virtual ObjectResult<Nullable<int>> GetUnitsCountForGivenLandlord(string vLandlordId)
+        {
+            var vLandlordIdParameter = vLandlordId != null ?
+                new ObjectParameter("vLandlordId", vLandlordId) :
+                new ObjectParameter("vLandlordId", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("GetUnitsCountForGivenLandlord", vLandlordIdParameter);
+        }
     }
 }

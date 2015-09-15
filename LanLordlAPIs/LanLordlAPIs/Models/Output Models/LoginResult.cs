@@ -127,6 +127,11 @@ namespace LanLordlAPIs.Models.Output_Models
         public string AddState { get; set; }
         public string Country { get; set; }
         public string Zip { get; set; }
+
+        public string UserImageUrl { get; set; }
+        public string PropertiesCount { get; set; }
+        public string TenantsCount { get; set; }
+        public string UnitsCount { get; set; }
         
     }
 
