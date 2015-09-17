@@ -184,30 +184,6 @@
     <NavigationProperty Name="MemberPrivacySettings" Relationship="Self.FK_MemberPrivacySettings_Members" FromRole="Members" ToRole="MemberPrivacySettings" />
     <NavigationProperty Name="PasswordResetRequests" Relationship="NOOCHModel.FK_PasswordResetRequests_Members" FromRole="Member" ToRole="PasswordResetRequest" />
   </EntityType>
-  <EntityType Name="Property">
-    <Key>
-      <PropertyRef Name="PropertyId" />
-    </Key>
-    <Property Name="PropertyId" Type="Guid" Nullable="false" />
-    <Property Name="PropStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="PropType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="PropName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="AddressLineOne" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="AddressLineTwo" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="City" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="State" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="Zip" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="ContactNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="DefaultDueDate" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="DateAdded" Type="DateTime" Precision="3" />
-    <Property Name="DateModified" Type="DateTime" Precision="3" />
-    <Property Name="LandlordId" Type="Guid" />
-    <Property Name="MemberId" Type="Guid" />
-    <Property Name="PropertyImage" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="IsSingleUnit" Type="Boolean" />
-    <Property Name="IsDeleted" Type="Boolean" />
-    <Property Name="DefaulBank" Type="Guid" />
-  </EntityType>
   <EntityType Name="PropertyUnit">
     <Key>
       <PropertyRef Name="UnitId" />
@@ -285,7 +261,6 @@
     <EntitySet Name="MemberNotifications" EntityType="Self.MemberNotification" />
     <EntitySet Name="MemberPrivacySettings" EntityType="Self.MemberPrivacySetting" />
     <EntitySet Name="Members" EntityType="Self.Member" />
-    <EntitySet Name="Properties" EntityType="Self.Property" />
     <EntitySet Name="PropertyUnits" EntityType="Self.PropertyUnit" />
     <EntitySet Name="Tenants" EntityType="Self.Tenant" />
     <AssociationSet Name="FK_MemberNotifications_Members" Association="Self.FK_MemberNotifications_Members">
@@ -320,6 +295,8 @@
     <FunctionImport Name="GetUnitsCountForGivenLandlord" ReturnType="Collection(Int32)">
       <Parameter Name="vLandlordId" Mode="In" Type="String" />
     </FunctionImport>
+    <EntitySet Name="SynapseBanksOfMembers" EntityType="NOOCHModel.SynapseBanksOfMember" />
+    <EntitySet Name="Properties" EntityType="NOOCHModel.Property" />
   </EntityContainer>
   <EntityType Name="UnitsOccupiedByTenant">
     <Key>
@@ -426,4 +403,57 @@
     <Property Type="String" Name="UnitNumber" Nullable="true" MaxLength="50" />
     <Property Type="String" Name="TenantEmail" Nullable="true" />
   </ComplexType>
+  <EntityType Name="SynapseBanksOfMember">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="account_class" Type="Int32" />
+    <Property Name="account_number_string" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="account_type" Type="Int32" />
+    <Property Name="address" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="balance" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="bank_name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="bankAdddate" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="bankid" Type="Int32" />
+    <Property Name="is_buyer_default" Type="Boolean" />
+    <Property Name="is_seller_default" Type="Boolean" />
+    <Property Name="mfa_verifed" Type="Boolean" />
+    <Property Name="name_on_account" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="nickname" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="phone_number" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="resource_uri" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="routing_number_string" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="IsDefault" Type="Boolean" />
+    <Property Name="AddedOn" Type="DateTime" Precision="3" />
+    <Property Name="MemberId" Type="Guid" />
+    <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="VerifiedOn" Type="DateTime" Precision="3" />
+    <Property Name="VerificationCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="Property">
+    <Key>
+      <PropertyRef Name="PropertyId" />
+    </Key>
+    <Property Name="PropertyId" Type="Guid" Nullable="false" />
+    <Property Name="PropStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="PropType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="PropName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="AddressLineOne" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="AddressLineTwo" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="City" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="State" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="Zip" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="ContactNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="DefaultDueDate" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="DateAdded" Type="DateTime" Precision="3" />
+    <Property Name="DateModified" Type="DateTime" Precision="3" />
+    <Property Name="LandlordId" Type="Guid" />
+    <Property Name="MemberId" Type="Guid" />
+    <Property Name="PropertyImage" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="IsSingleUnit" Type="Boolean" />
+    <Property Name="IsDeleted" Type="Boolean" />
+    <Property Name="DefaulBank" Type="Int32" />
+  </EntityType>
 </Schema>

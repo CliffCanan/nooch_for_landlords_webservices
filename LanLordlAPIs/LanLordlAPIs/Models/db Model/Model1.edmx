@@ -239,7 +239,7 @@
           <Property Name="PropertyImage" Type="varchar(max)" />
           <Property Name="IsSingleUnit" Type="bit" />
           <Property Name="IsDeleted" Type="bit" />
-          <Property Name="DefaulBank" Type="uniqueidentifier" />
+          <Property Name="DefaulBank" Type="int" />
         </EntityType>
         <EntityType Name="PropertyUnits">
           <Key>
@@ -261,6 +261,35 @@
           <Property Name="Status" Type="varchar(max)" />
           <Property Name="DueDate" Type="datetime" />
           <Property Name="UnitNickName" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="SynapseBanksOfMembers">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="account_class" Type="int" />
+          <Property Name="account_number_string" Type="varchar(max)" />
+          <Property Name="account_type" Type="int" />
+          <Property Name="address" Type="varchar(max)" />
+          <Property Name="balance" Type="varchar(max)" />
+          <Property Name="bank_name" Type="varchar(max)" />
+          <Property Name="bankAdddate" Type="varchar" MaxLength="100" />
+          <Property Name="email" Type="varchar" MaxLength="100" />
+          <Property Name="bankid" Type="int" />
+          <Property Name="is_buyer_default" Type="bit" />
+          <Property Name="is_seller_default" Type="bit" />
+          <Property Name="mfa_verifed" Type="bit" />
+          <Property Name="name_on_account" Type="varchar(max)" />
+          <Property Name="nickname" Type="varchar(max)" />
+          <Property Name="phone_number" Type="varchar" MaxLength="100" />
+          <Property Name="resource_uri" Type="varchar(max)" />
+          <Property Name="routing_number_string" Type="varchar(max)" />
+          <Property Name="IsDefault" Type="bit" />
+          <Property Name="AddedOn" Type="datetime" />
+          <Property Name="MemberId" Type="uniqueidentifier" />
+          <Property Name="Status" Type="varchar" MaxLength="50" />
+          <Property Name="VerifiedOn" Type="datetime" />
+          <Property Name="VerificationCode" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="Tenants">
           <Key>
@@ -379,6 +408,7 @@
           <EntitySet Name="PasswordResetRequests" EntityType="Self.PasswordResetRequests" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Properties" EntityType="Self.Properties" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PropertyUnits" EntityType="Self.PropertyUnits" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SynapseBanksOfMembers" EntityType="Self.SynapseBanksOfMembers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tenants" EntityType="Self.Tenants" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TenantsIdDocuments" EntityType="Self.TenantsIdDocuments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UnitsOccupiedByTenants" EntityType="Self.UnitsOccupiedByTenants" Schema="dbo" store:Type="Tables" />
@@ -583,30 +613,6 @@
           <NavigationProperty Name="MemberPrivacySettings" Relationship="Self.FK_MemberPrivacySettings_Members" FromRole="Members" ToRole="MemberPrivacySettings" />
           <NavigationProperty Name="PasswordResetRequests" Relationship="NOOCHModel.FK_PasswordResetRequests_Members" FromRole="Member" ToRole="PasswordResetRequest" />
         </EntityType>
-        <EntityType Name="Property">
-          <Key>
-            <PropertyRef Name="PropertyId" />
-          </Key>
-          <Property Name="PropertyId" Type="Guid" Nullable="false" />
-          <Property Name="PropStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="PropType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="PropName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="AddressLineOne" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="AddressLineTwo" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="City" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="State" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="Zip" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="ContactNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="DefaultDueDate" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DateAdded" Type="DateTime" Precision="3" />
-          <Property Name="DateModified" Type="DateTime" Precision="3" />
-          <Property Name="LandlordId" Type="Guid" />
-          <Property Name="MemberId" Type="Guid" />
-          <Property Name="PropertyImage" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="IsSingleUnit" Type="Boolean" />
-          <Property Name="IsDeleted" Type="Boolean" />
-          <Property Name="DefaulBank" Type="Guid" />
-        </EntityType>
         <EntityType Name="PropertyUnit">
           <Key>
             <PropertyRef Name="UnitId" />
@@ -684,7 +690,6 @@
           <EntitySet Name="MemberNotifications" EntityType="Self.MemberNotification" />
           <EntitySet Name="MemberPrivacySettings" EntityType="Self.MemberPrivacySetting" />
           <EntitySet Name="Members" EntityType="Self.Member" />
-          <EntitySet Name="Properties" EntityType="Self.Property" />
           <EntitySet Name="PropertyUnits" EntityType="Self.PropertyUnit" />
           <EntitySet Name="Tenants" EntityType="Self.Tenant" />
           <AssociationSet Name="FK_MemberNotifications_Members" Association="Self.FK_MemberNotifications_Members">
@@ -717,8 +722,10 @@
           <Parameter Name="vLandlordId" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="GetUnitsCountForGivenLandlord" ReturnType="Collection(Int32)">
-            <Parameter Name="vLandlordId" Mode="In" Type="String" />
+          <Parameter Name="vLandlordId" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="SynapseBanksOfMembers" EntityType="NOOCHModel.SynapseBanksOfMember" />
+          <EntitySet Name="Properties" EntityType="NOOCHModel.Property" />
         </EntityContainer>
         <EntityType Name="UnitsOccupiedByTenant">
           <Key>
@@ -825,6 +832,59 @@
           <Property Type="String" Name="UnitNumber" Nullable="true" MaxLength="50" />
           <Property Type="String" Name="TenantEmail" Nullable="true" />
         </ComplexType>
+        <EntityType Name="SynapseBanksOfMember">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="account_class" Type="Int32" />
+          <Property Name="account_number_string" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="account_type" Type="Int32" />
+          <Property Name="address" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="balance" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="bank_name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="bankAdddate" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="bankid" Type="Int32" />
+          <Property Name="is_buyer_default" Type="Boolean" />
+          <Property Name="is_seller_default" Type="Boolean" />
+          <Property Name="mfa_verifed" Type="Boolean" />
+          <Property Name="name_on_account" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="nickname" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="phone_number" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="resource_uri" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="routing_number_string" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="IsDefault" Type="Boolean" />
+          <Property Name="AddedOn" Type="DateTime" Precision="3" />
+          <Property Name="MemberId" Type="Guid" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="VerifiedOn" Type="DateTime" Precision="3" />
+          <Property Name="VerificationCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Property">
+          <Key>
+            <PropertyRef Name="PropertyId" />
+          </Key>
+          <Property Name="PropertyId" Type="Guid" Nullable="false" />
+          <Property Name="PropStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PropType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PropName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="AddressLineOne" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="AddressLineTwo" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="City" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="State" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Zip" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="ContactNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="DefaultDueDate" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateAdded" Type="DateTime" Precision="3" />
+          <Property Name="DateModified" Type="DateTime" Precision="3" />
+          <Property Name="LandlordId" Type="Guid" />
+          <Property Name="MemberId" Type="Guid" />
+          <Property Name="PropertyImage" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="IsSingleUnit" Type="Boolean" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="DefaulBank" Type="Int32" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1015,31 +1075,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Properties">
-            <EntityTypeMapping TypeName="NOOCHModel.Property">
-              <MappingFragment StoreEntitySet="Properties">
-                <ScalarProperty Name="PropertyId" ColumnName="PropertyId" />
-                <ScalarProperty Name="PropStatus" ColumnName="PropStatus" />
-                <ScalarProperty Name="PropType" ColumnName="PropType" />
-                <ScalarProperty Name="PropName" ColumnName="PropName" />
-                <ScalarProperty Name="AddressLineOne" ColumnName="AddressLineOne" />
-                <ScalarProperty Name="AddressLineTwo" ColumnName="AddressLineTwo" />
-                <ScalarProperty Name="City" ColumnName="City" />
-                <ScalarProperty Name="State" ColumnName="State" />
-                <ScalarProperty Name="Zip" ColumnName="Zip" />
-                <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
-                <ScalarProperty Name="DefaultDueDate" ColumnName="DefaultDueDate" />
-                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
-                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
-                <ScalarProperty Name="LandlordId" ColumnName="LandlordId" />
-                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
-                <ScalarProperty Name="PropertyImage" ColumnName="PropertyImage" />
-                <ScalarProperty Name="IsSingleUnit" ColumnName="IsSingleUnit" />
-                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-                <ScalarProperty Name="DefaulBank" ColumnName="DefaulBank" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="PropertyUnits">
             <EntityTypeMapping TypeName="NOOCHModel.PropertyUnit">
               <MappingFragment StoreEntitySet="PropertyUnits">
@@ -1180,6 +1215,61 @@
           <FunctionImportMapping FunctionImportName="GetPropertiesCountForGivenLandlord" FunctionName="NOOCHModel.Store.GetPropertiesCountForGivenLandlord" />
           <FunctionImportMapping FunctionImportName="GetTenantsCountForGivenLandlord" FunctionName="NOOCHModel.Store.GetTenantsCountForGivenLandlord" />
           <FunctionImportMapping FunctionImportName="GetUnitsCountForGivenLandlord" FunctionName="NOOCHModel.Store.GetUnitsCountForGivenLandlord" />
+          <EntitySetMapping Name="SynapseBanksOfMembers">
+            <EntityTypeMapping TypeName="NOOCHModel.SynapseBanksOfMember">
+              <MappingFragment StoreEntitySet="SynapseBanksOfMembers">
+                <ScalarProperty Name="VerificationCode" ColumnName="VerificationCode" />
+                <ScalarProperty Name="VerifiedOn" ColumnName="VerifiedOn" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="AddedOn" ColumnName="AddedOn" />
+                <ScalarProperty Name="IsDefault" ColumnName="IsDefault" />
+                <ScalarProperty Name="routing_number_string" ColumnName="routing_number_string" />
+                <ScalarProperty Name="resource_uri" ColumnName="resource_uri" />
+                <ScalarProperty Name="phone_number" ColumnName="phone_number" />
+                <ScalarProperty Name="nickname" ColumnName="nickname" />
+                <ScalarProperty Name="name_on_account" ColumnName="name_on_account" />
+                <ScalarProperty Name="mfa_verifed" ColumnName="mfa_verifed" />
+                <ScalarProperty Name="is_seller_default" ColumnName="is_seller_default" />
+                <ScalarProperty Name="is_buyer_default" ColumnName="is_buyer_default" />
+                <ScalarProperty Name="bankid" ColumnName="bankid" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="bankAdddate" ColumnName="bankAdddate" />
+                <ScalarProperty Name="bank_name" ColumnName="bank_name" />
+                <ScalarProperty Name="balance" ColumnName="balance" />
+                <ScalarProperty Name="address" ColumnName="address" />
+                <ScalarProperty Name="account_type" ColumnName="account_type" />
+                <ScalarProperty Name="account_number_string" ColumnName="account_number_string" />
+                <ScalarProperty Name="account_class" ColumnName="account_class" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Properties">
+            <EntityTypeMapping TypeName="NOOCHModel.Property">
+              <MappingFragment StoreEntitySet="Properties">
+                <ScalarProperty Name="DefaulBank" ColumnName="DefaulBank" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsSingleUnit" ColumnName="IsSingleUnit" />
+                <ScalarProperty Name="PropertyImage" ColumnName="PropertyImage" />
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="LandlordId" ColumnName="LandlordId" />
+                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
+                <ScalarProperty Name="DefaultDueDate" ColumnName="DefaultDueDate" />
+                <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
+                <ScalarProperty Name="Zip" ColumnName="Zip" />
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="AddressLineTwo" ColumnName="AddressLineTwo" />
+                <ScalarProperty Name="AddressLineOne" ColumnName="AddressLineOne" />
+                <ScalarProperty Name="PropName" ColumnName="PropName" />
+                <ScalarProperty Name="PropType" ColumnName="PropType" />
+                <ScalarProperty Name="PropStatus" ColumnName="PropStatus" />
+                <ScalarProperty Name="PropertyId" ColumnName="PropertyId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

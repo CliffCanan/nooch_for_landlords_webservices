@@ -32,6 +32,6 @@ namespace LanLordlAPIs.Models.db_Model
         public string PropertyImage { get; set; }
         public Nullable<bool> IsSingleUnit { get; set; }
         public Nullable<bool> IsDeleted { get; set; }
-        public Nullable<System.Guid> DefaulBank { get; set; }
+        public Nullable<int> DefaulBank { get; set; }
     }
 }

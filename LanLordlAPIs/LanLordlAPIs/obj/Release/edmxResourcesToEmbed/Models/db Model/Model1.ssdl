@@ -234,7 +234,7 @@
     <Property Name="PropertyImage" Type="varchar(max)" />
     <Property Name="IsSingleUnit" Type="bit" />
     <Property Name="IsDeleted" Type="bit" />
-    <Property Name="DefaulBank" Type="uniqueidentifier" />
+    <Property Name="DefaulBank" Type="int" />
   </EntityType>
   <EntityType Name="PropertyUnits">
     <Key>
@@ -256,6 +256,35 @@
     <Property Name="Status" Type="varchar(max)" />
     <Property Name="DueDate" Type="datetime" />
     <Property Name="UnitNickName" Type="varchar(max)" />
+  </EntityType>
+  <EntityType Name="SynapseBanksOfMembers">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="account_class" Type="int" />
+    <Property Name="account_number_string" Type="varchar(max)" />
+    <Property Name="account_type" Type="int" />
+    <Property Name="address" Type="varchar(max)" />
+    <Property Name="balance" Type="varchar(max)" />
+    <Property Name="bank_name" Type="varchar(max)" />
+    <Property Name="bankAdddate" Type="varchar" MaxLength="100" />
+    <Property Name="email" Type="varchar" MaxLength="100" />
+    <Property Name="bankid" Type="int" />
+    <Property Name="is_buyer_default" Type="bit" />
+    <Property Name="is_seller_default" Type="bit" />
+    <Property Name="mfa_verifed" Type="bit" />
+    <Property Name="name_on_account" Type="varchar(max)" />
+    <Property Name="nickname" Type="varchar(max)" />
+    <Property Name="phone_number" Type="varchar" MaxLength="100" />
+    <Property Name="resource_uri" Type="varchar(max)" />
+    <Property Name="routing_number_string" Type="varchar(max)" />
+    <Property Name="IsDefault" Type="bit" />
+    <Property Name="AddedOn" Type="datetime" />
+    <Property Name="MemberId" Type="uniqueidentifier" />
+    <Property Name="Status" Type="varchar" MaxLength="50" />
+    <Property Name="VerifiedOn" Type="datetime" />
+    <Property Name="VerificationCode" Type="varchar(max)" />
   </EntityType>
   <EntityType Name="Tenants">
     <Key>
@@ -374,6 +403,7 @@
     <EntitySet Name="PasswordResetRequests" EntityType="Self.PasswordResetRequests" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Properties" EntityType="Self.Properties" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PropertyUnits" EntityType="Self.PropertyUnits" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="SynapseBanksOfMembers" EntityType="Self.SynapseBanksOfMembers" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Tenants" EntityType="Self.Tenants" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="TenantsIdDocuments" EntityType="Self.TenantsIdDocuments" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="UnitsOccupiedByTenants" EntityType="Self.UnitsOccupiedByTenants" Schema="dbo" store:Type="Tables" />

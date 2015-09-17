@@ -172,7 +172,7 @@ namespace LanLordlAPIs.Controllers
                                 existingProp.AddressLineOne = Property.Address.Trim();
                                 existingProp.City = Property.City.Trim();
                                 existingProp.Zip = Property.Zip.Trim();
-                                existingProp.State= Property.State.Trim();
+                                existingProp.State = Property.State.Trim();
                                 existingProp.ContactNumber = Property.ContactNumber.Trim();
 
 
@@ -567,7 +567,7 @@ namespace LanLordlAPIs.Controllers
                                 }
                                 currentProperty.AllUnits = AllUnitsListPrepared;
                                 currentProperty.UnitsCount = AllUnitsListPrepared.Count.ToString();
-                                currentProperty.TenantsCount = obj.GetTenantsCountInGivenPropertyId(currentProperty.PropertyId).FirstOrDefault().ToString(); 
+                                currentProperty.TenantsCount = obj.GetTenantsCountInGivenPropertyId(currentProperty.PropertyId).FirstOrDefault().ToString();
 
 
                                 AllPropertiesPreparedToDisp.Add(currentProperty);
@@ -671,30 +671,135 @@ namespace LanLordlAPIs.Controllers
                             currentProperty.IsSingleUnit = properTyInDb.IsSingleUnit;
                             currentProperty.IsDeleted = properTyInDb.IsDeleted;
 
-                            currentProperty.DefaulBank = properTyInDb.DefaulBank != null ? properTyInDb.DefaulBank.ToString() : ".";
-                            if (currentProperty.DefaulBank != "")
+                            //currentProperty.DefaulBank = properTyInDb.DefaulBank != null ? properTyInDb.DefaulBank.ToString() : "."; // hard coded it for testing purpose
+                            //if (currentProperty.DefaulBank != "")
+                            //{
+                            //    result.IsBankAccountAdded = true;
+
+                            //    // code here to add bank details
+
+                            //    BankDetailsReusltClass bdetails = new BankDetailsReusltClass();
+                            //    bdetails.BankAccountID = "XXXX-11111-22222-1231232";
+                            //    bdetails.BankName = "Bank of America";
+
+                            //    bdetails.BankIcon = "http://54.201.43.89/landlords/db/UploadedImages/PropertyImages/21d4e1ee_865c_40dd_b841_15807546daae_property_test_bASDASD.png";
+                            //    bdetails.BankAccountNick = "Checking account";
+                            //    bdetails.BankAccountNumString = "1234";
+
+                            //    result.BankAccountDetails = bdetails;
+
+
+                            //}
+                            //else
+                            //{
+                            //    result.IsBankAccountAdded = false;
+                            //}
+
+                            BankDetailsReusltClass bdetails = new BankDetailsReusltClass();
+                            if (properTyInDb.DefaulBank != null)
                             {
-                                result.IsBankAccountAdded = true;
 
-                                // code here to add bank details
+                                int bnkId = Convert.ToInt16(properTyInDb.DefaulBank);
+                                // gettting bank details
+                                var allBankDetails =
+                                    (from c in obj.SynapseBanksOfMembers
+                                     where c.Id == bnkId && c.IsDefault == true
+                                     select c).FirstOrDefault();
+                                if (allBankDetails != null)
+                                {
+                                    result.IsBankAccountAdded = true;
 
-                                BankDetailsReusltClass bdetails = new BankDetailsReusltClass();
-                                bdetails.BankAccountID = "XXXX-11111-22222-1231232";
-                                bdetails.BankName = "Bank of America";
+                                    bdetails.BankAccountID = allBankDetails.Id.ToString();
+                                    bdetails.BankName = allBankDetails.bank_name != null ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(allBankDetails.bank_name)) : "";
+                                    bdetails.BankAccountNick = allBankDetails.nickname != null ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(allBankDetails.nickname)) : "";
+                                    bdetails.BankAccountNumString = allBankDetails.account_number_string != null ? CommonHelper.GetDecryptedData(allBankDetails.account_number_string) : "";
 
-                                bdetails.BankIcon = "http://54.201.43.89/landlords/db/UploadedImages/PropertyImages/21d4e1ee_865c_40dd_b841_15807546daae_property_test_bASDASD.png";
-                                bdetails.BankAccountNick = "Checking account";
-                                bdetails.BankAccountNumString = "1234";
+                                    string bankNameToMatch = allBankDetails.bank_name != null
+                                        ? CommonHelper.GetDecryptedData(allBankDetails.bank_name).ToUpper()
+                                        : "";
+                                    if (bankNameToMatch.Length > 0)
+                                    {
+                                        switch (bankNameToMatch)
+                                        {
+                                            case "ALLY":
+                                                bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/ally.png";
+                                                break;
+                                            case "BANK OF AMERICA":
+                                                bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/bankofamerica.png";
+                                                break;
+                                            case "BB&T BANK"://need logo
+                                                bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/no.png";
+                                                break;
+                                            case "CHASE":
+                                                bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/chase.png";
+                                                break;
+                                            case "CITIBANK":
+                                                bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/citibank.png";
+                                                break;
+                                            case "CHARLES SCHWAB"://need logo
+                                                bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/no.png";
+                                                break;
+                                            case "CAPITAL ONE 360":
+                                                bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/capone360.png";
+                                                break;
+                                            case "FIDELITY"://need logo
+                                                bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/no.png";
+                                                break;
+                                            case "FIRST TENNESSEE":
+                                                bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/firsttennessee.png";
+                                                break;
+                                            case "US BANK":
+                                                bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/usbank.png";
+                                                break;
+                                            case "USAA":
+                                                bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/usaa.png";
+                                                break;
+                                            case "WELLS FARGO":
+                                                bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/WellsFargo.png";
+                                                break;
+                                            case "PNC":
+                                                bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/pnc.png";
+                                                break;
+                                            case "REGIONS":
+                                                bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/regions.png";
+                                                break;
+                                            case "SUNTRUST":
+                                                bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/suntrust.png";
+                                                break;
+                                            case "TD BANK":
+                                                bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/td.png";
+                                                break;
+                                            default:
+                                                bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/no.png";
+                                                break;
+                                        }
+                                    }
+                                    else
+                                    {
 
-                                result.BankAccountDetails = bdetails;
+                                        bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/no.png";
+                                    }
+
+
+
+
+
+
+                                }
+
+
+
 
 
                             }
                             else
                             {
+
+                                bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/no.png";
+
                                 result.IsBankAccountAdded = false;
                             }
-
+                            result.BankAccountDetails = bdetails;
                             result.PropertyDetails = currentProperty;
 
                             // raeding all units of this property
