@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="cd15dcc551d3402cae47284990068485" Name="Diagram1" ZoomLevel="82">
+      <Diagram DiagramId="cd15dcc551d3402cae47284990068485" Name="Diagram1" ZoomLevel="55">
         <EntityTypeShape EntityType="NOOCHModel.GeoLocation" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="NOOCHModel.Landlord" Width="1.5" PointX="5.75" PointY="4.75" IsExpanded="true" />
         <EntityTypeShape EntityType="NOOCHModel.MemberNotification" Width="1.5" PointX="3" PointY="8" IsExpanded="true" />

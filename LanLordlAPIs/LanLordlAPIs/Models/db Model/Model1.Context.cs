@@ -87,5 +87,44 @@ namespace LanLordlAPIs.Models.db_Model
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("GetUnitsCountForGivenLandlord", vLandlordIdParameter);
         }
+    
+        public virtual ObjectResult<Nullable<bool>> IsBankAccountAddedforGivenLandlordOrTenant(string vUserType, string vUserId)
+        {
+            var vUserTypeParameter = vUserType != null ?
+                new ObjectParameter("vUserType", vUserType) :
+                new ObjectParameter("vUserType", typeof(string));
+    
+            var vUserIdParameter = vUserId != null ?
+                new ObjectParameter("vUserId", vUserId) :
+                new ObjectParameter("vUserId", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<bool>>("IsBankAccountAddedforGivenLandlordOrTenant", vUserTypeParameter, vUserIdParameter);
+        }
+    
+        public virtual ObjectResult<Nullable<bool>> IsEmailVerifiedforGivenLandlordOrTenant(string vUserType, string vUserId)
+        {
+            var vUserTypeParameter = vUserType != null ?
+                new ObjectParameter("vUserType", vUserType) :
+                new ObjectParameter("vUserType", typeof(string));
+    
+            var vUserIdParameter = vUserId != null ?
+                new ObjectParameter("vUserId", vUserId) :
+                new ObjectParameter("vUserId", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<bool>>("IsEmailVerifiedforGivenLandlordOrTenant", vUserTypeParameter, vUserIdParameter);
+        }
+    
+        public virtual ObjectResult<Nullable<bool>> IsPhoneVerifiedforGivenLandlordOrTenant(string vUserType, string vUserId)
+        {
+            var vUserTypeParameter = vUserType != null ?
+                new ObjectParameter("vUserType", vUserType) :
+                new ObjectParameter("vUserType", typeof(string));
+    
+            var vUserIdParameter = vUserId != null ?
+                new ObjectParameter("vUserId", vUserId) :
+                new ObjectParameter("vUserId", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<bool>>("IsPhoneVerifiedforGivenLandlordOrTenant", vUserTypeParameter, vUserIdParameter);
+        }
     }
 }

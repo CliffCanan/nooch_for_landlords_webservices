@@ -397,6 +397,18 @@
         <Function Name="GetUnitsCountForGivenLandlord" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="vLandlordId" Type="varchar(max)" Mode="In" />
         </Function>
+        <Function Name="IsBankAccountAddedforGivenLandlordOrTenant" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="vUserType" Type="varchar" Mode="In" />
+          <Parameter Name="vUserId" Type="varchar(max)" Mode="In" />
+        </Function>
+        <Function Name="IsEmailVerifiedforGivenLandlordOrTenant" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="vUserType" Type="varchar" Mode="In" />
+          <Parameter Name="vUserId" Type="varchar(max)" Mode="In" />
+        </Function>
+        <Function Name="IsPhoneVerifiedforGivenLandlordOrTenant" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="vUserType" Type="varchar" Mode="In" />
+          <Parameter Name="vUserId" Type="varchar(max)" Mode="In" />
+        </Function>
         <EntityContainer Name="NOOCHModelStoreContainer">
           <EntitySet Name="AuthenticationTokens" EntityType="Self.AuthenticationTokens" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GeoLocations" EntityType="Self.GeoLocations" Schema="dbo" store:Type="Tables" />
@@ -726,6 +738,18 @@
           </FunctionImport>
           <EntitySet Name="SynapseBanksOfMembers" EntityType="NOOCHModel.SynapseBanksOfMember" />
           <EntitySet Name="Properties" EntityType="NOOCHModel.Property" />
+          <FunctionImport Name="IsBankAccountAddedforGivenLandlordOrTenant" ReturnType="Collection(Boolean)">
+            <Parameter Name="vUserType" Mode="In" Type="String" />
+            <Parameter Name="vUserId" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="IsEmailVerifiedforGivenLandlordOrTenant" ReturnType="Collection(Boolean)">
+            <Parameter Name="vUserType" Mode="In" Type="String" />
+            <Parameter Name="vUserId" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="IsPhoneVerifiedforGivenLandlordOrTenant" ReturnType="Collection(Boolean)">
+            <Parameter Name="vUserType" Mode="In" Type="String" />
+            <Parameter Name="vUserId" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="UnitsOccupiedByTenant">
           <Key>
@@ -1270,6 +1294,9 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="IsBankAccountAddedforGivenLandlordOrTenant" FunctionName="NOOCHModel.Store.IsBankAccountAddedforGivenLandlordOrTenant" />
+          <FunctionImportMapping FunctionImportName="IsEmailVerifiedforGivenLandlordOrTenant" FunctionName="NOOCHModel.Store.IsEmailVerifiedforGivenLandlordOrTenant" />
+          <FunctionImportMapping FunctionImportName="IsPhoneVerifiedforGivenLandlordOrTenant" FunctionName="NOOCHModel.Store.IsPhoneVerifiedforGivenLandlordOrTenant" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

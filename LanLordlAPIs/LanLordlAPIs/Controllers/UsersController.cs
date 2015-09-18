@@ -225,7 +225,7 @@ namespace LanLordlAPIs.Controllers
                             result.CompanyEID = !String.IsNullOrEmpty(lanlorddetails.CompanyEIN) ? CommonHelper.GetDecryptedData(lanlorddetails.CompanyEIN) : "";
                             result.UserImageUrl = lanlorddetails.UserPic;
                             result.TenantsCount = obj.GetTenantsCountForGivenLandlord(User.LandlorId).SingleOrDefault().ToString();
-                            result.PropertiesCount= obj.GetPropertiesCountForGivenLandlord(User.LandlorId).SingleOrDefault().ToString();
+                            result.PropertiesCount = obj.GetPropertiesCountForGivenLandlord(User.LandlorId).SingleOrDefault().ToString();
                             result.UnitsCount = obj.GetUnitsCountForGivenLandlord(User.LandlorId).SingleOrDefault().ToString();
                             result.IsSuccess = true;
                             result.ErrorMessage = "OK";
@@ -886,6 +886,72 @@ namespace LanLordlAPIs.Controllers
 
             }
         }
+
+        // to get account setting stats
+
+
+        [HttpPost]
+        [ActionName("GetAccountCompletetionStatsOfGivenLandlord")]
+        public GetAccountCompletionStatsResultClass GetAccountCompletetionStatsOfGivenLandlord(GetProfileDataInput Property)
+        {
+
+            GetAccountCompletionStatsResultClass result = new GetAccountCompletionStatsResultClass();
+            try
+            {
+                Logger.Info("Landlords API -> Users -> GetAccountCompletetionStatsOfGivenLandlord. LoadProperties requested by [" +
+                            Property.LandlorId + "]");
+                Guid landlordguidId = new Guid(Property.LandlorId);
+                result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, Property.AccessToken);
+
+                if (result.AuthTokenValidation.IsTokenOk)
+                {
+
+
+                    
+                    using (NOOCHEntities obj = new NOOCHEntities())
+                    {
+
+
+                        result.AllUnitsCount = obj.GetUnitsCountForGivenLandlord(Property.LandlorId).SingleOrDefault().ToString();
+                        result.AllPropertysCount = obj.GetPropertiesCountForGivenLandlord(Property.LandlorId).SingleOrDefault().ToString();
+                        result.AllTenantsCount = obj.GetTenantsCountForGivenLandlord(Property.LandlorId).SingleOrDefault().ToString();
+
+                        result.IsAccountAdded = Convert.ToBoolean(obj.IsBankAccountAddedforGivenLandlordOrTenant("Landlord", Property.LandlorId).SingleOrDefault());
+                        result.IsEmailVerified = Convert.ToBoolean(obj.IsEmailVerifiedforGivenLandlordOrTenant("Landlord", Property.LandlorId).SingleOrDefault());
+                        result.IsPhoneVerified = Convert.ToBoolean(obj.IsPhoneVerifiedforGivenLandlordOrTenant("Landlord", Property.LandlorId).SingleOrDefault());
+
+
+                        //TBD with Cliff
+                        result.IsIDVerified = true;
+                        result.IsAnyRentReceived = true;
+
+                        result.IsSuccess = true;
+                        result.ErrorMessage = "OK";
+
+
+
+                    }
+
+
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.ErrorMessage = "Invalid Access token.";
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Landlords API -> Properties -> LoadProperties. LoadProperties requested by- [ " +
+                             Property.LandlorId + " ] . Exception details [ " + ex + " ]");
+                result.IsSuccess = false;
+                result.ErrorMessage = "Error while getting properties list. Retry later!";
+                return result;
+
+            }
+        }
+
 
     }
 }

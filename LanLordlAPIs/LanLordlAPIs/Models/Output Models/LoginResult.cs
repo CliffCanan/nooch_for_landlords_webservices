@@ -137,6 +137,30 @@ namespace LanLordlAPIs.Models.Output_Models
 
 
 
+
+
+    public class GetAccountCompletionStatsResultClass
+    {
+        public AccessTokenValidationOutput AuthTokenValidation { get; set; }
+
+
+
+        // if any exception
+        public bool IsSuccess { get; set; }
+        public string ErrorMessage { get; set; }
+
+
+        public string AllPropertysCount { get; set; }
+        public string AllUnitsCount { get; set; }
+
+        public bool IsEmailVerified { get; set; }
+        public bool IsPhoneVerified { get; set; }
+        public bool IsAccountAdded { get; set; }
+        public bool IsIDVerified { get; set; }
+        public bool IsAnyRentReceived { get; set; }
+        public string AllTenantsCount { get; set; }
+    }
+
     public class GetAllPropertysResultClass
     {
         public AccessTokenValidationOutput AuthTokenValidation { get; set; }
@@ -150,6 +174,13 @@ namespace LanLordlAPIs.Models.Output_Models
         public List<PropertyClassWithUnits> AllProperties { get; set; }
 
         public string AllPropertysCount { get; set; }
+        public string AllUnitsCount { get; set; }
+
+        public bool IsEmailVerified { get; set; }
+        public bool IsPhoneVerified { get; set; }
+        public bool IsAccountAdded { get; set; }
+        public bool IsIDVerified { get; set; }
+        public bool IsAnyRentReceived { get; set; }
         public string AllTenantsCount { get; set; }
 
         

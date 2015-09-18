@@ -392,6 +392,18 @@
   <Function Name="GetUnitsCountForGivenLandlord" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
     <Parameter Name="vLandlordId" Type="varchar(max)" Mode="In" />
   </Function>
+  <Function Name="IsBankAccountAddedforGivenLandlordOrTenant" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="vUserType" Type="varchar" Mode="In" />
+    <Parameter Name="vUserId" Type="varchar(max)" Mode="In" />
+  </Function>
+  <Function Name="IsEmailVerifiedforGivenLandlordOrTenant" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="vUserType" Type="varchar" Mode="In" />
+    <Parameter Name="vUserId" Type="varchar(max)" Mode="In" />
+  </Function>
+  <Function Name="IsPhoneVerifiedforGivenLandlordOrTenant" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="vUserType" Type="varchar" Mode="In" />
+    <Parameter Name="vUserId" Type="varchar(max)" Mode="In" />
+  </Function>
   <EntityContainer Name="NOOCHModelStoreContainer">
     <EntitySet Name="AuthenticationTokens" EntityType="Self.AuthenticationTokens" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="GeoLocations" EntityType="Self.GeoLocations" Schema="dbo" store:Type="Tables" />

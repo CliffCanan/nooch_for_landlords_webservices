@@ -297,6 +297,18 @@
     </FunctionImport>
     <EntitySet Name="SynapseBanksOfMembers" EntityType="NOOCHModel.SynapseBanksOfMember" />
     <EntitySet Name="Properties" EntityType="NOOCHModel.Property" />
+    <FunctionImport Name="IsBankAccountAddedforGivenLandlordOrTenant" ReturnType="Collection(Boolean)">
+      <Parameter Name="vUserType" Mode="In" Type="String" />
+      <Parameter Name="vUserId" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="IsEmailVerifiedforGivenLandlordOrTenant" ReturnType="Collection(Boolean)">
+      <Parameter Name="vUserType" Mode="In" Type="String" />
+      <Parameter Name="vUserId" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="IsPhoneVerifiedforGivenLandlordOrTenant" ReturnType="Collection(Boolean)">
+      <Parameter Name="vUserType" Mode="In" Type="String" />
+      <Parameter Name="vUserId" Mode="In" Type="String" />
+    </FunctionImport>
   </EntityContainer>
   <EntityType Name="UnitsOccupiedByTenant">
     <Key>

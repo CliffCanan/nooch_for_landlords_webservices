@@ -569,10 +569,15 @@ namespace LanLordlAPIs.Controllers
                                 currentProperty.UnitsCount = AllUnitsListPrepared.Count.ToString();
                                 currentProperty.TenantsCount = obj.GetTenantsCountInGivenPropertyId(currentProperty.PropertyId).FirstOrDefault().ToString();
 
+                                
+
 
                                 AllPropertiesPreparedToDisp.Add(currentProperty);
-                                result.AllPropertysCount = AllUnitsListPrepared.Count.ToString();
-                                result.AllTenantsCount = result.AllTenantsCount + currentProperty.TenantsCount;
+
+
+
+                              
+
 
 
 
@@ -580,6 +585,14 @@ namespace LanLordlAPIs.Controllers
                             }
 
                             result.AllProperties = AllPropertiesPreparedToDisp;
+
+                            result.AllUnitsCount = obj.GetUnitsCountForGivenLandlord(Property.LandlorId).SingleOrDefault().ToString();
+                            result.AllPropertysCount = obj.GetPropertiesCountForGivenLandlord(Property.LandlorId).SingleOrDefault().ToString();
+                            result.AllTenantsCount = obj.GetTenantsCountForGivenLandlord(Property.LandlorId).SingleOrDefault().ToString();
+
+                            result.IsAccountAdded = Convert.ToBoolean( obj.IsBankAccountAddedforGivenLandlordOrTenant("Landlord",Property.LandlorId).SingleOrDefault());
+                            result.IsEmailVerified = Convert.ToBoolean(obj.IsEmailVerifiedforGivenLandlordOrTenant("Landlord", Property.LandlorId).SingleOrDefault());
+                            result.IsPhoneVerified = Convert.ToBoolean(obj.IsPhoneVerifiedforGivenLandlordOrTenant("Landlord", Property.LandlorId).SingleOrDefault());
 
                             result.IsSuccess = true;
                             result.ErrorMessage = "OK";

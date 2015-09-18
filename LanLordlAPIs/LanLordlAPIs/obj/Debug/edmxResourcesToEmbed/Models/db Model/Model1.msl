@@ -380,5 +380,8 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="IsBankAccountAddedforGivenLandlordOrTenant" FunctionName="NOOCHModel.Store.IsBankAccountAddedforGivenLandlordOrTenant" />
+    <FunctionImportMapping FunctionImportName="IsEmailVerifiedforGivenLandlordOrTenant" FunctionName="NOOCHModel.Store.IsEmailVerifiedforGivenLandlordOrTenant" />
+    <FunctionImportMapping FunctionImportName="IsPhoneVerifiedforGivenLandlordOrTenant" FunctionName="NOOCHModel.Store.IsPhoneVerifiedforGivenLandlordOrTenant" />
   </EntityContainerMapping>
 </Mapping>
