@@ -56,6 +56,8 @@
     <Property Name="IsDeleted" Type="Boolean" />
     <Property Name="WebAccessToken" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
     <Property Name="LastSeenOn" Type="DateTime" Precision="3" />
+    <Property Name="IsAnyRentReceived" Type="Boolean" />
+    <Property Name="IsIdVerified" Type="Boolean" />
   </EntityType>
   <EntityType Name="MemberNotification">
     <Key>
@@ -230,6 +232,7 @@
     <Property Name="BankAccountId" Type="Guid" />
     <Property Name="UserPic" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
     <Property Name="IsIdDocumentVerified" Type="Boolean" />
+    <Property Name="IsAnyRentPaid" Type="Boolean" />
   </EntityType>
   <Association Name="FK_MemberNotifications_Members">
     <End Role="Members" Type="Self.Member" Multiplicity="1" />

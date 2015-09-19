@@ -717,9 +717,195 @@ namespace LanLordlAPIs.Classes.Utility
             }
         }
 
+        public static string IsDuplicateMember(string userName)
+        {
+            
+
+            var userNameLowerCase = CommonHelper.GetEncryptedData(userName.ToLower());
+
+            using (var noochConnection = new NOOCHEntities())
+            {
+                
+                var noochMember = (from c in noochConnection.Members  where c.UserName==userNameLowerCase && c.IsDeleted==false select c).FirstOrDefault();
+                
+                if (noochMember != null)
+                {
+                    return "Username already exists for the primary email you entered. Please try with some other email.";
+                }
+
+                return "Not a nooch member.";
+            }
+        }
 
 
+        public static string SendSMS(string phoneto, string msg)
+        {
+            string AccountSid = ConfigurationSettings.AppSettings["AccountSid"].ToString();
+            string AuthToken = ConfigurationSettings.AppSettings["AuthToken"].ToString();
+            string from = ConfigurationSettings.AppSettings["AccountPhone"].ToString();
+            string to = "";
 
+            if (!phoneto.Trim().Contains("+"))
+                to = GetValueFromConfig("SMSInternationalCode") + phoneto.Trim();
+            else
+                to = phoneto.Trim();
+
+            var client = new Twilio.TwilioRestClient(AccountSid, AuthToken);
+            var sms = client.SendSmsMessage(from, to, msg);
+            return sms.Status;
+        }
+
+        public static  string ResendVerificationSMS(string Username)
+        {
+            //1. Check if user exists
+            //2. Check if phone is already verified
+
+            bool IsValidMember = false;
+            string s = IsDuplicateMember(Username);
+            if (s != "Not a nooch member.")
+            {
+                // member exists, now check if Phone is already verified
+                IsValidMember = true;
+                // checking if phone is already activated
+                // getting MemberId
+                Username = CommonHelper.GetEncryptedData(Username);
+                using (var noochConnection = new NOOCHEntities())
+                {
+                    var memberEntity = (from c in noochConnection.Members where c.UserName == Username && c.IsDeleted == false select c).FirstOrDefault();
+                    if (memberEntity != null)
+                    {
+                        if (memberEntity.Status == "Temporarily_Blocked")
+                        {
+                            return "Temporarily_Blocked";
+                        }
+                        else if (memberEntity.Status == "Suspended")
+                        {
+                            return "Suspended";
+                        }
+
+                        else if (memberEntity.Status == "Active" || memberEntity.Status == "Registered")
+                        {
+                            string MessageBody = "Reply with 'GO' to this message to confirm your mobile number.";
+                            if (memberEntity.ContactNumber != null &&
+                                (memberEntity.IsVerifiedPhone == false || memberEntity.IsVerifiedPhone == null))
+                            {
+                                string result = SendSMS(memberEntity.ContactNumber, MessageBody);
+                                return "Success";
+                            }
+                            else if (memberEntity.ContactNumber != null && (memberEntity.IsVerifiedPhone == true))
+                            {
+                                return "Already Verified.";
+                            }
+                            else
+                            {
+                                return "Failure";
+                            }
+                        }
+                        else
+                        {
+                            return "Failure";
+                        }
+                    }
+                    else
+                    {
+                        return "Not a nooch member.";
+                    }
+                }
+            }
+            else
+            {
+                // Member doesn't exists
+                return "Not a nooch member.";
+            }
+        }
+
+
+        public static string GetMemberNameByUserName(string userName)
+        {
+            
+            
+
+            var userNameLowerCase = CommonHelper.GetEncryptedData(userName.ToLower());
+            userName = CommonHelper.GetEncryptedData(userName);
+
+            using (var noochConnection = new NOOCHEntities())
+            {
+                
+                
+                var noochMember = (from c in noochConnection.Members where c.UserName==userName && c.IsDeleted==false select c).FirstOrDefault();
+                
+                if (noochMember != null)
+                {
+                    return CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(noochMember.FirstName))) + " "
+                           + CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(noochMember.LastName)));
+                }
+            }
+            return null;
+        }
+
+        public static string ResendVerificationLink(string Username)
+        {
+            //1. Check if user exists or not
+            //2. Check if already verified or not
+
+            string s = IsDuplicateMember(Username);
+            if (s != "Not a nooch member.")
+            {
+                // getting MemberId
+                Member mem = getMemberByEmailId(Username);
+                string MemberId = mem.MemberId.ToString();
+
+                var userNameLowerCase = CommonHelper.GetEncryptedData(Username.ToLower());
+                using (var noochConnection = new NOOCHEntities())
+                {
+                    // member exists check for already activated or not
+                    Guid MemId = mem.MemberId;
+
+                    var noochMember = (from c in noochConnection.AuthenticationTokens where c.IsActivated == false && c.MemberId == MemId select c).FirstOrDefault();
+
+                    if (noochMember != null)
+                    {
+                        // send registration email to member with autogenerated token 
+                        var link = String.Concat(GetValueFromConfig("ApplicationURL"),
+                            "/Registration/Activation.aspx?tokenId=" + noochMember.TokenId);
+                        string MemberName = GetMemberNameByUserName(Username);
+
+                        var fromAddress = GetValueFromConfig("welcomeMail");
+                        // Add any tokens you want to find/replace within your template file
+                        var tokens = new Dictionary<string, string>
+                        {
+                            {Constants.PLACEHOLDER_FIRST_NAME, MemberName},
+                            {Constants.PLACEHOLDER_LAST_NAME, ""},
+                            {Constants.PLACEHOLDER_OTHER_LINK, link}
+                        };
+                        try
+                        {
+                            SendEmail(Constants.TEMPLATE_REGISTRATION,
+                                fromAddress, Username,
+                                "Confirm Nooch Registration", tokens,null);
+                            return "Success";
+                        }
+                        catch (Exception)
+                        {
+                            Logger.Error("CommonHelper -> ResendVerificationLink - Member activation email not sent to [" +
+                                                   Username + "].");
+                            return "Failure";
+                        }
+                    }
+                    else
+                    {
+                        // already activated send failure
+                        return "Already Activated.";
+                    }
+                }
+
+            }
+            else
+            {
+                // Member doesn't exists
+                return "Not a nooch member.";
+            }
+        }
     }
 
 

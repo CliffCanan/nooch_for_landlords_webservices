@@ -21,6 +21,8 @@
     <EntitySetMapping Name="Landlords">
       <EntityTypeMapping TypeName="NOOCHModel.Landlord">
         <MappingFragment StoreEntitySet="Landlords">
+          <ScalarProperty Name="IsIdVerified" ColumnName="IsIdVerified" />
+          <ScalarProperty Name="IsAnyRentReceived" ColumnName="IsAnyRentReceived" />
           <ScalarProperty Name="LastSeenOn" ColumnName="LastSeenOn" />
           <ScalarProperty Name="LandlordId" ColumnName="LandlordId" />
           <ScalarProperty Name="MemberId" ColumnName="MemberId" />
@@ -210,6 +212,7 @@
     <EntitySetMapping Name="Tenants">
       <EntityTypeMapping TypeName="NOOCHModel.Tenant">
         <MappingFragment StoreEntitySet="Tenants">
+          <ScalarProperty Name="IsAnyRentPaid" ColumnName="IsAnyRentPaid" />
           <ScalarProperty Name="IsIdDocumentVerified" ColumnName="IsIdDocumentVerified" />
           <ScalarProperty Name="TenantId" ColumnName="TenantId" />
           <ScalarProperty Name="FirstName" ColumnName="FirstName" />

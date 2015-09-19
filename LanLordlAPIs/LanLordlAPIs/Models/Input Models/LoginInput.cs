@@ -23,6 +23,16 @@ namespace LanLordlAPIs.Models.Input_Models
     }
 
 
+    public class ResendVerificationEmailAndSMSInput
+    {
+        public string UserId { get; set; }
+        public string AccessToken { get; set; }
+        public string UserType { get; set; }
+        public string RequestFor { get; set; }
+
+    }
+
+
 
     public class EditPersonalInfoInputClass
     {

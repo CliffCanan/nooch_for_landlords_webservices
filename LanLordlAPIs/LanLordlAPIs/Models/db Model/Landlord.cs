@@ -50,5 +50,7 @@ namespace LanLordlAPIs.Models.db_Model
         public Nullable<bool> IsDeleted { get; set; }
         public string WebAccessToken { get; set; }
         public Nullable<System.DateTime> LastSeenOn { get; set; }
+        public Nullable<bool> IsAnyRentReceived { get; set; }
+        public Nullable<bool> IsIdVerified { get; set; }
     }
 }

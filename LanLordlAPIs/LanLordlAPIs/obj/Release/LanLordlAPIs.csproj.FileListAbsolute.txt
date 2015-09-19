@@ -124,3 +124,8 @@ C:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\obj\Release\LanLordlAPIs.dll
 C:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\obj\Release\LanLordlAPIs.pdb
 C:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\obj\Release\LanLordlAPIs.Constants.resources
 C:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\obj\Release\LanLordlAPIs.csproj.GenerateResource.Cache
+C:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\bin\RestSharp.dll
+C:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\bin\Twilio.Api.dll
+C:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\bin\RestSharp.xml
+C:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\bin\Twilio.Api.pdb
+C:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\bin\Twilio.Api.xml

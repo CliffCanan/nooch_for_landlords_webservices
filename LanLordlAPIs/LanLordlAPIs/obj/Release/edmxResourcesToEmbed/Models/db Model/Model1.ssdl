@@ -81,6 +81,8 @@
     <Property Name="IsDeleted" Type="bit" />
     <Property Name="WebAccessToken" Type="varchar(max)" />
     <Property Name="LastSeenOn" Type="datetime" />
+    <Property Name="IsAnyRentReceived" Type="bit" />
+    <Property Name="IsIdVerified" Type="bit" />
   </EntityType>
   <EntityType Name="MemberNotifications">
     <Key>
@@ -311,6 +313,7 @@
     <Property Name="BankAccountId" Type="uniqueidentifier" />
     <Property Name="UserPic" Type="varchar(max)" />
     <Property Name="IsIdDocumentVerified" Type="bit" />
+    <Property Name="IsAnyRentPaid" Type="bit" />
   </EntityType>
   <EntityType Name="TenantsIdDocuments">
     <Key>
