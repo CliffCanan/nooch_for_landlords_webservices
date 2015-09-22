@@ -531,6 +531,9 @@ namespace LanLordlAPIs.Controllers
 
 
 
+
+
+
         [HttpPost]
         [ActionName("RegisterLandlord")]
         public RegisterLandlordResult RegisterLandlord(RegisterLandlordInput llDetails)
@@ -1073,6 +1076,147 @@ namespace LanLordlAPIs.Controllers
                 result.IsSuccess = false;
                 result.ErrorMessage= "Server error, retry later!";
                 return result;
+            }
+        }
+
+
+        // tos end emails to tenants
+        [HttpPost]
+        [ActionName("SendEmailsToTenants")]
+        public CreatePropertyResultOutput SendEmailsToTenants(SendEmailsToTenantsInputClass User)
+        {
+            CreatePropertyResultOutput result = new CreatePropertyResultOutput();
+            try
+            {
+
+                Guid landlordguidId = new Guid(User.DeviceInfo.LandlorId);
+                result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, User.DeviceInfo.AccessToken);
+
+                if (result.AuthTokenValidation.IsTokenOk)
+                {
+                    // valid access token continue with edit
+
+                    using (NOOCHEntities obj = new NOOCHEntities())
+                    {
+                        //reading details from db
+                        var lanlorddetails =
+                       (from c in obj.Landlords
+
+                        where c.LandlordId == landlordguidId
+                        select
+                            c
+                    ).FirstOrDefault();
+
+                        if (lanlorddetails != null)
+                        {
+                           // if mail to be sent is for one or all
+
+                            if (User.EmailInfo.IsForAllOrOne=="One")
+                            {
+                                //signle person message
+                                if (!String.IsNullOrEmpty( User.EmailInfo.TenantIdToBeMessaged))
+                                {
+                                    Guid tenantguidId = new Guid(User.DeviceInfo.LandlorId);    
+
+                                    // getting tenant info
+
+                                    var tenanInfo =
+                                        (from c in obj.Tenants where c.TenantId == tenantguidId select c).FirstOrDefault
+                                            ();
+
+                                    if (tenanInfo!=null)
+                                    {
+                                        string emailtobesentto = CommonHelper.GetDecryptedData(tenanInfo.eMail);
+                                        string emailtobesentfrom = CommonHelper.GetDecryptedData(lanlorddetails.eMail);
+
+                                        string bodytext = User.EmailInfo.MessageToBeSent;
+
+                                        CommonHelper.SendEmail(null, emailtobesentfrom, emailtobesentto,
+                                            "New message from " +
+                                            CommonHelper.GetDecryptedData(lanlorddetails.FirstName), null, bodytext);
+
+                                        result.IsSuccess = true;
+                                        result.ErrorMessage = "Message sent.";
+
+
+                                    }
+                                    else
+                                    {
+                                        result.IsSuccess = false;
+                                        result.ErrorMessage = "Given tenant not found.";
+                                    }
+                                }
+                                else
+                                {
+                                    result.IsSuccess = false;
+                                    result.ErrorMessage = "Invalid input data.";
+                                }
+
+                                
+                            }
+                            else if (User.EmailInfo.IsForAllOrOne == "All")
+                            {
+                                //email to be sent to all
+                                // getting all tenants of given landlord
+                                string propId = User.EmailInfo.PropertyId;
+
+                                List<GetTenantsInGivenPropertyId_Result1> allTenantsOfLl = obj.GetTenantsInGivenPropertyId(propId).ToList();
+
+                                if (allTenantsOfLl.Count>0)
+                                {
+
+                                    string emailtobesentfrom = CommonHelper.GetDecryptedData(lanlorddetails.eMail);
+                                    foreach (GetTenantsInGivenPropertyId_Result1 ten in allTenantsOfLl)
+                                    {
+                                        string emailtobesentto = CommonHelper.GetDecryptedData(ten.TenantEmail);
+                                        
+
+                                        string bodytext = User.EmailInfo.MessageToBeSent;
+
+                                        CommonHelper.SendEmail(null, emailtobesentfrom, emailtobesentto,
+                                            "New message from " +
+                                           CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(lanlorddetails.FirstName)) + " " + CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(lanlorddetails.LastName)), null, bodytext);
+                                    }
+
+                                    result.IsSuccess = true;
+                                    result.ErrorMessage = "Messages sent.";
+
+                                }
+                                else
+                                {
+                                    result.IsSuccess = false;
+                                    result.ErrorMessage = "No tenant found for given landlord and property.";
+                                }
+
+                            }
+                            else
+                            {
+                                result.IsSuccess = false;
+                                result.ErrorMessage = "Invalid input data.";
+                            }
+                        }
+                        else
+                        {
+                            result.IsSuccess = false;
+                            result.ErrorMessage = "Given landlor doesn't exists in system.";
+                        }
+                    }
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.ErrorMessage = result.AuthTokenValidation.ErrorMessage;
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.Info("Landlords API -> Users -> SendEmailsToTenants. SendEmailsToTenants exception[" + ex.ToString() + "]");
+                result.IsSuccess = false;
+                result.ErrorMessage = "Server error";
+                return result;
+
             }
         }
 
