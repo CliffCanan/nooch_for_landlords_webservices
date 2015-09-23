@@ -33,7 +33,6 @@ namespace LanLordlAPIs.Models.db_Model
         public DbSet<MemberNotification> MemberNotifications { get; set; }
         public DbSet<MemberPrivacySetting> MemberPrivacySettings { get; set; }
         public DbSet<Member> Members { get; set; }
-        public DbSet<PropertyUnit> PropertyUnits { get; set; }
         public DbSet<Tenant> Tenants { get; set; }
         public DbSet<UnitsOccupiedByTenant> UnitsOccupiedByTenants { get; set; }
         public DbSet<TenantsIdDocument> TenantsIdDocuments { get; set; }
@@ -42,6 +41,7 @@ namespace LanLordlAPIs.Models.db_Model
         public DbSet<PasswordResetRequest> PasswordResetRequests { get; set; }
         public DbSet<SynapseBanksOfMember> SynapseBanksOfMembers { get; set; }
         public DbSet<Property> Properties { get; set; }
+        public DbSet<PropertyUnit> PropertyUnits { get; set; }
     
         public virtual ObjectResult<Nullable<int>> GetTenantsCountInGivenPropertyId(string vPropertyId)
         {

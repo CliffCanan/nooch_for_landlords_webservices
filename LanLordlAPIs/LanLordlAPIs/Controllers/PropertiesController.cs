@@ -58,7 +58,8 @@ namespace LanLordlAPIs.Controllers
                                 LandlordId = landlordguidId,
                                 PropertyImage = propertyImagePath,
                                 IsSingleUnit = !Property.IsMultipleUnitsAdded,
-                                IsDeleted = false
+                                IsDeleted = false,
+                                DefaultDueDate = "1st of Month"
 
 
                             };
@@ -129,6 +130,122 @@ namespace LanLordlAPIs.Controllers
             catch (Exception ex)
             {
                 Logger.Error("Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by- [ " + Property.User.LandlorId + " ] . Exception details [ " + ex + " ]");
+                result.IsSuccess = false;
+                result.ErrorMessage = "Error while creating property. Retry later!";
+                return result;
+
+            }
+        }
+
+
+        // tos save new property unit for given property
+        [HttpPost]
+        [ActionName("AddNewUnitInProperty")]
+        public CreatePropertyResultOutput AddNewUnitInProperty(AddNewUnitInputOuterClass Property)
+        {
+
+            CreatePropertyResultOutput result = new CreatePropertyResultOutput();
+            try
+            {
+                Logger.Info("Landlords API -> Properties -> AddNewUnitInProperty. AddNewUnitInProperty requested by [" +
+                            Property.User.LandlorId + "]");
+                Guid landlordguidId = new Guid(Property.User.LandlorId);
+                Guid propertyguidId = new Guid(Property.PropertyId);
+                result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, Property.User.AccessToken);
+
+                if (result.AuthTokenValidation.IsTokenOk)
+                {
+               
+                       
+                        using (NOOCHEntities obj = new NOOCHEntities())
+                        {
+
+                            // checking if valid property
+
+                            var propDetails =
+                                (from c in obj.Properties where c.PropertyId == propertyguidId select c).FirstOrDefault();
+
+                            if (propDetails!=null)
+                            {
+                                
+                                // adding new unit
+                                PropertyUnit pu = new PropertyUnit();
+                                pu.UnitId = Guid.NewGuid();
+                                pu.DateAdded = DateTime.Now;
+                                if ( !String.IsNullOrEmpty( Property.Unit.UnitNum))
+                                {
+                                    pu.UnitNumber = Property.Unit.UnitNum;
+                                }
+                                if (!String.IsNullOrEmpty(Property.Unit.UnitNickName))
+                                {
+                                    pu.UnitNickName= Property.Unit.UnitNickName;
+                                }
+
+                                pu.LandlordId = landlordguidId;
+                                pu.UnitRent = Property.Unit.Rent;
+                                pu.PropertyId = propertyguidId;
+
+                                pu.IsDeleted = false;
+                                pu.IsHidden = false;
+
+                                if (Property.Unit.IsTenantAdded && !String.IsNullOrEmpty(Property.Unit.TenantId))
+                                {
+                                    pu.Status = "Occupied";
+                                    pu.IsOccupied = true;
+                                }
+                                else
+                                {
+                                    pu.Status = "Published";
+                                    pu.IsOccupied = false;
+                                }
+
+                                
+                                pu.DueDate = Property.Unit.DueDate;
+
+                                //TBD with CLIFF about agreement starte date and length
+
+                                obj.PropertyUnits.Add(pu);
+                                obj.SaveChanges();
+
+
+                                if (Property.Unit.IsTenantAdded && !String.IsNullOrEmpty(Property.Unit.TenantId))
+                                {
+                                    // code to save tenant for given unit...tenant will always be somewhere in db
+                                    Guid tenantguid = CommonHelper.ConvertToGuid(Property.Unit.TenantId);
+                                    UnitsOccupiedByTenant uobt = new UnitsOccupiedByTenant();
+                                    uobt.TenantId = tenantguid;
+                                    uobt.UnitId = pu.UnitId;
+
+                                    obj.UnitsOccupiedByTenants.Add(uobt);
+                                    obj.SaveChanges();
+
+
+                                }
+                                result.IsSuccess = true;
+                                result.ErrorMessage = "OK.";
+                                result.PropertyIdGenerated = pu.UnitId.ToString();
+                            }
+                            else
+                            {
+                                result.IsSuccess = false;
+                                result.ErrorMessage = "Invalid property Id passed.";
+                            }
+       
+                        }
+
+
+
+                    return result;
+                }
+                else
+                {
+                    return result;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Landlords API -> Properties -> AddNewUnitInProperty. AddNewUnitInProperty requested by- [ " + Property.User.LandlorId + " ] . Exception details [ " + ex + " ]");
                 result.IsSuccess = false;
                 result.ErrorMessage = "Error while creating property. Retry later!";
                 return result;
@@ -560,7 +677,7 @@ namespace LanLordlAPIs.Controllers
 
                                     currentPUnit.Status = pUnit.Status ?? "";
 
-                                    currentPUnit.DueDate = pUnit.DueDate != null ? Convert.ToDateTime(pUnit.DueDate).ToShortDateString() : "";
+                                    currentPUnit.DueDate = pUnit.DueDate ?? "";
 
                                     AllUnitsListPrepared.Add(currentPUnit);
 
@@ -848,7 +965,7 @@ namespace LanLordlAPIs.Controllers
 
                                 currentPUnit.Status = pUnit.Status ?? "";
 
-                                currentPUnit.DueDate = pUnit.DueDate != null ? Convert.ToDateTime(pUnit.DueDate).ToShortDateString() : "";
+                                currentPUnit.DueDate = pUnit.DueDate ?? "";
 
                                 AllUnitsListPrepared.Add(currentPUnit);
 

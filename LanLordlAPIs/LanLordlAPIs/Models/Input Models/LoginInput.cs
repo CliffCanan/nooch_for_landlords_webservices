@@ -107,6 +107,40 @@ namespace LanLordlAPIs.Models.Input_Models
 
     }
 
+
+
+    public class AddNewUnitInputOuterClass
+    {
+        public string PropertyId { get; set; }
+        
+        public GetProfileDataInput User { get; set; }
+
+        public AddNewUnitInnerClass Unit { get; set; }
+
+    }
+
+
+    public class AddNewUnitInnerClass
+    {
+        public string UnitNum { get; set; }
+
+        public string UnitNickName { get; set; }
+        public string Rent { get; set; }
+        public string DueDate { get; set; }
+
+        public bool IsTenantAdded { get; set; }
+
+        public string TenantId { get; set; }
+
+        public string RentStartDate { get; set; }
+        public string AgreementDuration { get; set; }
+
+        
+
+
+
+    }
+
     public class AddNewUnitClass
     {
         public string UnitNum { get; set; }

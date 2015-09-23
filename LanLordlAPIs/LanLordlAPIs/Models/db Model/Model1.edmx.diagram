@@ -4,13 +4,12 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="cd15dcc551d3402cae47284990068485" Name="Diagram1" ZoomLevel="55">
+      <Diagram DiagramId="cd15dcc551d3402cae47284990068485" Name="Diagram1" ZoomLevel="93">
         <EntityTypeShape EntityType="NOOCHModel.GeoLocation" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="NOOCHModel.Landlord" Width="1.5" PointX="5.75" PointY="4.75" IsExpanded="true" />
         <EntityTypeShape EntityType="NOOCHModel.MemberNotification" Width="1.5" PointX="3" PointY="8" IsExpanded="true" />
         <EntityTypeShape EntityType="NOOCHModel.MemberPrivacySetting" Width="1.5" PointX="3" PointY="4.625" IsExpanded="true" />
         <EntityTypeShape EntityType="NOOCHModel.Member" Width="1.5" PointX="0.75" PointY="1.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="NOOCHModel.PropertyUnit" Width="1.5" PointX="7.75" PointY="6.75" IsExpanded="true" />
         <EntityTypeShape EntityType="NOOCHModel.Tenant" Width="1.5" PointX="9.75" PointY="0.75" IsExpanded="true" />
         <AssociationConnector Association="NOOCHModel.FK_MemberNotifications_Members" ManuallyRouted="false" />
         <AssociationConnector Association="NOOCHModel.FK_MemberPrivacySettings_Members" ManuallyRouted="false" />
@@ -21,7 +20,8 @@
         <EntityTypeShape EntityType="NOOCHModel.PasswordResetRequest" Width="1.5" PointX="3" PointY="15.625" />
         <AssociationConnector Association="NOOCHModel.FK_PasswordResetRequests_Members" />
         <EntityTypeShape EntityType="NOOCHModel.SynapseBanksOfMember" Width="1.5" PointX="12.375" PointY="8.75" />
-        <EntityTypeShape EntityType="NOOCHModel.Property" Width="1.5" PointX="5.375" PointY="13.75" />
+        <EntityTypeShape EntityType="NOOCHModel.Property" Width="1.5" PointX="8.375" PointY="13.75" />
+        <EntityTypeShape EntityType="NOOCHModel.PropertyUnit" Width="1.5" PointX="14.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

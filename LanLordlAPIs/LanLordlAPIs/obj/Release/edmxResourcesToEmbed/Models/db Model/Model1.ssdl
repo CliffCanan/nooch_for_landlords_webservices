@@ -228,7 +228,7 @@
     <Property Name="State" Type="varchar(max)" />
     <Property Name="Zip" Type="varchar(max)" />
     <Property Name="ContactNumber" Type="varchar(max)" />
-    <Property Name="DefaultDueDate" Type="varchar" MaxLength="50" />
+    <Property Name="DefaultDueDate" Type="varchar(max)" />
     <Property Name="DateAdded" Type="datetime" />
     <Property Name="DateModified" Type="datetime" />
     <Property Name="LandlordId" Type="uniqueidentifier" />
@@ -256,7 +256,7 @@
     <Property Name="IsHidden" Type="bit" />
     <Property Name="IsOccupied" Type="bit" />
     <Property Name="Status" Type="varchar(max)" />
-    <Property Name="DueDate" Type="datetime" />
+    <Property Name="DueDate" Type="varchar(max)" />
     <Property Name="UnitNickName" Type="varchar(max)" />
   </EntityType>
   <EntityType Name="SynapseBanksOfMembers">

@@ -28,7 +28,7 @@ namespace LanLordlAPIs.Models.db_Model
         public Nullable<bool> IsHidden { get; set; }
         public Nullable<bool> IsOccupied { get; set; }
         public string Status { get; set; }
-        public Nullable<System.DateTime> DueDate { get; set; }
+        public string DueDate { get; set; }
         public string UnitNickName { get; set; }
     }
 }
