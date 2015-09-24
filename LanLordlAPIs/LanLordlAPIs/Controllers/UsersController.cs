@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 using System.Web.Services.Protocols;
 using LanLordlAPIs.Classes.Utility;
@@ -100,6 +102,109 @@ namespace LanLordlAPIs.Controllers
                 Logger.Error("Landlords API -> Users -> Login. Error while login request from username  - [ " + User.UserName + " ] . Exception details [ " + ex + " ]");
                 result.IsSuccess = false;
                 result.ErrorMessage = "Error while logging on. Retry.";
+                return result;
+
+            }
+
+
+        }
+
+
+
+
+        // to save user image
+        [HttpPost]
+        [ActionName("UploadLandlordProfileImage")]
+        public LoginResult UploadLandlordProfileImage()
+        {
+            GetProfileDataInput User = new GetProfileDataInput();
+            LoginResult result = new LoginResult();
+            try
+            {
+                var file = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
+                if (file != null && file.ContentLength > 0)
+                {
+
+
+                    string[] llId = HttpContext.Current.Request.Form.GetValues("LandlorId");
+                    if (llId!=null && llId.Length > 0)
+                    {
+
+                        using (NOOCHEntities obj = new NOOCHEntities())
+                        {
+                            Guid landlordguidId = new Guid(llId[0]);
+
+
+                            //var fileName = Path.GetFileName(file.FileName);
+                            //var fileExtension = Path.GetExtension(file.FileName);
+                            //var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file.FileName);
+                            var fileExtension = Path.GetExtension(file.FileName);
+                            var fileName = landlordguidId.ToString().Replace("-","_").Trim()+fileExtension;
+                            
+                            
+
+                            var path = Path.Combine(
+                                HttpContext.Current.Server.MapPath(CommonHelper.GetValueFromConfig("UserPhotoPath")),
+                                fileName
+                                );
+
+                            if (File.Exists(path))
+                            {
+                                File.Delete(path);
+
+                             }
+
+
+                            file.SaveAs(path);
+
+
+                            var llDetails =
+                                (from c in obj.Landlords where c.LandlordId == landlordguidId select c).FirstOrDefault();
+                            if (llDetails != null)
+                            {
+                                llDetails.UserPic = CommonHelper.GetValueFromConfig("UserPhotoUrl") + fileName;
+                                obj.SaveChanges();
+                                result.IsSuccess = true;
+                                result.ErrorMessage = llDetails.UserPic;
+                            }
+                            else
+                            {
+                                result.IsSuccess = false;
+                                result.ErrorMessage = "Invalid landlord Id passed.";
+                            }
+                        }
+
+                    }
+
+                    else
+                    {
+                        // no file selected
+                        result.IsSuccess = false;
+                        result.ErrorMessage = "No or invalid user id passed.";
+                    }
+                    // return file != null ? "/uploads/" + file.FileName : null;
+
+
+                }
+                else
+                {
+                    // no file selected
+                    result.IsSuccess = false;
+                    result.ErrorMessage = "No or invalid file passed.";
+                }
+                // return file != null ? "/uploads/" + file.FileName : null;
+
+                return result;
+
+            }
+
+            catch (Exception ex)
+            {
+                Logger.Error(
+                    "Landlords API -> Users -> UploadProfileImage. Error while UploadProfileImage request from username  - [ " +
+                    User.LandlorId + " ] . Exception details [ " + ex + " ]");
+                result.IsSuccess = false;
+                result.ErrorMessage = "Error while uploading image. Retry.";
                 return result;
 
             }
@@ -970,98 +1075,98 @@ namespace LanLordlAPIs.Controllers
             {
                 using (NOOCHEntities obj = new NOOCHEntities())
                 {
-                     Guid userGUID = new Guid(property.UserId);
+                    Guid userGUID = new Guid(property.UserId);
                     switch (property.UserType)
                     {
                         case "Landlord":
-                           
+
                             #region Landlord related operations
-		var landlordDetails =
-                                (from c in obj.Landlords where c.LandlordId == userGUID select c).FirstOrDefault();
+                            var landlordDetails =
+                                                    (from c in obj.Landlords where c.LandlordId == userGUID select c).FirstOrDefault();
                             if (landlordDetails != null)
                             {
-                                        switch (property.RequestFor)
-                                    {
-                                        case "Email":
-                                                    string s = CommonHelper.ResendVerificationLink(CommonHelper.GetDecryptedData(landlordDetails.eMail));
-                                                    if (s=="Success")
-                                                    {
-                                                        result.IsSuccess = true;
-                                                        result.ErrorMessage = "OK.";
-                                            
-                                                    }
-                                                    else
-                                                    {
-                                                         result.IsSuccess = false;
-                                                        result.ErrorMessage = s;
-                                                    }
-                                            break;
-                                        case "SMS":
-                                                        string s2 = CommonHelper.ResendVerificationSMS(CommonHelper.GetDecryptedData(landlordDetails.eMail));
-                                                    if (s2=="Success")
-                                                    {
-                                                        result.IsSuccess = true;
-                                                        result.ErrorMessage = "OK.";
-                                            
-                                                    }
-                                                    else
-                                                    {
-                                                         result.IsSuccess = false;
-                                                        result.ErrorMessage = s2;
-                                                    }
-                                            break;
-                                        default:
-                                                    result.IsSuccess = false;
-                                                    result.ErrorMessage = "Invalid data.";
-                                            break;
-                                    }  
-                            } 
-	#endregion
-                            
+                                switch (property.RequestFor)
+                                {
+                                    case "Email":
+                                        string s = CommonHelper.ResendVerificationLink(CommonHelper.GetDecryptedData(landlordDetails.eMail));
+                                        if (s == "Success")
+                                        {
+                                            result.IsSuccess = true;
+                                            result.ErrorMessage = "OK.";
+
+                                        }
+                                        else
+                                        {
+                                            result.IsSuccess = false;
+                                            result.ErrorMessage = s;
+                                        }
+                                        break;
+                                    case "SMS":
+                                        string s2 = CommonHelper.ResendVerificationSMS(CommonHelper.GetDecryptedData(landlordDetails.eMail));
+                                        if (s2 == "Success")
+                                        {
+                                            result.IsSuccess = true;
+                                            result.ErrorMessage = "OK.";
+
+                                        }
+                                        else
+                                        {
+                                            result.IsSuccess = false;
+                                            result.ErrorMessage = s2;
+                                        }
+                                        break;
+                                    default:
+                                        result.IsSuccess = false;
+                                        result.ErrorMessage = "Invalid data.";
+                                        break;
+                                }
+                            }
+                            #endregion
+
                             break;
                         case "Tenant":
                             #region Tenants related operations
-		var tenantDetails =
-                                (from c in obj.Tenants where c.TenantId == userGUID select c).FirstOrDefault();
+                            var tenantDetails =
+                                                    (from c in obj.Tenants where c.TenantId == userGUID select c).FirstOrDefault();
                             if (tenantDetails != null)
                             {
-                                        switch (property.RequestFor)
-                                    {
-                                        case "Email":
-                                                    string s = CommonHelper.ResendVerificationLink(CommonHelper.GetDecryptedData(tenantDetails.eMail));
-                                                    if (s=="Success")
-                                                    {
-                                                        result.IsSuccess = true;
-                                                        result.ErrorMessage = "OK.";
-                                            
-                                                    }
-                                                    else
-                                                    {
-                                                         result.IsSuccess = false;
-                                                        result.ErrorMessage = s;
-                                                    }
-                                            break;
-                                        case "SMS":
-                                                        string s2 = CommonHelper.ResendVerificationSMS(CommonHelper.GetDecryptedData(tenantDetails.eMail));
-                                                    if (s2=="Success")
-                                                    {
-                                                        result.IsSuccess = true;
-                                                        result.ErrorMessage = "OK.";
-                                            
-                                                    }
-                                                    else
-                                                    {
-                                                         result.IsSuccess = false;
-                                                        result.ErrorMessage = s2;
-                                                    }
-                                            break;
-                                        default:
-                                                    result.IsSuccess = false;
-                                                    result.ErrorMessage = "Invalid data.";
-                                            break;
-                                    }  
-                            } 
-	#endregion
+                                switch (property.RequestFor)
+                                {
+                                    case "Email":
+                                        string s = CommonHelper.ResendVerificationLink(CommonHelper.GetDecryptedData(tenantDetails.eMail));
+                                        if (s == "Success")
+                                        {
+                                            result.IsSuccess = true;
+                                            result.ErrorMessage = "OK.";
+
+                                        }
+                                        else
+                                        {
+                                            result.IsSuccess = false;
+                                            result.ErrorMessage = s;
+                                        }
+                                        break;
+                                    case "SMS":
+                                        string s2 = CommonHelper.ResendVerificationSMS(CommonHelper.GetDecryptedData(tenantDetails.eMail));
+                                        if (s2 == "Success")
+                                        {
+                                            result.IsSuccess = true;
+                                            result.ErrorMessage = "OK.";
+
+                                        }
+                                        else
+                                        {
+                                            result.IsSuccess = false;
+                                            result.ErrorMessage = s2;
+                                        }
+                                        break;
+                                    default:
+                                        result.IsSuccess = false;
+                                        result.ErrorMessage = "Invalid data.";
+                                        break;
+                                }
+                            }
+                            #endregion
                             break;
                         default:
                             result.IsSuccess = false;
@@ -1074,7 +1179,7 @@ namespace LanLordlAPIs.Controllers
             catch (Exception)
             {
                 result.IsSuccess = false;
-                result.ErrorMessage= "Server error, retry later!";
+                result.ErrorMessage = "Server error, retry later!";
                 return result;
             }
         }
@@ -1109,14 +1214,14 @@ namespace LanLordlAPIs.Controllers
 
                         if (lanlorddetails != null)
                         {
-                           // if mail to be sent is for one or all
+                            // if mail to be sent is for one or all
 
-                            if (User.EmailInfo.IsForAllOrOne=="One")
+                            if (User.EmailInfo.IsForAllOrOne == "One")
                             {
                                 //signle person message
-                                if (!String.IsNullOrEmpty( User.EmailInfo.TenantIdToBeMessaged))
+                                if (!String.IsNullOrEmpty(User.EmailInfo.TenantIdToBeMessaged))
                                 {
-                                    Guid tenantguidId = new Guid(User.DeviceInfo.LandlorId);    
+                                    Guid tenantguidId = new Guid(User.DeviceInfo.LandlorId);
 
                                     // getting tenant info
 
@@ -1124,7 +1229,7 @@ namespace LanLordlAPIs.Controllers
                                         (from c in obj.Tenants where c.TenantId == tenantguidId select c).FirstOrDefault
                                             ();
 
-                                    if (tenanInfo!=null)
+                                    if (tenanInfo != null)
                                     {
                                         string emailtobesentto = CommonHelper.GetDecryptedData(tenanInfo.eMail);
                                         string emailtobesentfrom = CommonHelper.GetDecryptedData(lanlorddetails.eMail);
@@ -1152,7 +1257,7 @@ namespace LanLordlAPIs.Controllers
                                     result.ErrorMessage = "Invalid input data.";
                                 }
 
-                                
+
                             }
                             else if (User.EmailInfo.IsForAllOrOne == "All")
                             {
@@ -1162,14 +1267,14 @@ namespace LanLordlAPIs.Controllers
 
                                 List<GetTenantsInGivenPropertyId_Result1> allTenantsOfLl = obj.GetTenantsInGivenPropertyId(propId).ToList();
 
-                                if (allTenantsOfLl.Count>0)
+                                if (allTenantsOfLl.Count > 0)
                                 {
 
                                     string emailtobesentfrom = CommonHelper.GetDecryptedData(lanlorddetails.eMail);
                                     foreach (GetTenantsInGivenPropertyId_Result1 ten in allTenantsOfLl)
                                     {
                                         string emailtobesentto = CommonHelper.GetDecryptedData(ten.TenantEmail);
-                                        
+
 
                                         string bodytext = User.EmailInfo.MessageToBeSent;
 

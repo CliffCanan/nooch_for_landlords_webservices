@@ -343,6 +343,8 @@
     <Property Name="LastPaymentDate" Type="datetime" />
     <Property Name="LastPaymentAmount" Type="varchar" MaxLength="50" />
     <Property Name="IsPaymentDueForThisMonth" Type="bit" />
+    <Property Name="RentStartFrom" Type="varchar(max)" />
+    <Property Name="AgreementLength" Type="varchar(max)" />
   </EntityType>
   <Association Name="FK_MemberNotifications_Members">
     <End Role="Members" Type="Self.Members" Multiplicity="1" />

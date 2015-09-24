@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 using System.Web.UI.WebControls;
 using LanLordlAPIs.Classes.Utility;
@@ -215,6 +217,13 @@ namespace LanLordlAPIs.Controllers
                                     UnitsOccupiedByTenant uobt = new UnitsOccupiedByTenant();
                                     uobt.TenantId = tenantguid;
                                     uobt.UnitId = pu.UnitId;
+
+
+                                    if (!String.IsNullOrEmpty(Property.Unit.AgreementDuration) && !String.IsNullOrEmpty(Property.Unit.RentStartDate))
+                                    {
+                                        uobt.RentStartFrom = Property.Unit.RentStartDate;
+                                        uobt.AgreementLength= Property.Unit.AgreementDuration;
+                                    }
 
                                     obj.UnitsOccupiedByTenants.Add(uobt);
                                     obj.SaveChanges();
@@ -1154,6 +1163,106 @@ namespace LanLordlAPIs.Controllers
         private class PropertyInputValidationResult
         {
             public bool IsDataValid { get; set; }public string ValidationError { get; set; }
+        }
+
+
+        [HttpPost]
+        [ActionName("UploadPropertyImage")]
+        public LoginResult UploadPropertyImage()
+        {
+            GetProfileDataInput User = new GetProfileDataInput();
+            LoginResult result = new LoginResult();
+            try
+            {
+                var file = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
+                if (file != null && file.ContentLength > 0)
+                {
+
+
+                    string[] llId = HttpContext.Current.Request.Form.GetValues("PropertyId");
+                    if (llId != null && llId.Length > 0)
+                    {
+
+                        using (NOOCHEntities obj = new NOOCHEntities())
+                        {
+                            Guid landlordguidId = new Guid(llId[0]);
+
+
+                            //var fileName = Path.GetFileName(file.FileName);
+                            //var fileExtension = Path.GetExtension(file.FileName);
+                            //var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file.FileName);
+                            var fileExtension = Path.GetExtension(file.FileName);
+                            var fileName = landlordguidId.ToString().Replace("-", "_").Trim() + fileExtension;
+
+
+
+                            var path = Path.Combine(
+                                HttpContext.Current.Server.MapPath(CommonHelper.GetValueFromConfig("PhotoPath")),
+                                fileName
+                                );
+
+                            if (File.Exists(path))
+                            {
+                                File.Delete(path);
+
+                            }
+
+
+                            file.SaveAs(path);
+
+
+                            var llDetails =
+                                (from c in obj.Properties where c.PropertyId== landlordguidId select c).FirstOrDefault();
+                            if (llDetails != null)
+                            {
+                                llDetails.PropertyImage= CommonHelper.GetValueFromConfig("PhotoUrl") + fileName;
+                                obj.SaveChanges();
+                                result.IsSuccess = true;
+                                result.ErrorMessage = llDetails.PropertyImage;
+                            }
+                            else
+                            {
+                                result.IsSuccess = false;
+                                result.ErrorMessage = "Invalid property Id passed.";
+                            }
+                        }
+
+                    }
+
+                    else
+                    {
+                        // no file selected
+                        result.IsSuccess = false;
+                        result.ErrorMessage = "No or invalid property id passed.";
+                    }
+                    // return file != null ? "/uploads/" + file.FileName : null;
+
+
+                }
+                else
+                {
+                    // no file selected
+                    result.IsSuccess = false;
+                    result.ErrorMessage = "No or invalid file passed.";
+                }
+                // return file != null ? "/uploads/" + file.FileName : null;
+
+                return result;
+
+            }
+
+            catch (Exception ex)
+            {
+                Logger.Error(
+                    "Landlords API -> Prrperties -> UploadPropertyImage. Error while UploadProfileImage request from property id - [ " +
+                    User.LandlorId + " ] . Exception details [ " + ex + " ]");
+                result.IsSuccess = false;
+                result.ErrorMessage = "Error while uploading image. Retry.";
+                return result;
+
+            }
+
+
         }
     }
 }

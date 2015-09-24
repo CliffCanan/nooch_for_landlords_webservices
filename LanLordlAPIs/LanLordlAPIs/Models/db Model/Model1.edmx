@@ -348,6 +348,8 @@
           <Property Name="LastPaymentDate" Type="datetime" />
           <Property Name="LastPaymentAmount" Type="varchar" MaxLength="50" />
           <Property Name="IsPaymentDueForThisMonth" Type="bit" />
+          <Property Name="RentStartFrom" Type="varchar(max)" />
+          <Property Name="AgreementLength" Type="varchar(max)" />
         </EntityType>
         <Association Name="FK_MemberNotifications_Members">
           <End Role="Members" Type="Self.Members" Multiplicity="1" />
@@ -749,6 +751,8 @@
           <Property Name="LastPaymentDate" Type="DateTime" Precision="3" />
           <Property Name="LastPaymentAmount" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="IsPaymentDueForThisMonth" Type="Boolean" />
+          <Property Name="RentStartFrom" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="AgreementLength" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="TenantsIdDocument">
           <Key>
@@ -1138,6 +1142,8 @@
           <EntitySetMapping Name="UnitsOccupiedByTenants">
             <EntityTypeMapping TypeName="NOOCHModel.UnitsOccupiedByTenant">
               <MappingFragment StoreEntitySet="UnitsOccupiedByTenants">
+                <ScalarProperty Name="AgreementLength" ColumnName="AgreementLength" />
+                <ScalarProperty Name="RentStartFrom" ColumnName="RentStartFrom" />
                 <ScalarProperty Name="IsPaymentDueForThisMonth" ColumnName="IsPaymentDueForThisMonth" />
                 <ScalarProperty Name="LastPaymentAmount" ColumnName="LastPaymentAmount" />
                 <ScalarProperty Name="LastPaymentDate" ColumnName="LastPaymentDate" />

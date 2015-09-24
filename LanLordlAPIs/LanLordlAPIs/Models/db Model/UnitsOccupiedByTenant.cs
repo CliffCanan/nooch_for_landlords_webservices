@@ -23,5 +23,7 @@ namespace LanLordlAPIs.Models.db_Model
         public Nullable<System.DateTime> LastPaymentDate { get; set; }
         public string LastPaymentAmount { get; set; }
         public Nullable<bool> IsPaymentDueForThisMonth { get; set; }
+        public string RentStartFrom { get; set; }
+        public string AgreementLength { get; set; }
     }
 }

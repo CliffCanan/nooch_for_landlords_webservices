@@ -218,6 +218,8 @@
     <EntitySetMapping Name="UnitsOccupiedByTenants">
       <EntityTypeMapping TypeName="NOOCHModel.UnitsOccupiedByTenant">
         <MappingFragment StoreEntitySet="UnitsOccupiedByTenants">
+          <ScalarProperty Name="AgreementLength" ColumnName="AgreementLength" />
+          <ScalarProperty Name="RentStartFrom" ColumnName="RentStartFrom" />
           <ScalarProperty Name="IsPaymentDueForThisMonth" ColumnName="IsPaymentDueForThisMonth" />
           <ScalarProperty Name="LastPaymentAmount" ColumnName="LastPaymentAmount" />
           <ScalarProperty Name="LastPaymentDate" ColumnName="LastPaymentDate" />
