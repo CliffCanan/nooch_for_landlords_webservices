@@ -26,20 +26,11 @@ namespace LanLordlAPIs.Classes.Utility
             }
             catch (Exception ex)
             {
-
+                Logger.Error("Landlord Common Helper -> GetEncryptdData FAILED - [SourceData: [" + sourceData + ", [Exception: " + ex + "]");
             }
             return string.Empty;
         }
-        public static string UppercaseFirst(string s)
-        {
-            // Check for empty string.
-            if (string.IsNullOrEmpty(s))
-            {
-                return string.Empty;
-            }
-            // Return char and concat substring.
-            return char.ToUpper(s[0]) + s.Substring(1);
-        }
+
 
         public static string GetDecryptedData(string sourceData)
         {
@@ -51,9 +42,23 @@ namespace LanLordlAPIs.Classes.Utility
             }
             catch (Exception ex)
             {
+                Logger.Error("Landlord Common Helper -> GetDecryptedData FAILED - [SourceData: [" + sourceData + ", [Exception: " + ex + "]");
             }
             return string.Empty;
         }
+
+
+        public static string UppercaseFirst(string s)
+        {
+            // Check for empty string.
+            if (string.IsNullOrEmpty(s))
+            {
+                return string.Empty;
+            }
+            // Return char and concat substring.
+            return char.ToUpper(s[0]) + s.Substring(1);
+        }
+
 
         public static string GetRandomNoochId()
         {
@@ -69,9 +74,8 @@ namespace LanLordlAPIs.Classes.Utility
                             .Select(s => s[random.Next(s.Length)])
                             .ToArray());
 
-
-
                     var memberEntity = getMemberByNoochId(randomId);
+
                     if (memberEntity == null)
                     {
                         return randomId;
@@ -82,6 +86,8 @@ namespace LanLordlAPIs.Classes.Utility
             }
             return null;
         }
+
+
         public static bool saveLandlordIp(Guid LandlorId, string IP)
         {
             try
@@ -114,15 +120,12 @@ namespace LanLordlAPIs.Classes.Utility
                                 {
                                     IPsListPrepared = IPsListPrepared + ", " + recenips[i];
                                     break;
-
                                 }
                                 else
                                 {
                                     IPsListPrepared = IPsListPrepared + ", " + recenips[i];
                                 }
-
                             }
-
                             IPsListPrepared = IPsListPrepared + ", " + IP;
                         }
                         else
@@ -130,25 +133,22 @@ namespace LanLordlAPIs.Classes.Utility
                             IPsListPrepared = lanlorddetails.IpAddresses + ", " + IP;
                         }
 
-                        //updating ip in db
-
+                        // Update IP in DB
                         lanlorddetails.IpAddresses = IPsListPrepared;
                         obj.SaveChanges();
-                        return true;
 
+                        return true;
                     }
                     return false;
                 }
-
-
             }
             catch (Exception ex)
             {
                 Logger.Error("Landlords API -> CommonHelper -> saveLandlordIp. Error while updating IP address - [ " + IP + " ] for Landlor Id [ " + LandlorId + " ]. Error details [" + ex + " ]");
                 return false;
             }
-
         }
+
 
         public static string GenerateAccessToken()
         {
@@ -157,6 +157,7 @@ namespace LanLordlAPIs.Classes.Utility
             string token = Convert.ToBase64String(time.Concat(key).ToArray());
             return CommonHelper.GetEncryptedData(token);
         }
+
 
         public static AccessTokenValidationOutput AuthTokenValidation(Guid LandlorId, string accesstoken)
         {
@@ -173,12 +174,11 @@ namespace LanLordlAPIs.Classes.Utility
 
                 if (lanlorddetails != null)
                 {
-
                     //checking if there is need to update existing token or not
                     DateTime currentTime = DateTime.Now;
-
                     DateTime lastseen = currentTime;
                     TimeSpan t;
+
                     if (lanlorddetails.LastSeenOn != null)
                     {
                         t = currentTime - Convert.ToDateTime(lanlorddetails.LastSeenOn);
@@ -198,11 +198,9 @@ namespace LanLordlAPIs.Classes.Utility
                         result.IsTokenUpdated = true;
                         result.AccessToken = lanlorddetails.WebAccessToken;
                         result.ErrorMessage = "OK";
-
                     }
                     else
                     {
-
                         result.IsTokenOk = true;
                         result.IsTokenUpdated = false;
                         result.AccessToken = lanlorddetails.WebAccessToken;
@@ -210,7 +208,6 @@ namespace LanLordlAPIs.Classes.Utility
                         lanlorddetails.LastSeenOn = lastseen;
                         obj.SaveChanges();
                     }
-
                 }
                 else
                 {
@@ -222,7 +219,6 @@ namespace LanLordlAPIs.Classes.Utility
             }
 
             return result;
-
         }
 
 
@@ -234,6 +230,22 @@ namespace LanLordlAPIs.Classes.Utility
             sourcePhone = sourcePhone.Insert(5, " ");
             sourcePhone = sourcePhone.Insert(9, "-");
             return sourcePhone;
+        }
+
+
+        public static string RemovePhoneNumberFormatting(string sourceNum)
+        {
+            if (!String.IsNullOrEmpty(sourceNum))
+            {
+                // removing extra stuff from phone number
+                sourceNum = sourceNum.Replace("(", "");
+                sourceNum = sourceNum.Replace(")", "");
+                sourceNum = sourceNum.Replace(" ", "");
+                sourceNum = sourceNum.Replace("-", "");
+                sourceNum = sourceNum.Replace("+", "");
+                sourceNum = sourceNum.Replace(".", "");
+            }
+            return sourceNum;
         }
 
 
@@ -249,6 +261,7 @@ namespace LanLordlAPIs.Classes.Utility
             return randomId;
         }
 
+
         public static Guid ConvertToGuid(string value)
         {
             var id = new Guid();
@@ -259,29 +272,31 @@ namespace LanLordlAPIs.Classes.Utility
                     id = new Guid(value);
                 }
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                Logger.Error(exception.Message + "Unable to format string :" + value);
+                Logger.Error("Landlord Common Helper -> ConvertTo Guid FAILED - [Exception: " + ex.Message + "]. Unable to format string: [" + value + "]");
                 throw;
             }
             return id;
         }
+
+
         public static string getReferralCode(String memberId)
         {
-
             using (var noochConnection = new NOOCHEntities())
             {
                 var id = ConvertToGuid(memberId);
 
                 var noochMember = (from c in noochConnection.Members where c.MemberId == id && c.IsDeleted == false select c).FirstOrDefault();
+                
                 if (noochMember != null)
                 {
                     if (noochMember.InviteCodeId != null)
                     {
                         Guid v = ConvertToGuid(noochMember.InviteCodeId.ToString());
 
-
                         var inviteMember = (from c in noochConnection.InviteCodes where c.InviteCodeId == v select c).FirstOrDefault();
+                        
                         if (inviteMember != null)
                         {
                             return inviteMember.code;
@@ -303,16 +318,17 @@ namespace LanLordlAPIs.Classes.Utility
                 }
             }
         }
+
+
         public static string setReferralCode(Guid memberId)
         {
-
             using (var noochConnection = new NOOCHEntities())
             {
                 try
                 {
-                    //Get the member details
-
+                    // Get the member's details
                     var noochMember = (from c in noochConnection.Members where c.MemberId == memberId select c).FirstOrDefault();
+
                     if (noochMember != null)
                     {
                         //Check if the user already has an invite code generted or not
@@ -358,21 +374,6 @@ namespace LanLordlAPIs.Classes.Utility
         }
 
 
-
-
-        public static string RemovePhoneNumberFormatting(string sourceNum)
-        {
-            if (!String.IsNullOrEmpty(sourceNum))
-            {
-                // removing extra stuff from phone number
-                sourceNum = sourceNum.Replace("(", "");
-                sourceNum = sourceNum.Replace(")", "");
-                sourceNum = sourceNum.Replace(" ", "");
-                sourceNum = sourceNum.Replace("-", "");
-                sourceNum = sourceNum.Replace("+", "");
-            }
-            return sourceNum;
-        }
         public static string GetValueFromConfig(string key)
         {
             return ConfigurationManager.AppSettings[key];
@@ -419,14 +420,16 @@ namespace LanLordlAPIs.Classes.Utility
             fullpathtoSaveimage = PhotoUrl + filnameMade;
             return fullpathtoSaveimage;
         }
+
+
         public static string GetMemberIdOfLandlord(Guid landlorID)
         {
-
             using (NOOCHEntities obj = new NOOCHEntities())
             {
                 return (from c in obj.Landlords where c.LandlordId == landlorID select c.MemberId).SingleOrDefault().ToString();
             }
         }
+
 
         public static CheckAndRegisterMemberByEmailResult CheckIfMemberExistsWithGivenEmailId(string eMailId)
         {
@@ -461,19 +464,12 @@ namespace LanLordlAPIs.Classes.Utility
             }
             catch (Exception)
             {
-
                 Logger.Error("CheckIfMemberExistsWithGivenEmailId while checking " + eMailId);
                 result.IsSuccess = false;
                 result.ErrorMessage = "Server Error.";
                 return result;
             }
-
-
         }
-
-
-
-
 
 
         public static Member getMemberByEmailId(string eMailID)
@@ -488,15 +484,16 @@ namespace LanLordlAPIs.Classes.Utility
             }
         }
 
+
         public static Member getMemberByNoochId(string NoochId)
         {
             using (NOOCHEntities obj = new NOOCHEntities())
             {
-
                 var memDetails = (from c in obj.Members where c.Nooch_ID == NoochId select c).SingleOrDefault();
                 return memDetails;
             }
         }
+
 
         public static CheckAndRegisterLandlordByEmailResult checkAndRegisterLandlordByemailId(string eMailID)
         {
@@ -514,8 +511,6 @@ namespace LanLordlAPIs.Classes.Utility
                         result.IsSuccess = false;
                         result.ErrorMessage = "Landlord already exists with given eMail id.";
                         result.LanlordDetails = existingMemberDetails;
-                        
-                        
                     }
                     else
                     {
@@ -527,21 +522,15 @@ namespace LanLordlAPIs.Classes.Utility
                 }
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                Logger.Error("checkAndRegisterLandlordByemailId while checking " + eMailID);
+                Logger.Error("Landlord Common Helper -> checkAndRegisterLandlordByemailId FAIELD - [Exception: " + ex.Message + "], [Email: " + eMailID + "]");
                 result.IsSuccess = false;
                 result.ErrorMessage = "Server Error.";
                 return result;
             }
         }
-
-
-
-      
-
-
+        
 
         public static bool SendPasswordMail(Member member, string primaryMail)
         {
@@ -590,14 +579,10 @@ namespace LanLordlAPIs.Classes.Utility
         }
 
 
-
         public static Landlord AddNewLandlordEntryInDb(string firstName, string lastName, string eMail, string passWord, bool eMailSatusToSet, bool phoneStatusToSet, Guid memberGuid)
         {
-
             try
             {
-
-
                 using (NOOCHEntities obj = new NOOCHEntities())
                 {
                     Landlord ll = new Landlord();
@@ -612,17 +597,15 @@ namespace LanLordlAPIs.Classes.Utility
                     ll.SubType= "Basic";
                     ll.MemberId = memberGuid;
                     ll.IsDeleted = false;
+
                     obj.Landlords.Add(ll);
                     obj.SaveChanges();
 
-
                     return ll;
-
                 }
             }
             catch (Exception)
             {
-
                 return null;
             }
         }
@@ -639,15 +622,12 @@ namespace LanLordlAPIs.Classes.Utility
         {
             try
             {
-
-
                 MailMessage mailMessage = new MailMessage();
                 string template;
                 string subjectString = subject;
                 string content = string.Empty;
                 if (!String.IsNullOrEmpty(templateName))
                 {
-                    //template = GetEmailTemplate(HostingEnvironment.MapPath(String.Concat(GetValueFromConfig("EmailTemplatesPath"), templateName, ".txt")));
                     template = GetEmailTemplate(String.Concat(GetValueFromConfig("EmailTemplatesPath"), templateName, ".txt"));
                     content = template;
 
@@ -666,8 +646,6 @@ namespace LanLordlAPIs.Classes.Utility
                 {
                     mailMessage.Body = bodyText;
                 }
-
-
 
                 switch (fromAddress)
                 {
@@ -688,19 +666,14 @@ namespace LanLordlAPIs.Classes.Utility
                 SmtpClient smtp = new SmtpClient();
 
                 smtp.Host = "smtp.mandrillapp.com";
-
-
                 smtp.Port = 25;
 
                 //smtp.Timeout = 6000;
                 smtp.UseDefaultCredentials = true;
-
                 smtp.Credentials = new NetworkCredential("cliff@nooch.com", "7UehAJkEBJJas0EpQKWppQ");
                 smtp.EnableSsl = false;
 
-
                 mailMessage.From = new MailAddress(fromAddress, fromAddress);
-
 
                 mailMessage.Priority = MailPriority.High;
                 smtp.Send(mailMessage);
@@ -710,22 +683,20 @@ namespace LanLordlAPIs.Classes.Utility
             }
             catch (Exception ex)
             {
-                Logger.Error("UtilityDataAccess -> SendEmail ERROR -> [Template: " + templateName + "], " +
+                Logger.Error("Landlord CommonHelper -> SendEmail ERROR -> [Template: " + templateName + "], " +
                                        "[ToAddress: " + toAddress + "],  [Exception: " + ex + "]");
 
                 return false;
             }
         }
 
+
         public static string IsDuplicateMember(string userName)
         {
-            
-
             var userNameLowerCase = CommonHelper.GetEncryptedData(userName.ToLower());
 
             using (var noochConnection = new NOOCHEntities())
             {
-                
                 var noochMember = (from c in noochConnection.Members  where c.UserName==userNameLowerCase && c.IsDeleted==false select c).FirstOrDefault();
                 
                 if (noochMember != null)
@@ -755,6 +726,7 @@ namespace LanLordlAPIs.Classes.Utility
             return sms.Status;
         }
 
+
         public static  string ResendVerificationSMS(string Username)
         {
             //1. Check if user exists
@@ -762,6 +734,7 @@ namespace LanLordlAPIs.Classes.Utility
 
             bool IsValidMember = false;
             string s = IsDuplicateMember(Username);
+
             if (s != "Not a nooch member.")
             {
                 // member exists, now check if Phone is already verified
@@ -769,6 +742,7 @@ namespace LanLordlAPIs.Classes.Utility
                 // checking if phone is already activated
                 // getting MemberId
                 Username = CommonHelper.GetEncryptedData(Username);
+
                 using (var noochConnection = new NOOCHEntities())
                 {
                     var memberEntity = (from c in noochConnection.Members where c.UserName == Username && c.IsDeleted == false select c).FirstOrDefault();
@@ -786,8 +760,9 @@ namespace LanLordlAPIs.Classes.Utility
                         else if (memberEntity.Status == "Active" || memberEntity.Status == "Registered")
                         {
                             string MessageBody = "Reply with 'GO' to this message to confirm your mobile number.";
-                            if (memberEntity.ContactNumber != null &&
-                                (memberEntity.IsVerifiedPhone == false || memberEntity.IsVerifiedPhone == null))
+                            if ( memberEntity.ContactNumber != null &&
+                                (memberEntity.IsVerifiedPhone == false || 
+                                 memberEntity.IsVerifiedPhone == null))
                             {
                                 string result = SendSMS(memberEntity.ContactNumber, MessageBody);
                                 return "Success";
@@ -822,16 +797,11 @@ namespace LanLordlAPIs.Classes.Utility
 
         public static string GetMemberNameByUserName(string userName)
         {
-            
-            
-
             var userNameLowerCase = CommonHelper.GetEncryptedData(userName.ToLower());
             userName = CommonHelper.GetEncryptedData(userName);
 
             using (var noochConnection = new NOOCHEntities())
             {
-                
-                
                 var noochMember = (from c in noochConnection.Members where c.UserName==userName && c.IsDeleted==false select c).FirstOrDefault();
                 
                 if (noochMember != null)
@@ -842,6 +812,7 @@ namespace LanLordlAPIs.Classes.Utility
             }
             return null;
         }
+
 
         public static string ResendVerificationLink(string Username)
         {
@@ -902,16 +873,14 @@ namespace LanLordlAPIs.Classes.Utility
             }
             else
             {
-                // Member doesn't exists
+                // Member doesn't exist
                 return "Not a nooch member.";
             }
         }
     }
 
 
-
-
-    //All utility classes goes here---------------------------------------------------------XXXXXXXXXXXXXXXXXXXXXXXXX--------------------------------------------
+    //All utility classes goes here--------------------------------XXXXXXXXXXXXXXXXXXXXXXXXX-------------------------
 
     public class AccessTokenValidationOutput
     {
@@ -920,5 +889,5 @@ namespace LanLordlAPIs.Classes.Utility
         public string AccessToken { get; set; }
         public string ErrorMessage { get; set; }
     }
-    //All utility classes up there---------------------------------------------------------XXXXXXXXXXXXXXXXXXXXXXXXX--------------------------------------------
+    //All utility classes up there----------------------------------XXXXXXXXXXXXXXXXXXXXXXXXX------------------------
 }
