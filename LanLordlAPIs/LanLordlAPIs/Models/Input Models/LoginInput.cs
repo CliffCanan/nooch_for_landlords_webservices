@@ -30,7 +30,7 @@ namespace LanLordlAPIs.Models.Input_Models
     public class EditPersonalInfoInputClass
     {
         public GetProfileDataInput DeviceInfo { get; set; }
-        public UserProfileInfoInputClass UserInfo { get; set; }
+        public LandlordProfileInfoInputClass UserInfo { get; set; }
     }
 
     public class SendEmailsToTenantsInputClass

@@ -191,9 +191,9 @@ namespace LanLordlAPIs.Controllers
 
         [HttpPost]
         [ActionName("GetUserInfo")]
-        public UserProfileInfoResult GetUserInfo(GetProfileDataInput User)
+        public LandlordProfileInfoResult GetUserInfo(GetProfileDataInput User)
         {
-            UserProfileInfoResult result = new UserProfileInfoResult();
+            LandlordProfileInfoResult result = new LandlordProfileInfoResult();
             try
             {
                 Logger.Info("Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [" + User.LandlorId + "]");

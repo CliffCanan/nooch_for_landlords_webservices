@@ -594,35 +594,32 @@ namespace LanLordlAPIs.Controllers
         // to get all properties added by given user
         [HttpPost]
         [ActionName("LoadProperties")]
-        public GetAllPropertysResultClass LoadProperties(GetProfileDataInput Property)
+        public GetAllPropertiesResult LoadProperties(GetProfileDataInput Property)
         {
 
-            GetAllPropertysResultClass result = new GetAllPropertysResultClass();
+            GetAllPropertiesResult result = new GetAllPropertiesResult();
             try
             {
-                Logger.Info("Landlords API -> Properties -> LoadProperties. LoadProperties requested by [" +
-                            Property.LandlorId + "]");
+                Logger.Info("PropertiesController -> LoadProperties - [LandlordID: " + Property.LandlorId + "]");
+
                 Guid landlordguidId = new Guid(Property.LandlorId);
                 result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, Property.AccessToken);
 
                 if (result.AuthTokenValidation.IsTokenOk)
                 {
-
-
                     Guid propId = new Guid(Property.LandlorId);
+                    
                     using (NOOCHEntities obj = new NOOCHEntities())
                     {
-                        var properTyInDb =
-                            (from c in obj.Properties
-                             where c.LandlordId == propId &&
-                                 (c.IsDeleted == false || c.IsDeleted == null)
-                             select c).ToList();
+                        var propertyInDb = (from c in obj.Properties 
+                                            where c.LandlordId == propId && 
+                                                 (c.IsDeleted == false || c.IsDeleted == null)
+                                            select c).ToList();
 
-                        if (properTyInDb.Count > 0)
+                        if (propertyInDb.Count > 0)
                         {
-
                             List<PropertyClassWithUnits> AllPropertiesPreparedToDisp = new List<PropertyClassWithUnits>();
-                            foreach (Property prop in properTyInDb)
+                            foreach (Property prop in propertyInDb)
                             {
                                 PropertyClassWithUnits currentProperty = new PropertyClassWithUnits();
 
@@ -644,20 +641,18 @@ namespace LanLordlAPIs.Controllers
 
                                 currentProperty.LandlordId = prop.LandlordId.ToString();
                                 currentProperty.MemberId = prop.MemberId != null ? prop.MemberId.ToString() : "";
-
                                 currentProperty.PropertyImage = prop.PropertyImage ?? "";
-
                                 currentProperty.IsSingleUnit = prop.IsSingleUnit;
                                 currentProperty.IsDeleted = prop.IsDeleted;
-
                                 currentProperty.DefaulBank = prop.DefaulBank != null ? prop.DefaulBank.ToString() : "";
 
 
-                                // raeding all units of this property
+                                // Now get all units within this property
                                 var AllSubUnits = (from d in obj.PropertyUnits
                                                    where d.PropertyId == prop.PropertyId &&
-                                                       (d.IsDeleted == false || d.IsDeleted == null)
+                                                        (d.IsDeleted == false || d.IsDeleted == null)
                                                    select d).ToList();
+
                                 List<PropertyUnitClass> AllUnitsListPrepared = new List<PropertyUnitClass>();
 
                                 foreach (PropertyUnit pUnit in AllSubUnits)
@@ -673,41 +668,24 @@ namespace LanLordlAPIs.Controllers
                                     currentPUnit.DateAdded = pUnit.DateAdded != null ? Convert.ToDateTime(pUnit.DateAdded).ToShortDateString() : "";
                                     currentPUnit.ModifiedOn = pUnit.ModifiedOn != null ? Convert.ToDateTime(pUnit.ModifiedOn).ToShortDateString() : "";
 
-
                                     currentPUnit.LandlordId = pUnit.LandlordId != null ? pUnit.LandlordId.ToString() : "";
                                     currentPUnit.MemberId = pUnit.MemberId != null ? pUnit.MemberId.ToString() : "";
 
-
                                     currentPUnit.UnitImage = pUnit.UnitImage ?? "";
                                     currentPUnit.IsDeleted = pUnit.IsDeleted;
-
                                     currentPUnit.IsHidden = pUnit.IsHidden;
                                     currentPUnit.IsOccupied = pUnit.IsOccupied;
-
                                     currentPUnit.Status = pUnit.Status ?? "";
-
                                     currentPUnit.DueDate = pUnit.DueDate ?? "";
 
                                     AllUnitsListPrepared.Add(currentPUnit);
-
                                 }
+
                                 currentProperty.AllUnits = AllUnitsListPrepared;
                                 currentProperty.UnitsCount = AllUnitsListPrepared.Count.ToString();
                                 currentProperty.TenantsCount = obj.GetTenantsCountInGivenPropertyId(currentProperty.PropertyId).FirstOrDefault().ToString();
 
-                                
-
-
                                 AllPropertiesPreparedToDisp.Add(currentProperty);
-
-
-
-                              
-
-
-
-
-
                             }
 
                             result.AllProperties = AllPropertiesPreparedToDisp;
@@ -722,21 +700,14 @@ namespace LanLordlAPIs.Controllers
 
                             result.IsSuccess = true;
                             result.ErrorMessage = "OK";
-
-
                         }
                         else
                         {
-                            // invalid property id or no data found
+                            // Invalid property ID or no data found
                             result.IsSuccess = false;
                             result.ErrorMessage = "No properties found for given Landlord.";
-
                         }
                     }
-
-
-
-
                 }
                 return result;
             }
@@ -747,114 +718,88 @@ namespace LanLordlAPIs.Controllers
                 result.IsSuccess = false;
                 result.ErrorMessage = "Error while getting properties list. Retry later!";
                 return result;
-
             }
         }
 
 
-        // to get all properties added by given user
+        /// <summary>
+        /// To get the details of a sepcific property
+        /// </summary>
+        /// <param name="Property"></param>
         [HttpPost]
         [ActionName("GetPropertyDetailsPageData")]
-        public GetPropertyDetailsPageDataResultClass GetPropertyDetailsPageData(SetPropertyStatusClass Property)
+        public GetPropertyDetailsPageDataResult GetPropertyDetailsPageData(SetPropertyStatusClass Property)
         {
+            GetPropertyDetailsPageDataResult result = new GetPropertyDetailsPageDataResult();
 
-            GetPropertyDetailsPageDataResultClass result = new GetPropertyDetailsPageDataResultClass();
             try
             {
-                Logger.Info("Landlords API -> Properties -> LoadProperties. LoadProperties requested by [" +
-                            Property.User.LandlorId + "]");
+                Logger.Info("PropertiesController -> GetPropertyDetailsPageData Initiated - [LandlordID: " + Property.User.LandlorId + "]");
+                
                 Guid landlordguidId = new Guid(Property.User.LandlorId);
                 result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, Property.User.AccessToken);
 
                 if (result.AuthTokenValidation.IsTokenOk)
                 {
-
-
                     Guid PropertyGuId = new Guid(Property.PropertyId);
                     Guid LandlordGuidId = new Guid(Property.User.LandlorId);
+                    
                     using (NOOCHEntities obj = new NOOCHEntities())
                     {
-                        var properTyInDb =
-                            (from c in obj.Properties
-                             where c.PropertyId == PropertyGuId &&
-                                 (c.IsDeleted == false || c.IsDeleted == null) && c.LandlordId == LandlordGuidId
-                             select c).FirstOrDefault();
+                        var propertyInDb = (from c in obj.Properties
+                                            where c.PropertyId == PropertyGuId &&
+                                                 (c.IsDeleted == false || c.IsDeleted == null) &&
+                                                  c.LandlordId == LandlordGuidId 
+                                            select c).FirstOrDefault();
 
-                        if (properTyInDb != null)
+                        if (propertyInDb != null)
                         {
-
-
                             PropertyClassWithUnits currentProperty = new PropertyClassWithUnits();
 
-                            currentProperty.PropertyId = properTyInDb.PropertyId.ToString();
-                            currentProperty.PropStatus = properTyInDb.PropStatus ?? "";
-                            currentProperty.PropType = properTyInDb.PropType ?? "";
-                            currentProperty.PropName = properTyInDb.PropName ?? "";
-                            currentProperty.AddressLineOne = properTyInDb.AddressLineOne ?? "";
-                            currentProperty.AddressLineTwo = properTyInDb.AddressLineTwo ?? "";
+                            currentProperty.PropertyId = propertyInDb.PropertyId.ToString();
+                            currentProperty.PropStatus = propertyInDb.PropStatus ?? "";
+                            currentProperty.PropType = propertyInDb.PropType ?? "";
+                            currentProperty.PropName = propertyInDb.PropName ?? "";
+                            currentProperty.AddressLineOne = propertyInDb.AddressLineOne ?? "";
+                            currentProperty.AddressLineTwo = propertyInDb.AddressLineTwo ?? "";
+                            currentProperty.City = propertyInDb.City ?? "";
+                            currentProperty.Zip = propertyInDb.Zip ?? "";
+                            currentProperty.State = propertyInDb.State ?? "";
+                            currentProperty.ContactNumber = propertyInDb.ContactNumber ?? "";
 
-                            currentProperty.City = properTyInDb.City ?? "";
-                            currentProperty.Zip = properTyInDb.Zip ?? "";
-                            currentProperty.State = properTyInDb.State ?? "";
-                            currentProperty.ContactNumber = properTyInDb.ContactNumber ?? "";
+                            currentProperty.DefaultDueDate = propertyInDb.DefaultDueDate ?? "";
+                            currentProperty.DateAdded = propertyInDb.DateAdded != null ? Convert.ToDateTime(propertyInDb.DateAdded).ToShortDateString() : "";
+                            currentProperty.DateModified = propertyInDb.DateModified != null ? Convert.ToDateTime(propertyInDb.DateModified).ToShortDateString() : "";
 
-                            currentProperty.DefaultDueDate = properTyInDb.DefaultDueDate ?? "";
-                            currentProperty.DateAdded = properTyInDb.DateAdded != null ? Convert.ToDateTime(properTyInDb.DateAdded).ToShortDateString() : "";
-                            currentProperty.DateModified = properTyInDb.DateModified != null ? Convert.ToDateTime(properTyInDb.DateModified).ToShortDateString() : "";
+                            currentProperty.LandlordId = propertyInDb.LandlordId.ToString();
+                            currentProperty.MemberId = propertyInDb.MemberId != null ? propertyInDb.MemberId.ToString() : "";
+                            currentProperty.PropertyImage = propertyInDb.PropertyImage ?? "";
+                            currentProperty.IsSingleUnit = propertyInDb.IsSingleUnit;
+                            currentProperty.IsDeleted = propertyInDb.IsDeleted;
 
-                            currentProperty.LandlordId = properTyInDb.LandlordId.ToString();
-                            currentProperty.MemberId = properTyInDb.MemberId != null ? properTyInDb.MemberId.ToString() : "";
+                            #region Get Bank Details For This Property
 
-                            currentProperty.PropertyImage = properTyInDb.PropertyImage ?? "";
-
-                            currentProperty.IsSingleUnit = properTyInDb.IsSingleUnit;
-                            currentProperty.IsDeleted = properTyInDb.IsDeleted;
-
-                            //currentProperty.DefaulBank = properTyInDb.DefaulBank != null ? properTyInDb.DefaulBank.ToString() : "."; // hard coded it for testing purpose
-                            //if (currentProperty.DefaulBank != "")
-                            //{
-                            //    result.IsBankAccountAdded = true;
-
-                            //    // code here to add bank details
-
-                            //    BankDetailsReusltClass bdetails = new BankDetailsReusltClass();
-                            //    bdetails.BankAccountID = "XXXX-11111-22222-1231232";
-                            //    bdetails.BankName = "Bank of America";
-
-                            //    bdetails.BankIcon = "http://54.201.43.89/landlords/db/UploadedImages/PropertyImages/21d4e1ee_865c_40dd_b841_15807546daae_property_test_bASDASD.png";
-                            //    bdetails.BankAccountNick = "Checking account";
-                            //    bdetails.BankAccountNumString = "1234";
-
-                            //    result.BankAccountDetails = bdetails;
-
-
-                            //}
-                            //else
-                            //{
-                            //    result.IsBankAccountAdded = false;
-                            //}
-
-                            BankDetailsReusltClass bdetails = new BankDetailsReusltClass();
-                            if (properTyInDb.DefaulBank != null)
+                            BankDetailsResult bdetails = new BankDetailsResult();
+                            if (propertyInDb.DefaulBank != null)
                             {
+                                int bnkId = Convert.ToInt16(propertyInDb.DefaulBank);
 
-                                int bnkId = Convert.ToInt16(properTyInDb.DefaulBank);
-                                // gettting bank details
-                                var allBankDetails =
-                                    (from c in obj.SynapseBanksOfMembers
-                                     where c.Id == bnkId && c.IsDefault == true
-                                     select c).FirstOrDefault();
-                                if (allBankDetails != null)
+                                // Get bank details
+                                var bankDetails = (from c in obj.SynapseBanksOfMembers
+                                                      where c.Id == bnkId && c.IsDefault == true
+                                                      select c).FirstOrDefault();
+
+                                if (bankDetails != null)
                                 {
                                     result.IsBankAccountAdded = true;
 
-                                    bdetails.BankAccountID = allBankDetails.Id.ToString();
-                                    bdetails.BankName = allBankDetails.bank_name != null ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(allBankDetails.bank_name)) : "";
-                                    bdetails.BankAccountNick = allBankDetails.nickname != null ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(allBankDetails.nickname)) : "";
-                                    bdetails.BankAccountNumString = allBankDetails.account_number_string != null ? CommonHelper.GetDecryptedData(allBankDetails.account_number_string) : "";
+                                    bdetails.BankAccountID = bankDetails.Id.ToString();
+                                    bdetails.BankName = bankDetails.bank_name != null ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(bankDetails.bank_name)) : "";
+                                    bdetails.BankAccountNick = bankDetails.nickname != null ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(bankDetails.nickname)) : "";
+                                    bdetails.BankAccountNumString = bankDetails.account_number_string != null ? CommonHelper.GetDecryptedData(bankDetails.account_number_string) : "";
 
-                                    string bankNameToMatch = allBankDetails.bank_name != null
-                                        ? CommonHelper.GetDecryptedData(allBankDetails.bank_name).ToUpper()
+                                    string bankNameToMatch = bankDetails.bank_name != null
+                                        ? CommonHelper.GetDecryptedData(bankDetails.bank_name).ToUpper()
                                         : "";
                                     if (bankNameToMatch.Length > 0)
                                     {
@@ -866,8 +811,8 @@ namespace LanLordlAPIs.Controllers
                                             case "BANK OF AMERICA":
                                                 bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/bankofamerica.png";
                                                 break;
-                                            case "BB&T BANK"://need logo
-                                                bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/no.png";
+                                            case "BB&T BANK":
+                                                bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/bbandt.png";
                                                 break;
                                             case "CHASE":
                                                 bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/chase.png";
@@ -875,8 +820,8 @@ namespace LanLordlAPIs.Controllers
                                             case "CITIBANK":
                                                 bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/citibank.png";
                                                 break;
-                                            case "CHARLES SCHWAB"://need logo
-                                                bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/no.png";
+                                            case "CHARLES SCHWAB":
+                                                bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/schwab.png";
                                                 break;
                                             case "CAPITAL ONE 360":
                                                 bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/capone360.png";
@@ -915,114 +860,97 @@ namespace LanLordlAPIs.Controllers
                                     }
                                     else
                                     {
-
                                         bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/no.png";
                                     }
-
-
-
-
-
-
                                 }
-
-
-
-
-
                             }
                             else
                             {
-
                                 bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/no.png";
 
                                 result.IsBankAccountAdded = false;
                             }
                             result.BankAccountDetails = bdetails;
-                            result.PropertyDetails = currentProperty;
 
-                            // raeding all units of this property
-                            var AllSubUnits = (from d in obj.PropertyUnits
-                                               where d.PropertyId == properTyInDb.PropertyId &&
-                                                   (d.IsDeleted == false || d.IsDeleted == null)
-                                               select d).ToList();
+                            #endregion Get Bank Details For This Property
+
+                            // Get all units of this property
+                            #region Get All Units For This Property
+
+                            var allUnits = ( from d in obj.PropertyUnits
+                                             where d.PropertyId == propertyInDb.PropertyId &&
+                                                 (d.IsDeleted == false || d.IsDeleted == null)
+                                             select d).ToList();
+
                             List<PropertyUnitClass> AllUnitsListPrepared = new List<PropertyUnitClass>();
 
-                            foreach (PropertyUnit pUnit in AllSubUnits)
+                            foreach (PropertyUnit unitX in allUnits)
                             {
-                                PropertyUnitClass currentPUnit = new PropertyUnitClass();
+                                PropertyUnitClass currentUnit = new PropertyUnitClass();
 
-                                currentPUnit.UnitId = pUnit.UnitId.ToString();
-                                currentPUnit.PropertyId = pUnit.PropertyId.ToString();
-                                currentPUnit.UnitNumber = pUnit.UnitNumber ?? "";
+                                currentUnit.UnitId = unitX.UnitId.ToString();
+                                currentUnit.PropertyId = unitX.PropertyId.ToString();
+                                currentUnit.UnitNumber = unitX.UnitNumber ?? "";
+                                currentUnit.UnitNickname = unitX.UnitNickName ?? "";
 
-                                currentPUnit.UnitRent = pUnit.UnitRent ?? "";
-                                currentPUnit.BankAccountId = pUnit.BankAccountId != null ? pUnit.BankAccountId.ToString() : "";
-                                currentPUnit.DateAdded = pUnit.DateAdded != null ? Convert.ToDateTime(pUnit.DateAdded).ToShortDateString() : "";
-                                currentPUnit.ModifiedOn = pUnit.ModifiedOn != null ? Convert.ToDateTime(pUnit.ModifiedOn).ToShortDateString() : "";
+                                currentUnit.UnitRent = unitX.UnitRent ?? "";
+                                currentUnit.BankAccountId = unitX.BankAccountId != null ? unitX.BankAccountId.ToString() : "";
+                                currentUnit.DateAdded = unitX.DateAdded != null ? Convert.ToDateTime(unitX.DateAdded).ToShortDateString() : "";
+                                currentUnit.ModifiedOn = unitX.ModifiedOn != null ? Convert.ToDateTime(unitX.ModifiedOn).ToShortDateString() : "";
 
+                                currentUnit.LandlordId = unitX.LandlordId != null ? unitX.LandlordId.ToString() : "";
+                                currentUnit.MemberId = unitX.MemberId != null ? unitX.MemberId.ToString() : "";
 
-                                currentPUnit.LandlordId = pUnit.LandlordId != null ? pUnit.LandlordId.ToString() : "";
-                                currentPUnit.MemberId = pUnit.MemberId != null ? pUnit.MemberId.ToString() : "";
+                                currentUnit.TenantName = ""; // NEED TO GET THIS BY USING THE MEMBER ID TO LOOK UP THE MEMBER'S NAME ('name' isn't stored in the 'PropertyUnits' Table)
 
+                                currentUnit.UnitImage = unitX.UnitImage ?? "";
+                                currentUnit.IsDeleted = unitX.IsDeleted;
+                                currentUnit.IsHidden = unitX.IsHidden;
+                                currentUnit.IsOccupied = unitX.IsOccupied;
+                                currentUnit.Status = unitX.Status ?? "";
+                                currentUnit.DueDate = unitX.DueDate ?? "";
 
-                                currentPUnit.UnitImage = pUnit.UnitImage ?? "";
-                                currentPUnit.IsDeleted = pUnit.IsDeleted;
-
-                                currentPUnit.IsHidden = pUnit.IsHidden;
-                                currentPUnit.IsOccupied = pUnit.IsOccupied;
-
-                                currentPUnit.Status = pUnit.Status ?? "";
-
-                                currentPUnit.DueDate = pUnit.DueDate ?? "";
-
-                                AllUnitsListPrepared.Add(currentPUnit);
-
+                                AllUnitsListPrepared.Add(currentUnit);
                             }
-
-
-                            //var alLUnitIds =
-                            //    from c in obj.PropertyUnits
-                            //        where c.PropertyId == properTyInDb.PropertyId
-                            //        select c.UnitId;
-                            //var alltenantsCount =
-                            //    (from dc in obj.UnitsOccupiedByTenants where alLUnitIds.Contains(dc.UnitId) select dc);
-
 
                             currentProperty.AllUnits = AllUnitsListPrepared;
                             currentProperty.UnitsCount = AllUnitsListPrepared.Count.ToString();
+
+                            #endregion Get All Units For This Property
+
                             currentProperty.TenantsCount = obj.GetTenantsCountInGivenPropertyId(currentProperty.PropertyId).FirstOrDefault().ToString();
 
 
-                            // getting tenants list for this property
-                            var AllTenantsOccupiedGivenPropertyUnits =
-                                obj.GetTenantsInGivenPropertyId(currentProperty.PropertyId).ToList();
+                            // Get list of all tenants for this property
+                            #region Get All Tenants For This Property
 
-                            List<TenantDetailsResultClass> TenantsListForThisPropertyPrepared = new List<TenantDetailsResultClass>();
+                            var AllTenantsInGivenProperty = obj.GetTenantsInGivenPropertyId(currentProperty.PropertyId).ToList();
 
-                            if (AllTenantsOccupiedGivenPropertyUnits.Count > 0)
+                            List<TenantDetailsResult> TenantsListForThisPropertyPrepared = new List<TenantDetailsResult>();
+
+                            if (AllTenantsInGivenProperty.Count > 0)
                             {
-                                foreach (var v in AllTenantsOccupiedGivenPropertyUnits)
+                                foreach (var v in AllTenantsInGivenProperty)
                                 {
-                                    TenantDetailsResultClass trc = new TenantDetailsResultClass();
+                                    TenantDetailsResult trc = new TenantDetailsResult();
+
                                     trc.TenantId = v.TenantId.ToString() ?? "";
                                     trc.UnitId = v.UnitId.ToString() ?? "";
+
                                     if (!String.IsNullOrEmpty(v.FirstName))
                                     {
-                                        trc.Name = CommonHelper.GetDecryptedData(v.FirstName);
+                                        trc.Name = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(v.FirstName));
                                     }
                                     if (!String.IsNullOrEmpty(v.LastName))
                                     {
-                                        trc.Name = trc.Name + " " + CommonHelper.GetDecryptedData(v.LastName);
+                                        trc.Name = trc.Name + " " + CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(v.LastName));
                                     }
 
                                     trc.ImageUrl = v.UserPic ?? "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAAB4CAMAAAAOusbgAAAAPFBMVEX///+4uLjr6+u1tbWysrL39/f7+/vg4OC7u7vm5ubMzMzt7e3BwcH09PT5+fm9vb3KysrW1tbR0dHZ2dlNTySgAAAC4ElEQVRoge2a25arIAyGRRDE8+H933XLjNNWu5WcqGvW+N/16luJSUh/yLJbt27d+ivq6jz3Ps/r4oNQm49DU6ovlc0wevsJauErZYzWapXWy6/Bpw68dY1+QtWT3s9tQqwN2Dfqim7mZBlvD7Eruk6CtfMZ9gttxgRBF1OMG9CV+Je2QxwbyI1wedvBQLgLeRAlF1BuiFkw23YC5XklV3IV5hDchTxLcQuFAisj1M/Agn4JuelEwA6HVVLJLrABS1W2Rwe8kB2f2zXogBdwzx8jOYErEvIEnlkb8MAGl6SIleaOr5oU8DJEPBM8U8EjE4w5Hl7F/cjocfkQcyMoeiJXlbzh1ZZUsMpZ4JoO5pV1Teb+WvBVqWYUF2//uaydGAOEuXfRTkWBc9FddUi0Vx2LWU9cBLjc61Yf2uzS7EzTGkrkT8xVC33WXfUXhhCySMCLKmRh60bIE7C4pV5rMRfEoywBqUQHzRjzZRK09yx8fulKxof4EZRsBM2mlQyzFMW5mZ3jFab1JJvnb3kVSbfWLo1XbquzoLWS9U838tXhulsO/JPwWIU78oB049LFW0+nW3Y/JbmTWII1keIyRj7s4vjiZ5Nw6Yz7AXpMLLUtV2TdaRu9o4WmtXWxwbGXURKDpIXcN+2D1hN7F2gp5q3AulfTuIHMamrczrMlc7wIR+cGMnn38viy2pCpf6ByolX9JJckd4/NJZKJfbQjE7qqEuCG5Q/LpZouexlkaTM8zL1Qg8TKJDoIt2lTXIBDIbqZdK13JIwfMgpV1rcM+FLXckb0u7SCfmWpVvoRtKVEv3AQ9Cvj3kCAyKCQBXv4AQb1ck2+DThWDxlf8pmG5TpBpmG5LojO+DkY8FiB9hghSo6vItQr8nMB7kbIF02nAlwV8Fe8/4LLGLdLwl3IsalJfX4RU/SNl08Fju0h0kfiAxybXWm6CbCGyG49L+BYI18GbvNESvn8+tatW7c+o3+CASXGSkLOCwAAAABJRU5ErkJggg==";  // will modify it after testing
                                     trc.UnitRent = v.UnitRent ?? "";
-                                    trc.LastRentPaidOn = Convert.ToDateTime(v.LastPaymentDate).ToString(" MMM d, yyyy") ?? "";
-
+                                    trc.LastRentPaidOn = Convert.ToDateTime(v.LastPaymentDate).ToString("MMM d, yyyy") ?? "";
                                     trc.IsRentPaidForThisMonth = v.IsPaymentDueForThisMonth ?? false;
                                     trc.IsPhoneVerified = v.IsPhoneVerfied ?? false;
-
                                     trc.IsEmailVerified = v.IsEmailVerified ?? false;
                                     trc.IsDocumentsVerified = v.IsIdDocumentVerified ?? false;
 
@@ -1044,25 +972,22 @@ namespace LanLordlAPIs.Controllers
 
                             result.TenantsListForThisProperty = TenantsListForThisPropertyPrepared;
 
+                            #endregion Get All Tenants For This Property
+
                             result.AllTenantsWithPassedDueDateCount = "0";
+
+                            result.PropertyDetails = currentProperty;
 
                             result.IsSuccess = true;
                             result.ErrorMessage = "OK";
-
-
                         }
                         else
                         {
-                            // invalid property id or no data found
+                            // Invalid property ID or no data found
                             result.IsSuccess = false;
                             result.ErrorMessage = "No properties found for given Landlord.";
-
                         }
                     }
-
-
-
-
                 }
                 return result;
             }
@@ -1083,6 +1008,7 @@ namespace LanLordlAPIs.Controllers
             PropertyInputValidationResult res = new PropertyInputValidationResult();
             res.IsDataValid = true;
             res.ValidationError = "OK";
+
             // checking property details
             if (String.IsNullOrEmpty(inputData.PropertyName))
             {
@@ -1124,13 +1050,8 @@ namespace LanLordlAPIs.Controllers
 
             if (IsUnitsCheckRequired)
             {
-
-
-
                 if (inputData.IsMultipleUnitsAdded)
                 {
-
-
                     if (inputData.Unit.Any(unitItem => String.IsNullOrEmpty(unitItem.UnitNum)))
                     {
                         res.IsDataValid = false;
@@ -1155,9 +1076,7 @@ namespace LanLordlAPIs.Controllers
                 }
 
             }
-            //}
             return res;
-
         }
 
         private class PropertyInputValidationResult
@@ -1172,13 +1091,13 @@ namespace LanLordlAPIs.Controllers
         {
             GetProfileDataInput User = new GetProfileDataInput();
             LoginResult result = new LoginResult();
+
             try
             {
                 var file = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
+
                 if (file != null && file.ContentLength > 0)
                 {
-
-
                     string[] llId = HttpContext.Current.Request.Form.GetValues("PropertyId");
                     if (llId != null && llId.Length > 0)
                     {
@@ -1187,14 +1106,11 @@ namespace LanLordlAPIs.Controllers
                         {
                             Guid landlordguidId = new Guid(llId[0]);
 
-
                             //var fileName = Path.GetFileName(file.FileName);
                             //var fileExtension = Path.GetExtension(file.FileName);
                             //var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file.FileName);
                             var fileExtension = Path.GetExtension(file.FileName);
                             var fileName = landlordguidId.ToString().Replace("-", "_").Trim() + fileExtension;
-
-
 
                             var path = Path.Combine(
                                 HttpContext.Current.Server.MapPath(CommonHelper.GetValueFromConfig("PhotoPath")),
@@ -1204,12 +1120,9 @@ namespace LanLordlAPIs.Controllers
                             if (File.Exists(path))
                             {
                                 File.Delete(path);
-
                             }
 
-
                             file.SaveAs(path);
-
 
                             var llDetails =
                                 (from c in obj.Properties where c.PropertyId== landlordguidId select c).FirstOrDefault();
@@ -1226,18 +1139,13 @@ namespace LanLordlAPIs.Controllers
                                 result.ErrorMessage = "Invalid property Id passed.";
                             }
                         }
-
                     }
-
                     else
                     {
                         // no file selected
                         result.IsSuccess = false;
                         result.ErrorMessage = "No or invalid property id passed.";
                     }
-                    // return file != null ? "/uploads/" + file.FileName : null;
-
-
                 }
                 else
                 {
@@ -1245,23 +1153,16 @@ namespace LanLordlAPIs.Controllers
                     result.IsSuccess = false;
                     result.ErrorMessage = "No or invalid file passed.";
                 }
-                // return file != null ? "/uploads/" + file.FileName : null;
 
                 return result;
-
             }
-
             catch (Exception ex)
             {
-                Logger.Error(
-                    "Landlords API -> Prrperties -> UploadPropertyImage. Error while UploadProfileImage request from property id - [ " +
-                    User.LandlorId + " ] . Exception details [ " + ex + " ]");
+                Logger.Error("PropertiesController -> UploadPropertyImage FAILED - [LandlordID: " + User.LandlorId + " ] . Exception details [ " + ex.Message + " ]");
                 result.IsSuccess = false;
                 result.ErrorMessage = "Error while uploading image. Retry.";
                 return result;
-
             }
-
 
         }
     }

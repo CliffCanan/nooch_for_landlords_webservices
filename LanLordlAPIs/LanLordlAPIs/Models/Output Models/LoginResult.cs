@@ -18,32 +18,22 @@ namespace LanLordlAPIs.Models.Output_Models
 
     public class CreatePropertyResultOutput
     {
-
         //auth token and validation result
         public AccessTokenValidationOutput AuthTokenValidation { get; set; }
 
-
-
-        // if any exception
         public bool IsSuccess { get; set; }
         public string ErrorMessage { get; set; }
         public string PropertyIdGenerated { get; set; }
     }
 
 
-
-
-    public class UserProfileInfoInputClass
+    public class LandlordProfileInfoInputClass
     {
-
-
         //Account info
         public string AccountType { get; set; }
         public string SubType { get; set; }
         public string VerificationType { get; set; }
 
-
-        //Personel info
         public string DOB { get; set; }
         public string SSN { get; set; }
 
@@ -65,7 +55,6 @@ namespace LanLordlAPIs.Models.Output_Models
         public bool IsPhoneVerified { get; set; }
         public bool IsEmailVerified { get; set; }
 
-        //Address
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
 
@@ -75,30 +64,22 @@ namespace LanLordlAPIs.Models.Output_Models
         public string Zip { get; set; }
 
         public string InfoType { get; set; }
-
     }
 
 
-    public class UserProfileInfoResult
+    public class LandlordProfileInfoResult
     {
-
         //auth token and validation result
         public AccessTokenValidationOutput AuthTokenValidation { get; set; }
 
-
-
-        // if any exception
         public bool IsSuccess { get; set; }
         public string ErrorMessage { get; set; }
-
 
         //Account info
         public string AccountType { get; set; }
         public string SubType { get; set; }
         public string VerificationType { get; set; }
 
-
-        //Personel info
         public string DOB { get; set; }
         public string SSN { get; set; }
 
@@ -119,7 +100,6 @@ namespace LanLordlAPIs.Models.Output_Models
         public bool IsPhoneVerified { get; set; }
         public bool IsEmailVerified { get; set; }
 
-        //Address
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
 
@@ -132,27 +112,18 @@ namespace LanLordlAPIs.Models.Output_Models
         public string PropertiesCount { get; set; }
         public string TenantsCount { get; set; }
         public string UnitsCount { get; set; }
-        
     }
-
-
-
 
 
     public class GetAccountCompletionStatsResultClass
     {
         public AccessTokenValidationOutput AuthTokenValidation { get; set; }
 
-
-
-        // if any exception
         public bool IsSuccess { get; set; }
         public string ErrorMessage { get; set; }
 
-
         public string AllPropertysCount { get; set; }
         public string AllUnitsCount { get; set; }
-
         public bool IsEmailVerified { get; set; }
         public bool IsPhoneVerified { get; set; }
         public bool IsAccountAdded { get; set; }
@@ -161,100 +132,75 @@ namespace LanLordlAPIs.Models.Output_Models
         public string AllTenantsCount { get; set; }
     }
 
-    public class GetAllPropertysResultClass
+
+    public class GetAllPropertiesResult
     {
         public AccessTokenValidationOutput AuthTokenValidation { get; set; }
 
-
-
-        // if any exception
         public bool IsSuccess { get; set; }
         public string ErrorMessage { get; set; }
 
         public List<PropertyClassWithUnits> AllProperties { get; set; }
-
         public string AllPropertysCount { get; set; }
         public string AllUnitsCount { get; set; }
-
         public bool IsEmailVerified { get; set; }
         public bool IsPhoneVerified { get; set; }
         public bool IsAccountAdded { get; set; }
         public bool IsIDVerified { get; set; }
         public bool IsAnyRentReceived { get; set; }
         public string AllTenantsCount { get; set; }
-
-        
     }
 
 
-    public class GetPropertyDetailsPageDataResultClass
+    public class GetPropertyDetailsPageDataResult
     {
         public AccessTokenValidationOutput AuthTokenValidation { get; set; }
 
-        // if any exception
         public bool IsSuccess { get; set; }
         public string ErrorMessage { get; set; }
 
         public PropertyClassWithUnits PropertyDetails { get; set; }
 
-        public BankDetailsReusltClass BankAccountDetails { get; set; }
-
+        public BankDetailsResult BankAccountDetails { get; set; }
         public bool IsBankAccountAdded { get; set; }
-        
-      
+
         public string AllUnitsCount { get; set; }
         public string AllTenantsCount { get; set; }
 
         public string AllTenantsWithPassedDueDateCount { get; set; }
 
-
-        public List<TenantDetailsResultClass> TenantsListForThisProperty { get; set; }
-        public List<TenantDetailsResultClass> DefaulterTenants { get; set; }
-        
+        public List<TenantDetailsResult> TenantsListForThisProperty { get; set; }
+        public List<TenantDetailsResult> DefaulterTenants { get; set; }
     }
 
-    public class TenantDetailsResultClass
+
+    public class TenantDetailsResult
     {
         public string TenantId { get; set; }
         public string UnitId { get; set; }
-
-
         public string UnitNumber { get; set; }
         public string TenantEmail { get; set; }
-
         public string UnitRent { get; set; }
         public string Name { get; set; }
-
         public string ImageUrl { get; set; }
-
         public string RentAmount { get; set; }
         public string LastRentPaidOn { get; set; }
-
         public bool IsRentPaidForThisMonth { get; set; }
-
         public bool IsEmailVerified { get; set; }
         public bool IsDocumentsVerified { get; set; }
         public bool IsPhoneVerified { get; set; }
         public bool IsBankAccountAdded { get; set; }
-
-
     }
     
 
-    public class BankDetailsReusltClass
+    public class BankDetailsResult
     {
         public string BankName { get; set; }
         public string BankIcon { get; set; }
-
         public string BankAccountID { get; set; }
-
         public string BankAccountNick { get; set; }
-
-        public string BankAccountNumString { get; set; }
-
-        
+        public string BankAccountNumString { get; set; }   
     }
-    
 
 
     public class PropertyClassWithUnits
@@ -282,11 +228,9 @@ namespace LanLordlAPIs.Models.Output_Models
         public List<PropertyUnitClass> AllUnits { get; set; }
 
         public string UnitsCount { get; set; }
-
         public string TenantsCount { get; set; }
-
-
     }
+
 
     public class PropertyClass
     {
@@ -311,17 +255,20 @@ namespace LanLordlAPIs.Models.Output_Models
         public string DefaulBank { get; set; }
     }
 
+
     public class PropertyUnitClass
     {
         public string UnitId { get; set; }
         public string PropertyId { get; set; }
         public string UnitNumber { get; set; }
+        public string UnitNickname { get; set; }
         public string UnitRent { get; set; }
         public string BankAccountId { get; set; }
         public string DateAdded { get; set; }
         public string ModifiedOn { get; set; }
         public string LandlordId { get; set; }
         public string MemberId { get; set; }
+        public string TenantName { get; set; }
         public string UnitImage { get; set; }
         public Nullable<bool> IsDeleted { get; set; }
         public Nullable<bool> IsHidden { get; set; }
@@ -333,16 +280,11 @@ namespace LanLordlAPIs.Models.Output_Models
 
     public class RegisterLandlordResult
     {
-
         //auth token and validation result
         public AccessTokenValidationOutput AuthTokenValidation { get; set; }
 
-
-
-        // if any exception
         public bool IsSuccess { get; set; }
         public string ErrorMessage { get; set; }
-        
     }
 
 }
