@@ -38,5 +38,12 @@ namespace LanLordlAPIs.Models.db_Model
         public string Status { get; set; }
         public Nullable<System.DateTime> VerifiedOn { get; set; }
         public string VerificationCode { get; set; }
+        public string oid { get; set; }
+        public string allowed { get; set; }
+        public string supp_id { get; set; }
+        public string @class { get; set; }
+        public string type_bank { get; set; }
+        public string type_synapse { get; set; }
+        public Nullable<bool> is_active { get; set; }
     }
 }

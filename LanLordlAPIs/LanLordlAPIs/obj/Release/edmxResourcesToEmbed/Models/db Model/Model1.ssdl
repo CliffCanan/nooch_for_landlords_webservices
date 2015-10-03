@@ -382,8 +382,20 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Function Name="GetLastRentPaymentDateForGivenUnitId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="vUnitId" Type="varchar(max)" Mode="In" />
+  </Function>
   <Function Name="GetPropertiesCountForGivenLandlord" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
     <Parameter Name="vLandlordId" Type="varchar(max)" Mode="In" />
+  </Function>
+  <Function Name="GetTenantEmailForGivenUnitId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="vUnitId" Type="varchar(max)" Mode="In" />
+  </Function>
+  <Function Name="GetTenantImageForGivenUnitId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="vUnitId" Type="varchar(max)" Mode="In" />
+  </Function>
+  <Function Name="GetTenantNameForGivenUnitId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="vUnitId" Type="varchar(max)" Mode="In" />
   </Function>
   <Function Name="GetTenantsCountForGivenLandlord" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
     <Parameter Name="vLandlordId" Type="varchar(max)" Mode="In" />
@@ -401,6 +413,12 @@
     <Parameter Name="vUserType" Type="varchar" Mode="In" />
     <Parameter Name="vUserId" Type="varchar(max)" Mode="In" />
   </Function>
+  <Function Name="IsBankAccountAddedOfTenantInGivenUnitId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="vUnitId" Type="varchar(max)" Mode="In" />
+  </Function>
+  <Function Name="IsEmailIdVerifiedOfTenantInGivenUnitId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="vUnitId" Type="varchar(max)" Mode="In" />
+  </Function>
   <Function Name="IsEmailVerifiedforGivenLandlordOrTenant" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
     <Parameter Name="vUserType" Type="varchar" Mode="In" />
     <Parameter Name="vUserId" Type="varchar(max)" Mode="In" />
@@ -408,6 +426,12 @@
   <Function Name="IsPhoneVerifiedforGivenLandlordOrTenant" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
     <Parameter Name="vUserType" Type="varchar" Mode="In" />
     <Parameter Name="vUserId" Type="varchar(max)" Mode="In" />
+  </Function>
+  <Function Name="IsPhoneVerifiedOfTenantInGivenUnitId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="vUnitId" Type="varchar(max)" Mode="In" />
+  </Function>
+  <Function Name="IsRentPaidByTenantForGivenUnitId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="vUnitId" Type="varchar(max)" Mode="In" />
   </Function>
   <EntityContainer Name="NOOCHModelStoreContainer">
     <EntitySet Name="AuthenticationTokens" EntityType="Self.AuthenticationTokens" Schema="dbo" store:Type="Tables" />

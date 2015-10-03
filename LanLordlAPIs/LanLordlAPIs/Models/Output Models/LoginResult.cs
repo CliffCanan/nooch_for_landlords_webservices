@@ -269,6 +269,20 @@ namespace LanLordlAPIs.Models.Output_Models
         public string LandlordId { get; set; }
         public string MemberId { get; set; }
         public string TenantName { get; set; }
+        public string TenantEmail { get; set; }
+
+
+        // rent
+        public string LastRentPaidOn { get; set; }
+        public bool IsRentPaidForThisMonth { get; set; }
+
+        //tenant bank email and phone related
+        public bool IsEmailVerified { get; set; }
+        public bool IsPhoneVerified { get; set; }
+        public bool IsBankAccountAdded { get; set; }
+        
+
+        public string ImageUrl { get; set; }  // for tenant image url
         public string UnitImage { get; set; }
         public Nullable<bool> IsDeleted { get; set; }
         public Nullable<bool> IsHidden { get; set; }

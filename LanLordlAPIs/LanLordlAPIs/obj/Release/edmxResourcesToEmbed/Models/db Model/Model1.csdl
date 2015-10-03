@@ -291,6 +291,30 @@
     </FunctionImport>
     <EntitySet Name="Properties" EntityType="NOOCHModel.Property" />
     <EntitySet Name="PropertyUnits" EntityType="NOOCHModel.PropertyUnit" />
+    <FunctionImport Name="GetTenantNameForGivenUnitId" ReturnType="Collection(String)">
+      <Parameter Name="vUnitId" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="GetTenantEmailForGivenUnitId" ReturnType="Collection(String)">
+      <Parameter Name="vUnitId" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="GetTenantImageForGivenUnitId" ReturnType="Collection(String)">
+      <Parameter Name="vUnitId" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="GetLastRentPaymentDateForGivenUnitId" ReturnType="Collection(DateTime)">
+      <Parameter Name="vUnitId" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="IsBankAccountAddedOfTenantInGivenUnitId" ReturnType="Collection(Int32)">
+      <Parameter Name="vUnitId" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="IsEmailIdVerifiedOfTenantInGivenUnitId" ReturnType="Collection(Boolean)">
+      <Parameter Name="vUnitId" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="IsPhoneVerifiedOfTenantInGivenUnitId" ReturnType="Collection(Boolean)">
+      <Parameter Name="vUnitId" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="IsRentPaidByTenantForGivenUnitId" ReturnType="Collection(Boolean)">
+      <Parameter Name="vUnitId" Mode="In" Type="String" />
+    </FunctionImport>
   </EntityContainer>
   <EntityType Name="UnitsOccupiedByTenant">
     <Key>

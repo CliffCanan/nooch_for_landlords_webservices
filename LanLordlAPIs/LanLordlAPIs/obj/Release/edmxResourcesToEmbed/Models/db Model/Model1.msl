@@ -388,5 +388,13 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="GetTenantNameForGivenUnitId" FunctionName="NOOCHModel.Store.GetTenantNameForGivenUnitId" />
+    <FunctionImportMapping FunctionImportName="GetTenantEmailForGivenUnitId" FunctionName="NOOCHModel.Store.GetTenantEmailForGivenUnitId" />
+    <FunctionImportMapping FunctionImportName="GetTenantImageForGivenUnitId" FunctionName="NOOCHModel.Store.GetTenantImageForGivenUnitId" />
+    <FunctionImportMapping FunctionImportName="GetLastRentPaymentDateForGivenUnitId" FunctionName="NOOCHModel.Store.GetLastRentPaymentDateForGivenUnitId" />
+    <FunctionImportMapping FunctionImportName="IsBankAccountAddedOfTenantInGivenUnitId" FunctionName="NOOCHModel.Store.IsBankAccountAddedOfTenantInGivenUnitId" />
+    <FunctionImportMapping FunctionImportName="IsEmailIdVerifiedOfTenantInGivenUnitId" FunctionName="NOOCHModel.Store.IsEmailIdVerifiedOfTenantInGivenUnitId" />
+    <FunctionImportMapping FunctionImportName="IsPhoneVerifiedOfTenantInGivenUnitId" FunctionName="NOOCHModel.Store.IsPhoneVerifiedOfTenantInGivenUnitId" />
+    <FunctionImportMapping FunctionImportName="IsRentPaidByTenantForGivenUnitId" FunctionName="NOOCHModel.Store.IsRentPaidByTenantForGivenUnitId" />
   </EntityContainerMapping>
 </Mapping>

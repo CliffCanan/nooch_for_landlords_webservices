@@ -32,16 +32,16 @@ namespace LanLordlAPIs.Models.db_Model
         public DbSet<Landlord> Landlords { get; set; }
         public DbSet<MemberNotification> MemberNotifications { get; set; }
         public DbSet<MemberPrivacySetting> MemberPrivacySettings { get; set; }
-        public DbSet<Member> Members { get; set; }
         public DbSet<Tenant> Tenants { get; set; }
         public DbSet<UnitsOccupiedByTenant> UnitsOccupiedByTenants { get; set; }
         public DbSet<TenantsIdDocument> TenantsIdDocuments { get; set; }
         public DbSet<InviteCode> InviteCodes { get; set; }
         public DbSet<AuthenticationToken> AuthenticationTokens { get; set; }
         public DbSet<PasswordResetRequest> PasswordResetRequests { get; set; }
-        public DbSet<SynapseBanksOfMember> SynapseBanksOfMembers { get; set; }
         public DbSet<Property> Properties { get; set; }
         public DbSet<PropertyUnit> PropertyUnits { get; set; }
+        public DbSet<Member> Members { get; set; }
+        public DbSet<SynapseBanksOfMember> SynapseBanksOfMembers { get; set; }
     
         public virtual ObjectResult<Nullable<int>> GetTenantsCountInGivenPropertyId(string vPropertyId)
         {
@@ -125,6 +125,78 @@ namespace LanLordlAPIs.Models.db_Model
                 new ObjectParameter("vUserId", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<bool>>("IsPhoneVerifiedforGivenLandlordOrTenant", vUserTypeParameter, vUserIdParameter);
+        }
+    
+        public virtual ObjectResult<string> GetTenantNameForGivenUnitId(string vUnitId)
+        {
+            var vUnitIdParameter = vUnitId != null ?
+                new ObjectParameter("vUnitId", vUnitId) :
+                new ObjectParameter("vUnitId", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("GetTenantNameForGivenUnitId", vUnitIdParameter);
+        }
+    
+        public virtual ObjectResult<string> GetTenantEmailForGivenUnitId(string vUnitId)
+        {
+            var vUnitIdParameter = vUnitId != null ?
+                new ObjectParameter("vUnitId", vUnitId) :
+                new ObjectParameter("vUnitId", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("GetTenantEmailForGivenUnitId", vUnitIdParameter);
+        }
+    
+        public virtual ObjectResult<string> GetTenantImageForGivenUnitId(string vUnitId)
+        {
+            var vUnitIdParameter = vUnitId != null ?
+                new ObjectParameter("vUnitId", vUnitId) :
+                new ObjectParameter("vUnitId", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("GetTenantImageForGivenUnitId", vUnitIdParameter);
+        }
+    
+        public virtual ObjectResult<Nullable<System.DateTime>> GetLastRentPaymentDateForGivenUnitId(string vUnitId)
+        {
+            var vUnitIdParameter = vUnitId != null ?
+                new ObjectParameter("vUnitId", vUnitId) :
+                new ObjectParameter("vUnitId", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<System.DateTime>>("GetLastRentPaymentDateForGivenUnitId", vUnitIdParameter);
+        }
+    
+        public virtual ObjectResult<Nullable<int>> IsBankAccountAddedOfTenantInGivenUnitId(string vUnitId)
+        {
+            var vUnitIdParameter = vUnitId != null ?
+                new ObjectParameter("vUnitId", vUnitId) :
+                new ObjectParameter("vUnitId", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("IsBankAccountAddedOfTenantInGivenUnitId", vUnitIdParameter);
+        }
+    
+        public virtual ObjectResult<Nullable<bool>> IsEmailIdVerifiedOfTenantInGivenUnitId(string vUnitId)
+        {
+            var vUnitIdParameter = vUnitId != null ?
+                new ObjectParameter("vUnitId", vUnitId) :
+                new ObjectParameter("vUnitId", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<bool>>("IsEmailIdVerifiedOfTenantInGivenUnitId", vUnitIdParameter);
+        }
+    
+        public virtual ObjectResult<Nullable<bool>> IsPhoneVerifiedOfTenantInGivenUnitId(string vUnitId)
+        {
+            var vUnitIdParameter = vUnitId != null ?
+                new ObjectParameter("vUnitId", vUnitId) :
+                new ObjectParameter("vUnitId", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<bool>>("IsPhoneVerifiedOfTenantInGivenUnitId", vUnitIdParameter);
+        }
+    
+        public virtual ObjectResult<Nullable<bool>> IsRentPaidByTenantForGivenUnitId(string vUnitId)
+        {
+            var vUnitIdParameter = vUnitId != null ?
+                new ObjectParameter("vUnitId", vUnitId) :
+                new ObjectParameter("vUnitId", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<bool>>("IsRentPaidByTenantForGivenUnitId", vUnitIdParameter);
         }
     }
 }

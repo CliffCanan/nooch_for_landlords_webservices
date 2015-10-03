@@ -89,7 +89,7 @@
     <Property Name="NewAndUpdate" Type="Boolean" />
     <Property Name="DateCreated" Type="DateTime" Precision="3" />
     <Property Name="DateModified" Type="DateTime" Precision="3" />
-    <NavigationProperty Name="Member" Relationship="Self.FK_MemberNotifications_Members" FromRole="MemberNotifications" ToRole="Members" />
+    <NavigationProperty Name="Member" Relationship="NOOCHModel.FK_MemberNotifications_Members" FromRole="MemberNotification" ToRole="Member" />
   </EntityType>
   <EntityType Name="MemberPrivacySetting">
     <Key>
@@ -102,89 +102,7 @@
     <Property Name="RequireImmediately" Type="Boolean" />
     <Property Name="DateCreated" Type="DateTime" Precision="3" />
     <Property Name="DateModified" Type="DateTime" Precision="3" />
-    <NavigationProperty Name="Member" Relationship="Self.FK_MemberPrivacySettings_Members" FromRole="MemberPrivacySettings" ToRole="Members" />
-  </EntityType>
-  <EntityType Name="Member">
-    <Key>
-      <PropertyRef Name="MemberId" />
-    </Key>
-    <Property Name="MemberId" Type="Guid" Nullable="false" />
-    <Property Name="Nooch_ID" Type="String" MaxLength="8" FixedLength="false" Unicode="false" Nullable="false" />
-    <Property Name="FirstName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <Property Name="LastName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <Property Name="UDID1" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-    <Property Name="UserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <Property Name="SecondaryEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-    <Property Name="RecoveryEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-    <Property Name="TertiaryEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-    <Property Name="PinNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
-    <Property Name="ContactNumber" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-    <Property Name="Status" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
-    <Property Name="RememberMeEnabled" Type="Boolean" />
-    <Property Name="NoochAccountId" Type="Guid" />
-    <Property Name="DateCreated" Type="DateTime" Precision="3" />
-    <Property Name="DateModified" Type="DateTime" Precision="3" />
-    <Property Name="ModifiedBy" Type="Guid" />
-    <Property Name="InvalidLoginTime" Type="DateTime" Precision="3" />
-    <Property Name="InvalidLoginAttemptCount" Type="Int32" />
-    <Property Name="InvalidPinAttemptCount" Type="Int32" />
-    <Property Name="InvalidPinAttemptTime" Type="DateTime" Precision="3" />
-    <Property Name="DateOfBirth" Type="DateTime" Precision="3" />
-    <Property Name="FacebookAccountLogin" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-    <Property Name="AllowPushNotifications" Type="Boolean" />
-    <Property Name="Photo" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-    <Property Name="FacebookPhoto" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-    <Property Name="UseFacebookPicture" Type="Boolean" />
-    <Property Name="ClearTransactionHistory" Type="Boolean" />
-    <Property Name="Address" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
-    <Property Name="City" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
-    <Property Name="State" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
-    <Property Name="Zipcode" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
-    <Property Name="Country" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
-    <Property Name="NoOfTransfersByPackage" Type="Int32" />
-    <Property Name="FreeTransfers" Type="Int32" />
-    <Property Name="ShowInSearch" Type="Boolean" />
-    <Property Name="IsDeleted" Type="Boolean" />
-    <Property Name="Deposit" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-    <Property Name="InviteReminderDate" Type="DateTime" Precision="3" />
-    <Property Name="UserNameLowerCase" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <Property Name="TimeZoneKey" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <Property Name="Address2" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
-    <Property Name="TotalNoochTransfersCount" Type="Int32" />
-    <Property Name="TotalACHTransfersCount" Type="Int32" />
-    <Property Name="ValidatedDate" Type="DateTime" Precision="3" />
-    <Property Name="ValidationFailedCount" Type="Int32" />
-    <Property Name="InviteCodeId" Type="Guid" />
-    <Property Name="InviteCodeIdUsed" Type="Guid" />
-    <Property Name="Type" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-    <Property Name="SSN" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="UpgradeDate" Type="DateTime" Precision="0" />
-    <Property Name="IsVerifiedPhone" Type="Boolean" />
-    <Property Name="LastLocationLat" Type="Decimal" Precision="18" Scale="15" />
-    <Property Name="LastLocationLng" Type="Decimal" Precision="18" Scale="15" />
-    <Property Name="AccessToken" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="IsFrequencyOn" Type="Boolean" />
-    <Property Name="IsTriggerOn" Type="Boolean" />
-    <Property Name="WithdrawalFrequency" Type="Decimal" Precision="18" Scale="2" />
-    <Property Name="WithdrawalId" Type="Guid" />
-    <Property Name="Allow2FactorAuthentication" Type="Boolean" />
-    <Property Name="IsOnline" Type="Boolean" />
-    <Property Name="SDNCheckDateTime" Type="DateTime" Precision="3" />
-    <Property Name="AnyPriliminaryHit" Type="Boolean" />
-    <Property Name="ent_num" Type="Int64" />
-    <Property Name="IsRequiredImmediatley" Type="Boolean" />
-    <Property Name="DeviceToken" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-    <Property Name="trans_id" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-    <Property Name="user_key" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-    <Property Name="user_pass" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-    <Property Name="IsSDNSafe" Type="Boolean" />
-    <Property Name="AdminNotes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="PhoneVerifiedOn" Type="DateTime" Precision="3" />
-    <Property Name="VerificationDocumentPath" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <NavigationProperty Name="MemberNotifications" Relationship="Self.FK_MemberNotifications_Members" FromRole="Members" ToRole="MemberNotifications" />
-    <NavigationProperty Name="MemberPrivacySettings" Relationship="Self.FK_MemberPrivacySettings_Members" FromRole="Members" ToRole="MemberPrivacySettings" />
-    <NavigationProperty Name="PasswordResetRequests" Relationship="NOOCHModel.FK_PasswordResetRequests_Members" FromRole="Member" ToRole="PasswordResetRequest" />
+    <NavigationProperty Name="Member" Relationship="NOOCHModel.FK_MemberPrivacySettings_Members" FromRole="MemberPrivacySetting" ToRole="Member" />
   </EntityType>
   <EntityType Name="Tenant">
     <Key>
@@ -213,45 +131,12 @@
     <Property Name="IsIdDocumentVerified" Type="Boolean" />
     <Property Name="IsAnyRentPaid" Type="Boolean" />
   </EntityType>
-  <Association Name="FK_MemberNotifications_Members">
-    <End Role="Members" Type="Self.Member" Multiplicity="1" />
-    <End Role="MemberNotifications" Type="Self.MemberNotification" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Members">
-        <PropertyRef Name="MemberId" />
-      </Principal>
-      <Dependent Role="MemberNotifications">
-        <PropertyRef Name="MemberId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_MemberPrivacySettings_Members">
-    <End Role="Members" Type="Self.Member" Multiplicity="0..1" />
-    <End Role="MemberPrivacySettings" Type="Self.MemberPrivacySetting" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Members">
-        <PropertyRef Name="MemberId" />
-      </Principal>
-      <Dependent Role="MemberPrivacySettings">
-        <PropertyRef Name="MemberId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <EntityContainer Name="NOOCHEntities" annotation:LazyLoadingEnabled="true">
     <EntitySet Name="GeoLocations" EntityType="Self.GeoLocation" />
     <EntitySet Name="Landlords" EntityType="Self.Landlord" />
     <EntitySet Name="MemberNotifications" EntityType="Self.MemberNotification" />
     <EntitySet Name="MemberPrivacySettings" EntityType="Self.MemberPrivacySetting" />
-    <EntitySet Name="Members" EntityType="Self.Member" />
     <EntitySet Name="Tenants" EntityType="Self.Tenant" />
-    <AssociationSet Name="FK_MemberNotifications_Members" Association="Self.FK_MemberNotifications_Members">
-      <End Role="Members" EntitySet="Members" />
-      <End Role="MemberNotifications" EntitySet="MemberNotifications" />
-    </AssociationSet>
-    <AssociationSet Name="FK_MemberPrivacySettings_Members" Association="Self.FK_MemberPrivacySettings_Members">
-      <End Role="Members" EntitySet="Members" />
-      <End Role="MemberPrivacySettings" EntitySet="MemberPrivacySettings" />
-    </AssociationSet>
     <EntitySet Name="UnitsOccupiedByTenants" EntityType="NOOCHModel.UnitsOccupiedByTenant" />
     <FunctionImport Name="GetTenantsCountInGivenPropertyId" ReturnType="Collection(Int32)">
       <Parameter Name="vPropertyId" Mode="In" Type="String" />
@@ -260,10 +145,6 @@
     <EntitySet Name="InviteCodes" EntityType="NOOCHModel.InviteCode" />
     <EntitySet Name="AuthenticationTokens" EntityType="NOOCHModel.AuthenticationToken" />
     <EntitySet Name="PasswordResetRequests" EntityType="NOOCHModel.PasswordResetRequest" />
-    <AssociationSet Name="FK_PasswordResetRequests_Members" Association="NOOCHModel.FK_PasswordResetRequests_Members">
-      <End Role="Member" EntitySet="Members" />
-      <End Role="PasswordResetRequest" EntitySet="PasswordResetRequests" />
-    </AssociationSet>
     <FunctionImport Name="GetTenantsInGivenPropertyId" ReturnType="Collection(NOOCHModel.GetTenantsInGivenPropertyId_Result1)">
       <Parameter Name="vPropertyId" Mode="In" Type="String" />
     </FunctionImport>
@@ -276,7 +157,6 @@
     <FunctionImport Name="GetUnitsCountForGivenLandlord" ReturnType="Collection(Int32)">
       <Parameter Name="vLandlordId" Mode="In" Type="String" />
     </FunctionImport>
-    <EntitySet Name="SynapseBanksOfMembers" EntityType="NOOCHModel.SynapseBanksOfMember" />
     <FunctionImport Name="IsBankAccountAddedforGivenLandlordOrTenant" ReturnType="Collection(Boolean)">
       <Parameter Name="vUserType" Mode="In" Type="String" />
       <Parameter Name="vUserId" Mode="In" Type="String" />
@@ -291,6 +171,44 @@
     </FunctionImport>
     <EntitySet Name="Properties" EntityType="NOOCHModel.Property" />
     <EntitySet Name="PropertyUnits" EntityType="NOOCHModel.PropertyUnit" />
+    <FunctionImport Name="GetTenantNameForGivenUnitId" ReturnType="Collection(String)">
+      <Parameter Name="vUnitId" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="GetTenantEmailForGivenUnitId" ReturnType="Collection(String)">
+      <Parameter Name="vUnitId" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="GetTenantImageForGivenUnitId" ReturnType="Collection(String)">
+      <Parameter Name="vUnitId" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="GetLastRentPaymentDateForGivenUnitId" ReturnType="Collection(DateTime)">
+      <Parameter Name="vUnitId" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="IsBankAccountAddedOfTenantInGivenUnitId" ReturnType="Collection(Int32)">
+      <Parameter Name="vUnitId" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="IsEmailIdVerifiedOfTenantInGivenUnitId" ReturnType="Collection(Boolean)">
+      <Parameter Name="vUnitId" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="IsPhoneVerifiedOfTenantInGivenUnitId" ReturnType="Collection(Boolean)">
+      <Parameter Name="vUnitId" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="IsRentPaidByTenantForGivenUnitId" ReturnType="Collection(Boolean)">
+      <Parameter Name="vUnitId" Mode="In" Type="String" />
+    </FunctionImport>
+    <EntitySet Name="Members" EntityType="NOOCHModel.Member" />
+    <EntitySet Name="SynapseBanksOfMembers" EntityType="NOOCHModel.SynapseBanksOfMember" />
+    <AssociationSet Name="FK_MemberNotifications_Members" Association="NOOCHModel.FK_MemberNotifications_Members">
+      <End Role="Member" EntitySet="Members" />
+      <End Role="MemberNotification" EntitySet="MemberNotifications" />
+    </AssociationSet>
+    <AssociationSet Name="FK_MemberPrivacySettings_Members" Association="NOOCHModel.FK_MemberPrivacySettings_Members">
+      <End Role="Member" EntitySet="Members" />
+      <End Role="MemberPrivacySetting" EntitySet="MemberPrivacySettings" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PasswordResetRequests_Members" Association="NOOCHModel.FK_PasswordResetRequests_Members">
+      <End Role="Member" EntitySet="Members" />
+      <End Role="PasswordResetRequest" EntitySet="PasswordResetRequests" />
+    </AssociationSet>
   </EntityContainer>
   <EntityType Name="UnitsOccupiedByTenant">
     <Key>
@@ -305,6 +223,8 @@
     <Property Name="LastPaymentDate" Type="DateTime" Precision="3" />
     <Property Name="LastPaymentAmount" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
     <Property Name="IsPaymentDueForThisMonth" Type="Boolean" />
+    <Property Name="RentStartFrom" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="AgreementLength" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
   </EntityType>
   <EntityType Name="TenantsIdDocument">
     <Key>
@@ -369,18 +289,6 @@
     <Property Name="RequestedOn" Type="DateTime" Precision="3" />
     <NavigationProperty Name="Member" Relationship="NOOCHModel.FK_PasswordResetRequests_Members" FromRole="PasswordResetRequest" ToRole="Member" />
   </EntityType>
-  <Association Name="FK_PasswordResetRequests_Members">
-    <End Type="NOOCHModel.Member" Role="Member" Multiplicity="0..1" />
-    <End Type="NOOCHModel.PasswordResetRequest" Role="PasswordResetRequest" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Member">
-        <PropertyRef Name="MemberId" />
-      </Principal>
-      <Dependent Role="PasswordResetRequest">
-        <PropertyRef Name="MemberId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <ComplexType Name="GetTenantsInGivenPropertyId_Result1">
     <Property Type="Guid" Name="TenantId" Nullable="false" />
     <Property Type="Guid" Name="UnitId" Nullable="false" />
@@ -397,35 +305,6 @@
     <Property Type="String" Name="UnitNumber" Nullable="true" MaxLength="50" />
     <Property Type="String" Name="TenantEmail" Nullable="true" />
   </ComplexType>
-  <EntityType Name="SynapseBanksOfMember">
-    <Key>
-      <PropertyRef Name="Id" />
-    </Key>
-    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="account_class" Type="Int32" />
-    <Property Name="account_number_string" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="account_type" Type="Int32" />
-    <Property Name="address" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="balance" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="bank_name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="bankAdddate" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-    <Property Name="email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-    <Property Name="bankid" Type="Int32" />
-    <Property Name="is_buyer_default" Type="Boolean" />
-    <Property Name="is_seller_default" Type="Boolean" />
-    <Property Name="mfa_verifed" Type="Boolean" />
-    <Property Name="name_on_account" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="nickname" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="phone_number" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-    <Property Name="resource_uri" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="routing_number_string" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="IsDefault" Type="Boolean" />
-    <Property Name="AddedOn" Type="DateTime" Precision="3" />
-    <Property Name="MemberId" Type="Guid" />
-    <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="VerifiedOn" Type="DateTime" Precision="3" />
-    <Property Name="VerificationCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-  </EntityType>
   <EntityType Name="Property">
     <Key>
       <PropertyRef Name="PropertyId" />
@@ -471,4 +350,146 @@
     <Property Name="DueDate" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
     <Property Name="UnitNickName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
   </EntityType>
+  <EntityType Name="Member">
+    <Key>
+      <PropertyRef Name="MemberId" />
+    </Key>
+    <Property Name="MemberId" Type="Guid" Nullable="false" />
+    <Property Name="Nooch_ID" Type="String" Nullable="false" MaxLength="8" FixedLength="false" Unicode="false" />
+    <Property Name="FirstName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="LastName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="UDID1" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="UserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="SecondaryEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="RecoveryEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="TertiaryEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="PinNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Password" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="ContactNumber" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="Status" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="RememberMeEnabled" Type="Boolean" />
+    <Property Name="DateCreated" Type="DateTime" Precision="3" />
+    <Property Name="DateModified" Type="DateTime" Precision="3" />
+    <Property Name="ModifiedBy" Type="Guid" />
+    <Property Name="InvalidLoginTime" Type="DateTime" Precision="3" />
+    <Property Name="InvalidLoginAttemptCount" Type="Int32" />
+    <Property Name="InvalidPinAttemptCount" Type="Int32" />
+    <Property Name="InvalidPinAttemptTime" Type="DateTime" Precision="3" />
+    <Property Name="DateOfBirth" Type="DateTime" Precision="3" />
+    <Property Name="FacebookAccountLogin" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="AllowPushNotifications" Type="Boolean" />
+    <Property Name="Photo" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="Address" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="City" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="State" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="Zipcode" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="Country" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="ShowInSearch" Type="Boolean" />
+    <Property Name="IsDeleted" Type="Boolean" />
+    <Property Name="Deposit" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="InviteReminderDate" Type="DateTime" Precision="3" />
+    <Property Name="UserNameLowerCase" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="TimeZoneKey" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Address2" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="TotalNoochTransfersCount" Type="Int32" />
+    <Property Name="TotalACHTransfersCount" Type="Int32" />
+    <Property Name="ValidatedDate" Type="DateTime" Precision="3" />
+    <Property Name="ValidationFailedCount" Type="Int32" />
+    <Property Name="InviteCodeId" Type="Guid" />
+    <Property Name="InviteCodeIdUsed" Type="Guid" />
+    <Property Name="Type" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="SSN" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="UpgradeDate" Type="DateTime" Precision="0" />
+    <Property Name="IsVerifiedPhone" Type="Boolean" />
+    <Property Name="LastLocationLat" Type="Decimal" Precision="18" Scale="15" />
+    <Property Name="LastLocationLng" Type="Decimal" Precision="18" Scale="15" />
+    <Property Name="AccessToken" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="Allow2FactorAuthentication" Type="Boolean" />
+    <Property Name="IsOnline" Type="Boolean" />
+    <Property Name="SDNCheckDateTime" Type="DateTime" Precision="3" />
+    <Property Name="AnyPriliminaryHit" Type="Boolean" />
+    <Property Name="ent_num" Type="Int64" />
+    <Property Name="IsRequiredImmediatley" Type="Boolean" />
+    <Property Name="DeviceToken" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+    <Property Name="IsSDNSafe" Type="Boolean" />
+    <Property Name="AdminNotes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="PhoneVerifiedOn" Type="DateTime" Precision="3" />
+    <Property Name="VerificationDocumentPath" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="IsVerifiedWithSynapse" Type="Boolean" />
+    <NavigationProperty Name="MemberNotifications" Relationship="NOOCHModel.FK_MemberNotifications_Members" FromRole="Member" ToRole="MemberNotification" />
+    <NavigationProperty Name="MemberPrivacySettings" Relationship="NOOCHModel.FK_MemberPrivacySettings_Members" FromRole="Member" ToRole="MemberPrivacySetting" />
+    <NavigationProperty Name="PasswordResetRequests" Relationship="NOOCHModel.FK_PasswordResetRequests_Members" FromRole="Member" ToRole="PasswordResetRequest" />
+  </EntityType>
+  <EntityType Name="SynapseBanksOfMember">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="account_class" Type="Int32" />
+    <Property Name="account_number_string" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="account_type" Type="Int32" />
+    <Property Name="address" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="balance" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="bank_name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="bankAdddate" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="bankid" Type="Int32" />
+    <Property Name="is_buyer_default" Type="Boolean" />
+    <Property Name="is_seller_default" Type="Boolean" />
+    <Property Name="mfa_verifed" Type="Boolean" />
+    <Property Name="name_on_account" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="nickname" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="phone_number" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="resource_uri" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="routing_number_string" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="IsDefault" Type="Boolean" />
+    <Property Name="AddedOn" Type="DateTime" Precision="3" />
+    <Property Name="MemberId" Type="Guid" />
+    <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="VerifiedOn" Type="DateTime" Precision="3" />
+    <Property Name="VerificationCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="oid" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="allowed" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="supp_id" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="class" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="type_bank" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="type_synapse" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="is_active" Type="Boolean" />
+  </EntityType>
+  <Association Name="FK_MemberNotifications_Members">
+    <End Type="NOOCHModel.Member" Role="Member" Multiplicity="1" />
+    <End Type="NOOCHModel.MemberNotification" Role="MemberNotification" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Member">
+        <PropertyRef Name="MemberId" />
+      </Principal>
+      <Dependent Role="MemberNotification">
+        <PropertyRef Name="MemberId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_MemberPrivacySettings_Members">
+    <End Type="NOOCHModel.Member" Role="Member" Multiplicity="0..1" />
+    <End Type="NOOCHModel.MemberPrivacySetting" Role="MemberPrivacySetting" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Member">
+        <PropertyRef Name="MemberId" />
+      </Principal>
+      <Dependent Role="MemberPrivacySetting">
+        <PropertyRef Name="MemberId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PasswordResetRequests_Members">
+    <End Type="NOOCHModel.Member" Role="Member" Multiplicity="0..1" />
+    <End Type="NOOCHModel.PasswordResetRequest" Role="PasswordResetRequest" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Member">
+        <PropertyRef Name="MemberId" />
+      </Principal>
+      <Dependent Role="PasswordResetRequest">
+        <PropertyRef Name="MemberId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
 </Schema>

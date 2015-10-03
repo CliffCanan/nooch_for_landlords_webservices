@@ -35,7 +35,6 @@ namespace LanLordlAPIs.Models.db_Model
         public string ContactNumber { get; set; }
         public string Status { get; set; }
         public Nullable<bool> RememberMeEnabled { get; set; }
-        public Nullable<System.Guid> NoochAccountId { get; set; }
         public Nullable<System.DateTime> DateCreated { get; set; }
         public Nullable<System.DateTime> DateModified { get; set; }
         public Nullable<System.Guid> ModifiedBy { get; set; }
@@ -47,16 +46,11 @@ namespace LanLordlAPIs.Models.db_Model
         public string FacebookAccountLogin { get; set; }
         public Nullable<bool> AllowPushNotifications { get; set; }
         public string Photo { get; set; }
-        public string FacebookPhoto { get; set; }
-        public Nullable<bool> UseFacebookPicture { get; set; }
-        public Nullable<bool> ClearTransactionHistory { get; set; }
         public string Address { get; set; }
         public string City { get; set; }
         public string State { get; set; }
         public string Zipcode { get; set; }
         public string Country { get; set; }
-        public Nullable<int> NoOfTransfersByPackage { get; set; }
-        public Nullable<int> FreeTransfers { get; set; }
         public Nullable<bool> ShowInSearch { get; set; }
         public Nullable<bool> IsDeleted { get; set; }
         public string Deposit { get; set; }
@@ -77,10 +71,6 @@ namespace LanLordlAPIs.Models.db_Model
         public Nullable<decimal> LastLocationLat { get; set; }
         public Nullable<decimal> LastLocationLng { get; set; }
         public string AccessToken { get; set; }
-        public Nullable<bool> IsFrequencyOn { get; set; }
-        public Nullable<bool> IsTriggerOn { get; set; }
-        public Nullable<decimal> WithdrawalFrequency { get; set; }
-        public Nullable<System.Guid> WithdrawalId { get; set; }
         public Nullable<bool> Allow2FactorAuthentication { get; set; }
         public Nullable<bool> IsOnline { get; set; }
         public Nullable<System.DateTime> SDNCheckDateTime { get; set; }
@@ -88,13 +78,11 @@ namespace LanLordlAPIs.Models.db_Model
         public Nullable<long> ent_num { get; set; }
         public Nullable<bool> IsRequiredImmediatley { get; set; }
         public string DeviceToken { get; set; }
-        public string trans_id { get; set; }
-        public string user_key { get; set; }
-        public string user_pass { get; set; }
         public Nullable<bool> IsSDNSafe { get; set; }
         public string AdminNotes { get; set; }
         public Nullable<System.DateTime> PhoneVerifiedOn { get; set; }
         public string VerificationDocumentPath { get; set; }
+        public Nullable<bool> IsVerifiedWithSynapse { get; set; }
     
         public virtual ICollection<MemberNotification> MemberNotifications { get; set; }
         public virtual ICollection<MemberPrivacySetting> MemberPrivacySettings { get; set; }

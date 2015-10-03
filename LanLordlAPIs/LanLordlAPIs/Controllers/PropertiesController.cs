@@ -157,90 +157,90 @@ namespace LanLordlAPIs.Controllers
 
                 if (result.AuthTokenValidation.IsTokenOk)
                 {
-               
-                       
-                        using (NOOCHEntities obj = new NOOCHEntities())
+
+
+                    using (NOOCHEntities obj = new NOOCHEntities())
+                    {
+
+                        // checking if valid property
+
+                        var propDetails =
+                            (from c in obj.Properties where c.PropertyId == propertyguidId select c).FirstOrDefault();
+
+                        if (propDetails != null)
                         {
 
-                            // checking if valid property
-
-                            var propDetails =
-                                (from c in obj.Properties where c.PropertyId == propertyguidId select c).FirstOrDefault();
-
-                            if (propDetails!=null)
+                            // adding new unit
+                            PropertyUnit pu = new PropertyUnit();
+                            pu.UnitId = Guid.NewGuid();
+                            pu.DateAdded = DateTime.Now;
+                            if (!String.IsNullOrEmpty(Property.Unit.UnitNum))
                             {
-                                
-                                // adding new unit
-                                PropertyUnit pu = new PropertyUnit();
-                                pu.UnitId = Guid.NewGuid();
-                                pu.DateAdded = DateTime.Now;
-                                if ( !String.IsNullOrEmpty( Property.Unit.UnitNum))
-                                {
-                                    pu.UnitNumber = Property.Unit.UnitNum;
-                                }
-                                if (!String.IsNullOrEmpty(Property.Unit.UnitNickName))
-                                {
-                                    pu.UnitNickName= Property.Unit.UnitNickName;
-                                }
+                                pu.UnitNumber = Property.Unit.UnitNum;
+                            }
+                            if (!String.IsNullOrEmpty(Property.Unit.UnitNickName))
+                            {
+                                pu.UnitNickName = Property.Unit.UnitNickName;
+                            }
 
-                                pu.LandlordId = landlordguidId;
-                                pu.UnitRent = Property.Unit.Rent;
-                                pu.PropertyId = propertyguidId;
+                            pu.LandlordId = landlordguidId;
+                            pu.UnitRent = Property.Unit.Rent;
+                            pu.PropertyId = propertyguidId;
 
-                                pu.IsDeleted = false;
-                                pu.IsHidden = false;
+                            pu.IsDeleted = false;
+                            pu.IsHidden = false;
 
-                                if (Property.Unit.IsTenantAdded && !String.IsNullOrEmpty(Property.Unit.TenantId))
-                                {
-                                    pu.Status = "Occupied";
-                                    pu.IsOccupied = true;
-                                }
-                                else
-                                {
-                                    pu.Status = "Published";
-                                    pu.IsOccupied = false;
-                                }
-
-                                
-                                pu.DueDate = Property.Unit.DueDate;
-
-                                //TBD with CLIFF about agreement starte date and length
-
-                                obj.PropertyUnits.Add(pu);
-                                obj.SaveChanges();
-
-
-                                if (Property.Unit.IsTenantAdded && !String.IsNullOrEmpty(Property.Unit.TenantId))
-                                {
-                                    // code to save tenant for given unit...tenant will always be somewhere in db
-                                    Guid tenantguid = CommonHelper.ConvertToGuid(Property.Unit.TenantId);
-                                    UnitsOccupiedByTenant uobt = new UnitsOccupiedByTenant();
-                                    uobt.TenantId = tenantguid;
-                                    uobt.UnitId = pu.UnitId;
-
-
-                                    if (!String.IsNullOrEmpty(Property.Unit.AgreementDuration) && !String.IsNullOrEmpty(Property.Unit.RentStartDate))
-                                    {
-                                        uobt.RentStartFrom = Property.Unit.RentStartDate;
-                                        uobt.AgreementLength= Property.Unit.AgreementDuration;
-                                    }
-
-                                    obj.UnitsOccupiedByTenants.Add(uobt);
-                                    obj.SaveChanges();
-
-
-                                }
-                                result.IsSuccess = true;
-                                result.ErrorMessage = "OK.";
-                                result.PropertyIdGenerated = pu.UnitId.ToString();
+                            if (Property.Unit.IsTenantAdded && !String.IsNullOrEmpty(Property.Unit.TenantId))
+                            {
+                                pu.Status = "Occupied";
+                                pu.IsOccupied = true;
                             }
                             else
                             {
-                                result.IsSuccess = false;
-                                result.ErrorMessage = "Invalid property Id passed.";
+                                pu.Status = "Published";
+                                pu.IsOccupied = false;
                             }
-       
+
+
+                            pu.DueDate = Property.Unit.DueDate;
+
+                            //TBD with CLIFF about agreement starte date and length
+
+                            obj.PropertyUnits.Add(pu);
+                            obj.SaveChanges();
+
+
+                            if (Property.Unit.IsTenantAdded && !String.IsNullOrEmpty(Property.Unit.TenantId))
+                            {
+                                // code to save tenant for given unit...tenant will always be somewhere in db
+                                Guid tenantguid = CommonHelper.ConvertToGuid(Property.Unit.TenantId);
+                                UnitsOccupiedByTenant uobt = new UnitsOccupiedByTenant();
+                                uobt.TenantId = tenantguid;
+                                uobt.UnitId = pu.UnitId;
+
+
+                                if (!String.IsNullOrEmpty(Property.Unit.AgreementDuration) && !String.IsNullOrEmpty(Property.Unit.RentStartDate))
+                                {
+                                    uobt.RentStartFrom = Property.Unit.RentStartDate;
+                                    uobt.AgreementLength = Property.Unit.AgreementDuration;
+                                }
+
+                                obj.UnitsOccupiedByTenants.Add(uobt);
+                                obj.SaveChanges();
+
+
+                            }
+                            result.IsSuccess = true;
+                            result.ErrorMessage = "OK.";
+                            result.PropertyIdGenerated = pu.UnitId.ToString();
                         }
+                        else
+                        {
+                            result.IsSuccess = false;
+                            result.ErrorMessage = "Invalid property Id passed.";
+                        }
+
+                    }
 
 
 
@@ -608,11 +608,11 @@ namespace LanLordlAPIs.Controllers
                 if (result.AuthTokenValidation.IsTokenOk)
                 {
                     Guid propId = new Guid(Property.LandlorId);
-                    
+
                     using (NOOCHEntities obj = new NOOCHEntities())
                     {
-                        var propertyInDb = (from c in obj.Properties 
-                                            where c.LandlordId == propId && 
+                        var propertyInDb = (from c in obj.Properties
+                                            where c.LandlordId == propId &&
                                                  (c.IsDeleted == false || c.IsDeleted == null)
                                             select c).ToList();
 
@@ -694,7 +694,7 @@ namespace LanLordlAPIs.Controllers
                             result.AllPropertysCount = obj.GetPropertiesCountForGivenLandlord(Property.LandlorId).SingleOrDefault().ToString();
                             result.AllTenantsCount = obj.GetTenantsCountForGivenLandlord(Property.LandlorId).SingleOrDefault().ToString();
 
-                            result.IsAccountAdded = Convert.ToBoolean( obj.IsBankAccountAddedforGivenLandlordOrTenant("Landlord",Property.LandlorId).SingleOrDefault());
+                            result.IsAccountAdded = Convert.ToBoolean(obj.IsBankAccountAddedforGivenLandlordOrTenant("Landlord", Property.LandlorId).SingleOrDefault());
                             result.IsEmailVerified = Convert.ToBoolean(obj.IsEmailVerifiedforGivenLandlordOrTenant("Landlord", Property.LandlorId).SingleOrDefault());
                             result.IsPhoneVerified = Convert.ToBoolean(obj.IsPhoneVerifiedforGivenLandlordOrTenant("Landlord", Property.LandlorId).SingleOrDefault());
 
@@ -735,7 +735,7 @@ namespace LanLordlAPIs.Controllers
             try
             {
                 Logger.Info("PropertiesController -> GetPropertyDetailsPageData Initiated - [LandlordID: " + Property.User.LandlorId + "]");
-                
+
                 Guid landlordguidId = new Guid(Property.User.LandlorId);
                 result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, Property.User.AccessToken);
 
@@ -743,13 +743,13 @@ namespace LanLordlAPIs.Controllers
                 {
                     Guid PropertyGuId = new Guid(Property.PropertyId);
                     Guid LandlordGuidId = new Guid(Property.User.LandlorId);
-                    
+
                     using (NOOCHEntities obj = new NOOCHEntities())
                     {
                         var propertyInDb = (from c in obj.Properties
                                             where c.PropertyId == PropertyGuId &&
                                                  (c.IsDeleted == false || c.IsDeleted == null) &&
-                                                  c.LandlordId == LandlordGuidId 
+                                                  c.LandlordId == LandlordGuidId
                                             select c).FirstOrDefault();
 
                         if (propertyInDb != null)
@@ -786,8 +786,8 @@ namespace LanLordlAPIs.Controllers
 
                                 // Get bank details
                                 var bankDetails = (from c in obj.SynapseBanksOfMembers
-                                                      where c.Id == bnkId && c.IsDefault == true
-                                                      select c).FirstOrDefault();
+                                                   where c.Id == bnkId && c.IsDefault == true
+                                                   select c).FirstOrDefault();
 
                                 if (bankDetails != null)
                                 {
@@ -877,10 +877,10 @@ namespace LanLordlAPIs.Controllers
                             // Get all units of this property
                             #region Get All Units For This Property
 
-                            var allUnits = ( from d in obj.PropertyUnits
-                                             where d.PropertyId == propertyInDb.PropertyId &&
-                                                 (d.IsDeleted == false || d.IsDeleted == null)
-                                             select d).ToList();
+                            var allUnits = (from d in obj.PropertyUnits
+                                            where d.PropertyId == propertyInDb.PropertyId &&
+                                                (d.IsDeleted == false || d.IsDeleted == null)
+                                            select d).ToList();
 
                             List<PropertyUnitClass> AllUnitsListPrepared = new List<PropertyUnitClass>();
 
@@ -901,12 +901,77 @@ namespace LanLordlAPIs.Controllers
                                 currentUnit.LandlordId = unitX.LandlordId != null ? unitX.LandlordId.ToString() : "";
                                 currentUnit.MemberId = unitX.MemberId != null ? unitX.MemberId.ToString() : "";
 
-                                currentUnit.TenantName = ""; // NEED TO GET THIS BY USING THE MEMBER ID TO LOOK UP THE MEMBER'S NAME ('name' isn't stored in the 'PropertyUnits' Table)
+
 
                                 currentUnit.UnitImage = unitX.UnitImage ?? "";
                                 currentUnit.IsDeleted = unitX.IsDeleted;
                                 currentUnit.IsHidden = unitX.IsHidden;
                                 currentUnit.IsOccupied = unitX.IsOccupied;
+
+
+                                if (currentUnit.IsOccupied == true)
+                                {
+                                    string s = obj.GetTenantNameForGivenUnitId(currentUnit.UnitId).FirstOrDefault();
+                                    string tEmail = obj.GetTenantEmailForGivenUnitId(currentUnit.UnitId).FirstOrDefault();
+                                    string timgurl = obj.GetTenantImageForGivenUnitId(currentUnit.UnitId).FirstOrDefault();
+
+                                    bool isRentPaid = Convert.ToBoolean(obj.IsRentPaidByTenantForGivenUnitId(currentUnit.UnitId).FirstOrDefault());
+
+                                    bool isemail = Convert.ToBoolean(obj.IsEmailIdVerifiedOfTenantInGivenUnitId(currentUnit.UnitId).FirstOrDefault());
+                                    bool isphone = Convert.ToBoolean(obj.IsPhoneVerifiedOfTenantInGivenUnitId(currentUnit.UnitId).FirstOrDefault());
+                                    bool isaccount = Convert.ToBoolean(obj.IsBankAccountAddedOfTenantInGivenUnitId(currentUnit.UnitId).FirstOrDefault());
+
+                                    DateTime? d =
+                                        obj.GetLastRentPaymentDateForGivenUnitId(currentUnit.UnitId).FirstOrDefault();
+                                    string lastPayDate = "";
+                                    if (d != null)
+                                    {
+                                        lastPayDate = Convert.ToDateTime(d).ToShortDateString();
+                                    }
+
+                                    currentUnit.LastRentPaidOn = lastPayDate;
+
+                                    currentUnit.IsRentPaidForThisMonth = isRentPaid;
+
+                                    currentUnit.IsEmailVerified = isemail;
+                                    currentUnit.IsPhoneVerified = isphone;
+                                    currentUnit.IsBankAccountAdded = isaccount;
+
+
+
+                                    if (!String.IsNullOrEmpty(s))
+                                    {
+                                        string[] namesSplit = s.Split(' ');
+                                        if (namesSplit.Length > 0)
+                                        {
+                                            currentUnit.TenantName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(namesSplit[0])) + " " +
+                                            CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(namesSplit[1]));
+
+                                        }
+                                        else
+                                        {
+                                            currentUnit.TenantName = "";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        currentUnit.TenantName = ""; // NEED TO GET THIS BY USING THE MEMBER ID TO LOOK UP THE MEMBER'S NAME ('name' isn't stored in the 'PropertyUnits' Table) 
+                                    }
+
+                                    currentUnit.TenantEmail = !String.IsNullOrEmpty(tEmail) ? CommonHelper.GetDecryptedData(tEmail) : "";
+                                    currentUnit.ImageUrl = timgurl ?? "";
+
+
+
+                                }
+                                else
+                                {
+                                    // setting other tenante related data to blank
+                                    currentUnit.TenantName = "";
+                                    currentUnit.TenantEmail = "";
+                                    currentUnit.ImageUrl = "";
+                                }
+
                                 currentUnit.Status = unitX.Status ?? "";
                                 currentUnit.DueDate = unitX.DueDate ?? "";
 
@@ -1125,10 +1190,10 @@ namespace LanLordlAPIs.Controllers
                             file.SaveAs(path);
 
                             var llDetails =
-                                (from c in obj.Properties where c.PropertyId== landlordguidId select c).FirstOrDefault();
+                                (from c in obj.Properties where c.PropertyId == landlordguidId select c).FirstOrDefault();
                             if (llDetails != null)
                             {
-                                llDetails.PropertyImage= CommonHelper.GetValueFromConfig("PhotoUrl") + fileName;
+                                llDetails.PropertyImage = CommonHelper.GetValueFromConfig("PhotoUrl") + fileName;
                                 obj.SaveChanges();
                                 result.IsSuccess = true;
                                 result.ErrorMessage = llDetails.PropertyImage;
@@ -1165,5 +1230,84 @@ namespace LanLordlAPIs.Controllers
             }
 
         }
+
+        //method to remove unit from property
+        [HttpPost]
+        [ActionName("DeletePropertyUnit")]
+        public CreatePropertyResultOutput DeletePropertyUnit(SetPropertyStatusClass Property)
+        {
+
+            CreatePropertyResultOutput result = new CreatePropertyResultOutput();
+            try
+            {
+                Logger.Info("Landlords API -> Properties -> DeletePropertyUnit -> DeletePropertyUnit. SetPropertyStatus requested by [" +
+                            Property.User.LandlorId + "] and Unit Id - [ " + Property.PropertyId + " ]");
+                Guid landlordguidId = new Guid(Property.User.LandlorId);
+                result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, Property.User.AccessToken);
+
+                if (result.AuthTokenValidation.IsTokenOk)
+                {
+
+                    if (!String.IsNullOrEmpty(Property.PropertyId))
+                    {
+                        Guid propId = new Guid(Property.PropertyId);
+                        using (NOOCHEntities obj = new NOOCHEntities())
+                        {
+                            var properTyInDb =
+                                (from c in obj.PropertyUnits where c.UnitId == propId && c.IsDeleted == false select c).FirstOrDefault();
+
+                            if (properTyInDb != null)
+                            {
+                                // checking units inside property
+
+
+                                bool IsAnyocupiedUnitFound = properTyInDb.IsOccupied == true && (properTyInDb.IsDeleted == false || properTyInDb.IsDeleted == null);
+
+                                if (!IsAnyocupiedUnitFound)
+                                {
+                                    properTyInDb.IsDeleted = true;
+                                    obj.SaveChanges();
+                                    result.IsSuccess = true;
+                                    result.ErrorMessage = "OK";
+                                }
+                                else
+                                {
+                                    result.IsSuccess = false;
+                                    result.ErrorMessage = "Property unit can't be deleted as its occupied by some tenant.";
+                                }
+                            }
+
+                            else
+                            {
+                                // invalid property id or no data found
+                                result.IsSuccess = false;
+                                result.ErrorMessage = "No property unit found for given Id.";
+
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        // invalid data sent error
+                        result.IsSuccess = false;
+                        result.ErrorMessage = "No property Id passed. Retyr!";
+                    }
+
+
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Landlords API -> Properties -> DeletePropertyUnit. DeletePropertyUnit requested by- [ " +
+                             Property.User.LandlorId + " ] . Exception details [ " + ex + " ]");
+                result.IsSuccess = false;
+                result.ErrorMessage = "Error while deleting property. Retry later!";
+                return result;
+
+            }
+        }
+
     }
 }
