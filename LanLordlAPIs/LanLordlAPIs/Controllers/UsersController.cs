@@ -110,8 +110,13 @@ namespace LanLordlAPIs.Controllers
         [ActionName("UploadLandlordProfileImage")]
         public LoginResult UploadLandlordProfileImage()
         {
-            GetProfileDataInput User = new GetProfileDataInput();
+            Logger.Error("Landlords API -> UsersController -> UploadProfileImage Initiated");
+
             LoginResult result = new LoginResult();
+            result.IsSuccess = false;
+
+            //GetProfileDataInput User = new GetProfileDataInput();
+
             try
             {
                 var file = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
@@ -127,12 +132,11 @@ namespace LanLordlAPIs.Controllers
                             Guid landlordguidId = new Guid(llId[0]);
 
                             var fileExtension = Path.GetExtension(file.FileName);
-                            var fileName = landlordguidId.ToString().Replace("-","_").Trim() + fileExtension;
+                            var fileName = landlordguidId.ToString().Replace("-", "_").Trim() + fileExtension;
 
                             var path = Path.Combine(
                                 HttpContext.Current.Server.MapPath(CommonHelper.GetValueFromConfig("UserPhotoPath")),
-                                fileName
-                                );
+                                fileName);
 
                             if (File.Exists(path))
                             {
@@ -141,7 +145,7 @@ namespace LanLordlAPIs.Controllers
 
                             file.SaveAs(path);
 
-                            var llDetails = (from c in obj.Landlords 
+                            var llDetails = (from c in obj.Landlords
                                              where c.LandlordId == landlordguidId
                                              select c).FirstOrDefault();
 
@@ -154,7 +158,6 @@ namespace LanLordlAPIs.Controllers
                             }
                             else
                             {
-                                result.IsSuccess = false;
                                 result.ErrorMessage = "Invalid landlord Id passed.";
                             }
                         }
@@ -162,47 +165,47 @@ namespace LanLordlAPIs.Controllers
                     else
                     {
                         // No Lanlord ID found
-                        result.IsSuccess = false;
                         result.ErrorMessage = "No landlord ID found.";
                     }
                 }
                 else
                 {
                     // no file selected
-                    result.IsSuccess = false;
+                    
                     result.ErrorMessage = "No or invalid file passed.";
                 }
-
-                return result;
             }
             catch (Exception ex)
             {
-                Logger.Error(
-                    "Landlords API -> Users -> UploadProfileImage. Error while UploadProfileImage request from username  - [ " +
-                    User.LandlorId + " ] . Exception details [ " + ex + " ]");
-                result.IsSuccess = false;
+                Logger.Error("Landlords API -> UsersController -> UploadProfileImage FAILED. [LandlordID: ], [Exception: " + ex + "]");
                 result.ErrorMessage = "Error while uploading image. Retry.";
-                return result;
             }
+
+            return result;
         }
 
 
-        // to get user homepage information
-
+        /// <summary>
+        /// To get a Landlord's user details.
+        /// </summary>
+        /// <param name="User"></param>
+        /// <returns>LandlordProfileInfoResult object</returns>
         [HttpPost]
         [ActionName("GetUserInfo")]
         public LandlordProfileInfoResult GetUserInfo(GetProfileDataInput User)
         {
-            LandlordProfileInfoResult result = new LandlordProfileInfoResult();
+            Logger.Info("Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [" + User.LandlorId + "]");
+
+            LandlordProfileInfoResult res = new LandlordProfileInfoResult();
+            res.IsSuccess = false;
+
             try
             {
-                Logger.Info("Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [" + User.LandlorId + "]");
-
                 Guid landlordguidId = new Guid(User.LandlorId);
 
-                result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, User.AccessToken);
+                res.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, User.AccessToken);
 
-                if (result.AuthTokenValidation.IsTokenOk)
+                if (res.AuthTokenValidation.IsTokenOk)
                 {
                     using (NOOCHEntities obj = new NOOCHEntities())
                     {
@@ -213,118 +216,118 @@ namespace LanLordlAPIs.Controllers
 
                         if (lanlorddetails != null)
                         {
-                            result.FirstName = !String.IsNullOrEmpty(lanlorddetails.FirstName) ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(lanlorddetails.FirstName)) : "";
-                            result.LastName = !String.IsNullOrEmpty(lanlorddetails.LastName) ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(lanlorddetails.LastName)) : "";
-                            result.AccountType = !String.IsNullOrEmpty(lanlorddetails.Type) ? lanlorddetails.Type : "";
-                            result.SubType = !String.IsNullOrEmpty(lanlorddetails.SubType) ? lanlorddetails.SubType : "";
+                            res.FirstName = !String.IsNullOrEmpty(lanlorddetails.FirstName) ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(lanlorddetails.FirstName)) : "";
+                            res.LastName = !String.IsNullOrEmpty(lanlorddetails.LastName) ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(lanlorddetails.LastName)) : "";
+                            res.AccountType = !String.IsNullOrEmpty(lanlorddetails.Type) ? lanlorddetails.Type : "";
+                            res.SubType = !String.IsNullOrEmpty(lanlorddetails.SubType) ? lanlorddetails.SubType : "";
 
-                            result.IsPhoneVerified = lanlorddetails.IsPhoneVerified != null;
-                            result.IsEmailVerified = lanlorddetails.IsEmailVerfieid != null;
+                            res.IsPhoneVerified = lanlorddetails.IsPhoneVerified != null;
+                            res.IsEmailVerified = lanlorddetails.IsEmailVerfieid != null;
 
-                            result.DOB = lanlorddetails.DateOfBirth != null ? Convert.ToDateTime(lanlorddetails.DateOfBirth).ToString("d") : "";
+                            res.DOB = lanlorddetails.DateOfBirth != null ? Convert.ToDateTime(lanlorddetails.DateOfBirth).ToString("d") : "";
 
-                            result.SSN = !String.IsNullOrEmpty(lanlorddetails.SSN) ? CommonHelper.GetDecryptedData(lanlorddetails.SSN) : "";
-                            result.UserEmail = !String.IsNullOrEmpty(lanlorddetails.eMail) ? CommonHelper.GetDecryptedData(lanlorddetails.eMail) : "";
+                            res.SSN = !String.IsNullOrEmpty(lanlorddetails.SSN) ? CommonHelper.GetDecryptedData(lanlorddetails.SSN) : "";
+                            res.UserEmail = !String.IsNullOrEmpty(lanlorddetails.eMail) ? CommonHelper.GetDecryptedData(lanlorddetails.eMail) : "";
 
-                            result.MobileNumber = !String.IsNullOrEmpty(lanlorddetails.MobileNumber) ? CommonHelper.FormatPhoneNumber(lanlorddetails.MobileNumber) : "";
+                            res.MobileNumber = !String.IsNullOrEmpty(lanlorddetails.MobileNumber) ? CommonHelper.FormatPhoneNumber(lanlorddetails.MobileNumber) : "";
 
                             if (!String.IsNullOrEmpty(lanlorddetails.AddressLineOne))
                             {
-                                result.Address = CommonHelper.GetDecryptedData(lanlorddetails.AddressLineOne);
-                                result.AddressLine1 = CommonHelper.GetDecryptedData(lanlorddetails.AddressLineOne);
+                                res.Address = CommonHelper.GetDecryptedData(lanlorddetails.AddressLineOne);
+                                res.AddressLine1 = CommonHelper.GetDecryptedData(lanlorddetails.AddressLineOne);
                             }
                             else
                             {
-                                result.AddressLine1 = "";
+                                res.AddressLine1 = "";
                             }
 
                             if (!String.IsNullOrEmpty(lanlorddetails.AddressLineTwo))
                             {
-                                result.Address += " " + CommonHelper.GetDecryptedData(lanlorddetails.AddressLineTwo);
-                                result.AddressLine2 = CommonHelper.GetDecryptedData(lanlorddetails.AddressLineTwo);
+                                res.Address += " " + CommonHelper.GetDecryptedData(lanlorddetails.AddressLineTwo);
+                                res.AddressLine2 = CommonHelper.GetDecryptedData(lanlorddetails.AddressLineTwo);
                             }
                             else
                             {
-                                result.AddressLine2 = "";
+                                res.AddressLine2 = "";
                             }
                             if (!String.IsNullOrEmpty(lanlorddetails.City))
                             {
-                                result.Address += " " + CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(lanlorddetails.City));
-                                result.City = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(lanlorddetails.City));
+                                res.Address += " " + CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(lanlorddetails.City));
+                                res.City = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(lanlorddetails.City));
                             }
                             else
                             {
-                                result.City = "";
+                                res.City = "";
                             }
 
                             if (!String.IsNullOrEmpty(lanlorddetails.State))
                             {
-                                result.Address += " " + CommonHelper.GetDecryptedData(lanlorddetails.State);
-                                result.AddState = CommonHelper.GetDecryptedData(lanlorddetails.State);
+                                res.Address += " " + CommonHelper.GetDecryptedData(lanlorddetails.State);
+                                res.AddState = CommonHelper.GetDecryptedData(lanlorddetails.State);
                             }
                             else
                             {
-                                result.AddState = "";
+                                res.AddState = "";
                             }
                             if (!String.IsNullOrEmpty(lanlorddetails.Zip))
                             {
-                                result.Address += " " + CommonHelper.GetDecryptedData(lanlorddetails.Zip);
-                                result.Zip = CommonHelper.GetDecryptedData(lanlorddetails.Zip);
+                                res.Address += " " + CommonHelper.GetDecryptedData(lanlorddetails.Zip);
+                                res.Zip = CommonHelper.GetDecryptedData(lanlorddetails.Zip);
                             }
                             else
                             {
-                                result.Zip = "";
+                                res.Zip = "";
                             }
                             if (!String.IsNullOrEmpty(lanlorddetails.Country))
                             {
-                                result.Address += " " + CommonHelper.GetDecryptedData(lanlorddetails.Country);
-                                result.Country = CommonHelper.GetDecryptedData(lanlorddetails.Country);
+                                res.Address += " " + CommonHelper.GetDecryptedData(lanlorddetails.Country);
+                                res.Country = CommonHelper.GetDecryptedData(lanlorddetails.Country);
                             }
                             else
                             {
-                                result.Country = "";
+                                res.Country = "";
                             }
 
-                            result.TwitterHandle = !String.IsNullOrEmpty(lanlorddetails.TwitterHandle)
-                                                    ? lanlorddetails.TwitterHandle 
+                            res.TwitterHandle = !String.IsNullOrEmpty(lanlorddetails.TwitterHandle)
+                                                    ? lanlorddetails.TwitterHandle
                                                     : "";
-                            result.FbUrl = !String.IsNullOrEmpty(lanlorddetails.FBId) 
+                            res.FbUrl = !String.IsNullOrEmpty(lanlorddetails.FBId)
                                                     ? lanlorddetails.FBId : "";
-                            result.InstaUrl = !String.IsNullOrEmpty(lanlorddetails.InstagramUrl)
-                                                    ? lanlorddetails.InstagramUrl 
+                            res.InstaUrl = !String.IsNullOrEmpty(lanlorddetails.InstagramUrl)
+                                                    ? lanlorddetails.InstagramUrl
                                                     : "";
 
-                            result.CompanyName = !String.IsNullOrEmpty(lanlorddetails.CompanyName)
-                                                    ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(lanlorddetails.CompanyName)) 
+                            res.CompanyName = !String.IsNullOrEmpty(lanlorddetails.CompanyName)
+                                                    ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(lanlorddetails.CompanyName))
                                                     : "";
-                            result.CompanyEID = !String.IsNullOrEmpty(lanlorddetails.CompanyEIN)
+                            res.CompanyEID = !String.IsNullOrEmpty(lanlorddetails.CompanyEIN)
                                                     ? CommonHelper.GetDecryptedData(lanlorddetails.CompanyEIN)
                                                     : "";
-                            
-                            result.UserImageUrl = lanlorddetails.UserPic;
-                            result.TenantsCount = obj.GetTenantsCountForGivenLandlord(User.LandlorId).SingleOrDefault().ToString();
-                            result.PropertiesCount = obj.GetPropertiesCountForGivenLandlord(User.LandlorId).SingleOrDefault().ToString();
-                            result.UnitsCount = obj.GetUnitsCountForGivenLandlord(User.LandlorId).SingleOrDefault().ToString();
-                            result.IsSuccess = true;
-                            result.ErrorMessage = "OK";
+
+                            res.UserImageUrl = lanlorddetails.UserPic;
+                            res.TenantsCount = obj.GetTenantsCountForGivenLandlord(User.LandlorId).SingleOrDefault().ToString();
+                            res.PropertiesCount = obj.GetPropertiesCountForGivenLandlord(User.LandlorId).SingleOrDefault().ToString();
+                            res.UnitsCount = obj.GetUnitsCountForGivenLandlord(User.LandlorId).SingleOrDefault().ToString();
+                            res.IsSuccess = true;
+                            res.ErrorMessage = "OK";
                         }
 
-                        return result;
+                        return res;
                     }
                 }
                 else
                 {
-                    result.IsSuccess = true;
-                    result.ErrorMessage = "OK";
-                    return result;
+                    res.IsSuccess = false;
+                    res.ErrorMessage = "Auth token failure";
+                    return res;
                 }
             }
             catch (Exception ex)
             {
                 Logger.Error("Landlords API -> Users -> GetUserInfo. Error while GetUserInfo request from LandlorgId - [ " + User.LandlorId + " ] . Exception details [ " + ex + " ]");
-                result.IsSuccess = false;
-                result.ErrorMessage = "Error while logging on. Retry.";
-                return result;
+                res.IsSuccess = false;
+                res.ErrorMessage = "Error while logging on. Retry.";
+                return res;
             }
         }
 
@@ -334,6 +337,7 @@ namespace LanLordlAPIs.Controllers
         public CreatePropertyResultOutput EditUserInfo(EditPersonalInfoInputClass User)
         {
             CreatePropertyResultOutput result = new CreatePropertyResultOutput();
+            result.IsSuccess = false;
 
             try
             {
@@ -347,13 +351,9 @@ namespace LanLordlAPIs.Controllers
                     using (NOOCHEntities obj = new NOOCHEntities())
                     {
                         //reading details from db
-                        var lanlorddetails =
-                       (from c in obj.Landlords
-
-                        where c.LandlordId == landlordguidId
-                        select
-                            c
-                    ).FirstOrDefault();
+                        var lanlorddetails = (from c in obj.Landlords
+                                              where c.LandlordId == landlordguidId
+                                              select c).FirstOrDefault();
 
                         if (lanlorddetails != null)
                         {
@@ -363,7 +363,6 @@ namespace LanLordlAPIs.Controllers
 
                                 if (String.IsNullOrEmpty(User.UserInfo.FullName))
                                 {
-                                    result.IsSuccess = false;
                                     result.ErrorMessage = "Name missing.";
                                     return result;
                                 }
@@ -380,22 +379,8 @@ namespace LanLordlAPIs.Controllers
                                         lastName += CommonHelper.UppercaseFirst(nameAftetSplit[i]) + " ";
                                     }
 
-                                    //if (String.IsNullOrEmpty(User.UserInfo.DOB))
-                                    //{
-                                    //    result.IsSuccess = false;
-                                    //    result.ErrorMessage = "Date of birth missing.";
-                                    //    return result;
-                                    //}
-
-                                    //if (String.IsNullOrEmpty(User.UserInfo.SSN))
-                                    //{
-                                    //    result.IsSuccess = false;
-                                    //    result.ErrorMessage = "SSN number missing.";
-                                    //    return result;
-                                    //}
-
                                     // Now store info in DB
-                                    lanlorddetails.FirstName = CommonHelper.GetEncryptedData(firstName);
+                                    lanlorddetails.FirstName = CommonHelper.GetEncryptedData(firstName.Trim());
                                     lanlorddetails.LastName = CommonHelper.GetEncryptedData(lastName.Trim());
                                     if (!String.IsNullOrEmpty(User.UserInfo.DOB))
                                     {
@@ -414,7 +399,6 @@ namespace LanLordlAPIs.Controllers
                                 }
                                 else
                                 {
-                                    result.IsSuccess = false;
                                     result.ErrorMessage = "Last or First Name missing.";
                                     return result;
                                 }
@@ -422,22 +406,15 @@ namespace LanLordlAPIs.Controllers
                                 #endregion Editing Personal Info
                             }
 
-                            if (User.UserInfo.InfoType == "Company")
+                            else if (User.UserInfo.InfoType == "Company")
                             {
                                 #region Editing Company Info
 
                                 if (String.IsNullOrEmpty(User.UserInfo.CompanyName))
                                 {
-                                    result.IsSuccess = false;
                                     result.ErrorMessage = "Company name missing.";
                                     return result;
                                 }
-                                //if (String.IsNullOrEmpty(User.UserInfo.CompanyEID))
-                                //{
-                                //    result.IsSuccess = false;
-                                //    result.ErrorMessage = "Company EIN missing.";
-                                //    return result;
-                                //}
 
                                 // Now store company info in DB
                                 lanlorddetails.CompanyName = CommonHelper.GetEncryptedData(CommonHelper.UppercaseFirst(User.UserInfo.CompanyName));
@@ -455,27 +432,24 @@ namespace LanLordlAPIs.Controllers
                                 #endregion Editing Company Info
                             }
 
-                            if (User.UserInfo.InfoType == "Contact")
+                            else if (User.UserInfo.InfoType == "Contact")
                             {
                                 #region Editing Contact Info
 
                                 if (String.IsNullOrEmpty(User.UserInfo.UserEmail))
                                 {
-                                    result.IsSuccess = false;
                                     result.ErrorMessage = "eMail missing.";
                                     return result;
                                 }
 
                                 if (String.IsNullOrEmpty(User.UserInfo.MobileNumber))
                                 {
-                                    result.IsSuccess = false;
                                     result.ErrorMessage = "Contact number missing.";
                                     return result;
                                 }
 
                                 if (String.IsNullOrEmpty(User.UserInfo.AddressLine1))
                                 {
-                                    result.IsSuccess = false;
                                     result.ErrorMessage = "Address missing.";
                                     return result;
                                 }
@@ -490,11 +464,9 @@ namespace LanLordlAPIs.Controllers
 
                                 if (lanlorddetailsbyEmail != null)
                                 {
-                                    result.IsSuccess = false;
                                     result.ErrorMessage = "User with given email already exists.";
                                     return result;
                                 }
-
 
                                 // Now store all contact info in DB
                                 lanlorddetails.DateModified = DateTime.Now;
@@ -523,7 +495,7 @@ namespace LanLordlAPIs.Controllers
                                 #endregion Editing Contact Info
                             }
 
-                            if (User.UserInfo.InfoType == "Social")
+                            else if (User.UserInfo.InfoType == "Social")
                             {
                                 #region Editing Social Info
 
@@ -552,26 +524,22 @@ namespace LanLordlAPIs.Controllers
                         }
                         else
                         {
-                            result.IsSuccess = false;
-                            result.ErrorMessage = "Given landlor doesn't exists in system.";
+                            result.ErrorMessage = "Given landlord ID not found.";
                         }
                     }
                 }
                 else
                 {
-                    result.IsSuccess = false;
                     result.ErrorMessage = result.AuthTokenValidation.ErrorMessage;
                 }
-
-                return result;
             }
             catch (Exception ex)
             {
-                Logger.Info("Landlords API -> Users -> EditUserInfo. EditUserInfo exception[" + ex.ToString() + "]");
-                result.IsSuccess = false;
+                Logger.Info("Landlords API -> UsersController -> EditUserInfo FAILED - [Outer Exception: " + ex.ToString() + "]");
                 result.ErrorMessage = "Server error";
-                return result;
             }
+
+            return result;
         }
 
 
@@ -580,6 +548,7 @@ namespace LanLordlAPIs.Controllers
         public RegisterLandlordResult RegisterLandlord(RegisterLandlordInput llDetails)
         {
             RegisterLandlordResult result = new RegisterLandlordResult();
+            result.IsSuccess = false;
 
             try
             {
@@ -593,22 +562,24 @@ namespace LanLordlAPIs.Controllers
 
                     if (mem.IsSuccess && mem.ErrorMessage == "No user found.")
                     {
-                        #region New Member details and landlord details being saved in db here.
+                        #region Save New Landlord & Member Details In DB
+
                         // need to make new entry in member table first
                         var userNameLowerCase = llDetails.eMail.Trim().ToLower();
                         string noochRandomId = CommonHelper.GetRandomNoochId();
+
                         if (noochRandomId == null)
                         {
-                            result.IsSuccess = false;
                             result.ErrorMessage = "Some duplicate values are being generated at server. Retry later! ";
                             return result;
-
                         }
 
-                        #region region
                         using (NOOCHEntities obj = new NOOCHEntities())
                         {
-                            #region Member object
+                            #region Create User Settings & Save To DB
+
+                            #region Create Member Object
+
                             string randomPin = CommonHelper.GetRandomPinNumber();
                             var member = new Member
                             {
@@ -635,37 +606,38 @@ namespace LanLordlAPIs.Controllers
                                 City = CommonHelper.GetEncryptedData(" "),
                                 Zipcode = CommonHelper.GetEncryptedData(" "),
                                 ContactNumber = CommonHelper.GetEncryptedData(" ")
-
                             };
-                            #endregion
+
+                            #endregion Create Member Object
 
                             obj.Members.Add(member);
+
                             try
                             {
-
                                 obj.SaveChanges();
 
                                 CommonHelper.setReferralCode(member.MemberId);
                                 var tokenId = Guid.NewGuid();
-                                #region Verification email
 
-                                //send registration email to member with autogenerated token 
+                                #region Send Verification email
+
+                                // Send registration email to member with autogenerated token 
                                 var link = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
-                                    "/Registration/Activation.aspx?tokenId=" + tokenId);
+                                           "/Registration/Activation.aspx?tokenId=" + tokenId);
                                 var fromAddress = CommonHelper.GetValueFromConfig("welcomeMail");
-                                // Add any tokens you want to find/replace within your template file
+
                                 var tokens = new Dictionary<string, string>
-                            {
                                 {
-                                    Constants.PLACEHOLDER_FIRST_NAME,
-                                    CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(member.FirstName))
-                                },
-                                {
-                                    Constants.PLACEHOLDER_LAST_NAME,
-                                    CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(member.LastName))
-                                },
-                                {Constants.PLACEHOLDER_OTHER_LINK, link}
-                            };
+                                    {
+                                        Constants.PLACEHOLDER_FIRST_NAME,
+                                        CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(member.FirstName))
+                                    },
+                                    {
+                                        Constants.PLACEHOLDER_LAST_NAME,
+                                        CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(member.LastName))
+                                    },
+                                    {Constants.PLACEHOLDER_OTHER_LINK, link}
+                                };
                                 try
                                 {
                                     CommonHelper.SendEmail(Constants.TEMPLATE_REGISTRATION,
@@ -673,53 +645,21 @@ namespace LanLordlAPIs.Controllers
                                         "Confirm your email on Nooch",
                                         tokens, null);
 
-                                    Logger.Info("MemberDataAccess - Registration mail sent to [" + llDetails.eMail.Trim() +
-                                                           "].");
+                                    Logger.Info("UserController -> RegisterLandlord - Registration email sent to [" + llDetails.eMail.Trim() + "] successfully.");
                                 }
-                                catch (Exception)
+                                catch (Exception ex)
                                 {
-                                    // to revert the member record when mail is not sent successfully.
-                                    Logger.Error("MemberDataAccess - Member activation mail NOT sent to [" +
-                                                           llDetails.eMail.Trim() + "].");
+                                    Logger.Error("UserController -> RegisterLandlord - Registration email NOT sent to [" +
+                                                           llDetails.eMail.Trim() + "]");
                                 }
 
-                                #endregion
+                                #endregion Send Verification email
 
 
-                                #region PinNumber email
-
-                                // emailing temp pin number
-                                //    var tokens2 = new Dictionary<string, string>
-                                //{
-                                //    {
-                                //        Constants.PLACEHOLDER_FIRST_NAME,
-                                //        CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(member.FirstName))
-                                //    },
-                                //    {Constants.PLACEHOLDER_PINNUMBER, randomPin}
-                                //};
-                                //    try
-                                //    {
-
-                                //        CommonHelper.SendEmail("pinSetForNewUser",
-                                //            fromAddress, llDetails.eMail.Trim(),
-                                //            "Your temporary Nooch PIN",
-                                //            tokens2, null);
-
-
-                                //    }
-                                //    catch (Exception)
-                                //    {
-                                //        Logger.Error("MemberDataAccess - Member temp pin mail not sent to [" +
-                                //                               userNameLowerCase + "].");
-                                //    }
-
-                                #endregion
-
-
-                                #region AuthenticationToken
+                                #region Create Authentication Token
 
                                 var requestId = Guid.Empty;
-                                // save the token details into authentication tokens table  
+
                                 var token = new AuthenticationToken
                                 {
                                     TokenId = tokenId,
@@ -728,11 +668,11 @@ namespace LanLordlAPIs.Controllers
                                     DateGenerated = DateTime.Now,
                                     FriendRequestId = requestId
                                 };
+                                // Now save the token details into Authentication tokens DB table  
                                 obj.AuthenticationTokens.Add(token);
                                 obj.SaveChanges();
 
-
-                                #endregion
+                                #endregion Create Authentication Token
 
 
                                 #region Notification Settings
@@ -740,7 +680,6 @@ namespace LanLordlAPIs.Controllers
                                 var memberNotification = new MemberNotification
                                 {
                                     NotificationId = Guid.NewGuid(),
-
 
                                     MemberId = member.MemberId,
                                     FriendRequest = true,
@@ -750,7 +689,6 @@ namespace LanLordlAPIs.Controllers
                                     TransferAttemptFailure = true,
                                     NoochToBank = true,
                                     BankToNooch = true,
-
                                     EmailFriendRequest = true,
                                     EmailInviteRequestAccept = true,
                                     EmailTransferSent = true,
@@ -771,25 +709,23 @@ namespace LanLordlAPIs.Controllers
 
                                 obj.MemberNotifications.Add(memberNotification);
 
-                                #endregion
+                                #endregion Notification Settings
+
 
                                 #region Privacy Settings
-
 
                                 var memberPrivacySettings = new MemberPrivacySetting
                                 {
                                     MemberId = member.MemberId,
-
                                     AllowSharing = true,
                                     ShowInSearch = true,
                                     DateCreated = DateTime.Now
                                 };
                                 obj.MemberPrivacySettings.Add(memberPrivacySettings);
 
-                                #endregion
+                                #endregion Privacy Settings
 
-
-                                // finally making an entry in 
+                                // Finally, make an entry in DB 
                                 Landlord l = CommonHelper.AddNewLandlordEntryInDb(llDetails.FirstName,
                                     llDetails.LastName, llDetails.eMail, llDetails.Password, false, false,
                                     member.MemberId);
@@ -798,35 +734,28 @@ namespace LanLordlAPIs.Controllers
                                 {
                                     result.IsSuccess = true;
                                     result.ErrorMessage = "OK";
-                                    return result;
                                 }
                                 else
                                 {
                                     // exception while creating account
-                                    result.IsSuccess = false;
                                     result.ErrorMessage = "Server error. Retry later! ";
-                                    return result;
                                 }
-
                             }
-                            catch (Exception)
+                            catch (Exception ex)
                             {
-
-                                result.IsSuccess = false;
+                                Logger.Error("UsersController -> RegisterLandlord FAILED while making account for: [" + llDetails.eMail + "], [Exception: " + ex.Message + "]");
                                 result.ErrorMessage = "Some duplicate values are being generated at server. Retry later! ";
-                                return result;
                             }
-
-
+                            #endregion Create User Settings & Save To DB
                         }
-                        #endregion
-                        #endregion
+
+                        #endregion Save New Landlord & Member Details In DB
                     }
                     else
                     {
                         // Member with that email already exists
-                        #region new landlord but existing member
-                        // finally making an entry in 
+                        #region New Landlord But Existing Member
+
                         Landlord l = CommonHelper.AddNewLandlordEntryInDb(llDetails.FirstName,
                             llDetails.LastName, llDetails.eMail, llDetails.Password, true, true,
                             mem.MemberDetails.MemberId);
@@ -845,23 +774,21 @@ namespace LanLordlAPIs.Controllers
                             result.ErrorMessage = "Server error. Retry later! ";
                             return result;
                         }
-                        #endregion
+
+                        #endregion New Landlord But Existing Member
                     }
                 }
                 else
                 {
-                    result.IsSuccess = false;
                     result.ErrorMessage = ll.ErrorMessage;
-                    return result;
                 }
             }
             catch (Exception ex)
             {
-                Logger.Error("UsersController -> RegisterLandlord FAILED while making account for: [" + llDetails.eMail + "], [Exception: " + ex.Message + "]");
-                result.IsSuccess = false;
+                Logger.Error("UsersController -> RegisterLandlord FAILED - Outer Exception - [Email: " + llDetails.eMail + "], [Exception: " + ex.Message + "]");
                 result.ErrorMessage = "Server Error.";
-                return result;
             }
+            return result;
         }
 
 
@@ -870,6 +797,7 @@ namespace LanLordlAPIs.Controllers
         public PasswordResetOutputClass ResetPassword(PasswordResetInputClass userName)
         {
             PasswordResetOutputClass res = new PasswordResetOutputClass();
+            res.IsSuccess = false;
 
             var getMember = CommonHelper.getMemberByEmailId(userName.eMail);
 
@@ -887,28 +815,22 @@ namespace LanLordlAPIs.Controllers
                     }
                     else
                     {
-                        res.IsSuccess = false;
                         res.ErrorMessage = "Problem occured while sending mail.";
-                        return res;
                     }
                 }
                 else
                 {
-                    res.IsSuccess = false;
                     res.ErrorMessage = "Problem occured while sending mail.";
-
-                    return res;
                 }
             }
             catch (Exception ex)
             {
                 Logger.Error("UsersController -> ResetPassword FAILED - [UserName: " + userName + "], [Exception: " + ex.Message + "]");
 
-                res.IsSuccess = false;
                 res.ErrorMessage = "Problem occured while sending mail.";
-
-                return res;
             }
+
+            return res;
         }
 
 
@@ -920,13 +842,14 @@ namespace LanLordlAPIs.Controllers
         [ActionName("GetAccountCompletetionStatsOfGivenLandlord")]
         public GetAccountCompletionStatsResultClass GetAccountCompletetionStatsOfGivenLandlord(GetProfileDataInput Property)
         {
-            GetAccountCompletionStatsResultClass result = new GetAccountCompletionStatsResultClass();
-            
-            try
-            {
-                Logger.Info("UsersController -> GetAccountCompletetionStatsOfGivenLandlord Initiated -[LandlordID: " +
+            Logger.Info("UsersController -> GetAccountCompletetionStatsOfGivenLandlord Initiated -[LandlordID: " +
                             Property.LandlorId + "]");
 
+            GetAccountCompletionStatsResultClass result = new GetAccountCompletionStatsResultClass();
+            result.IsSuccess = false;
+
+            try
+            {
                 Guid landlordguidId = new Guid(Property.LandlorId);
                 result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, Property.AccessToken);
 
@@ -958,19 +881,18 @@ namespace LanLordlAPIs.Controllers
                 }
                 else
                 {
-                    result.IsSuccess = false;
                     result.ErrorMessage = "Invalid Access token.";
                 }
-                return result;
             }
             catch (Exception ex)
             {
-                Logger.Error("UsersControllers -> GetAccountCompletionStatsOfGivenLandlord - [LandlordID: " +
-                             Property.LandlorId + " ], [Exception: " + ex.Message + " ]");
-                result.IsSuccess = false;
+                Logger.Error("UsersControllers -> GetAccountCompletionStatsOfGivenLandlord FAILED - [LandlordID: " +
+                             Property.LandlorId + "], [Exception: " + ex.Message + "]");
+
                 result.ErrorMessage = "Error while getting properties list. Retry later!";
-                return result;
             }
+
+            return result;
         }
 
 
@@ -983,6 +905,7 @@ namespace LanLordlAPIs.Controllers
         public LoginResult ResendVerificationEmailAndSMS(ResendVerificationEmailAndSMSInput property)
         {
             LoginResult result = new LoginResult();
+            result.IsSuccess = false;
 
             try
             {
@@ -993,9 +916,12 @@ namespace LanLordlAPIs.Controllers
                     {
                         case "Landlord":
 
-                            #region Landlord related operations
-                            var landlordDetails =
-                                                    (from c in obj.Landlords where c.LandlordId == userGUID select c).FirstOrDefault();
+                            #region Landlord Related Operations
+
+                            var landlordDetails = (from c in obj.Landlords
+                                                   where c.LandlordId == userGUID
+                                                   select c).FirstOrDefault();
+
                             if (landlordDetails != null)
                             {
                                 switch (property.RequestFor)
@@ -1006,11 +932,9 @@ namespace LanLordlAPIs.Controllers
                                         {
                                             result.IsSuccess = true;
                                             result.ErrorMessage = "OK.";
-
                                         }
                                         else
                                         {
-                                            result.IsSuccess = false;
                                             result.ErrorMessage = s;
                                         }
                                         break;
@@ -1020,25 +944,24 @@ namespace LanLordlAPIs.Controllers
                                         {
                                             result.IsSuccess = true;
                                             result.ErrorMessage = "OK.";
-
                                         }
                                         else
                                         {
-                                            result.IsSuccess = false;
                                             result.ErrorMessage = s2;
                                         }
                                         break;
                                     default:
-                                        result.IsSuccess = false;
                                         result.ErrorMessage = "Invalid data.";
                                         break;
                                 }
                             }
-                            #endregion
+
+                            #endregion Landlord Related Operations
 
                             break;
                         case "Tenant":
-                            #region Tenants related operations
+                            #region Tenants Related Operations
+
                             var tenantDetails =
                                                     (from c in obj.Tenants where c.TenantId == userGUID select c).FirstOrDefault();
                             if (tenantDetails != null)
@@ -1051,7 +974,6 @@ namespace LanLordlAPIs.Controllers
                                         {
                                             result.IsSuccess = true;
                                             result.ErrorMessage = "OK.";
-
                                         }
                                         else
                                         {
@@ -1065,7 +987,6 @@ namespace LanLordlAPIs.Controllers
                                         {
                                             result.IsSuccess = true;
                                             result.ErrorMessage = "OK.";
-
                                         }
                                         else
                                         {
@@ -1079,22 +1000,26 @@ namespace LanLordlAPIs.Controllers
                                         break;
                                 }
                             }
-                            #endregion
+
+                            #endregion Tenants Related Operations
+
                             break;
                         default:
                             result.IsSuccess = false;
                             result.ErrorMessage = "Invalid data.";
                             break;
                     }
-                    return result;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                result.IsSuccess = false;
+                Logger.Error("UsersControllers -> ResendVerificationEmailAndSMS FAILED - [UserID: " +
+                             property.UserId + " ], [Exception: " + ex.Message + "]");
+
                 result.ErrorMessage = "Server error, retry later!";
-                return result;
             }
+
+            return result;
         }
 
 
@@ -1199,7 +1124,7 @@ namespace LanLordlAPIs.Controllers
 
                                             CommonHelper.SendEmail(null, emailtobesentfrom, emailtobesentto,
                                                 "New message from " +
-                                               CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(lanlorddetails.FirstName)) + " " + 
+                                               CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(lanlorddetails.FirstName)) + " " +
                                                CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(lanlorddetails.LastName)), null, bodytext);
                                         }
 
@@ -1225,7 +1150,7 @@ namespace LanLordlAPIs.Controllers
                         }
                         else
                         {
-                            result.ErrorMessage = "Given landlor doesn't exists in system.";
+                            result.ErrorMessage = "Given landlord doesn't exists in system.";
                         }
                     }
                 }

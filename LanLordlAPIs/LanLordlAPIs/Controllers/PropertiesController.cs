@@ -20,33 +20,35 @@ namespace LanLordlAPIs.Controllers
         [ActionName("AddNewProperty")]
         public CreatePropertyResultOutput GetUserInfo(AddNewPropertyClass Property)
         {
+            Logger.Info("Landlords API -> Properties -> AddNewProperty - Requested by [" + Property.User.LandlorId + "]");
 
             CreatePropertyResultOutput result = new CreatePropertyResultOutput();
+            result.IsSuccess = false;
+
             try
             {
-                Logger.Info("Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [" +
-                            Property.User.LandlorId + "]");
                 Guid landlordguidId = new Guid(Property.User.LandlorId);
+
                 result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, Property.User.AccessToken);
 
                 if (result.AuthTokenValidation.IsTokenOk)
                 {
                     var validationResult = IsPropertyDataInputValid(Property, true);
+
                     if (validationResult.IsDataValid)
                     {
                         // all set.... data is ready to be saved in db
                         string propertyImagePath = CommonHelper.GetValueFromConfig("PhotoUrl") + "propertyDefault.png";
                         if (Property.IsPropertyImageAdded)
                         {
-                            //getting image url from base64 string
+                            // Get image URL from Base64 string
                             string fileName = Property.PropertyName.Trim().Replace("-", "_").Replace(" ", "_") + ".png";
-                            propertyImagePath =
-                                CommonHelper.SaveBase64AsImage(landlordguidId.ToString().Replace("-", "_") + "_property_" + fileName,
-                                    Property.PropertyImage);
+                            propertyImagePath = CommonHelper.SaveBase64AsImage(landlordguidId.ToString().Replace("-", "_") +
+                                                "_property_" + fileName, Property.PropertyImage);
                         }
+
                         using (NOOCHEntities obj = new NOOCHEntities())
                         {
-
                             Property prop = new Property
                             {
                                 PropertyId = Guid.NewGuid(),
@@ -62,15 +64,12 @@ namespace LanLordlAPIs.Controllers
                                 IsSingleUnit = !Property.IsMultipleUnitsAdded,
                                 IsDeleted = false,
                                 DefaultDueDate = "1st of Month"
-
-
                             };
-
 
                             obj.Properties.Add(prop);
                             obj.SaveChanges();
 
-                            // setting type to single unit if only one item passed in property units
+                            // Set type to single unit if only one item passed in property units
                             if (Property.Unit.Length < 2)
                             {
                                 prop.IsSingleUnit = true;
@@ -78,8 +77,7 @@ namespace LanLordlAPIs.Controllers
                                 obj.SaveChanges();
                             }
 
-
-                            // saving units... if any
+                            // Saving Units (if any)
                             foreach (AddNewUnitClass unitItem in Property.Unit)
                             {
                                 PropertyUnit pu = new PropertyUnit();
@@ -92,7 +90,6 @@ namespace LanLordlAPIs.Controllers
 
                                 if (prop.IsSingleUnit != true)
                                 {
-
                                     pu.UnitNumber = unitItem.UnitNum;
                                 }
                                 else
@@ -104,7 +101,6 @@ namespace LanLordlAPIs.Controllers
                                 pu.IsOccupied = false;
                                 pu.MemberId = new Guid(CommonHelper.GetMemberIdOfLandlord(landlordguidId));
 
-
                                 obj.PropertyUnits.Add(pu);
                                 obj.SaveChanges();
                             }
@@ -112,83 +108,69 @@ namespace LanLordlAPIs.Controllers
                             result.IsSuccess = true;
                             result.ErrorMessage = "OK";
                         }
-
-
                     }
                     else
                     {
-                        result.IsSuccess = false;
                         result.ErrorMessage = validationResult.ValidationError;
                     }
-
-                    return result;
                 }
                 else
                 {
-                    return result;
                 }
-
             }
             catch (Exception ex)
             {
-                Logger.Error("Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by- [ " + Property.User.LandlorId + " ] . Exception details [ " + ex + " ]");
-                result.IsSuccess = false;
+                Logger.Error("Landlords API -> Properties -> AddNewProperty FAILED - [LandlordID: " + Property.User.LandlorId + "], [Exception: [ " + ex + " ]");
                 result.ErrorMessage = "Error while creating property. Retry later!";
-                return result;
-
             }
+
+            return result;
         }
 
 
-        // tos save new property unit for given property
+        /// <summary>
+        /// To save a new unit for a given property.
+        /// </summary>
+        /// <param name="Property"></param>
+        /// <returns>CreatePropertyResultOutput</returns>
         [HttpPost]
         [ActionName("AddNewUnitInProperty")]
         public CreatePropertyResultOutput AddNewUnitInProperty(AddNewUnitInputOuterClass Property)
         {
-
             CreatePropertyResultOutput result = new CreatePropertyResultOutput();
+
             try
             {
-                Logger.Info("Landlords API -> Properties -> AddNewUnitInProperty. AddNewUnitInProperty requested by [" +
-                            Property.User.LandlorId + "]");
+                Logger.Info("Landlords API -> Properties -> AddNewUnitInProperty - Requested by [" + Property.User.LandlorId + "]");
+
                 Guid landlordguidId = new Guid(Property.User.LandlorId);
                 Guid propertyguidId = new Guid(Property.PropertyId);
                 result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, Property.User.AccessToken);
 
                 if (result.AuthTokenValidation.IsTokenOk)
                 {
-
-
                     using (NOOCHEntities obj = new NOOCHEntities())
                     {
-
-                        // checking if valid property
-
-                        var propDetails =
-                            (from c in obj.Properties where c.PropertyId == propertyguidId select c).FirstOrDefault();
+                        // First, check if this is a valid property
+                        var propDetails = (from c in obj.Properties
+                                           where c.PropertyId == propertyguidId
+                                           select c).FirstOrDefault();
 
                         if (propDetails != null)
                         {
-
-                            // adding new unit
+                            // Now add the new unit
                             PropertyUnit pu = new PropertyUnit();
                             pu.UnitId = Guid.NewGuid();
                             pu.DateAdded = DateTime.Now;
-                            if (!String.IsNullOrEmpty(Property.Unit.UnitNum))
-                            {
-                                pu.UnitNumber = Property.Unit.UnitNum;
-                            }
-                            if (!String.IsNullOrEmpty(Property.Unit.UnitNickName))
-                            {
-                                pu.UnitNickName = Property.Unit.UnitNickName;
-                            }
-
                             pu.LandlordId = landlordguidId;
                             pu.UnitRent = Property.Unit.Rent;
+                            pu.DueDate = Property.Unit.DueDate;
                             pu.PropertyId = propertyguidId;
-
                             pu.IsDeleted = false;
                             pu.IsHidden = false;
+                            pu.UnitNumber = !String.IsNullOrEmpty(Property.Unit.UnitNum) ? Property.Unit.UnitNum : null;
+
+                            pu.UnitNickName = !String.IsNullOrEmpty(Property.Unit.UnitNickName) ? Property.Unit.UnitNickName : null;
 
                             if (Property.Unit.IsTenantAdded && !String.IsNullOrEmpty(Property.Unit.TenantId))
                             {
@@ -201,23 +183,21 @@ namespace LanLordlAPIs.Controllers
                                 pu.IsOccupied = false;
                             }
 
-
-                            pu.DueDate = Property.Unit.DueDate;
-
                             //TBD with CLIFF about agreement starte date and length
 
                             obj.PropertyUnits.Add(pu);
                             obj.SaveChanges();
 
-
                             if (Property.Unit.IsTenantAdded && !String.IsNullOrEmpty(Property.Unit.TenantId))
                             {
-                                // code to save tenant for given unit...tenant will always be somewhere in db
+                                // Code to save tenant for given unit...tenant will always be somewhere in DB
+                                // CLIFF (10/3/15): Actually, the tenant might NOT always be in the DB.  Landlords must "invite" tenants
+                                //                  who are not already Nooch users.  So the "tenant" could just be an email address here...
+
                                 Guid tenantguid = CommonHelper.ConvertToGuid(Property.Unit.TenantId);
                                 UnitsOccupiedByTenant uobt = new UnitsOccupiedByTenant();
                                 uobt.TenantId = tenantguid;
                                 uobt.UnitId = pu.UnitId;
-
 
                                 if (!String.IsNullOrEmpty(Property.Unit.AgreementDuration) && !String.IsNullOrEmpty(Property.Unit.RentStartDate))
                                 {
@@ -227,9 +207,8 @@ namespace LanLordlAPIs.Controllers
 
                                 obj.UnitsOccupiedByTenants.Add(uobt);
                                 obj.SaveChanges();
-
-
                             }
+
                             result.IsSuccess = true;
                             result.ErrorMessage = "OK.";
                             result.PropertyIdGenerated = pu.UnitId.ToString();
@@ -239,10 +218,7 @@ namespace LanLordlAPIs.Controllers
                             result.IsSuccess = false;
                             result.ErrorMessage = "Invalid property Id passed.";
                         }
-
                     }
-
-
 
                     return result;
                 }
@@ -250,30 +226,33 @@ namespace LanLordlAPIs.Controllers
                 {
                     return result;
                 }
-
             }
             catch (Exception ex)
             {
-                Logger.Error("Landlords API -> Properties -> AddNewUnitInProperty. AddNewUnitInProperty requested by- [ " + Property.User.LandlorId + " ] . Exception details [ " + ex + " ]");
+                Logger.Error("Landlords API -> Properties -> AddNewUnitInProperty - [LandlordID: " + Property.User.LandlorId + "], [Exception: [" + ex + "]");
                 result.IsSuccess = false;
                 result.ErrorMessage = "Error while creating property. Retry later!";
                 return result;
-
             }
         }
 
 
-
+        /// <summary>
+        /// To edit an existing property's details.
+        /// </summary>
+        /// <param name="Property"></param>
+        /// <returns>CreatePropertyResultOutput</returns>
         [HttpPost]
         [ActionName("EditProperty")]
         public CreatePropertyResultOutput EditProperty(AddNewPropertyClass Property)
         {
+            Logger.Info("Landlords API -> Properties -> AddNewProperty Initiated - [LandlordID: " + Property.User.LandlorId + "]");
 
             CreatePropertyResultOutput result = new CreatePropertyResultOutput();
+            result.IsSuccess = false;
+
             try
             {
-                Logger.Info("Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by [" +
-                            Property.User.LandlorId + "]");
                 Guid landlordguidId = new Guid(Property.User.LandlorId);
                 Guid propertyguidId = new Guid(Property.PropertyId);
 
@@ -282,18 +261,17 @@ namespace LanLordlAPIs.Controllers
                 if (result.AuthTokenValidation.IsTokenOk)
                 {
                     var validationResult = IsPropertyDataInputValid(Property, false);
+
                     if (validationResult.IsDataValid)
                     {
-
                         using (NOOCHEntities obj = new NOOCHEntities())
                         {
-
-                            var existingProp = (from c in obj.Properties where c.PropertyId == propertyguidId select c).FirstOrDefault();
-
+                            var existingProp = (from c in obj.Properties
+                                                where c.PropertyId == propertyguidId
+                                                select c).FirstOrDefault();
 
                             if (existingProp != null)
                             {
-
                                 existingProp.PropName = Property.PropertyName.Trim();
                                 existingProp.AddressLineOne = Property.Address.Trim();
                                 existingProp.City = Property.City.Trim();
@@ -301,28 +279,19 @@ namespace LanLordlAPIs.Controllers
                                 existingProp.State = Property.State.Trim();
                                 existingProp.ContactNumber = Property.ContactNumber.Trim();
 
-
                                 obj.SaveChanges();
-
 
                                 result.IsSuccess = true;
                                 result.ErrorMessage = "OK";
-
                             }
                             else
                             {
-                                result.IsSuccess = false;
                                 result.ErrorMessage = "Invalid property id passed.";
                             }
-
-
                         }
-
-
                     }
                     else
                     {
-                        result.IsSuccess = false;
                         result.ErrorMessage = validationResult.ValidationError;
                     }
 
@@ -332,55 +301,52 @@ namespace LanLordlAPIs.Controllers
                 {
                     return result;
                 }
-
             }
             catch (Exception ex)
             {
-                Logger.Error("Landlords API -> Properties -> AddNewProperty. AddNewProperty requested by- [ " + Property.User.LandlorId + " ] . Exception details [ " + ex + " ]");
-                result.IsSuccess = false;
+                Logger.Error("Landlords API -> Properties -> AddNewProperty FAILED - [LandlordID: " + Property.User.LandlorId +
+                             "], [Exception: " + ex + "]");
                 result.ErrorMessage = "Error while creating property. Retry later!";
                 return result;
-
             }
         }
+
 
         // To mark given property and sub units as active/inactive
         [HttpPost]
         [ActionName("SetPropertyStatus")]
         public CreatePropertyResultOutput SetPropertyStatus(SetPropertyStatusClass Property)
         {
+            Logger.Info("Landlords API -> Properties - SetPropertyStatus - [LandlordID: " +
+                            Property.User.LandlorId + "], [Property ID: "+ Property.PropertyId + "]");
 
             CreatePropertyResultOutput result = new CreatePropertyResultOutput();
+
             try
             {
-                Logger.Info("Landlords API -> Properties -> SetPropertyStatus. SetPropertyStatus requested by [" +
-                            Property.User.LandlorId + "]");
                 Guid landlordguidId = new Guid(Property.User.LandlorId);
                 result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, Property.User.AccessToken);
 
                 if (result.AuthTokenValidation.IsTokenOk)
                 {
-
                     if (!String.IsNullOrEmpty(Property.PropertyId))
                     {
                         Guid propId = new Guid(Property.PropertyId);
                         using (NOOCHEntities obj = new NOOCHEntities())
                         {
-                            var properTyInDb =
-                                (from c in obj.Properties where c.PropertyId == propId select c).FirstOrDefault();
-
+                            var properTyInDb = (from c in obj.Properties
+                                                where c.PropertyId == propId
+                                                select c).FirstOrDefault();
 
                             // checking units inside property
 
-                            var allUnits =
-                                (from d in obj.PropertyUnits where d.PropertyId == propId select d).ToList();
-
-
+                            var allUnits = (from d in obj.PropertyUnits
+                                            where d.PropertyId == propId
+                                            select d).ToList();
 
                             if (Property.PropertyStatusToSet == false)
                             {
                                 // query is to set hide property
-
 
                                 bool IsAnyocupiedUnitFound = false;
                                 if (allUnits.Count > 0)
@@ -401,16 +367,8 @@ namespace LanLordlAPIs.Controllers
                                             "Property can't be set to hidden as one or more units are occupied by Tenants.";
                                         return result;
                                     }
-
                                 }
-
-
-
                             }
-
-
-
-
 
                             if (properTyInDb != null)
                             {
@@ -443,8 +401,6 @@ namespace LanLordlAPIs.Controllers
                                 }
                                 result.IsSuccess = true;
                                 result.ErrorMessage = "OK";
-
-
                             }
                             else
                             {
@@ -454,7 +410,6 @@ namespace LanLordlAPIs.Controllers
 
                             }
                         }
-
                     }
                     else
                     {
@@ -462,8 +417,6 @@ namespace LanLordlAPIs.Controllers
                         result.IsSuccess = false;
                         result.ErrorMessage = "No property Id passed. Retyr!";
                     }
-
-
                 }
                 return result;
             }
@@ -474,57 +427,63 @@ namespace LanLordlAPIs.Controllers
                 result.IsSuccess = false;
                 result.ErrorMessage = "Error while updating property. Retry later!";
                 return result;
-
             }
         }
 
 
-
-        // to delete property  -- TBD with Cliff... what will happen if any unit is occupied .
+        // to delete property  -- TBD with Cliff... what will happen if any unit is occupied.
+        // CLIFF (10/3/15): If a unit is occupied and it's deleted, we should probably do nothing to the tenant...
+        //                  No reason to "delete" the tenant, and they won't be able to pay rent because the unit will
+        //                  be deleted.  And any automatic reminders we send to Tenants to pay their rent each month will
+        //                  also stop because this unit will be deleted.  So the tenants can just remain as they were.s
         [HttpPost]
         [ActionName("DeleteProperty")]
         public CreatePropertyResultOutput DeleteProperty(SetPropertyStatusClass Property)
         {
+            Logger.Info("Landlords API -> DeleteProperty - [LandlordID: " + Property.User.LandlorId +
+                        "], [Property ID: " + Property.PropertyId + "]");
 
             CreatePropertyResultOutput result = new CreatePropertyResultOutput();
+            result.IsSuccess = false;
+
             try
             {
-                Logger.Info("Landlords API -> DeleteProperty -> DeleteProperty. SetPropertyStatus requested by [" +
-                            Property.User.LandlorId + "] and Property Id - [ " + Property.PropertyId + " ]");
                 Guid landlordguidId = new Guid(Property.User.LandlorId);
                 result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, Property.User.AccessToken);
 
                 if (result.AuthTokenValidation.IsTokenOk)
                 {
-
                     if (!String.IsNullOrEmpty(Property.PropertyId))
                     {
                         Guid propId = new Guid(Property.PropertyId);
                         using (NOOCHEntities obj = new NOOCHEntities())
                         {
-                            var properTyInDb =
-                                (from c in obj.Properties where c.PropertyId == propId select c).FirstOrDefault();
+                            var properTyInDb = (from c in obj.Properties 
+                                                where c.PropertyId == propId 
+                                                select c).FirstOrDefault();
 
                             if (properTyInDb != null)
                             {
+                                // Check for units inside this property
+                                var allUnits = (from d in obj.PropertyUnits
+                                                where d.PropertyId == propId
+                                                select d).ToList();
 
-                                // checking units inside property
+                                bool anyOccupiedUnitFound = false;
 
-                                var allUnits =
-                                    (from d in obj.PropertyUnits where d.PropertyId == propId select d).ToList();
-
-                                bool IsAnyocupiedUnitFound = false;
                                 if (allUnits.Count > 0)
                                 {
                                     foreach (PropertyUnit pu in allUnits)
                                     {
-                                        if (pu.IsOccupied == true && (pu.IsDeleted == false || pu.IsDeleted == null) && (pu.IsHidden == false || pu.IsDeleted == null))
+                                        if ( pu.IsOccupied == true && 
+                                            (pu.IsDeleted == false || pu.IsDeleted == null) &&
+                                            (pu.IsHidden == false || pu.IsDeleted == null))
                                         {
-                                            IsAnyocupiedUnitFound = true;
+                                            anyOccupiedUnitFound = true;
                                         }
                                     }
 
-                                    if (!IsAnyocupiedUnitFound)
+                                    if (!anyOccupiedUnitFound)
                                     {
                                         foreach (PropertyUnit pu in allUnits)
                                         {
@@ -541,53 +500,41 @@ namespace LanLordlAPIs.Controllers
                                     }
                                     else
                                     {
-                                        result.IsSuccess = false;
                                         result.ErrorMessage = "Property can't be deleted as one or more units are occupied by Tenants.";
                                     }
                                 }
                                 else
                                 {
-                                    // code to mark property as deleted
+                                    // Mark property as deleted
                                     properTyInDb.IsDeleted = true;
                                     obj.SaveChanges();
                                     result.IsSuccess = true;
                                     result.ErrorMessage = "OK";
-
                                 }
-
-
-
                             }
                             else
                             {
-                                // invalid property id or no data found
-                                result.IsSuccess = false;
+                                // Invalid property ID or no data found
                                 result.ErrorMessage = "No property found for given Id.";
-
                             }
                         }
-
                     }
                     else
                     {
-                        // invalid data sent error
-                        result.IsSuccess = false;
+                        // Invalid data sent
                         result.ErrorMessage = "No property Id passed. Retyr!";
                     }
-
-
                 }
-                return result;
             }
             catch (Exception ex)
             {
-                Logger.Error("Landlords API -> Properties -> DeleteProperty. DeleteProperty requested by- [ " +
-                             Property.User.LandlorId + " ] . Exception details [ " + ex + " ]");
+                Logger.Error("Landlords API -> Properties -> DeleteProperty - [LandlordID: " +
+                             Property.User.LandlorId + "], [Exception: " + ex + "]");
                 result.IsSuccess = false;
                 result.ErrorMessage = "Error while deleting property. Retry later!";
-                return result;
-
             }
+
+            return result;
         }
 
 
@@ -731,6 +678,7 @@ namespace LanLordlAPIs.Controllers
         public GetPropertyDetailsPageDataResult GetPropertyDetailsPageData(SetPropertyStatusClass Property)
         {
             GetPropertyDetailsPageDataResult result = new GetPropertyDetailsPageDataResult();
+            result.IsSuccess = false;
 
             try
             {
@@ -900,14 +848,10 @@ namespace LanLordlAPIs.Controllers
 
                                 currentUnit.LandlordId = unitX.LandlordId != null ? unitX.LandlordId.ToString() : "";
                                 currentUnit.MemberId = unitX.MemberId != null ? unitX.MemberId.ToString() : "";
-
-
-
                                 currentUnit.UnitImage = unitX.UnitImage ?? "";
                                 currentUnit.IsDeleted = unitX.IsDeleted;
                                 currentUnit.IsHidden = unitX.IsHidden;
                                 currentUnit.IsOccupied = unitX.IsOccupied;
-
 
                                 if (currentUnit.IsOccupied == true)
                                 {
@@ -916,28 +860,23 @@ namespace LanLordlAPIs.Controllers
                                     string timgurl = obj.GetTenantImageForGivenUnitId(currentUnit.UnitId).FirstOrDefault();
 
                                     bool isRentPaid = Convert.ToBoolean(obj.IsRentPaidByTenantForGivenUnitId(currentUnit.UnitId).FirstOrDefault());
-
                                     bool isemail = Convert.ToBoolean(obj.IsEmailIdVerifiedOfTenantInGivenUnitId(currentUnit.UnitId).FirstOrDefault());
                                     bool isphone = Convert.ToBoolean(obj.IsPhoneVerifiedOfTenantInGivenUnitId(currentUnit.UnitId).FirstOrDefault());
                                     bool isaccount = Convert.ToBoolean(obj.IsBankAccountAddedOfTenantInGivenUnitId(currentUnit.UnitId).FirstOrDefault());
 
-                                    DateTime? d =
-                                        obj.GetLastRentPaymentDateForGivenUnitId(currentUnit.UnitId).FirstOrDefault();
+                                    DateTime? d = obj.GetLastRentPaymentDateForGivenUnitId(currentUnit.UnitId).FirstOrDefault();
                                     string lastPayDate = "";
+
                                     if (d != null)
                                     {
                                         lastPayDate = Convert.ToDateTime(d).ToShortDateString();
                                     }
 
                                     currentUnit.LastRentPaidOn = lastPayDate;
-
                                     currentUnit.IsRentPaidForThisMonth = isRentPaid;
-
                                     currentUnit.IsEmailVerified = isemail;
                                     currentUnit.IsPhoneVerified = isphone;
                                     currentUnit.IsBankAccountAdded = isaccount;
-
-
 
                                     if (!String.IsNullOrEmpty(s))
                                     {
@@ -946,7 +885,6 @@ namespace LanLordlAPIs.Controllers
                                         {
                                             currentUnit.TenantName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(namesSplit[0])) + " " +
                                             CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(namesSplit[1]));
-
                                         }
                                         else
                                         {
@@ -955,18 +893,15 @@ namespace LanLordlAPIs.Controllers
                                     }
                                     else
                                     {
-                                        currentUnit.TenantName = ""; // NEED TO GET THIS BY USING THE MEMBER ID TO LOOK UP THE MEMBER'S NAME ('name' isn't stored in the 'PropertyUnits' Table) 
+                                        currentUnit.TenantName = "";
                                     }
 
                                     currentUnit.TenantEmail = !String.IsNullOrEmpty(tEmail) ? CommonHelper.GetDecryptedData(tEmail) : "";
                                     currentUnit.ImageUrl = timgurl ?? "";
-
-
-
                                 }
                                 else
                                 {
-                                    // setting other tenante related data to blank
+                                    // Set other tenants-related data to blank
                                     currentUnit.TenantName = "";
                                     currentUnit.TenantEmail = "";
                                     currentUnit.ImageUrl = "";
@@ -1049,69 +984,49 @@ namespace LanLordlAPIs.Controllers
                         else
                         {
                             // Invalid property ID or no data found
-                            result.IsSuccess = false;
                             result.ErrorMessage = "No properties found for given Landlord.";
                         }
                     }
                 }
-                return result;
             }
             catch (Exception ex)
             {
-                Logger.Error("Landlords API -> Properties -> LoadProperties. LoadProperties requested by- [ " +
-                             Property.User.LandlorId + " ] . Exception details [ " + ex + " ]");
-                result.IsSuccess = false;
+                Logger.Error("Landlords API -> Properties -> LoadProperties - [LandlordID: " +
+                             Property.User.LandlorId + " ], [Exception: " + ex + "]");
                 result.ErrorMessage = "Error while getting properties list. Retry later!";
-                return result;
-
             }
+            
+            return result;
         }
 
 
         private PropertyInputValidationResult IsPropertyDataInputValid(AddNewPropertyClass inputData, bool IsUnitsCheckRequired)
         {
             PropertyInputValidationResult res = new PropertyInputValidationResult();
-            res.IsDataValid = true;
+            res.IsDataValid = false;
             res.ValidationError = "OK";
 
-            // checking property details
+            // Check property data sent
             if (String.IsNullOrEmpty(inputData.PropertyName))
             {
-                res.IsDataValid = false;
                 res.ValidationError = "Property name missing.";
                 return res;
             }
-
             if (String.IsNullOrEmpty(inputData.Address))
             {
-                res.IsDataValid = false;
                 res.ValidationError = "Property Address missing.";
                 return res;
             }
-
             if (String.IsNullOrEmpty(inputData.City))
             {
-                res.IsDataValid = false;
                 res.ValidationError = "Property City missing.";
                 return res;
             }
             if (String.IsNullOrEmpty(inputData.Zip))
             {
-                res.IsDataValid = false;
                 res.ValidationError = "Property Zip missing.";
                 return res;
             }
-
-            //if (String.IsNullOrEmpty(inputData.Rent))
-            //{
-            //    res.IsDataValid = false;
-            //    res.ValidationError = "Property Rent missing.";
-            //    return res;
-            //}
-
-            //if (inputData.IsMultipleUnitsAdded)
-            //{
-
 
             if (IsUnitsCheckRequired)
             {
@@ -1119,30 +1034,25 @@ namespace LanLordlAPIs.Controllers
                 {
                     if (inputData.Unit.Any(unitItem => String.IsNullOrEmpty(unitItem.UnitNum)))
                     {
-                        res.IsDataValid = false;
                         res.ValidationError = "One or more unit(s) number missing in data provided.";
                         return res;
                     }
                     if (inputData.Unit.Any(unitItem => String.IsNullOrEmpty(unitItem.Rent)))
                     {
-                        res.IsDataValid = false;
                         res.ValidationError = "One or more unit(s) missing Rent in data provided.";
                         return res;
                     }
                 }
-                else
+                else if (inputData.Unit.Any(unitItem => String.IsNullOrEmpty(unitItem.Rent)))
                 {
-                    if (inputData.Unit.Any(unitItem => String.IsNullOrEmpty(unitItem.Rent)))
-                    {
-                        res.IsDataValid = false;
-                        res.ValidationError = "One or more unit(s) missing Rent in data provided.";
-                        return res;
-                    }
+                    res.ValidationError = "One or more unit(s) missing Rent in data provided.";
+                    return res;
                 }
-
             }
+            res.IsDataValid = true;
             return res;
         }
+
 
         private class PropertyInputValidationResult
         {
@@ -1150,12 +1060,17 @@ namespace LanLordlAPIs.Controllers
         }
 
 
+        /// <summary>
+        /// For uploading a picture for a property.
+        /// </summary>
+        /// <returns>LoginResult</returns>
         [HttpPost]
         [ActionName("UploadPropertyImage")]
         public LoginResult UploadPropertyImage()
         {
             GetProfileDataInput User = new GetProfileDataInput();
             LoginResult result = new LoginResult();
+            result.IsSuccess = false;
 
             try
             {
@@ -1163,24 +1078,20 @@ namespace LanLordlAPIs.Controllers
 
                 if (file != null && file.ContentLength > 0)
                 {
-                    string[] llId = HttpContext.Current.Request.Form.GetValues("PropertyId");
-                    if (llId != null && llId.Length > 0)
-                    {
+                    string[] propId = HttpContext.Current.Request.Form.GetValues("PropertyId");
 
+                    if (propId != null && propId.Length > 0)
+                    {
                         using (NOOCHEntities obj = new NOOCHEntities())
                         {
-                            Guid landlordguidId = new Guid(llId[0]);
+                            Guid landlordguidId = new Guid(propId[0]);
 
-                            //var fileName = Path.GetFileName(file.FileName);
-                            //var fileExtension = Path.GetExtension(file.FileName);
-                            //var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file.FileName);
                             var fileExtension = Path.GetExtension(file.FileName);
                             var fileName = landlordguidId.ToString().Replace("-", "_").Trim() + fileExtension;
 
                             var path = Path.Combine(
                                 HttpContext.Current.Server.MapPath(CommonHelper.GetValueFromConfig("PhotoPath")),
-                                fileName
-                                );
+                                fileName);
 
                             if (File.Exists(path))
                             {
@@ -1189,33 +1100,33 @@ namespace LanLordlAPIs.Controllers
 
                             file.SaveAs(path);
 
-                            var llDetails =
-                                (from c in obj.Properties where c.PropertyId == landlordguidId select c).FirstOrDefault();
-                            if (llDetails != null)
+                            var propDetails = (from c in obj.Properties
+                                               where c.PropertyId == landlordguidId
+                                               select c).FirstOrDefault();
+
+                            if (propDetails != null)
                             {
-                                llDetails.PropertyImage = CommonHelper.GetValueFromConfig("PhotoUrl") + fileName;
+                                propDetails.PropertyImage = CommonHelper.GetValueFromConfig("PhotoUrl") + fileName;
                                 obj.SaveChanges();
+
                                 result.IsSuccess = true;
-                                result.ErrorMessage = llDetails.PropertyImage;
+                                result.ErrorMessage = propDetails.PropertyImage;
                             }
                             else
                             {
-                                result.IsSuccess = false;
                                 result.ErrorMessage = "Invalid property Id passed.";
                             }
                         }
                     }
                     else
                     {
-                        // no file selected
-                        result.IsSuccess = false;
+                        // Prop ID was invalid
                         result.ErrorMessage = "No or invalid property id passed.";
                     }
                 }
                 else
                 {
-                    // no file selected
-                    result.IsSuccess = false;
+                    // No file selected
                     result.ErrorMessage = "No or invalid file passed.";
                 }
 
@@ -1231,36 +1142,41 @@ namespace LanLordlAPIs.Controllers
 
         }
 
-        //method to remove unit from property
+
+        /// <summary>
+        /// To remove/delete a unit from a property.
+        /// </summary>
+        /// <param name="Property"></param>
+        /// <returns>CreatePropertyResultOutput</returns>
         [HttpPost]
         [ActionName("DeletePropertyUnit")]
         public CreatePropertyResultOutput DeletePropertyUnit(SetPropertyStatusClass Property)
         {
+            Logger.Info("Landlords API -> Properties -> DeletePropertyUnit - [Landlord ID: " +
+            Property.User.LandlorId + "], [Unit Id: " + Property.PropertyId + "]");
 
             CreatePropertyResultOutput result = new CreatePropertyResultOutput();
+            result.IsSuccess = false;
+
             try
             {
-                Logger.Info("Landlords API -> Properties -> DeletePropertyUnit -> DeletePropertyUnit. SetPropertyStatus requested by [" +
-                            Property.User.LandlorId + "] and Unit Id - [ " + Property.PropertyId + " ]");
                 Guid landlordguidId = new Guid(Property.User.LandlorId);
                 result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, Property.User.AccessToken);
 
                 if (result.AuthTokenValidation.IsTokenOk)
                 {
-
                     if (!String.IsNullOrEmpty(Property.PropertyId))
                     {
                         Guid propId = new Guid(Property.PropertyId);
                         using (NOOCHEntities obj = new NOOCHEntities())
                         {
-                            var properTyInDb =
-                                (from c in obj.PropertyUnits where c.UnitId == propId && c.IsDeleted == false select c).FirstOrDefault();
+                            var properTyInDb = (from c in obj.PropertyUnits
+                                                where c.UnitId == propId && c.IsDeleted == false
+                                                select c).FirstOrDefault();
 
                             if (properTyInDb != null)
                             {
-                                // checking units inside property
-
-
+                                // Check units inside property
                                 bool IsAnyocupiedUnitFound = properTyInDb.IsOccupied == true && (properTyInDb.IsDeleted == false || properTyInDb.IsDeleted == null);
 
                                 if (!IsAnyocupiedUnitFound)
@@ -1272,40 +1188,31 @@ namespace LanLordlAPIs.Controllers
                                 }
                                 else
                                 {
-                                    result.IsSuccess = false;
                                     result.ErrorMessage = "Property unit can't be deleted as its occupied by some tenant.";
                                 }
                             }
-
                             else
                             {
-                                // invalid property id or no data found
-                                result.IsSuccess = false;
+                                // Invalid property id or no data found
                                 result.ErrorMessage = "No property unit found for given Id.";
-
                             }
                         }
-
                     }
                     else
                     {
-                        // invalid data sent error
-                        result.IsSuccess = false;
+                        // Invalid data sent error
                         result.ErrorMessage = "No property Id passed. Retyr!";
                     }
-
-
                 }
                 return result;
             }
             catch (Exception ex)
             {
-                Logger.Error("Landlords API -> Properties -> DeletePropertyUnit. DeletePropertyUnit requested by- [ " +
-                             Property.User.LandlorId + " ] . Exception details [ " + ex + " ]");
+                Logger.Error("Landlords API -> Properties -> DeletePropertyUnit - [LandlordID: " +
+                             Property.User.LandlorId + " ], [Exception: " + ex + "]");
                 result.IsSuccess = false;
                 result.ErrorMessage = "Error while deleting property. Retry later!";
                 return result;
-
             }
         }
 
@@ -1315,41 +1222,35 @@ namespace LanLordlAPIs.Controllers
         [ActionName("EditPropertyUnit")]
         public CreatePropertyResultOutput EditPropertyUnit(AddNewUnitInputOuterClass Property)
         {
+            Logger.Info("Landlords API -> Properties -> EditPropertyUnit - [LandlordID: " + Property.User.LandlorId + "]");
 
             CreatePropertyResultOutput result = new CreatePropertyResultOutput();
+
             try
             {
-                Logger.Info("Landlords API -> Properties -> EditPropertyUnit. EditPropertyUnit requested by [" +
-                            Property.User.LandlorId + "]");
                 Guid landlordguidId = new Guid(Property.User.LandlorId);
                 Guid propertyguidId = new Guid(Property.Unit.UnitId);
                 result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, Property.User.AccessToken);
 
                 if (result.AuthTokenValidation.IsTokenOk)
                 {
-
-
                     using (NOOCHEntities obj = new NOOCHEntities())
                     {
-
                         // checking if valid property unit
 
-                        var propUnitDetails =
-                            (from c in obj.PropertyUnits where c.UnitId == propertyguidId select c).FirstOrDefault();
+                        var propUnitDetails = (from c in obj.PropertyUnits
+                                               where c.UnitId == propertyguidId
+                                               select c).FirstOrDefault();
 
                         if (propUnitDetails != null)
                         {
-
-
                             propUnitDetails.ModifiedOn = DateTime.Now;
-
 
                             if (String.IsNullOrEmpty(Property.Unit.UnitNum) && String.IsNullOrEmpty(Property.Unit.UnitNickName))
                             {
                                 result.IsSuccess = false;
                                 result.ErrorMessage = "Either unit number or nickname required.";
                             }
-
 
                             if (!String.IsNullOrEmpty(Property.Unit.UnitNum))
                             {
@@ -1360,10 +1261,7 @@ namespace LanLordlAPIs.Controllers
                                 propUnitDetails.UnitNickName = Property.Unit.UnitNickName;
                             }
 
-
                             propUnitDetails.UnitRent = Property.Unit.Rent;
-
-
 
                             //propUnitDetails.IsHidden = Property.Unit.is;
 
@@ -1378,28 +1276,26 @@ namespace LanLordlAPIs.Controllers
                                 propUnitDetails.IsOccupied = false;
                             }
 
-
                             propUnitDetails.DueDate = Property.Unit.DueDate;
 
                             //TBD with CLIFF about agreement starte date and length
                             //propUnitDetails
-                            
-                            obj.SaveChanges();
 
+                            obj.SaveChanges();
 
                             if (Property.Unit.IsTenantAdded && !String.IsNullOrEmpty(Property.Unit.TenantId))
                             {
                                 Guid tenantIdForUnit = new Guid(Property.Unit.TenantId);
-                                // checking existing tenants in given property unit
-                                var existingTenantsInUnit = (from c in obj.UnitsOccupiedByTenants
-                                    where
-                                        c.UnitId == propUnitDetails.UnitId &&
-                                        (c.IsDeleted == false || c.IsDeleted == null)
-                                    select c).ToList();
 
-                                if (existingTenantsInUnit.Count>0)
+                                // Check for existing tenants in given property unit
+                                var existingTenantsInUnit = (from c in obj.UnitsOccupiedByTenants
+                                                             where c.UnitId == propUnitDetails.UnitId &&
+                                                                  (c.IsDeleted == false || c.IsDeleted == null)
+                                                             select c).ToList();
+
+                                if (existingTenantsInUnit.Count > 0)
                                 {
-                                    // tenant found... checking if same tenant or different
+                                    // Tenant found... checking if same tenant or different
                                     foreach (UnitsOccupiedByTenant uobte in existingTenantsInUnit)
                                     {
                                         if (uobte.TenantId != tenantIdForUnit)
@@ -1412,11 +1308,10 @@ namespace LanLordlAPIs.Controllers
                                     // adding new tenant
 
                                     // code to save tenant for given unit...tenant will always be somewhere in db
-                                    
+
                                     UnitsOccupiedByTenant uobt = new UnitsOccupiedByTenant();
                                     uobt.TenantId = tenantIdForUnit;
                                     uobt.UnitId = propUnitDetails.UnitId;
-
 
                                     if (!String.IsNullOrEmpty(Property.Unit.AgreementDuration) && !String.IsNullOrEmpty(Property.Unit.RentStartDate))
                                     {
@@ -1426,7 +1321,6 @@ namespace LanLordlAPIs.Controllers
 
                                     obj.UnitsOccupiedByTenants.Add(uobt);
                                     obj.SaveChanges();
-
                                 }
                                 else
                                 {
@@ -1438,7 +1332,6 @@ namespace LanLordlAPIs.Controllers
                                     uobt.TenantId = tenantguid;
                                     uobt.UnitId = propUnitDetails.UnitId;
 
-
                                     if (!String.IsNullOrEmpty(Property.Unit.AgreementDuration) && !String.IsNullOrEmpty(Property.Unit.RentStartDate))
                                     {
                                         uobt.RentStartFrom = Property.Unit.RentStartDate;
@@ -1448,23 +1341,16 @@ namespace LanLordlAPIs.Controllers
                                     obj.UnitsOccupiedByTenants.Add(uobt);
                                     obj.SaveChanges();
                                 }
-
-
-
                             }
                             result.IsSuccess = true;
                             result.ErrorMessage = "OK.";
-                            
                         }
                         else
                         {
                             result.IsSuccess = false;
                             result.ErrorMessage = "Invalid unit Id passed.";
                         }
-
                     }
-
-
 
                     return result;
                 }
@@ -1472,15 +1358,13 @@ namespace LanLordlAPIs.Controllers
                 {
                     return result;
                 }
-
             }
             catch (Exception ex)
             {
-                Logger.Error("Landlords API -> Properties -> AddNewUnitInProperty. AddNewUnitInProperty requested by- [ " + Property.User.LandlorId + " ] . Exception details [ " + ex + " ]");
+                Logger.Error("Landlords API -> Properties -> EditPropertyUnit FAILED - [LandlordID: " + Property.User.LandlorId + " ], [Exception: " + ex + "]");
                 result.IsSuccess = false;
                 result.ErrorMessage = "Error while creating property. Retry later!";
                 return result;
-
             }
         }
     }
