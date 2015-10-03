@@ -98,6 +98,7 @@ namespace LanLordlAPIs.Models.Input_Models
 
         public bool IsTenantAdded { get; set; }
         public string TenantId { get; set; }
+        public string UnitId { get; set; }
 
         public string RentStartDate { get; set; }
         public string AgreementDuration { get; set; }

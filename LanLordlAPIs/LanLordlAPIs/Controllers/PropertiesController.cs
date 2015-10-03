@@ -1309,5 +1309,179 @@ namespace LanLordlAPIs.Controllers
             }
         }
 
+
+        //method to edit property unit
+        [HttpPost]
+        [ActionName("EditPropertyUnit")]
+        public CreatePropertyResultOutput EditPropertyUnit(AddNewUnitInputOuterClass Property)
+        {
+
+            CreatePropertyResultOutput result = new CreatePropertyResultOutput();
+            try
+            {
+                Logger.Info("Landlords API -> Properties -> EditPropertyUnit. EditPropertyUnit requested by [" +
+                            Property.User.LandlorId + "]");
+                Guid landlordguidId = new Guid(Property.User.LandlorId);
+                Guid propertyguidId = new Guid(Property.Unit.UnitId);
+                result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, Property.User.AccessToken);
+
+                if (result.AuthTokenValidation.IsTokenOk)
+                {
+
+
+                    using (NOOCHEntities obj = new NOOCHEntities())
+                    {
+
+                        // checking if valid property unit
+
+                        var propUnitDetails =
+                            (from c in obj.PropertyUnits where c.UnitId == propertyguidId select c).FirstOrDefault();
+
+                        if (propUnitDetails != null)
+                        {
+
+
+                            propUnitDetails.ModifiedOn = DateTime.Now;
+
+
+                            if (String.IsNullOrEmpty(Property.Unit.UnitNum) && String.IsNullOrEmpty(Property.Unit.UnitNickName))
+                            {
+                                result.IsSuccess = false;
+                                result.ErrorMessage = "Either unit number or nickname required.";
+                            }
+
+
+                            if (!String.IsNullOrEmpty(Property.Unit.UnitNum))
+                            {
+                                propUnitDetails.UnitNumber = Property.Unit.UnitNum;
+                            }
+                            if (!String.IsNullOrEmpty(Property.Unit.UnitNickName))
+                            {
+                                propUnitDetails.UnitNickName = Property.Unit.UnitNickName;
+                            }
+
+
+                            propUnitDetails.UnitRent = Property.Unit.Rent;
+
+
+
+                            //propUnitDetails.IsHidden = Property.Unit.is;
+
+                            if (Property.Unit.IsTenantAdded && !String.IsNullOrEmpty(Property.Unit.TenantId))
+                            {
+                                propUnitDetails.Status = "Occupied";
+                                propUnitDetails.IsOccupied = true;
+                            }
+                            else
+                            {
+                                propUnitDetails.Status = "Published";
+                                propUnitDetails.IsOccupied = false;
+                            }
+
+
+                            propUnitDetails.DueDate = Property.Unit.DueDate;
+
+                            //TBD with CLIFF about agreement starte date and length
+                            //propUnitDetails
+                            
+                            obj.SaveChanges();
+
+
+                            if (Property.Unit.IsTenantAdded && !String.IsNullOrEmpty(Property.Unit.TenantId))
+                            {
+                                Guid tenantIdForUnit = new Guid(Property.Unit.TenantId);
+                                // checking existing tenants in given property unit
+                                var existingTenantsInUnit = (from c in obj.UnitsOccupiedByTenants
+                                    where
+                                        c.UnitId == propUnitDetails.UnitId &&
+                                        (c.IsDeleted == false || c.IsDeleted == null)
+                                    select c).ToList();
+
+                                if (existingTenantsInUnit.Count>0)
+                                {
+                                    // tenant found... checking if same tenant or different
+                                    foreach (UnitsOccupiedByTenant uobte in existingTenantsInUnit)
+                                    {
+                                        if (uobte.TenantId != tenantIdForUnit)
+                                        {
+                                            // not sure what to do with existing tenant.... for now setting as deleted..and assigning property to new tenant
+                                            uobte.IsDeleted = true;
+                                            obj.SaveChanges();
+                                        }
+                                    }
+                                    // adding new tenant
+
+                                    // code to save tenant for given unit...tenant will always be somewhere in db
+                                    
+                                    UnitsOccupiedByTenant uobt = new UnitsOccupiedByTenant();
+                                    uobt.TenantId = tenantIdForUnit;
+                                    uobt.UnitId = propUnitDetails.UnitId;
+
+
+                                    if (!String.IsNullOrEmpty(Property.Unit.AgreementDuration) && !String.IsNullOrEmpty(Property.Unit.RentStartDate))
+                                    {
+                                        uobt.RentStartFrom = Property.Unit.RentStartDate;
+                                        uobt.AgreementLength = Property.Unit.AgreementDuration;
+                                    }
+
+                                    obj.UnitsOccupiedByTenants.Add(uobt);
+                                    obj.SaveChanges();
+
+                                }
+                                else
+                                {
+                                    // add new tenant
+
+                                    // code to save tenant for given unit...tenant will always be somewhere in db
+                                    Guid tenantguid = CommonHelper.ConvertToGuid(Property.Unit.TenantId);
+                                    UnitsOccupiedByTenant uobt = new UnitsOccupiedByTenant();
+                                    uobt.TenantId = tenantguid;
+                                    uobt.UnitId = propUnitDetails.UnitId;
+
+
+                                    if (!String.IsNullOrEmpty(Property.Unit.AgreementDuration) && !String.IsNullOrEmpty(Property.Unit.RentStartDate))
+                                    {
+                                        uobt.RentStartFrom = Property.Unit.RentStartDate;
+                                        uobt.AgreementLength = Property.Unit.AgreementDuration;
+                                    }
+
+                                    obj.UnitsOccupiedByTenants.Add(uobt);
+                                    obj.SaveChanges();
+                                }
+
+
+
+                            }
+                            result.IsSuccess = true;
+                            result.ErrorMessage = "OK.";
+                            
+                        }
+                        else
+                        {
+                            result.IsSuccess = false;
+                            result.ErrorMessage = "Invalid unit Id passed.";
+                        }
+
+                    }
+
+
+
+                    return result;
+                }
+                else
+                {
+                    return result;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Landlords API -> Properties -> AddNewUnitInProperty. AddNewUnitInProperty requested by- [ " + Property.User.LandlorId + " ] . Exception details [ " + ex + " ]");
+                result.IsSuccess = false;
+                result.ErrorMessage = "Error while creating property. Retry later!";
+                return result;
+
+            }
+        }
     }
 }

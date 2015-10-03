@@ -145,7 +145,6 @@
     <Property Name="ContactNumber" Type="nvarchar" MaxLength="500" />
     <Property Name="Status" Type="varchar" MaxLength="20" Nullable="false" />
     <Property Name="RememberMeEnabled" Type="bit" />
-    <Property Name="NoochAccountId" Type="uniqueidentifier" />
     <Property Name="DateCreated" Type="datetime" />
     <Property Name="DateModified" Type="datetime" />
     <Property Name="ModifiedBy" Type="uniqueidentifier" />
@@ -157,16 +156,11 @@
     <Property Name="FacebookAccountLogin" Type="nvarchar" MaxLength="100" />
     <Property Name="AllowPushNotifications" Type="bit" />
     <Property Name="Photo" Type="nvarchar" MaxLength="500" />
-    <Property Name="FacebookPhoto" Type="nvarchar" MaxLength="500" />
-    <Property Name="UseFacebookPicture" Type="bit" />
-    <Property Name="ClearTransactionHistory" Type="bit" />
     <Property Name="Address" Type="nvarchar" MaxLength="150" />
     <Property Name="City" Type="nvarchar" MaxLength="150" />
     <Property Name="State" Type="nvarchar" MaxLength="150" />
     <Property Name="Zipcode" Type="nvarchar" MaxLength="150" />
     <Property Name="Country" Type="nvarchar" MaxLength="150" />
-    <Property Name="NoOfTransfersByPackage" Type="int" />
-    <Property Name="FreeTransfers" Type="int" />
     <Property Name="ShowInSearch" Type="bit" />
     <Property Name="IsDeleted" Type="bit" />
     <Property Name="Deposit" Type="varchar" MaxLength="150" />
@@ -187,10 +181,6 @@
     <Property Name="LastLocationLat" Type="decimal" Precision="18" Scale="15" />
     <Property Name="LastLocationLng" Type="decimal" Precision="18" Scale="15" />
     <Property Name="AccessToken" Type="varchar(max)" />
-    <Property Name="IsFrequencyOn" Type="bit" />
-    <Property Name="IsTriggerOn" Type="bit" />
-    <Property Name="WithdrawalFrequency" Type="decimal" Precision="18" Scale="2" />
-    <Property Name="WithdrawalId" Type="uniqueidentifier" />
     <Property Name="Allow2FactorAuthentication" Type="bit" />
     <Property Name="IsOnline" Type="bit" />
     <Property Name="SDNCheckDateTime" Type="datetime" />
@@ -198,13 +188,11 @@
     <Property Name="ent_num" Type="bigint" />
     <Property Name="IsRequiredImmediatley" Type="bit" />
     <Property Name="DeviceToken" Type="varchar" MaxLength="250" />
-    <Property Name="trans_id" Type="varchar" MaxLength="250" />
-    <Property Name="user_key" Type="varchar" MaxLength="250" />
-    <Property Name="user_pass" Type="varchar" MaxLength="250" />
     <Property Name="IsSDNSafe" Type="bit" />
     <Property Name="AdminNotes" Type="varchar(max)" />
     <Property Name="PhoneVerifiedOn" Type="datetime" />
     <Property Name="VerificationDocumentPath" Type="varchar(max)" />
+    <Property Name="IsVerifiedWithSynapse" Type="bit" />
   </EntityType>
   <EntityType Name="PasswordResetRequests">
     <Key>
@@ -287,6 +275,13 @@
     <Property Name="Status" Type="varchar" MaxLength="50" />
     <Property Name="VerifiedOn" Type="datetime" />
     <Property Name="VerificationCode" Type="varchar(max)" />
+    <Property Name="oid" Type="varchar(max)" />
+    <Property Name="allowed" Type="varchar(max)" />
+    <Property Name="supp_id" Type="varchar(max)" />
+    <Property Name="class" Type="varchar(max)" />
+    <Property Name="type_bank" Type="varchar(max)" />
+    <Property Name="type_synapse" Type="varchar(max)" />
+    <Property Name="is_active" Type="bit" />
   </EntityType>
   <EntityType Name="Tenants">
     <Key>
