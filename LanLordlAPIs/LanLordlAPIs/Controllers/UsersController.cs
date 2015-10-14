@@ -171,7 +171,7 @@ namespace LanLordlAPIs.Controllers
                 else
                 {
                     // no file selected
-                    
+
                     result.ErrorMessage = "No or invalid file passed.";
                 }
             }
@@ -210,101 +210,100 @@ namespace LanLordlAPIs.Controllers
                     using (NOOCHEntities obj = new NOOCHEntities())
                     {
                         // Reading Landlord's details from DB
-                        var lanlorddetails = (from c in obj.Landlords
+                        var landlordObj = (from c in obj.Landlords
                                               where c.LandlordId == landlordguidId
                                               select c).FirstOrDefault();
 
-                        if (lanlorddetails != null)
+                        if (landlordObj != null)
                         {
-                            res.FirstName = !String.IsNullOrEmpty(lanlorddetails.FirstName) ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(lanlorddetails.FirstName)) : "";
-                            res.LastName = !String.IsNullOrEmpty(lanlorddetails.LastName) ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(lanlorddetails.LastName)) : "";
-                            res.AccountType = !String.IsNullOrEmpty(lanlorddetails.Type) ? lanlorddetails.Type : "";
-                            res.SubType = !String.IsNullOrEmpty(lanlorddetails.SubType) ? lanlorddetails.SubType : "";
+                            res.FirstName = !String.IsNullOrEmpty(landlordObj.FirstName) ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.FirstName)) : "";
+                            res.LastName = !String.IsNullOrEmpty(landlordObj.LastName) ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.LastName)) : "";
+                            res.AccountType = !String.IsNullOrEmpty(landlordObj.Type) ? landlordObj.Type : "";
+                            res.SubType = !String.IsNullOrEmpty(landlordObj.SubType) ? landlordObj.SubType : "";
 
-                            res.IsPhoneVerified = lanlorddetails.IsPhoneVerified != null;
-                            res.IsEmailVerified = lanlorddetails.IsEmailVerfieid != null;
+                            res.IsPhoneVerified = landlordObj.IsPhoneVerified != null;
+                            res.IsEmailVerified = landlordObj.IsEmailVerfieid != null;
 
-                            res.DOB = lanlorddetails.DateOfBirth != null ? Convert.ToDateTime(lanlorddetails.DateOfBirth).ToString("d") : "";
+                            res.DOB = landlordObj.DateOfBirth != null ? Convert.ToDateTime(landlordObj.DateOfBirth).ToString("d") : "";
+                            res.SSN = !String.IsNullOrEmpty(landlordObj.SSN) ? CommonHelper.GetDecryptedData(landlordObj.SSN) : "";
+                            res.isIdVerified = landlordObj.IsIdVerified ?? false;
 
-                            res.SSN = !String.IsNullOrEmpty(lanlorddetails.SSN) ? CommonHelper.GetDecryptedData(lanlorddetails.SSN) : "";
-                            res.UserEmail = !String.IsNullOrEmpty(lanlorddetails.eMail) ? CommonHelper.GetDecryptedData(lanlorddetails.eMail) : "";
+                            res.UserEmail = !String.IsNullOrEmpty(landlordObj.eMail) ? CommonHelper.GetDecryptedData(landlordObj.eMail) : "";
+                            res.MobileNumber = !String.IsNullOrEmpty(landlordObj.MobileNumber) ? CommonHelper.FormatPhoneNumber(landlordObj.MobileNumber) : "";
 
-                            res.MobileNumber = !String.IsNullOrEmpty(lanlorddetails.MobileNumber) ? CommonHelper.FormatPhoneNumber(lanlorddetails.MobileNumber) : "";
-
-                            if (!String.IsNullOrEmpty(lanlorddetails.AddressLineOne))
+                            if (!String.IsNullOrEmpty(landlordObj.AddressLineOne))
                             {
-                                res.Address = CommonHelper.GetDecryptedData(lanlorddetails.AddressLineOne);
-                                res.AddressLine1 = CommonHelper.GetDecryptedData(lanlorddetails.AddressLineOne);
+                                res.Address = CommonHelper.GetDecryptedData(landlordObj.AddressLineOne);
+                                res.AddressLine1 = CommonHelper.GetDecryptedData(landlordObj.AddressLineOne);
                             }
                             else
                             {
                                 res.AddressLine1 = "";
                             }
 
-                            if (!String.IsNullOrEmpty(lanlorddetails.AddressLineTwo))
+                            if (!String.IsNullOrEmpty(landlordObj.AddressLineTwo))
                             {
-                                res.Address += " " + CommonHelper.GetDecryptedData(lanlorddetails.AddressLineTwo);
-                                res.AddressLine2 = CommonHelper.GetDecryptedData(lanlorddetails.AddressLineTwo);
+                                res.Address += " " + CommonHelper.GetDecryptedData(landlordObj.AddressLineTwo);
+                                res.AddressLine2 = CommonHelper.GetDecryptedData(landlordObj.AddressLineTwo);
                             }
                             else
                             {
                                 res.AddressLine2 = "";
                             }
-                            if (!String.IsNullOrEmpty(lanlorddetails.City))
+                            if (!String.IsNullOrEmpty(landlordObj.City))
                             {
-                                res.Address += " " + CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(lanlorddetails.City));
-                                res.City = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(lanlorddetails.City));
+                                res.Address += " " + CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.City));
+                                res.City = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.City));
                             }
                             else
                             {
                                 res.City = "";
                             }
 
-                            if (!String.IsNullOrEmpty(lanlorddetails.State))
+                            if (!String.IsNullOrEmpty(landlordObj.State))
                             {
-                                res.Address += " " + CommonHelper.GetDecryptedData(lanlorddetails.State);
-                                res.AddState = CommonHelper.GetDecryptedData(lanlorddetails.State);
+                                res.Address += " " + CommonHelper.GetDecryptedData(landlordObj.State);
+                                res.AddState = CommonHelper.GetDecryptedData(landlordObj.State);
                             }
                             else
                             {
                                 res.AddState = "";
                             }
-                            if (!String.IsNullOrEmpty(lanlorddetails.Zip))
+                            if (!String.IsNullOrEmpty(landlordObj.Zip))
                             {
-                                res.Address += " " + CommonHelper.GetDecryptedData(lanlorddetails.Zip);
-                                res.Zip = CommonHelper.GetDecryptedData(lanlorddetails.Zip);
+                                res.Address += " " + CommonHelper.GetDecryptedData(landlordObj.Zip);
+                                res.Zip = CommonHelper.GetDecryptedData(landlordObj.Zip);
                             }
                             else
                             {
                                 res.Zip = "";
                             }
-                            if (!String.IsNullOrEmpty(lanlorddetails.Country))
+                            if (!String.IsNullOrEmpty(landlordObj.Country))
                             {
-                                res.Address += " " + CommonHelper.GetDecryptedData(lanlorddetails.Country);
-                                res.Country = CommonHelper.GetDecryptedData(lanlorddetails.Country);
+                                res.Address += " " + CommonHelper.GetDecryptedData(landlordObj.Country);
+                                res.Country = CommonHelper.GetDecryptedData(landlordObj.Country);
                             }
                             else
                             {
                                 res.Country = "";
                             }
 
-                            res.TwitterHandle = !String.IsNullOrEmpty(lanlorddetails.TwitterHandle)
-                                                    ? lanlorddetails.TwitterHandle
+                            res.TwitterHandle = !String.IsNullOrEmpty(landlordObj.TwitterHandle)
+                                                    ? landlordObj.TwitterHandle
                                                     : "";
-                            res.FbUrl = !String.IsNullOrEmpty(lanlorddetails.FBId)
-                                                    ? lanlorddetails.FBId : "";
-                            res.InstaUrl = !String.IsNullOrEmpty(lanlorddetails.InstagramUrl)
-                                                    ? lanlorddetails.InstagramUrl
+                            res.FbUrl = !String.IsNullOrEmpty(landlordObj.FBId)
+                                                    ? landlordObj.FBId : "";
+                            res.InstaUrl = !String.IsNullOrEmpty(landlordObj.InstagramUrl)
+                                                    ? landlordObj.InstagramUrl
+                                                    : "";
+                            res.CompanyName = !String.IsNullOrEmpty(landlordObj.CompanyName)
+                                                    ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.CompanyName))
+                                                    : "";
+                            res.CompanyEID = !String.IsNullOrEmpty(landlordObj.CompanyEIN)
+                                                    ? CommonHelper.GetDecryptedData(landlordObj.CompanyEIN)
                                                     : "";
 
-                            res.CompanyName = !String.IsNullOrEmpty(lanlorddetails.CompanyName)
-                                                    ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(lanlorddetails.CompanyName))
-                                                    : "";
-                            res.CompanyEID = !String.IsNullOrEmpty(lanlorddetails.CompanyEIN)
-                                                    ? CommonHelper.GetDecryptedData(lanlorddetails.CompanyEIN)
-                                                    : "";
-
-                            res.UserImageUrl = lanlorddetails.UserPic;
+                            res.UserImageUrl = landlordObj.UserPic;
                             res.TenantsCount = obj.GetTenantsCountForGivenLandlord(User.LandlorId).SingleOrDefault().ToString();
                             res.PropertiesCount = obj.GetPropertiesCountForGivenLandlord(User.LandlorId).SingleOrDefault().ToString();
                             res.UnitsCount = obj.GetUnitsCountForGivenLandlord(User.LandlorId).SingleOrDefault().ToString();
@@ -865,14 +864,14 @@ namespace LanLordlAPIs.Controllers
                         result.IsEmailVerified = Convert.ToBoolean(obj.IsEmailVerifiedforGivenLandlordOrTenant("Landlord", Property.LandlorId).SingleOrDefault());
                         result.IsPhoneVerified = Convert.ToBoolean(obj.IsPhoneVerifiedforGivenLandlordOrTenant("Landlord", Property.LandlorId).SingleOrDefault());
 
-                        var landlordDetails = (from c in obj.Landlords
+                        var landlordObj = (from c in obj.Landlords
                                                where c.LandlordId == landlordguidId
                                                select c).FirstOrDefault();
 
-                        if (landlordDetails != null)
+                        if (landlordObj != null)
                         {
-                            result.IsIDVerified = landlordDetails.IsIdVerified ?? false;
-                            result.IsAnyRentReceived = landlordDetails.IsAnyRentReceived ?? false;
+                            result.IsIDVerified = landlordObj.IsIdVerified ?? false;
+                            result.IsAnyRentReceived = landlordObj.IsAnyRentReceived ?? false;
                         }
 
                         result.IsSuccess = true;

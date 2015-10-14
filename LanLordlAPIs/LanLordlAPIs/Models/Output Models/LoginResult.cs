@@ -82,6 +82,7 @@ namespace LanLordlAPIs.Models.Output_Models
 
         public string DOB { get; set; }
         public string SSN { get; set; }
+        public bool? isIdVerified { get; set; }
 
         public string UserEmail { get; set; }
 
@@ -191,7 +192,7 @@ namespace LanLordlAPIs.Models.Output_Models
         public bool IsPhoneVerified { get; set; }
         public bool IsBankAccountAdded { get; set; }
     }
-    
+
 
     public class BankDetailsResult
     {
@@ -199,7 +200,7 @@ namespace LanLordlAPIs.Models.Output_Models
         public string BankIcon { get; set; }
         public string BankAccountID { get; set; }
         public string BankAccountNick { get; set; }
-        public string BankAccountNumString { get; set; }   
+        public string BankAccountNumString { get; set; }
     }
 
 
@@ -280,7 +281,7 @@ namespace LanLordlAPIs.Models.Output_Models
         public bool IsEmailVerified { get; set; }
         public bool IsPhoneVerified { get; set; }
         public bool IsBankAccountAdded { get; set; }
-        
+
 
         public string ImageUrl { get; set; }  // for tenant image url
         public string UnitImage { get; set; }
