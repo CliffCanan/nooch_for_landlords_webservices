@@ -47,8 +47,11 @@ namespace LanLordlAPIs.Controllers
                     // checking if username and password is correct and given user is landlord or not
                     var userCheckResult = (from c in obj.Landlords
                                            join d in obj.Members on c.MemberId equals d.MemberId
-                                           where d.UserName == userNameEncrypted && d.Password == passEncrypted
-                                                 && d.IsDeleted == false && c.IsDeleted == false && (c.Status != "Suspended" || c.Status != "Temporarily_Blocked")
+                                           where d.UserName == userNameEncrypted &&
+                                                 d.Password == passEncrypted &&
+                                                 d.IsDeleted == false &&
+                                                 c.IsDeleted == false &&
+                                                 (c.Status != "Suspended" || c.Status != "Temporarily_Blocked")
                                            select
                                                new
                                                {
@@ -61,9 +64,9 @@ namespace LanLordlAPIs.Controllers
                     if (userCheckResult != null)
                     {
                         //updating ip in db
-                        var landlordEntity =
-                            (from ll in obj.Landlords where ll.LandlordId == userCheckResult.LandlordId select ll)
-                                .FirstOrDefault();
+                        var landlordEntity = (from ll in obj.Landlords
+                                              where ll.LandlordId == userCheckResult.LandlordId
+                                              select ll).FirstOrDefault();
 
                         CommonHelper.saveLandlordIp(userCheckResult.LandlordId, User.Ip);
                         landlordEntity.DateModified = requestDatetime;
@@ -73,12 +76,10 @@ namespace LanLordlAPIs.Controllers
 
                         obj.SaveChanges();
 
-
                         result.IsSuccess = true;
                         result.ErrorMessage = "OK";
                         result.AccessToken = landlordEntity.WebAccessToken;
                         result.MemberId = landlordEntity.LandlordId.ToString();
-
                     }
                     else
                     {
@@ -194,7 +195,7 @@ namespace LanLordlAPIs.Controllers
         [ActionName("GetUserInfo")]
         public LandlordProfileInfoResult GetUserInfo(GetProfileDataInput User)
         {
-            Logger.Info("Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [" + User.LandlorId + "]");
+            //Logger.Info("UsersController -> GetUserInfo Initiated [" + User.LandlorId + "]");
 
             LandlordProfileInfoResult res = new LandlordProfileInfoResult();
             res.IsSuccess = false;
@@ -209,24 +210,26 @@ namespace LanLordlAPIs.Controllers
                 {
                     using (NOOCHEntities obj = new NOOCHEntities())
                     {
-                        // Reading Landlord's details from DB
+                        // Reading Landlord's details from Landlords Table in  DB
                         var landlordObj = (from c in obj.Landlords
-                                              where c.LandlordId == landlordguidId
-                                              select c).FirstOrDefault();
+                                           where c.LandlordId == landlordguidId
+                                           select c).FirstOrDefault();
 
                         if (landlordObj != null)
                         {
+                            res.MemberId = landlordObj.MemberId.ToString();
+
                             res.FirstName = !String.IsNullOrEmpty(landlordObj.FirstName) ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.FirstName)) : "";
                             res.LastName = !String.IsNullOrEmpty(landlordObj.LastName) ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.LastName)) : "";
                             res.AccountType = !String.IsNullOrEmpty(landlordObj.Type) ? landlordObj.Type : "";
                             res.SubType = !String.IsNullOrEmpty(landlordObj.SubType) ? landlordObj.SubType : "";
 
-                            res.IsPhoneVerified = landlordObj.IsPhoneVerified != null;
-                            res.IsEmailVerified = landlordObj.IsEmailVerfieid != null;
+                            res.IsPhoneVerified = (landlordObj.IsPhoneVerified == true) ? true : false;
+                            res.IsEmailVerified = (landlordObj.IsEmailVerfieid == true) ? true : false;
 
                             res.DOB = landlordObj.DateOfBirth != null ? Convert.ToDateTime(landlordObj.DateOfBirth).ToString("d") : "";
                             res.SSN = !String.IsNullOrEmpty(landlordObj.SSN) ? CommonHelper.GetDecryptedData(landlordObj.SSN) : "";
-                            res.isIdVerified = landlordObj.IsIdVerified ?? false;
+                            res.isIdVerified = (landlordObj.IsIdVerified == true) ? true : false;
 
                             res.UserEmail = !String.IsNullOrEmpty(landlordObj.eMail) ? CommonHelper.GetDecryptedData(landlordObj.eMail) : "";
                             res.MobileNumber = !String.IsNullOrEmpty(landlordObj.MobileNumber) ? CommonHelper.FormatPhoneNumber(landlordObj.MobileNumber) : "";
@@ -309,6 +312,19 @@ namespace LanLordlAPIs.Controllers
                             res.UnitsCount = obj.GetUnitsCountForGivenLandlord(User.LandlorId).SingleOrDefault().ToString();
                             res.IsSuccess = true;
                             res.ErrorMessage = "OK";
+
+                            // Now get Landlord's details from MEMBERS Table in  DB
+                            var memberObj = (from c in obj.Members
+                                             where c.MemberId == landlordObj.MemberId
+                                             select c).FirstOrDefault();
+
+                            if (memberObj != null)
+                            {
+                                if (memberObj.IsVerifiedWithSynapse == true)
+                                {
+                                    res.isIdVerified = true;
+                                }
+                            }
                         }
 
                         return res;
@@ -350,11 +366,11 @@ namespace LanLordlAPIs.Controllers
                     using (NOOCHEntities obj = new NOOCHEntities())
                     {
                         //reading details from db
-                        var lanlorddetails = (from c in obj.Landlords
-                                              where c.LandlordId == landlordguidId
-                                              select c).FirstOrDefault();
+                        var lanlordObj = (from c in obj.Landlords
+                                          where c.LandlordId == landlordguidId
+                                          select c).FirstOrDefault();
 
-                        if (lanlorddetails != null)
+                        if (lanlordObj != null)
                         {
                             if (User.UserInfo.InfoType == "Personal")
                             {
@@ -362,7 +378,7 @@ namespace LanLordlAPIs.Controllers
 
                                 if (String.IsNullOrEmpty(User.UserInfo.FullName))
                                 {
-                                    result.ErrorMessage = "Name missing.";
+                                    result.ErrorMessage = "Name missing";
                                     return result;
                                 }
 
@@ -379,17 +395,18 @@ namespace LanLordlAPIs.Controllers
                                     }
 
                                     // Now store info in DB
-                                    lanlorddetails.FirstName = CommonHelper.GetEncryptedData(firstName.Trim());
-                                    lanlorddetails.LastName = CommonHelper.GetEncryptedData(lastName.Trim());
+                                    lanlordObj.FirstName = CommonHelper.GetEncryptedData(firstName.Trim());
+                                    lanlordObj.LastName = CommonHelper.GetEncryptedData(lastName.Trim());
                                     if (!String.IsNullOrEmpty(User.UserInfo.DOB))
                                     {
-                                        lanlorddetails.DateOfBirth = Convert.ToDateTime(User.UserInfo.DOB);
+                                        lanlordObj.DateOfBirth = Convert.ToDateTime(User.UserInfo.DOB);
                                     }
-                                    if (!String.IsNullOrEmpty(User.UserInfo.SSN))
+                                    if (!String.IsNullOrEmpty(User.UserInfo.SSN) &&
+                                        User.UserInfo.SSN.Length == 4)
                                     {
-                                        lanlorddetails.SSN = CommonHelper.GetEncryptedData(User.UserInfo.SSN);
+                                        lanlordObj.SSN = CommonHelper.GetEncryptedData(User.UserInfo.SSN);
                                     }
-                                    lanlorddetails.DateModified = DateTime.Now;
+                                    lanlordObj.DateModified = DateTime.Now;
 
                                     obj.SaveChanges();
 
@@ -416,12 +433,12 @@ namespace LanLordlAPIs.Controllers
                                 }
 
                                 // Now store company info in DB
-                                lanlorddetails.CompanyName = CommonHelper.GetEncryptedData(CommonHelper.UppercaseFirst(User.UserInfo.CompanyName));
+                                lanlordObj.CompanyName = CommonHelper.GetEncryptedData(CommonHelper.UppercaseFirst(User.UserInfo.CompanyName));
                                 if (!String.IsNullOrEmpty(User.UserInfo.CompanyEID))
                                 {
-                                    lanlorddetails.CompanyEIN = CommonHelper.GetEncryptedData(User.UserInfo.CompanyEID);
+                                    lanlordObj.CompanyEIN = CommonHelper.GetEncryptedData(User.UserInfo.CompanyEID);
                                 }
-                                lanlorddetails.DateModified = DateTime.Now;
+                                lanlordObj.DateModified = DateTime.Now;
 
                                 obj.SaveChanges();
 
@@ -468,23 +485,23 @@ namespace LanLordlAPIs.Controllers
                                 }
 
                                 // Now store all contact info in DB
-                                lanlorddetails.DateModified = DateTime.Now;
+                                lanlordObj.DateModified = DateTime.Now;
 
-                                if (lanlorddetails.eMail != userEmailNew)
+                                if (lanlordObj.eMail != userEmailNew)
                                 {
-                                    lanlorddetails.IsEmailVerfieid = false;
-                                    lanlorddetails.eMail = userEmailNew;
+                                    lanlordObj.IsEmailVerfieid = false;
+                                    lanlordObj.eMail = userEmailNew;
                                 }
 
                                 if (String.IsNullOrEmpty(User.UserInfo.MobileNumber))
                                 {
-                                    if (CommonHelper.RemovePhoneNumberFormatting(lanlorddetails.MobileNumber) != CommonHelper.RemovePhoneNumberFormatting(User.UserInfo.MobileNumber))
+                                    if (CommonHelper.RemovePhoneNumberFormatting(lanlordObj.MobileNumber) != CommonHelper.RemovePhoneNumberFormatting(User.UserInfo.MobileNumber))
                                     {
-                                        lanlorddetails.MobileNumber = CommonHelper.RemovePhoneNumberFormatting(User.UserInfo.MobileNumber);
+                                        lanlordObj.MobileNumber = CommonHelper.RemovePhoneNumberFormatting(User.UserInfo.MobileNumber);
                                     }
                                 }
 
-                                lanlorddetails.AddressLineOne = CommonHelper.GetEncryptedData(User.UserInfo.AddressLine1);
+                                lanlordObj.AddressLineOne = CommonHelper.GetEncryptedData(User.UserInfo.AddressLine1);
 
                                 obj.SaveChanges();
 
@@ -502,15 +519,15 @@ namespace LanLordlAPIs.Controllers
 
                                 if (!String.IsNullOrEmpty(User.UserInfo.TwitterHandle))
                                 {
-                                    lanlorddetails.TwitterHandle = User.UserInfo.TwitterHandle;
+                                    lanlordObj.TwitterHandle = User.UserInfo.TwitterHandle;
                                 }
                                 if (!String.IsNullOrEmpty(User.UserInfo.FbUrl))
                                 {
-                                    lanlorddetails.FBId = User.UserInfo.FbUrl;
+                                    lanlordObj.FBId = User.UserInfo.FbUrl;
                                 }
                                 if (!String.IsNullOrEmpty(User.UserInfo.InstaUrl))
                                 {
-                                    lanlorddetails.InstagramUrl = User.UserInfo.InstaUrl;
+                                    lanlordObj.InstagramUrl = User.UserInfo.InstaUrl;
                                 }
 
                                 obj.SaveChanges();
@@ -534,11 +551,142 @@ namespace LanLordlAPIs.Controllers
             }
             catch (Exception ex)
             {
-                Logger.Info("Landlords API -> UsersController -> EditUserInfo FAILED - [Outer Exception: " + ex.ToString() + "]");
+                Logger.Error("Landlords API -> UsersController -> EditUserInfo FAILED - [Outer Exception: " + ex.ToString() + "]");
                 result.ErrorMessage = "Server error";
             }
 
             return result;
+        }
+
+
+        [HttpPost]
+        [ActionName("submitLandlordIdVerWiz")]
+        public idVerWizardResult submitLandlordIdVerWiz(idVerWizardInput landlordsInput)
+        {
+            Logger.Error("Landlords API -> UsersController -> submitLandlordIdVerWiz Initiated - [LandlordID: " + landlordsInput.DeviceInfo.LandlorId + "]");
+
+            idVerWizardResult res = new idVerWizardResult();
+            res.success = false;
+
+            try
+            {
+                Guid landlordguidId = new Guid(landlordsInput.DeviceInfo.LandlorId);
+                var checkToken = CommonHelper.AuthTokenValidation(landlordguidId, landlordsInput.DeviceInfo.AccessToken);
+
+                if (checkToken.IsTokenOk)
+                {
+                    // valid access token continue with edit
+
+                    using (NOOCHEntities obj = new NOOCHEntities())
+                    {
+                        // Get Landlord details from DB
+                        var lanlordObj = (from c in obj.Landlords
+                                          where c.LandlordId == landlordguidId
+                                          select c).FirstOrDefault();
+
+                        if (lanlordObj != null)
+                        {
+                            #region Update LANDLORDS Table
+
+                            // Now store info in DB
+                            if (!String.IsNullOrEmpty(landlordsInput.dob))
+                            {
+                                lanlordObj.DateOfBirth = Convert.ToDateTime(landlordsInput.dob);
+                            }
+                            if (!String.IsNullOrEmpty(landlordsInput.ssn) &&
+                                landlordsInput.ssn.Length == 4)
+                            {
+                                lanlordObj.SSN = CommonHelper.GetEncryptedData(landlordsInput.ssn);
+                            }
+                            if (!String.IsNullOrEmpty(landlordsInput.staddress))
+                            {
+                                lanlordObj.AddressLineOne = CommonHelper.GetEncryptedData(landlordsInput.staddress);
+                            }
+                            if (!String.IsNullOrEmpty(landlordsInput.zip))
+                            {
+                                lanlordObj.Zip = CommonHelper.GetEncryptedData(landlordsInput.zip);
+                            }
+                            lanlordObj.DateModified = DateTime.Now;
+
+                            #endregion Update LANDLORDS Table
+
+
+                            #region Update MEMBERS Table
+                            // CLIFF (10/15/15): Since all the Synapse methods take the data from the Members Table,
+                            //                   we have to also save any of that data for Landlords in the Members Table 
+                            //                   ...even though we have most of the same data in the Landlords table.  We shouldn't have duplicated everything :-(
+
+                            var memberObj = (from c in obj.Members
+                                             where c.MemberId == lanlordObj.MemberId
+                                             select c).FirstOrDefault();
+
+                            if (memberObj != null)
+                            {
+                                string firstName = "", lastName = "";
+                                string[] nameAftetSplit = landlordsInput.fullName.Trim().ToLower().Split(' ');
+
+                                if (nameAftetSplit.Length > 1)
+                                {
+                                    firstName = CommonHelper.UppercaseFirst(nameAftetSplit[0]);
+
+                                    for (int i = 1; i < nameAftetSplit.Length; i++)
+                                    {
+                                        lastName += CommonHelper.UppercaseFirst(nameAftetSplit[i]) + " ";
+                                    }
+                                }
+                                memberObj.FirstName = CommonHelper.GetEncryptedData(firstName.Trim());
+                                memberObj.LastName = CommonHelper.GetEncryptedData(lastName.Trim());
+                                if (!String.IsNullOrEmpty(landlordsInput.dob))
+                                {
+                                    memberObj.DateOfBirth = Convert.ToDateTime(landlordsInput.dob);
+                                }
+                                if (!String.IsNullOrEmpty(landlordsInput.ssn) &&
+                                    landlordsInput.ssn.Length == 4)
+                                {
+                                    memberObj.SSN = CommonHelper.GetEncryptedData(landlordsInput.ssn);
+                                }
+                                if (!String.IsNullOrEmpty(landlordsInput.staddress))
+                                {
+                                    memberObj.Address = CommonHelper.GetEncryptedData(landlordsInput.staddress);
+                                }
+                                if (!String.IsNullOrEmpty(landlordsInput.zip))
+                                {
+                                    memberObj.Zipcode = CommonHelper.GetEncryptedData(landlordsInput.zip);
+                                }
+
+                                // Setting IsVerifiedPhone to be 'true' because it might prevent the Landlord from adding a bank
+                                memberObj.IsVerifiedPhone = true;
+
+                                memberObj.DateModified = DateTime.Now;
+
+                                obj.SaveChanges();
+
+                                res.success = true;
+                                res.msg = "OK";
+                            }
+                            else
+                            {
+                                Logger.Error("Landlords API -> UsersController -> submitLandlordIdVerWiz FAILED - Member Not Found");
+                            }
+
+                            #endregion Update MEMBERS Table
+                        }
+                        else
+                        {
+                            Logger.Error("Landlords API -> UsersController -> submitLandlordIdVerWiz FAILED - Landlord Not Found");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("UsersControllers -> submitLandlordIdVerWiz FAILED - [LandlordID: " +
+                             landlordsInput.DeviceInfo.LandlorId + "], [Exception: " + ex + "]");
+
+                res.msg = "Server exception while submitting SSN info - try again later!";
+            }
+
+            return res;
         }
 
 
@@ -563,7 +711,7 @@ namespace LanLordlAPIs.Controllers
                     {
                         #region Save New Landlord & Member Details In DB
 
-                        // need to make new entry in member table first
+                        // Make new entry in Members Table first
                         var userNameLowerCase = llDetails.eMail.Trim().ToLower();
                         string noochRandomId = CommonHelper.GetRandomNoochId();
 
@@ -598,12 +746,17 @@ namespace LanLordlAPIs.Controllers
                                 UserNameLowerCase = CommonHelper.GetEncryptedData(userNameLowerCase),
                                 FacebookAccountLogin = null,
                                 InviteCodeIdUsed = null,
-                                Type = "Personal",
+                                Type = "Landlord",
+                                IsVerifiedPhone = false,
+                                IsVerifiedWithSynapse = false,
+                                UDID1 = llDetails.fingerprint,
 
-                                Address = CommonHelper.GetEncryptedData(" "),   // some blanks as default
+                                // some blanks as default
+                                Address = CommonHelper.GetEncryptedData(" "),
                                 State = CommonHelper.GetEncryptedData(" "),
                                 City = CommonHelper.GetEncryptedData(" "),
                                 Zipcode = CommonHelper.GetEncryptedData(" "),
+                                Country = llDetails.country,
                                 ContactNumber = CommonHelper.GetEncryptedData(" ")
                             };
 
@@ -649,7 +802,7 @@ namespace LanLordlAPIs.Controllers
                                 catch (Exception ex)
                                 {
                                     Logger.Error("UserController -> RegisterLandlord - Registration email NOT sent to [" +
-                                                           llDetails.eMail.Trim() + "]");
+                                                           llDetails.eMail.Trim() + "], [Exception: " + ex + "]");
                                 }
 
                                 #endregion Send Verification email
@@ -724,10 +877,10 @@ namespace LanLordlAPIs.Controllers
 
                                 #endregion Privacy Settings
 
-                                // Finally, make an entry in DB 
+                                // Finally, make an entry in Landlords Table 
                                 Landlord l = CommonHelper.AddNewLandlordEntryInDb(llDetails.FirstName,
                                     llDetails.LastName, llDetails.eMail, llDetails.Password, false, false,
-                                    member.MemberId);
+                                    llDetails.ip, member.MemberId);
 
                                 if (l != null)
                                 {
@@ -757,7 +910,7 @@ namespace LanLordlAPIs.Controllers
 
                         Landlord l = CommonHelper.AddNewLandlordEntryInDb(llDetails.FirstName,
                             llDetails.LastName, llDetails.eMail, llDetails.Password, true, true,
-                            mem.MemberDetails.MemberId);
+                            llDetails.ip, mem.MemberDetails.MemberId);
 
                         if (l != null)
                         {
@@ -784,7 +937,7 @@ namespace LanLordlAPIs.Controllers
             }
             catch (Exception ex)
             {
-                Logger.Error("UsersController -> RegisterLandlord FAILED - Outer Exception - [Email: " + llDetails.eMail + "], [Exception: " + ex.Message + "]");
+                Logger.Error("UsersController -> RegisterLandlord FAILED - Outer Exception - [Email: " + llDetails.eMail + "], [Exception: " + ex + "]");
                 result.ErrorMessage = "Server Error.";
             }
             return result;
@@ -824,7 +977,7 @@ namespace LanLordlAPIs.Controllers
             }
             catch (Exception ex)
             {
-                Logger.Error("UsersController -> ResetPassword FAILED - [UserName: " + userName + "], [Exception: " + ex.Message + "]");
+                Logger.Error("UsersController -> ResetPassword FAILED - [UserName: " + userName + "], [Exception: " + ex + "]");
 
                 res.ErrorMessage = "Problem occured while sending mail.";
             }
@@ -865,13 +1018,29 @@ namespace LanLordlAPIs.Controllers
                         result.IsPhoneVerified = Convert.ToBoolean(obj.IsPhoneVerifiedforGivenLandlordOrTenant("Landlord", Property.LandlorId).SingleOrDefault());
 
                         var landlordObj = (from c in obj.Landlords
-                                               where c.LandlordId == landlordguidId
-                                               select c).FirstOrDefault();
+                                           where c.LandlordId == landlordguidId
+                                           select c).FirstOrDefault();
 
                         if (landlordObj != null)
                         {
-                            result.IsIDVerified = landlordObj.IsIdVerified ?? false;
-                            result.IsAnyRentReceived = landlordObj.IsAnyRentReceived ?? false;
+                            result.isIdVerified = (landlordObj.IsIdVerified == true) ? true : false;
+                            result.IsAnyRentReceived = (landlordObj.IsAnyRentReceived == true) ? true : false;
+
+                            if (result.isIdVerified != true)
+                            {
+                                // Now check Landlord's details in MEMBERS Table to confirm ID is NOT verified
+                                var memberObj = (from c in obj.Members
+                                                 where c.MemberId == landlordObj.MemberId
+                                                 select c).FirstOrDefault();
+
+                                if (memberObj != null)
+                                {
+                                    if (memberObj.IsVerifiedWithSynapse == true)
+                                    {
+                                        result.isIdVerified = true;
+                                    }
+                                }
+                            }
                         }
 
                         result.IsSuccess = true;
@@ -1020,6 +1189,152 @@ namespace LanLordlAPIs.Controllers
 
             return result;
         }
+
+
+        [HttpPost]
+        [ActionName("GetBankAccountDetails")]
+        public SynapseAccoutDetailsInput GetBankAccountDetails(GetProfileDataInput input)
+        {
+            Logger.Info("Landlord APIs -> UsersController -> GetBankAccountDetails Initiated - [LandlordID: " + input.LandlorId + "]");
+
+            SynapseAccoutDetailsInput res = new SynapseAccoutDetailsInput();
+            res.success = false;
+            res.msg = "Initial";
+
+            try
+            {
+                Guid landlordguidId = new Guid(input.LandlorId);
+                var checkToken = CommonHelper.AuthTokenValidation(landlordguidId, input.AccessToken);
+
+                if (checkToken.IsTokenOk)
+                {
+                    // valid access token continue with edit
+
+                    using (NOOCHEntities obj = new NOOCHEntities())
+                    {
+                        var bankAccnt = (from c in obj.SynapseBanksOfMembers
+                                         join d in obj.Landlords on c.MemberId equals d.MemberId
+                                         where d.LandlordId == landlordguidId &&
+                                               d.IsDeleted == false
+                                         select
+                                         new
+                                         {
+                                             c.MemberId,
+                                             c.bank_name,
+                                             c.nickname,
+                                             c.account_number_string,
+                                             c.allowed,
+                                             c.Status,
+                                             c.AddedOn
+                                         }
+                        ).FirstOrDefault();
+
+
+                        if (bankAccnt != null)
+                        {
+                            res.msg = "Bank Found!";
+
+                            string appPath = "https://noochme.com/noochweb/";
+
+                            res.BankName = CommonHelper.GetDecryptedData(bankAccnt.bank_name);
+                            res.BankNickname = CommonHelper.GetDecryptedData(bankAccnt.nickname);
+                            switch (res.BankName)
+                            {
+                                case "Ally":
+                                    {
+                                        res.BankImageURL = String.Concat(appPath, "Assets/Images/bankPictures/ally.png");
+                                    }
+                                    break;
+                                case "Bank of America":
+                                    {
+                                        res.BankImageURL = String.Concat(appPath, "Assets/Images/bankPictures/bankofamerica.png");
+                                    }
+                                    break;
+                                case "Wells Fargo":
+                                    {
+                                        res.BankImageURL = String.Concat(appPath, "Assets/Images/bankPictures/WellsFargo.png");
+                                    }
+                                    break;
+                                case "Chase":
+                                    {
+                                        res.BankImageURL = String.Concat(appPath, "Assets/Images/bankPictures/chase.png");
+                                    }
+                                    break;
+                                case "Citibank":
+                                    {
+                                        res.BankImageURL = String.Concat(appPath, "Assets/Images/bankPictures/citibank.png");
+                                    }
+                                    break;
+                                case "TD Bank":
+                                    {
+                                        res.BankImageURL = String.Concat(appPath, "Assets/Images/bankPictures/td.png");
+                                    }
+                                    break;
+                                case "Capital One 360":
+                                    {
+                                        res.BankImageURL = String.Concat(appPath, "Assets/Images/bankPictures/capone360.png");
+                                    }
+                                    break;
+                                case "US Bank":
+                                    {
+                                        res.BankImageURL = String.Concat(appPath, "Assets/Images/bankPictures/usbank.png");
+                                    }
+                                    break;
+                                case "PNC":
+                                    {
+                                        res.BankImageURL = String.Concat(appPath, "Assets/Images/bankPictures/pnc.png");
+                                    }
+                                    break;
+                                case "SunTrust":
+                                    {
+                                        res.BankImageURL = String.Concat(appPath, "Assets/Images/bankPictures/suntrust.png");
+                                    }
+                                    break;
+                                case "USAA":
+                                    {
+                                        res.BankImageURL = String.Concat(appPath, "Assets/Images/bankPictures/usaa.png");
+                                    }
+                                    break;
+
+                                case "First Tennessee":
+                                    {
+                                        res.BankImageURL = String.Concat(appPath, "Assets/Images/bankPictures/firsttennessee.png");
+                                    }
+                                    break;
+                                default:
+                                    {
+                                        res.BankImageURL = String.Concat(appPath, "Assets/Images/bankPictures/no.png");
+                                    }
+                                    break;
+                            }
+                            res.AccountName = CommonHelper.GetDecryptedData(bankAccnt.account_number_string);
+                            res.AccountStatus = bankAccnt.Status;
+                            res.allowed = bankAccnt.allowed;
+                            res.dateCreated = Convert.ToDateTime(bankAccnt.AddedOn).ToString("d");
+                            res.MemberId = bankAccnt.MemberId.ToString();
+                            res.msg = "Worked like a charm";
+                        }
+                        else
+                        {
+                            res.msg = "No banks found!";
+                        }
+
+                        res.success = true;
+                    }
+                }
+                else
+                {
+                    res.msg = "Trouble with the auth token";
+                }
+            }
+            catch (Exception ex)
+            {
+                res.msg = "Hit exception";
+                Logger.Error("Service layer -> GetSynapseBankAccountDetails FAILED - [LandlorID: " + input.LandlorId + "]. Exception: [" + ex + "]");
+            }
+            return res;
+        }
+
 
 
         /// <summary>

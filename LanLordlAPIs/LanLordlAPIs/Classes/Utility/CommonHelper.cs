@@ -94,15 +94,12 @@ namespace LanLordlAPIs.Classes.Utility
             {
                 using (NOOCHEntities obj = new NOOCHEntities())
                 {
-                    var lanlorddetails =
-                        (from c in obj.Landlords
-
-                         where c.LandlordId == LandlorId
-                         select
-                             c
-                     ).FirstOrDefault();
+                    var lanlorddetails = (from c in obj.Landlords
+                                          where c.LandlordId == LandlorId
+                                          select c).FirstOrDefault();
 
                     if (lanlorddetails == null) return false;
+
                     if (!String.IsNullOrEmpty(lanlorddetails.IpAddresses))
                     {
                         string IPsListPrepared = "";
@@ -144,7 +141,7 @@ namespace LanLordlAPIs.Classes.Utility
             }
             catch (Exception ex)
             {
-                Logger.Error("Landlords API -> CommonHelper -> saveLandlordIp. Error while updating IP address - [ " + IP + " ] for Landlor Id [ " + LandlorId + " ]. Error details [" + ex + " ]");
+                Logger.Error("Landlords API -> CommonHelper -> saveLandlordIp. Error while updating IP address - [ " + IP + " ] for Landlor Id [ " + LandlorId + " ], [Exception: " + ex + " ]");
                 return false;
             }
         }
@@ -164,13 +161,9 @@ namespace LanLordlAPIs.Classes.Utility
             AccessTokenValidationOutput result = new AccessTokenValidationOutput();
             using (NOOCHEntities obj = new NOOCHEntities())
             {
-                var lanlorddetails =
-                    (from c in obj.Landlords
-
-                     where c.LandlordId == LandlorId && c.WebAccessToken == accesstoken && c.IsDeleted == false
-                     select
-                         c
-                        ).FirstOrDefault();
+                var lanlorddetails = (from c in obj.Landlords 
+                                      where c.LandlordId == LandlorId && c.WebAccessToken == accesstoken && c.IsDeleted == false
+                                      select c).FirstOrDefault();
 
                 if (lanlorddetails != null)
                 {
@@ -288,7 +281,7 @@ namespace LanLordlAPIs.Classes.Utility
                 var id = ConvertToGuid(memberId);
 
                 var noochMember = (from c in noochConnection.Members where c.MemberId == id && c.IsDeleted == false select c).FirstOrDefault();
-                
+
                 if (noochMember != null)
                 {
                     if (noochMember.InviteCodeId != null)
@@ -296,7 +289,7 @@ namespace LanLordlAPIs.Classes.Utility
                         Guid v = ConvertToGuid(noochMember.InviteCodeId.ToString());
 
                         var inviteMember = (from c in noochConnection.InviteCodes where c.InviteCodeId == v select c).FirstOrDefault();
-                        
+
                         if (inviteMember != null)
                         {
                             return inviteMember.code;
@@ -530,7 +523,7 @@ namespace LanLordlAPIs.Classes.Utility
                 return result;
             }
         }
-        
+
 
         public static bool SendPasswordMail(Member member, string primaryMail)
         {
@@ -568,7 +561,7 @@ namespace LanLordlAPIs.Classes.Utility
                     result = noochConnection.SaveChanges();
                 }
 
-                return SendEmail(Constants.TEMPLATE_FORGOT_PASSWORD,  fromAddress,
+                return SendEmail(Constants.TEMPLATE_FORGOT_PASSWORD, fromAddress,
                     primaryMail, "Reset your Nooch password", tokens
                     , null);
             }
@@ -579,7 +572,7 @@ namespace LanLordlAPIs.Classes.Utility
         }
 
 
-        public static Landlord AddNewLandlordEntryInDb(string firstName, string lastName, string eMail, string passWord, bool eMailSatusToSet, bool phoneStatusToSet, Guid memberGuid)
+        public static Landlord AddNewLandlordEntryInDb(string fName, string lName, string email, string pw, bool eMailSatusToSet, bool phoneStatusToSet, string ip, Guid memberGuid)
         {
             try
             {
@@ -587,16 +580,19 @@ namespace LanLordlAPIs.Classes.Utility
                 {
                     Landlord ll = new Landlord();
                     ll.LandlordId = Guid.NewGuid();
-                    ll.FirstName = GetEncryptedData(firstName.ToLower().Trim());
-                    ll.LastName = GetEncryptedData(lastName.ToLower().Trim());
-                    ll.eMail = GetEncryptedData(eMail.ToLower().Trim());
+                    ll.FirstName = GetEncryptedData(fName.ToLower().Trim());
+                    ll.LastName = GetEncryptedData(lName.ToLower().Trim());
+                    ll.eMail = GetEncryptedData(email.ToLower().Trim());
                     ll.IsEmailVerfieid = eMailSatusToSet;
                     ll.IsPhoneVerified = phoneStatusToSet;
                     ll.Status = "Active";
                     ll.Type = "Landlord";
-                    ll.SubType= "Basic";
+                    ll.SubType = "Basic";
                     ll.MemberId = memberGuid;
                     ll.IsDeleted = false;
+                    ll.DateCreated = DateTime.Now;
+                    ll.IpAddresses = ip;
+                    ll.IsIdVerified = false;
 
                     obj.Landlords.Add(ll);
                     obj.SaveChanges();
@@ -604,8 +600,9 @@ namespace LanLordlAPIs.Classes.Utility
                     return ll;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Logger.Error("CommonHelper -> AddNewLandlordEntryInDb FAILED - [Exception: " + ex + "]");
                 return null;
             }
         }
@@ -697,8 +694,8 @@ namespace LanLordlAPIs.Classes.Utility
 
             using (var noochConnection = new NOOCHEntities())
             {
-                var noochMember = (from c in noochConnection.Members  where c.UserName==userNameLowerCase && c.IsDeleted==false select c).FirstOrDefault();
-                
+                var noochMember = (from c in noochConnection.Members where c.UserName == userNameLowerCase && c.IsDeleted == false select c).FirstOrDefault();
+
                 if (noochMember != null)
                 {
                     return "Username already exists for the primary email you entered. Please try with some other email.";
@@ -727,7 +724,7 @@ namespace LanLordlAPIs.Classes.Utility
         }
 
 
-        public static  string ResendVerificationSMS(string Username)
+        public static string ResendVerificationSMS(string Username)
         {
             //1. Check if user exists
             //2. Check if phone is already verified
@@ -760,8 +757,8 @@ namespace LanLordlAPIs.Classes.Utility
                         else if (memberEntity.Status == "Active" || memberEntity.Status == "Registered")
                         {
                             string MessageBody = "Reply with 'GO' to this message to confirm your mobile number.";
-                            if ( memberEntity.ContactNumber != null &&
-                                (memberEntity.IsVerifiedPhone == false || 
+                            if (memberEntity.ContactNumber != null &&
+                                (memberEntity.IsVerifiedPhone == false ||
                                  memberEntity.IsVerifiedPhone == null))
                             {
                                 string result = SendSMS(memberEntity.ContactNumber, MessageBody);
@@ -802,8 +799,8 @@ namespace LanLordlAPIs.Classes.Utility
 
             using (var noochConnection = new NOOCHEntities())
             {
-                var noochMember = (from c in noochConnection.Members where c.UserName==userName && c.IsDeleted==false select c).FirstOrDefault();
-                
+                var noochMember = (from c in noochConnection.Members where c.UserName == userName && c.IsDeleted == false select c).FirstOrDefault();
+
                 if (noochMember != null)
                 {
                     return CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(noochMember.FirstName))) + " "
@@ -853,7 +850,7 @@ namespace LanLordlAPIs.Classes.Utility
                         {
                             SendEmail(Constants.TEMPLATE_REGISTRATION,
                                 fromAddress, Username,
-                                "Confirm Nooch Registration", tokens,null);
+                                "Confirm Nooch Registration", tokens, null);
                             return "Success";
                         }
                         catch (Exception)

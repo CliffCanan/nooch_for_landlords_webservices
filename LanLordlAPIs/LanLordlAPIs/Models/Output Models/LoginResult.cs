@@ -71,7 +71,7 @@ namespace LanLordlAPIs.Models.Output_Models
     {
         //auth token and validation result
         public AccessTokenValidationOutput AuthTokenValidation { get; set; }
-
+        public string MemberId { get; set; }
         public bool IsSuccess { get; set; }
         public string ErrorMessage { get; set; }
 
@@ -128,7 +128,7 @@ namespace LanLordlAPIs.Models.Output_Models
         public bool IsEmailVerified { get; set; }
         public bool IsPhoneVerified { get; set; }
         public bool IsAccountAdded { get; set; }
-        public bool IsIDVerified { get; set; }
+        public bool isIdVerified { get; set; }
         public bool IsAnyRentReceived { get; set; }
         public string AllTenantsCount { get; set; }
     }
@@ -193,6 +193,20 @@ namespace LanLordlAPIs.Models.Output_Models
         public bool IsBankAccountAdded { get; set; }
     }
 
+
+    public class SynapseAccoutDetailsInput
+    {
+        public bool success { get; set; }
+        public string msg { get; set; }
+        public string MemberId { get; set; }
+        public string BankName { get; set; }
+        public string BankNickname { get; set; }
+        public string AccountName { get; set; }
+        public string BankImageURL { get; set; }
+        public string AccountStatus { get; set; }
+        public string allowed { get; set; }
+        public string dateCreated { get; set; }
+    }
 
     public class BankDetailsResult
     {
@@ -272,16 +286,14 @@ namespace LanLordlAPIs.Models.Output_Models
         public string TenantName { get; set; }
         public string TenantEmail { get; set; }
 
-
         // rent
         public string LastRentPaidOn { get; set; }
         public bool IsRentPaidForThisMonth { get; set; }
 
-        //tenant bank email and phone related
+        // tenant bank email and phone related
         public bool IsEmailVerified { get; set; }
         public bool IsPhoneVerified { get; set; }
         public bool IsBankAccountAdded { get; set; }
-
 
         public string ImageUrl { get; set; }  // for tenant image url
         public string UnitImage { get; set; }
@@ -302,4 +314,9 @@ namespace LanLordlAPIs.Models.Output_Models
         public string ErrorMessage { get; set; }
     }
 
+    public class idVerWizardResult
+    {
+        public bool success { get; set; }
+        public string msg { get; set; }
+    }
 }

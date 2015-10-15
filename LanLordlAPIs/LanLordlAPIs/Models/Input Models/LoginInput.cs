@@ -33,6 +33,16 @@ namespace LanLordlAPIs.Models.Input_Models
         public LandlordProfileInfoInputClass UserInfo { get; set; }
     }
 
+    public class idVerWizardInput
+    {
+        public string ssn { get; set; }
+        public string fullName { get; set; }
+        public string dob { get; set; }
+        public string staddress { get; set; }
+        public string zip { get; set; }
+        public GetProfileDataInput DeviceInfo { get; set; }
+    }
+
     public class SendEmailsToTenantsInputClass
     {
         public GetProfileDataInput DeviceInfo { get; set; }
@@ -44,15 +54,20 @@ namespace LanLordlAPIs.Models.Input_Models
         public string IsForAllOrOne { get; set; }
         public string MessageToBeSent { get; set; }
         public string TenantIdToBeMessaged { get; set; }
-        public string PropertyId { get; set; }   
+        public string PropertyId { get; set; }
     }
 
     public class RegisterLandlordInput
     {
-        public string FirstName { get; set; }public string LastName { get; set; }
-        public string eMail  { get; set; }public string Password { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string eMail { get; set; }
+        public string Password { get; set; }
+        public string fingerprint { get; set; }
+        public string ip { get; set; }
+        public string country { get; set; }
     }
-    
+
     public class SetPropertyStatusClass
     {
         public string PropertyId { get; set; }
