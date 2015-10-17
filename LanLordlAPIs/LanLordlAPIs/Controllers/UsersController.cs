@@ -1222,7 +1222,8 @@ namespace LanLordlAPIs.Controllers
                         var bankAccnt = (from c in obj.SynapseBanksOfMembers
                                          join d in obj.Landlords on c.MemberId equals d.MemberId
                                          where d.LandlordId == landlordguidId &&
-                                               d.IsDeleted == false
+                                               d.IsDeleted == false &&
+                                               c.IsDefault == true
                                          select
                                          new
                                          {
