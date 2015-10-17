@@ -79,7 +79,8 @@ namespace LanLordlAPIs.Controllers
                         result.IsSuccess = true;
                         result.ErrorMessage = "OK";
                         result.AccessToken = landlordEntity.WebAccessToken;
-                        result.MemberId = landlordEntity.LandlordId.ToString();
+                        result.MemberId = landlordEntity.MemberId.ToString();
+                        result.LandlordId = landlordEntity.LandlordId.ToString();
                     }
                     else
                     {
@@ -324,6 +325,10 @@ namespace LanLordlAPIs.Controllers
                                 {
                                     res.isIdVerified = true;
                                 }
+
+                                // Now check the values in the Member Table and use them if they are verified
+                                res.IsPhoneVerified = (memberObj.IsVerifiedPhone == true) ? true : res.IsPhoneVerified;
+                                res.IsEmailVerified = (memberObj.Status == "Active") ? true : false;
                             }
                         }
 
@@ -561,11 +566,11 @@ namespace LanLordlAPIs.Controllers
 
         [HttpPost]
         [ActionName("submitLandlordIdVerWiz")]
-        public idVerWizardResult submitLandlordIdVerWiz(idVerWizardInput landlordsInput)
+        public GenericInternalResponse submitLandlordIdVerWiz(idVerWizardInput landlordsInput)
         {
             Logger.Error("Landlords API -> UsersController -> submitLandlordIdVerWiz Initiated - [LandlordID: " + landlordsInput.DeviceInfo.LandlorId + "]");
 
-            idVerWizardResult res = new idVerWizardResult();
+            GenericInternalResponse res = new GenericInternalResponse();
             res.success = false;
 
             try
@@ -606,12 +611,14 @@ namespace LanLordlAPIs.Controllers
                             {
                                 lanlordObj.Zip = CommonHelper.GetEncryptedData(landlordsInput.zip);
                             }
+                            lanlordObj.IsIdVerified = true;
                             lanlordObj.DateModified = DateTime.Now;
 
                             #endregion Update LANDLORDS Table
 
 
                             #region Update MEMBERS Table
+
                             // CLIFF (10/15/15): Since all the Synapse methods take the data from the Members Table,
                             //                   we have to also save any of that data for Landlords in the Members Table 
                             //                   ...even though we have most of the same data in the Landlords table.  We shouldn't have duplicated everything :-(
@@ -994,7 +1001,7 @@ namespace LanLordlAPIs.Controllers
         [ActionName("GetAccountCompletetionStatsOfGivenLandlord")]
         public GetAccountCompletionStatsResultClass GetAccountCompletetionStatsOfGivenLandlord(GetProfileDataInput Property)
         {
-            Logger.Info("UsersController -> GetAccountCompletetionStatsOfGivenLandlord Initiated -[LandlordID: " +
+            Logger.Info("UsersController -> GetAccountCompletetionStatsOfGivenLandlord Initiated - [LandlordID: " +
                             Property.LandlorId + "]");
 
             GetAccountCompletionStatsResultClass result = new GetAccountCompletionStatsResultClass();
@@ -1330,11 +1337,64 @@ namespace LanLordlAPIs.Controllers
             catch (Exception ex)
             {
                 res.msg = "Hit exception";
-                Logger.Error("Service layer -> GetSynapseBankAccountDetails FAILED - [LandlorID: " + input.LandlorId + "]. Exception: [" + ex + "]");
+                Logger.Error("UsersController -> GetSynapseBankAccountDetails FAILED - [LandlorID: " + input.LandlorId + "]. Exception: [" + ex + "]");
             }
             return res;
         }
 
+
+        [HttpPost]
+        [ActionName("DeleteSynapseBankAccount")]
+        public GenericInternalResponse deleteSynapseBank(basicLandlordPayload input)
+        {
+            Logger.Info("UsersController -> deleteSynapseBank Initiated - [LandlordID: " + input.LandlordId + "]");
+
+            GenericInternalResponse res = new GenericInternalResponse();
+            res.success = false;
+            res.msg = "Initial";
+
+            try
+            {
+                Guid memGuid = new Guid(input.MemberId);
+                var checkToken = CommonHelper.AuthTokenValidation(memGuid, input.AccessToken);
+
+                if (checkToken.IsTokenOk)
+                {
+                    // valid access token continue with edit
+
+                    using (NOOCHEntities obj = new NOOCHEntities())
+                    {
+                        var synapseBank = (from c in obj.SynapseBanksOfMembers
+                                           where c.MemberId == memGuid &&
+                                                 c.IsDefault == true
+                                           select c).FirstOrDefault();
+
+                        if (synapseBank != null)
+                        {
+                            synapseBank.IsDefault = false;
+                            obj.SaveChanges();
+
+                            res.msg = "ok";
+                            res.success = true;
+                        }
+                        else
+                        {
+                            res.msg = "No bank found for that MemberID";
+                        }
+                    }
+                }
+                else
+                {
+                    res.msg = "Trouble with the auth token";
+                }
+            }
+            catch (Exception ex)
+            {
+                res.msg = "Hit exception";
+                Logger.Error("UsersController -> deleteSynapseBank FAILED - [LandlorID: " + input.LandlordId + "]. Exception: [" + ex + "]");
+            }
+            return res;
+        }
 
 
         /// <summary>

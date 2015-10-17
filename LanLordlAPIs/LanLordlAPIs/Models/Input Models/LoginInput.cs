@@ -6,6 +6,13 @@ using LanLordlAPIs.Models.Output_Models;
 
 namespace LanLordlAPIs.Models.Input_Models
 {
+    public class basicLandlordPayload
+    {
+        public string LandlordId { get; set; }
+        public string MemberId { get; set; }
+        public string AccessToken { get; set; }
+    }
+
     public class LoginInput
     {
         public string UserName { get; set; }
@@ -89,7 +96,7 @@ namespace LanLordlAPIs.Models.Input_Models
         public string UnitsCount { get; set; }
         public string Rent { get; set; }
 
-        public GetProfileDataInput User { get; set; }
+        public basicLandlordPayload User { get; set; }
 
         public AddNewUnitClass[] Unit { get; set; }
 
@@ -97,15 +104,16 @@ namespace LanLordlAPIs.Models.Input_Models
         public bool IsPropertyImageAdded { get; set; }
     }
 
-    public class AddNewUnitInputOuterClass
+    public class AddOrEditUnitInput
     {
         public string PropertyId { get; set; }
         public GetProfileDataInput User { get; set; }
-        public AddNewUnitInnerClass Unit { get; set; }
+        public AddOrEditUnit_Unit Unit { get; set; }
     }
 
-    public class AddNewUnitInnerClass
+    public class AddOrEditUnit_Unit
     {
+        public bool isNewUnit { get; set; }
         public string UnitNum { get; set; }
         public string UnitNickName { get; set; }
         public string Rent { get; set; }
@@ -116,7 +124,7 @@ namespace LanLordlAPIs.Models.Input_Models
         public string UnitId { get; set; }
 
         public string RentStartDate { get; set; }
-        public string AgreementDuration { get; set; }
+        public string RentDuration { get; set; }
     }
 
     public class AddNewUnitClass

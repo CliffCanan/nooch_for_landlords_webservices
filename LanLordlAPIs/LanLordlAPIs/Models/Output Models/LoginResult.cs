@@ -12,6 +12,7 @@ namespace LanLordlAPIs.Models.Output_Models
         public string ErrorMessage { get; set; }
 
         public string MemberId { get; set; }
+        public string LandlordId { get; set; }
         public string AccessToken { get; set; }
     }
 
@@ -314,7 +315,8 @@ namespace LanLordlAPIs.Models.Output_Models
         public string ErrorMessage { get; set; }
     }
 
-    public class idVerWizardResult
+
+    public class GenericInternalResponse
     {
         public bool success { get; set; }
         public string msg { get; set; }
