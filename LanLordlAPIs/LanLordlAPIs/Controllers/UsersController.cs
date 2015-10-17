@@ -1482,5 +1482,78 @@ namespace LanLordlAPIs.Controllers
                 return result;
             }
         }
+
+
+        // to change password for given user
+        [HttpPost]
+        [ActionName("ChangeUserPassword")]
+        public CreatePropertyResultOutput ChangeUserPassword(EditPersonalInfoInputClass User)
+        {
+            CreatePropertyResultOutput result = new CreatePropertyResultOutput();
+            result.IsSuccess = false;
+
+            try
+            {
+                Guid landlordguidId = new Guid(User.DeviceInfo.LandlorId);
+                result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, User.DeviceInfo.AccessToken);
+
+                if (result.AuthTokenValidation.IsTokenOk)
+                {
+                    // valid access token continue with edit
+
+                    using (NOOCHEntities obj = new NOOCHEntities())
+                    {
+                        //reading details from db
+                        var lanlordObj = (from c in obj.Landlords
+                                          where c.LandlordId == landlordguidId
+                                          select c).FirstOrDefault();
+
+                        if (lanlordObj != null)
+                        {
+                            if (String.IsNullOrEmpty(User.UserInfo.NewPassword))
+                            {
+                                result.IsSuccess = false;
+                                result.ErrorMessage = "Invalid password.";    
+                            }
+                            else
+                            {
+                                //getting member from members table
+                                var memberDetails = (from c in obj.Members  where c.MemberId==lanlordObj.MemberId select c).FirstOrDefault();
+                                if (memberDetails!=null)
+                                {
+                                    memberDetails.Password = CommonHelper.GetEncryptedData(User.UserInfo.NewPassword);
+                                    memberDetails.DateModified = DateTime.Now;
+                                    obj.SaveChanges();
+                                    result.IsSuccess = true;
+                                    result.ErrorMessage = "Password changed successfully.";    
+                                }
+                                else
+                                {
+                                    result.IsSuccess = false;
+                                    result.ErrorMessage = "Invalid user id.";    
+                                }
+                                
+                            }
+                        }
+                        else
+                        {
+                            result.ErrorMessage = "Given landlord ID not found.";
+                        }
+                    }
+                }
+                else
+                {
+                    result.ErrorMessage = result.AuthTokenValidation.ErrorMessage;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Landlords API -> UsersController -> EditUserInfo FAILED - [Outer Exception: " + ex.ToString() + "]");
+                result.ErrorMessage = "Server error";
+            }
+
+            return result;
+        }
+
     }
 }

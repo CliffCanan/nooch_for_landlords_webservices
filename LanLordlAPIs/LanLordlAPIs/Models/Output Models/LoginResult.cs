@@ -64,6 +64,7 @@ namespace LanLordlAPIs.Models.Output_Models
         public string Zip { get; set; }
 
         public string InfoType { get; set; }
+        public string NewPassword { get; set; }
     }
 
 
