@@ -1443,6 +1443,8 @@ namespace LanLordlAPIs.Controllers
                                             phc.TransactionDate =
                                                 Convert.ToDateTime(t.TransactionDate).ToShortDateString();
 
+                                            phc.TransactionId = t.TransactionId.ToString();
+
                                             TransactionsListToRet.Add(phc);
 
                                         }
