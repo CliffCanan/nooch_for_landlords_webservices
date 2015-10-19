@@ -1318,7 +1318,7 @@ namespace LanLordlAPIs.Controllers
                             res.AccountName = CommonHelper.GetDecryptedData(bankAccnt.account_number_string);
                             res.AccountStatus = bankAccnt.Status;
                             res.allowed = bankAccnt.allowed;
-                            res.dateCreated = Convert.ToDateTime(bankAccnt.AddedOn).ToString("d");
+                            res.dateCreated = Convert.ToDateTime(bankAccnt.AddedOn).ToString("MMM d, yyyy");
                             res.MemberId = bankAccnt.MemberId.ToString();
                             res.msg = "Worked like a charm";
                         }
