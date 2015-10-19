@@ -391,5 +391,42 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="Transactions">
+      <EntityTypeMapping TypeName="NOOCHModel.Transaction">
+        <MappingFragment StoreEntitySet="Transactions">
+          <ScalarProperty Name="PhoneNumberInvited" ColumnName="PhoneNumberInvited" />
+          <ScalarProperty Name="IsPhoneInvitation" ColumnName="IsPhoneInvitation" />
+          <ScalarProperty Name="BankId" ColumnName="BankId" />
+          <ScalarProperty Name="ReceiverUpdatedBalanceAfterTransaction" ColumnName="ReceiverUpdatedBalanceAfterTransaction" />
+          <ScalarProperty Name="SenderUpdatedBalanceAfterTransaction" ColumnName="SenderUpdatedBalanceAfterTransaction" />
+          <ScalarProperty Name="InvitationSentTo" ColumnName="InvitationSentTo" />
+          <ScalarProperty Name="BankAccountId" ColumnName="BankAccountId" />
+          <ScalarProperty Name="Picture" ColumnName="Picture" />
+          <ScalarProperty Name="Memo" ColumnName="Memo" />
+          <ScalarProperty Name="RaisedById" ColumnName="RaisedById" />
+          <ScalarProperty Name="RaisedBy" ColumnName="RaisedBy" />
+          <ScalarProperty Name="Subject" ColumnName="Subject" />
+          <ScalarProperty Name="AdminName" ColumnName="AdminName" />
+          <ScalarProperty Name="AdminNotes" ColumnName="AdminNotes" />
+          <ScalarProperty Name="TransactionTrackingId" ColumnName="TransactionTrackingId" />
+          <ScalarProperty Name="ResolvedDate" ColumnName="ResolvedDate" />
+          <ScalarProperty Name="ReviewDate" ColumnName="ReviewDate" />
+          <ScalarProperty Name="DisputeDate" ColumnName="DisputeDate" />
+          <ScalarProperty Name="LocationId" ColumnName="LocationId" />
+          <ScalarProperty Name="TransactionType" ColumnName="TransactionType" />
+          <ScalarProperty Name="TransactionStatus" ColumnName="TransactionStatus" />
+          <ScalarProperty Name="DisputeStatus" ColumnName="DisputeStatus" />
+          <ScalarProperty Name="TransactionFee" ColumnName="TransactionFee" />
+          <ScalarProperty Name="IsPrepaidTransaction" ColumnName="IsPrepaidTransaction" />
+          <ScalarProperty Name="TransactionDate" ColumnName="TransactionDate" />
+          <ScalarProperty Name="Amount" ColumnName="Amount" />
+          <ScalarProperty Name="DisputeTrackingId" ColumnName="DisputeTrackingId" />
+          <ScalarProperty Name="DeviceId" ColumnName="DeviceId" />
+          <ScalarProperty Name="RecipientId" ColumnName="RecipientId" />
+          <ScalarProperty Name="SenderId" ColumnName="SenderId" />
+          <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
   </EntityContainerMapping>
 </Mapping>
