@@ -14,6 +14,11 @@ namespace LanLordlAPIs.Models.db_Model
     
     public partial class GeoLocation
     {
+        public GeoLocation()
+        {
+            this.Transactions = new HashSet<Transaction>();
+        }
+    
         public System.Guid LocationId { get; set; }
         public Nullable<double> Latitude { get; set; }
         public Nullable<double> Longitude { get; set; }
@@ -25,5 +30,7 @@ namespace LanLordlAPIs.Models.db_Model
         public string Country { get; set; }
         public string ZipCode { get; set; }
         public Nullable<System.DateTime> DateCreated { get; set; }
+    
+        public virtual ICollection<Transaction> Transactions { get; set; }
     }
 }

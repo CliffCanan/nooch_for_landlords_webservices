@@ -265,12 +265,16 @@
     <Compile Include="Models\db Model\TenantsIdDocument.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\db Model\Transaction.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\db Model\UnitsOccupiedByTenant.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Input Models\LoginInput.cs" />
     <Compile Include="Models\Input Models\PasswordResetInputClass.cs" />
     <Compile Include="Models\Output Models\CheckAndRegisterLandlordByEmailResult.cs" />
+    <Compile Include="Models\Output Models\LandlordsPaymentHistoryClass.cs" />
     <Compile Include="Models\Output Models\LoginResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -330,6 +330,42 @@
           <Property Name="VerfiedBy" Type="uniqueidentifier" />
           <Property Name="AdminNotes" Type="varchar(max)" />
         </EntityType>
+        <EntityType Name="Transactions">
+          <Key>
+            <PropertyRef Name="TransactionId" />
+          </Key>
+          <Property Name="TransactionId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="SenderId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="RecipientId" Type="uniqueidentifier" />
+          <Property Name="DeviceId" Type="nvarchar" MaxLength="100" />
+          <Property Name="DisputeTrackingId" Type="varchar" MaxLength="5" />
+          <Property Name="Amount" Type="money" Nullable="false" />
+          <Property Name="TransactionDate" Type="datetime" />
+          <Property Name="IsPrepaidTransaction" Type="bit" Nullable="false" />
+          <Property Name="TransactionFee" Type="money" />
+          <Property Name="DisputeStatus" Type="varchar(max)" />
+          <Property Name="TransactionStatus" Type="nvarchar" MaxLength="15" Nullable="false" />
+          <Property Name="TransactionType" Type="varchar(max)" />
+          <Property Name="LocationId" Type="uniqueidentifier" />
+          <Property Name="DisputeDate" Type="datetime" />
+          <Property Name="ReviewDate" Type="datetime" />
+          <Property Name="ResolvedDate" Type="datetime" />
+          <Property Name="TransactionTrackingId" Type="varchar" MaxLength="9" />
+          <Property Name="AdminNotes" Type="nvarchar" MaxLength="3000" />
+          <Property Name="AdminName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Subject" Type="nvarchar(max)" />
+          <Property Name="RaisedBy" Type="varchar" MaxLength="10" />
+          <Property Name="RaisedById" Type="uniqueidentifier" />
+          <Property Name="Memo" Type="nvarchar" MaxLength="100" />
+          <Property Name="Picture" Type="varbinary(max)" />
+          <Property Name="BankAccountId" Type="uniqueidentifier" />
+          <Property Name="InvitationSentTo" Type="varchar" MaxLength="500" />
+          <Property Name="SenderUpdatedBalanceAfterTransaction" Type="varchar" MaxLength="500" />
+          <Property Name="ReceiverUpdatedBalanceAfterTransaction" Type="varchar" MaxLength="500" />
+          <Property Name="BankId" Type="uniqueidentifier" />
+          <Property Name="IsPhoneInvitation" Type="bit" />
+          <Property Name="PhoneNumberInvited" Type="varchar" MaxLength="50" />
+        </EntityType>
         <EntityType Name="UnitsOccupiedByTenants">
           <Key>
             <PropertyRef Name="Id" />
@@ -379,6 +415,42 @@
             </Principal>
             <Dependent Role="PasswordResetRequests">
               <PropertyRef Name="MemberId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Transactions_GeoLocations">
+          <End Role="GeoLocations" Type="Self.GeoLocations" Multiplicity="0..1" />
+          <End Role="Transactions" Type="Self.Transactions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GeoLocations">
+              <PropertyRef Name="LocationId" />
+            </Principal>
+            <Dependent Role="Transactions">
+              <PropertyRef Name="LocationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Transactions_Members2">
+          <End Role="Members" Type="Self.Members" Multiplicity="1" />
+          <End Role="Transactions" Type="Self.Transactions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Members">
+              <PropertyRef Name="MemberId" />
+            </Principal>
+            <Dependent Role="Transactions">
+              <PropertyRef Name="SenderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Transactions_Members3">
+          <End Role="Members" Type="Self.Members" Multiplicity="0..1" />
+          <End Role="Transactions" Type="Self.Transactions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Members">
+              <PropertyRef Name="MemberId" />
+            </Principal>
+            <Dependent Role="Transactions">
+              <PropertyRef Name="RecipientId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -447,6 +519,7 @@
           <EntitySet Name="SynapseBanksOfMembers" EntityType="Self.SynapseBanksOfMembers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tenants" EntityType="Self.Tenants" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TenantsIdDocuments" EntityType="Self.TenantsIdDocuments" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Transactions" EntityType="Self.Transactions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UnitsOccupiedByTenants" EntityType="Self.UnitsOccupiedByTenants" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_MemberNotifications_Members" Association="Self.FK_MemberNotifications_Members">
             <End Role="Members" EntitySet="Members" />
@@ -459,6 +532,18 @@
           <AssociationSet Name="FK_PasswordResetRequests_Members" Association="Self.FK_PasswordResetRequests_Members">
             <End Role="Members" EntitySet="Members" />
             <End Role="PasswordResetRequests" EntitySet="PasswordResetRequests" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Transactions_GeoLocations" Association="Self.FK_Transactions_GeoLocations">
+            <End Role="GeoLocations" EntitySet="GeoLocations" />
+            <End Role="Transactions" EntitySet="Transactions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Transactions_Members2" Association="Self.FK_Transactions_Members2">
+            <End Role="Members" EntitySet="Members" />
+            <End Role="Transactions" EntitySet="Transactions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Transactions_Members3" Association="Self.FK_Transactions_Members3">
+            <End Role="Members" EntitySet="Members" />
+            <End Role="Transactions" EntitySet="Transactions" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -480,6 +565,7 @@
           <Property Name="Country" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="ZipCode" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
           <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Transactions" Relationship="NOOCHModel.FK_Transactions_GeoLocations" FromRole="GeoLocation" ToRole="Transaction" />
         </EntityType>
         <EntityType Name="Landlord">
           <Key>
@@ -673,6 +759,19 @@
           <AssociationSet Name="FK_PasswordResetRequests_Members" Association="NOOCHModel.FK_PasswordResetRequests_Members">
             <End Role="Member" EntitySet="Members" />
             <End Role="PasswordResetRequest" EntitySet="PasswordResetRequests" />
+          </AssociationSet>
+          <EntitySet Name="Transactions" EntityType="NOOCHModel.Transaction" />
+          <AssociationSet Name="FK_Transactions_GeoLocations" Association="NOOCHModel.FK_Transactions_GeoLocations">
+            <End Role="GeoLocation" EntitySet="GeoLocations" />
+            <End Role="Transaction" EntitySet="Transactions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Transactions_Members2" Association="NOOCHModel.FK_Transactions_Members2">
+            <End Role="Member" EntitySet="Members" />
+            <End Role="Transaction" EntitySet="Transactions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Transactions_Members3" Association="NOOCHModel.FK_Transactions_Members3">
+            <End Role="Member" EntitySet="Members" />
+            <End Role="Transaction" EntitySet="Transactions" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="UnitsOccupiedByTenant">
@@ -884,6 +983,8 @@
           <NavigationProperty Name="MemberNotifications" Relationship="NOOCHModel.FK_MemberNotifications_Members" FromRole="Member" ToRole="MemberNotification" />
           <NavigationProperty Name="MemberPrivacySettings" Relationship="NOOCHModel.FK_MemberPrivacySettings_Members" FromRole="Member" ToRole="MemberPrivacySetting" />
           <NavigationProperty Name="PasswordResetRequests" Relationship="NOOCHModel.FK_PasswordResetRequests_Members" FromRole="Member" ToRole="PasswordResetRequest" />
+          <NavigationProperty Name="Transactions" Relationship="NOOCHModel.FK_Transactions_Members2" FromRole="Member" ToRole="Transaction" />
+          <NavigationProperty Name="Transactions1" Relationship="NOOCHModel.FK_Transactions_Members3" FromRole="Member" ToRole="Transaction" />
         </EntityType>
         <EntityType Name="SynapseBanksOfMember">
           <Key>
@@ -954,6 +1055,81 @@
             </Principal>
             <Dependent Role="PasswordResetRequest">
               <PropertyRef Name="MemberId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Transaction">
+          <Key>
+            <PropertyRef Name="TransactionId" />
+          </Key>
+          <Property Name="TransactionId" Type="Guid" Nullable="false" />
+          <Property Name="SenderId" Type="Guid" Nullable="false" />
+          <Property Name="RecipientId" Type="Guid" />
+          <Property Name="DeviceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="DisputeTrackingId" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+          <Property Name="TransactionDate" Type="DateTime" Precision="3" />
+          <Property Name="IsPrepaidTransaction" Type="Boolean" Nullable="false" />
+          <Property Name="TransactionFee" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="DisputeStatus" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="TransactionStatus" Type="String" Nullable="false" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="TransactionType" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="LocationId" Type="Guid" />
+          <Property Name="DisputeDate" Type="DateTime" Precision="3" />
+          <Property Name="ReviewDate" Type="DateTime" Precision="3" />
+          <Property Name="ResolvedDate" Type="DateTime" Precision="3" />
+          <Property Name="TransactionTrackingId" Type="String" MaxLength="9" FixedLength="false" Unicode="false" />
+          <Property Name="AdminNotes" Type="String" MaxLength="3000" FixedLength="false" Unicode="true" />
+          <Property Name="AdminName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Subject" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="RaisedBy" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="RaisedById" Type="Guid" />
+          <Property Name="Memo" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Picture" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="BankAccountId" Type="Guid" />
+          <Property Name="InvitationSentTo" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="SenderUpdatedBalanceAfterTransaction" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="ReceiverUpdatedBalanceAfterTransaction" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="BankId" Type="Guid" />
+          <Property Name="IsPhoneInvitation" Type="Boolean" />
+          <Property Name="PhoneNumberInvited" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="GeoLocation" Relationship="NOOCHModel.FK_Transactions_GeoLocations" FromRole="Transaction" ToRole="GeoLocation" />
+          <NavigationProperty Name="Member" Relationship="NOOCHModel.FK_Transactions_Members2" FromRole="Transaction" ToRole="Member" />
+          <NavigationProperty Name="Member1" Relationship="NOOCHModel.FK_Transactions_Members3" FromRole="Transaction" ToRole="Member" />
+        </EntityType>
+        <Association Name="FK_Transactions_GeoLocations">
+          <End Type="NOOCHModel.GeoLocation" Role="GeoLocation" Multiplicity="0..1" />
+          <End Type="NOOCHModel.Transaction" Role="Transaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GeoLocation">
+              <PropertyRef Name="LocationId" />
+            </Principal>
+            <Dependent Role="Transaction">
+              <PropertyRef Name="LocationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Transactions_Members2">
+          <End Type="NOOCHModel.Member" Role="Member" Multiplicity="1" />
+          <End Type="NOOCHModel.Transaction" Role="Transaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Member">
+              <PropertyRef Name="MemberId" />
+            </Principal>
+            <Dependent Role="Transaction">
+              <PropertyRef Name="SenderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Transactions_Members3">
+          <End Type="NOOCHModel.Member" Role="Member" Multiplicity="0..1" />
+          <End Type="NOOCHModel.Transaction" Role="Transaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Member">
+              <PropertyRef Name="MemberId" />
+            </Principal>
+            <Dependent Role="Transaction">
+              <PropertyRef Name="RecipientId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1350,6 +1526,43 @@
                 <ScalarProperty Name="account_number_string" ColumnName="account_number_string" />
                 <ScalarProperty Name="account_class" ColumnName="account_class" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Transactions">
+            <EntityTypeMapping TypeName="NOOCHModel.Transaction">
+              <MappingFragment StoreEntitySet="Transactions">
+                <ScalarProperty Name="PhoneNumberInvited" ColumnName="PhoneNumberInvited" />
+                <ScalarProperty Name="IsPhoneInvitation" ColumnName="IsPhoneInvitation" />
+                <ScalarProperty Name="BankId" ColumnName="BankId" />
+                <ScalarProperty Name="ReceiverUpdatedBalanceAfterTransaction" ColumnName="ReceiverUpdatedBalanceAfterTransaction" />
+                <ScalarProperty Name="SenderUpdatedBalanceAfterTransaction" ColumnName="SenderUpdatedBalanceAfterTransaction" />
+                <ScalarProperty Name="InvitationSentTo" ColumnName="InvitationSentTo" />
+                <ScalarProperty Name="BankAccountId" ColumnName="BankAccountId" />
+                <ScalarProperty Name="Picture" ColumnName="Picture" />
+                <ScalarProperty Name="Memo" ColumnName="Memo" />
+                <ScalarProperty Name="RaisedById" ColumnName="RaisedById" />
+                <ScalarProperty Name="RaisedBy" ColumnName="RaisedBy" />
+                <ScalarProperty Name="Subject" ColumnName="Subject" />
+                <ScalarProperty Name="AdminName" ColumnName="AdminName" />
+                <ScalarProperty Name="AdminNotes" ColumnName="AdminNotes" />
+                <ScalarProperty Name="TransactionTrackingId" ColumnName="TransactionTrackingId" />
+                <ScalarProperty Name="ResolvedDate" ColumnName="ResolvedDate" />
+                <ScalarProperty Name="ReviewDate" ColumnName="ReviewDate" />
+                <ScalarProperty Name="DisputeDate" ColumnName="DisputeDate" />
+                <ScalarProperty Name="LocationId" ColumnName="LocationId" />
+                <ScalarProperty Name="TransactionType" ColumnName="TransactionType" />
+                <ScalarProperty Name="TransactionStatus" ColumnName="TransactionStatus" />
+                <ScalarProperty Name="DisputeStatus" ColumnName="DisputeStatus" />
+                <ScalarProperty Name="TransactionFee" ColumnName="TransactionFee" />
+                <ScalarProperty Name="IsPrepaidTransaction" ColumnName="IsPrepaidTransaction" />
+                <ScalarProperty Name="TransactionDate" ColumnName="TransactionDate" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="DisputeTrackingId" ColumnName="DisputeTrackingId" />
+                <ScalarProperty Name="DeviceId" ColumnName="DeviceId" />
+                <ScalarProperty Name="RecipientId" ColumnName="RecipientId" />
+                <ScalarProperty Name="SenderId" ColumnName="SenderId" />
+                <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
