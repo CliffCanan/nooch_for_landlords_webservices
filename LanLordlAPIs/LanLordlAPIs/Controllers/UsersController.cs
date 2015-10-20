@@ -1548,73 +1548,80 @@ namespace LanLordlAPIs.Controllers
         // to change password for given user
         [HttpPost]
         [ActionName("ChangeUserPassword")]
-        public CreatePropertyResultOutput ChangeUserPassword(EditPersonalInfoInputClass User)
+        public GenericInternalResponse ChangeUserPassword(UpdatePasswordInput input)
         {
-            CreatePropertyResultOutput result = new CreatePropertyResultOutput();
-            result.IsSuccess = false;
+            GenericInternalResponse result = new GenericInternalResponse();
+            result.success = false;
 
             try
             {
-                Guid landlordguidId = new Guid(User.DeviceInfo.LandlorId);
-                result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, User.DeviceInfo.AccessToken);
-
-                if (result.AuthTokenValidation.IsTokenOk)
+                if (String.IsNullOrEmpty(input.newPw))
                 {
-                    // valid access token continue with edit
-
-                    using (NOOCHEntities obj = new NOOCHEntities())
-                    {
-                        //reading details from db
-                        var lanlordObj = (from c in obj.Landlords
-                                          where c.LandlordId == landlordguidId
-                                          select c).FirstOrDefault();
-
-                        if (lanlordObj != null)
-                        {
-                            if (String.IsNullOrEmpty(User.UserInfo.NewPassword))
-                            {
-                                result.IsSuccess = false;
-                                result.ErrorMessage = "Invalid password.";    
-                            }
-                            else
-                            {
-                                //getting member from members table
-                                var memberDetails = (from c in obj.Members  where c.MemberId==lanlordObj.MemberId select c).FirstOrDefault();
-                                if (memberDetails!=null)
-                                {
-                                    memberDetails.Password = CommonHelper.GetEncryptedData(User.UserInfo.NewPassword);
-                                    memberDetails.DateModified = DateTime.Now;
-                                    obj.SaveChanges();
-                                    result.IsSuccess = true;
-                                    result.ErrorMessage = "Password changed successfully.";    
-                                }
-                                else
-                                {
-                                    result.IsSuccess = false;
-                                    result.ErrorMessage = "Invalid user id.";    
-                                }
-                                
-                            }
-                        }
-                        else
-                        {
-                            result.ErrorMessage = "Given landlord ID not found.";
-                        }
-                    }
+                    result.msg = "No new password sent!";
                 }
                 else
                 {
-                    result.ErrorMessage = result.AuthTokenValidation.ErrorMessage;
+                    Guid landlordguidId = new Guid(input.AuthInfo.LandlorId);
+                    result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, input.AuthInfo.AccessToken);
+
+                    if (result.AuthTokenValidation.IsTokenOk)
+                    {
+                        using (NOOCHEntities obj = new NOOCHEntities())
+                        {
+                            var lanlordObj = (from c in obj.Landlords
+                                              where c.LandlordId == landlordguidId
+                                              select c).FirstOrDefault();
+
+                            if (lanlordObj != null)
+                            {
+
+                                // Now get Member from Members Table
+                                var memberObj = (from c in obj.Members
+                                                 where c.MemberId == lanlordObj.MemberId
+                                                 select c).FirstOrDefault();
+
+                                if (memberObj != null)
+                                {
+                                    string currentPwEnc = CommonHelper.GetEncryptedData(input.currentPw);
+
+                                    if (currentPwEnc == memberObj.Password)
+                                    {
+                                        memberObj.Password = CommonHelper.GetEncryptedData(input.newPw);
+                                        memberObj.DateModified = DateTime.Now;
+                                        obj.SaveChanges();
+
+                                        result.success = true;
+                                        result.msg = "Password changed successfully.";
+                                    }
+                                    else
+                                    {
+                                        result.msg = "Current password [" + currentPwEnc + "] was incorrect.";
+                                    }
+                                }
+                                else
+                                {
+                                    result.msg = "Invalid user id.";
+                                }
+                            }
+                            else
+                            {
+                                result.msg = "Given landlord ID not found.";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        result.msg = result.AuthTokenValidation.ErrorMessage;
+                    }
                 }
             }
             catch (Exception ex)
             {
                 Logger.Error("Landlords API -> UsersController -> EditUserInfo FAILED - [Outer Exception: " + ex.ToString() + "]");
-                result.ErrorMessage = "Server error";
+                result.msg = "Server error";
             }
 
             return result;
         }
-
     }
 }

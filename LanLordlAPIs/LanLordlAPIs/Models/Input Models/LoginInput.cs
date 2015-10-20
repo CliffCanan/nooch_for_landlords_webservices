@@ -40,6 +40,13 @@ namespace LanLordlAPIs.Models.Input_Models
         public LandlordProfileInfoInputClass UserInfo { get; set; }
     }
 
+    public class UpdatePasswordInput
+    {
+        public GetProfileDataInput AuthInfo { get; set; }
+        public string currentPw { get; set; }
+        public string newPw { get; set; }
+    }
+
     public class idVerWizardInput
     {
         public string ssn { get; set; }

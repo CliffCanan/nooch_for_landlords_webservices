@@ -321,5 +321,6 @@ namespace LanLordlAPIs.Models.Output_Models
     {
         public bool success { get; set; }
         public string msg { get; set; }
+        public AccessTokenValidationOutput AuthTokenValidation { get; set; }
     }
 }
