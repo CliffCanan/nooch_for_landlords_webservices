@@ -181,7 +181,7 @@ namespace LanLordlAPIs.Classes.Utility
                         t = currentTime - lastseen;
                     }
 
-                    if (t.TotalMinutes > 10)
+                    if (t.TotalMinutes > 20)
                     {
                         lanlorddetails.WebAccessToken = GenerateAccessToken();
                         lanlorddetails.LastSeenOn = lastseen;
@@ -706,21 +706,32 @@ namespace LanLordlAPIs.Classes.Utility
         }
 
 
-        public static string SendSMS(string phoneto, string msg)
+        public static string SendSMS(string phoneto, string msg, string memberId)
         {
-            string AccountSid = ConfigurationSettings.AppSettings["AccountSid"].ToString();
-            string AuthToken = ConfigurationSettings.AppSettings["AuthToken"].ToString();
-            string from = ConfigurationSettings.AppSettings["AccountPhone"].ToString();
-            string to = "";
+            try
+            {
+                string AccountSid = ConfigurationSettings.AppSettings["AccountSid"].ToString();
+                string AuthToken = ConfigurationSettings.AppSettings["AuthToken"].ToString();
+                string from = ConfigurationSettings.AppSettings["AccountPhone"].ToString();
+                string to = "";
 
-            if (!phoneto.Trim().Contains("+"))
-                to = GetValueFromConfig("SMSInternationalCode") + phoneto.Trim();
-            else
-                to = phoneto.Trim();
+                if (!phoneto.Trim().Contains("+"))
+                    to = GetValueFromConfig("SMSInternationalCode") + phoneto.Trim();
+                else
+                    to = phoneto.Trim();
 
-            var client = new Twilio.TwilioRestClient(AccountSid, AuthToken);
-            var sms = client.SendSmsMessage(from, to, msg);
-            return sms.Status;
+                var client = new Twilio.TwilioRestClient(AccountSid, AuthToken);
+                //var sms = client.SendSmsMessage(from, to, msg);
+                var sms2 = client.SendMessage(from, to, msg);
+
+                return sms2.Status;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("CommonHelper -> SEND SMS FAILED - [To #: " + phoneto + "], [MemberID: " +
+                                       memberId + "], [Exception: " + ex.InnerException + "]");
+            }
+            return "Failure";
         }
 
 
@@ -742,29 +753,29 @@ namespace LanLordlAPIs.Classes.Utility
 
                 using (var noochConnection = new NOOCHEntities())
                 {
-                    var memberEntity = (from c in noochConnection.Members where c.UserName == Username && c.IsDeleted == false select c).FirstOrDefault();
+                    var memberEntity = (from c in noochConnection.Members
+                                        where c.UserName == Username && c.IsDeleted == false
+                                        select c).FirstOrDefault();
+
                     if (memberEntity != null)
                     {
-                        if (memberEntity.Status == "Temporarily_Blocked")
+                        if (memberEntity.Status == "Temporarily_Blocked" || memberEntity.Status == "Suspended")
                         {
-                            return "Temporarily_Blocked";
-                        }
-                        else if (memberEntity.Status == "Suspended")
-                        {
-                            return "Suspended";
+                            return memberEntity.Status;
                         }
 
                         else if (memberEntity.Status == "Active" || memberEntity.Status == "Registered")
                         {
-                            string MessageBody = "Reply with 'GO' to this message to confirm your mobile number.";
+                            string msg = "Reply with 'GO' to this message to confirm your mobile number.";
+
                             if (memberEntity.ContactNumber != null &&
-                                (memberEntity.IsVerifiedPhone == false ||
-                                 memberEntity.IsVerifiedPhone == null))
+                                memberEntity.IsVerifiedPhone != true)
                             {
-                                string result = SendSMS(memberEntity.ContactNumber, MessageBody);
-                                return "Success";
+                                string result = SendSMS(memberEntity.ContactNumber, msg, memberEntity.MemberId.ToString());
+                                return result;
                             }
-                            else if (memberEntity.ContactNumber != null && (memberEntity.IsVerifiedPhone == true))
+                            else if (memberEntity.ContactNumber != null &&
+                                     memberEntity.IsVerifiedPhone == true)
                             {
                                 return "Already Verified.";
                             }

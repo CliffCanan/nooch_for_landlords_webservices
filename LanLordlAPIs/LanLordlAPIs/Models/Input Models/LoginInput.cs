@@ -54,6 +54,7 @@ namespace LanLordlAPIs.Models.Input_Models
         public string dob { get; set; }
         public string staddress { get; set; }
         public string zip { get; set; }
+        public string phone { get; set; }
         public GetProfileDataInput DeviceInfo { get; set; }
     }
 
