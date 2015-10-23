@@ -60,6 +60,12 @@ namespace LanLordlAPIs.Classes.Utility
         }
 
 
+        public static string GetEmailTemplate(string physicalPath)
+        {
+            using (var sr = new StreamReader(physicalPath))
+                return sr.ReadToEnd();
+        }
+
         public static string GetRandomNoochId()
         {
             const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -86,6 +92,400 @@ namespace LanLordlAPIs.Classes.Utility
             }
             return null;
         }
+
+        public static string GetRandomPinNumber()
+        {
+            const string chars = "0123456789";
+            var random = new Random();
+            var randomId = new string(
+                Enumerable.Repeat(chars, 4)
+                          .Select(s => s[random.Next(s.Length)])
+                          .ToArray());
+
+            return randomId;
+        }
+
+        public static string GetValueFromConfig(string key)
+        {
+            return ConfigurationManager.AppSettings[key];
+        }
+
+        public static Member getMemberByEmailId(string eMailID)
+        {
+            using (NOOCHEntities obj = new NOOCHEntities())
+            {
+                string email = eMailID.Trim().ToLower();
+                email = CommonHelper.GetEncryptedData(email);
+
+                var memDetails = (from c in obj.Members
+                                  where c.UserName == email && c.IsDeleted == false
+                                  select c).SingleOrDefault();
+                return memDetails;
+            }
+        }
+
+        public static Member getMemberByNoochId(string NoochId)
+        {
+            using (NOOCHEntities obj = new NOOCHEntities())
+            {
+                var memDetails = (from c in obj.Members
+                                  where c.Nooch_ID == NoochId
+                                  select c).SingleOrDefault();
+                return memDetails;
+            }
+        }
+
+        public static string GetMemberIdOfLandlord(Guid landlorID)
+        {
+            using (NOOCHEntities obj = new NOOCHEntities())
+            {
+                return (from c in obj.Landlords
+                        where c.LandlordId == landlorID
+                        select c.MemberId).SingleOrDefault().ToString();
+            }
+        }
+
+        public static string GetMemberNameByUserName(string userName)
+        {
+            var userNameLowerCase = CommonHelper.GetEncryptedData(userName.ToLower());
+            userName = CommonHelper.GetEncryptedData(userName);
+
+            using (var noochConnection = new NOOCHEntities())
+            {
+                var noochMember = (from c in noochConnection.Members where c.UserName == userName && c.IsDeleted == false select c).FirstOrDefault();
+
+                if (noochMember != null)
+                {
+                    return CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(noochMember.FirstName))) + " "
+                           + CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(noochMember.LastName)));
+                }
+            }
+            return null;
+        }
+
+        public static string getReferralCode(String memberId)
+        {
+            using (var noochConnection = new NOOCHEntities())
+            {
+                var id = ConvertToGuid(memberId);
+
+                var noochMember = (from c in noochConnection.Members where c.MemberId == id && c.IsDeleted == false select c).FirstOrDefault();
+
+                if (noochMember != null)
+                {
+                    if (noochMember.InviteCodeId != null)
+                    {
+                        Guid v = ConvertToGuid(noochMember.InviteCodeId.ToString());
+
+                        var inviteMember = (from c in noochConnection.InviteCodes where c.InviteCodeId == v select c).FirstOrDefault();
+
+                        if (inviteMember != null)
+                        {
+                            return inviteMember.code;
+                        }
+                        else
+                        {
+                            return "";
+                        }
+                    }
+                    else
+                    {
+                        //No referal code
+                        return "";
+                    }
+                }
+                else
+                {
+                    return "Invalid";
+                }
+            }
+        }
+
+        public static string setReferralCode(Guid memberId)
+        {
+            using (var noochConnection = new NOOCHEntities())
+            {
+                try
+                {
+                    // Get the member's details
+                    var noochMember = (from c in noochConnection.Members where c.MemberId == memberId select c).FirstOrDefault();
+
+                    if (noochMember != null)
+                    {
+                        //Check if the user already has an invite code generted or not
+                        string existing = getReferralCode(memberId.ToString());
+                        if (existing == "")
+                        {
+                            //Generate random code
+                            Random rng = new Random();
+                            int value = rng.Next(1000);
+                            string text = value.ToString("000");
+                            string fName = GetDecryptedData(noochMember.FirstName);
+
+                            // Make sure First name is at least 4 letters
+                            if (fName.Length < 4)
+                            {
+                                string lname = CommonHelper.GetDecryptedData(noochMember.LastName);
+
+                                fName = fName + lname.Substring(0, 4 - fName.Length).ToUpper();
+                            }
+                            string code = fName.Substring(0, 4).ToUpper() + text;
+
+                            //Insert into invites
+                            InviteCode obj = new InviteCode();
+                            obj.InviteCodeId = Guid.NewGuid();
+                            obj.code = code;
+                            obj.totalAllowed = 10;
+                            obj.count = 0;
+
+                            noochConnection.InviteCodes.Add(obj);
+                            noochConnection.SaveChanges();
+                            //update the inviteid into the members table's invitecodeid column
+                            noochMember.InviteCodeId = obj.InviteCodeId;
+                            noochConnection.SaveChanges();
+                            return "Success";
+                        }
+                        else
+                        {
+                            return "Invite Code Already Exists";
+                        }
+                    }
+                    else
+                    {
+                        return "Invalid";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return "Error";
+                }
+            }
+        }
+
+
+        public static Landlord AddNewLandlordEntryInDb(string fName, string lName, string email, string pw, bool eMailSatusToSet, bool phoneStatusToSet, string ip, Guid memberGuid)
+        {
+            try
+            {
+                using (NOOCHEntities obj = new NOOCHEntities())
+                {
+                    Landlord ll = new Landlord();
+                    ll.LandlordId = Guid.NewGuid();
+                    ll.FirstName = GetEncryptedData(fName.ToLower().Trim());
+                    ll.LastName = GetEncryptedData(lName.ToLower().Trim());
+                    ll.eMail = GetEncryptedData(email.ToLower().Trim());
+                    ll.IsEmailVerfieid = eMailSatusToSet;
+                    ll.IsPhoneVerified = phoneStatusToSet;
+                    ll.Status = "Active";
+                    ll.Type = "Landlord";
+                    ll.SubType = "Basic";
+                    ll.MemberId = memberGuid;
+                    ll.IsDeleted = false;
+                    ll.DateCreated = DateTime.Now;
+                    ll.IpAddresses = ip;
+                    ll.IsIdVerified = false;
+
+                    obj.Landlords.Add(ll);
+                    obj.SaveChanges();
+
+                    return ll;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("CommonHelper -> AddNewLandlordEntryInDb FAILED - [Exception: " + ex + "]");
+                return null;
+            }
+        }
+
+
+        public static Tenant AddNewTenantRecordInDB(Guid guid, string fName, string lName, string email, bool isEmVer, DateTime? dob, string ssn, string address1, string city, string state, string zip, string phone, bool isPhVer)
+        {
+            try
+            {
+                using (NOOCHEntities obj = new NOOCHEntities())
+                {
+                    Tenant tenant = new Tenant
+                    {
+                        TenantId = guid,
+                        MemberId = guid,
+                        FirstName = GetEncryptedData(fName.Trim().ToLower()),
+                        LastName = GetEncryptedData(lName.Trim().ToLower()),
+                        eMail = GetEncryptedData(email.Trim().ToLower()),
+                        DateOfBirth = dob,
+                        SSN = !String.IsNullOrEmpty(ssn) ? GetEncryptedData(ssn) : null,
+                        AddressLineOne = !String.IsNullOrEmpty(address1) ? GetEncryptedData(ssn) : null,
+                        City = !String.IsNullOrEmpty(city) ? GetEncryptedData(city) : null,
+                        Zip = !String.IsNullOrEmpty(zip) ? GetEncryptedData(zip) : null,
+                        State = !String.IsNullOrEmpty(state) ? GetEncryptedData(state) : null,
+                        PhoneNumber = phone,
+                        IsEmailVerified = isEmVer,
+                        IsPhoneVerfied = isPhVer,
+                        IsDeleted = false,
+                        DateAdded = DateTime.Now,
+                        IsAnyRentPaid = false,
+                    };
+
+                    obj.Tenants.Add(tenant);
+                    obj.SaveChanges();
+
+                    return tenant;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("CommonHelper -> AddNewTenantRecordInDB FAILED - [Exception: " + ex + "]");
+                return null;
+            }
+        }
+
+
+        public static Member AddNewMemberRecordInDB(Guid guid, string fName, string lName, string email)
+        {
+            try
+            {
+                string noochRandomId = GetRandomNoochId();
+
+                using (NOOCHEntities obj = new NOOCHEntities())
+                {
+                    var member = new Member
+                    {
+                        Nooch_ID = noochRandomId,
+                        MemberId = guid,
+                        FirstName = GetEncryptedData(fName.Trim()),
+                        LastName = GetEncryptedData(lName.Trim()),
+                        UserName = GetEncryptedData(email.Trim()),
+                        UserNameLowerCase = GetEncryptedData(email.Trim().ToLower()),
+                        SecondaryEmail = GetEncryptedData(email.Trim()),
+                        RecoveryEmail = email.Trim(),
+
+                        Password = "",
+                        PinNumber = GetRandomPinNumber(),
+                        Status = "Invited",
+
+                        IsDeleted = false,
+                        DateCreated = DateTime.Now,
+                        FacebookAccountLogin = null,
+                        InviteCodeIdUsed = null,
+                        Type = "Tenant",
+                        IsVerifiedPhone = false,
+                        IsVerifiedWithSynapse = false,
+                    };
+
+                    obj.Members.Add(member);
+                    int saveNewMemberInDB = obj.SaveChanges();
+
+                    #region Create Authentication Token
+
+                    try
+                    {
+                        var tokenId = Guid.NewGuid();
+                        var requestId = Guid.Empty;
+
+                        var token = new AuthenticationToken
+                        {
+                            TokenId = tokenId,
+                            MemberId = member.MemberId,
+                            IsActivated = false,
+                            DateGenerated = DateTime.Now,
+                            FriendRequestId = requestId
+                        };
+                        // Save token details in Authentication Tokens DB table  
+                        obj.AuthenticationTokens.Add(token);
+                        obj.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error("CommonHelper -> AddNewMemberRecordInDB -> Create Auth Token FAILED - [Exception: " + ex + "]");
+                    }
+
+                    #endregion Create Authentication Token
+
+
+                    #region Notification Settings
+
+                    try
+                    {
+                        var memberNotification = new MemberNotification
+                        {
+                            NotificationId = Guid.NewGuid(),
+
+                            MemberId = member.MemberId,
+                            FriendRequest = true,
+                            InviteRequestAccept = true,
+                            TransferSent = true,
+                            TransferReceived = true,
+                            TransferAttemptFailure = true,
+                            NoochToBank = true,
+                            BankToNooch = true,
+                            EmailFriendRequest = true,
+                            EmailInviteRequestAccept = true,
+                            EmailTransferSent = true,
+                            EmailTransferReceived = true,
+                            EmailTransferAttemptFailure = true,
+                            TransferUnclaimed = true,
+                            BankToNoochRequested = true,
+                            BankToNoochCompleted = true,
+                            NoochToBankRequested = true,
+                            NoochToBankCompleted = true,
+                            InviteReminder = true,
+                            LowBalance = true,
+                            ValidationRemainder = true,
+                            ProductUpdates = true,
+                            NewAndUpdate = true,
+                            DateCreated = DateTime.Now
+                        };
+
+                        obj.MemberNotifications.Add(memberNotification);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error("CommonHelper -> AddNewMemberRecordInDB -> Create Notification Settings FAILED - [Exception: " + ex + "]");
+                    }
+
+                    #endregion Notification Settings
+
+
+                    #region Privacy Settings
+
+                    try
+                    {
+                        var memberPrivacySettings = new MemberPrivacySetting
+                        {
+                            MemberId = member.MemberId,
+                            AllowSharing = true,
+                            ShowInSearch = true,
+                            DateCreated = DateTime.Now
+                        };
+                        obj.MemberPrivacySettings.Add(memberPrivacySettings);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error("CommonHelper -> AddNewMemberRecordInDB -> Create Privacy Settings FAILED - [Exception: " + ex + "]");
+                    }
+
+                    #endregion Privacy Settings
+
+                    if (saveNewMemberInDB > 0)
+                    {
+                        Logger.Info("CommonHelper -> AddNewMemberRecordInDB - New Member Record Created SUCCESSFULLY - [MemberID: " + guid.ToString() + "]");
+                    }
+                    else
+                    {
+                        Logger.Error("CommonHelper -> AddNewMemberRecordInDB - New Member Record Creation FAILED - [MemberID: " + guid.ToString() + "]");
+                    }
+
+                    return member;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("CommonHelper -> AddNewMemberRecordInDB FAILED - [Exception: " + ex + "]");
+                return null;
+            }
+        }
+
+
 
 
         public static bool saveLandlordIp(Guid LandlorId, string IP)
@@ -147,6 +547,8 @@ namespace LanLordlAPIs.Classes.Utility
         }
 
 
+
+
         public static string GenerateAccessToken()
         {
             byte[] time = BitConverter.GetBytes(DateTime.UtcNow.ToBinary());
@@ -161,7 +563,7 @@ namespace LanLordlAPIs.Classes.Utility
             AccessTokenValidationOutput result = new AccessTokenValidationOutput();
             using (NOOCHEntities obj = new NOOCHEntities())
             {
-                var lanlorddetails = (from c in obj.Landlords 
+                var lanlorddetails = (from c in obj.Landlords
                                       where c.LandlordId == LandlorId && c.WebAccessToken == accesstoken && c.IsDeleted == false
                                       select c).FirstOrDefault();
 
@@ -215,6 +617,8 @@ namespace LanLordlAPIs.Classes.Utility
         }
 
 
+
+
         public static string FormatPhoneNumber(string sourcePhone)
         {
             if (String.IsNullOrEmpty(sourcePhone) || sourcePhone.Length != 10) return sourcePhone;
@@ -242,19 +646,6 @@ namespace LanLordlAPIs.Classes.Utility
         }
 
 
-        public static string GetRandomPinNumber()
-        {
-            const string chars = "0123456789";
-            var random = new Random();
-            var randomId = new string(
-                Enumerable.Repeat(chars, 4)
-                          .Select(s => s[random.Next(s.Length)])
-                          .ToArray());
-
-            return randomId;
-        }
-
-
         public static Guid ConvertToGuid(string value)
         {
             var id = new Guid();
@@ -274,103 +665,7 @@ namespace LanLordlAPIs.Classes.Utility
         }
 
 
-        public static string getReferralCode(String memberId)
-        {
-            using (var noochConnection = new NOOCHEntities())
-            {
-                var id = ConvertToGuid(memberId);
 
-                var noochMember = (from c in noochConnection.Members where c.MemberId == id && c.IsDeleted == false select c).FirstOrDefault();
-
-                if (noochMember != null)
-                {
-                    if (noochMember.InviteCodeId != null)
-                    {
-                        Guid v = ConvertToGuid(noochMember.InviteCodeId.ToString());
-
-                        var inviteMember = (from c in noochConnection.InviteCodes where c.InviteCodeId == v select c).FirstOrDefault();
-
-                        if (inviteMember != null)
-                        {
-                            return inviteMember.code;
-                        }
-                        else
-                        {
-                            return "";
-                        }
-                    }
-                    else
-                    {
-                        //No referal code
-                        return "";
-                    }
-                }
-                else
-                {
-                    return "Invalid";
-                }
-            }
-        }
-
-
-        public static string setReferralCode(Guid memberId)
-        {
-            using (var noochConnection = new NOOCHEntities())
-            {
-                try
-                {
-                    // Get the member's details
-                    var noochMember = (from c in noochConnection.Members where c.MemberId == memberId select c).FirstOrDefault();
-
-                    if (noochMember != null)
-                    {
-                        //Check if the user already has an invite code generted or not
-                        string existing = getReferralCode(memberId.ToString());
-                        if (existing == "")
-                        {
-                            //Generate random code
-                            Random rng = new Random();
-                            int value = rng.Next(1000);
-                            string text = value.ToString("000");
-                            string userName = GetDecryptedData(noochMember.FirstName);
-                            string code = userName.Substring(0, 4).ToUpper() + text;
-
-                            //Insert into invites
-                            InviteCode obj = new InviteCode();
-                            obj.InviteCodeId = Guid.NewGuid();
-                            obj.code = code;
-                            obj.totalAllowed = 10;
-                            obj.count = 0;
-
-                            noochConnection.InviteCodes.Add(obj);
-                            noochConnection.SaveChanges();
-                            //update the inviteid into the members table's invitecodeid column
-                            noochMember.InviteCodeId = obj.InviteCodeId;
-                            noochConnection.SaveChanges();
-                            return "Success";
-                        }
-                        else
-                        {
-                            return "Invite Code Already Exists";
-                        }
-                    }
-                    else
-                    {
-                        return "Invalid";
-                    }
-                }
-                catch (Exception ex)
-                {
-                    return "Error";
-                }
-            }
-        }
-
-
-        public static string GetValueFromConfig(string key)
-        {
-            return ConfigurationManager.AppSettings[key];
-        }
 
 
         public static Image byteArrayToImage(byte[] byteArrayIn)
@@ -415,18 +710,13 @@ namespace LanLordlAPIs.Classes.Utility
         }
 
 
-        public static string GetMemberIdOfLandlord(Guid landlorID)
-        {
-            using (NOOCHEntities obj = new NOOCHEntities())
-            {
-                return (from c in obj.Landlords where c.LandlordId == landlorID select c.MemberId).SingleOrDefault().ToString();
-            }
-        }
+
 
 
         public static CheckAndRegisterMemberByEmailResult CheckIfMemberExistsWithGivenEmailId(string eMailId)
         {
             CheckAndRegisterMemberByEmailResult result = new CheckAndRegisterMemberByEmailResult();
+
             try
             {
                 if (String.IsNullOrEmpty(eMailId))
@@ -436,9 +726,13 @@ namespace LanLordlAPIs.Classes.Utility
 
                 string email = eMailId.Trim().ToLower();
                 email = CommonHelper.GetEncryptedData(email);
+
                 using (NOOCHEntities obj = new NOOCHEntities())
                 {
-                    var existingMemberDetails = (from c in obj.Members where c.UserName == email && c.IsDeleted == false select c).FirstOrDefault();
+                    var existingMemberDetails = (from c in obj.Members
+                                                 where (c.UserName == email || c.UserNameLowerCase == email) && c.IsDeleted == false
+                                                 select c).FirstOrDefault();
+
                     if (existingMemberDetails != null)
                     {
                         // user already exists
@@ -461,29 +755,6 @@ namespace LanLordlAPIs.Classes.Utility
                 result.IsSuccess = false;
                 result.ErrorMessage = "Server Error.";
                 return result;
-            }
-        }
-
-
-        public static Member getMemberByEmailId(string eMailID)
-        {
-            using (NOOCHEntities obj = new NOOCHEntities())
-            {
-                string email = eMailID.Trim().ToLower();
-                email = CommonHelper.GetEncryptedData(email);
-
-                var memDetails = (from c in obj.Members where c.UserName == email && c.IsDeleted == false select c).SingleOrDefault();
-                return memDetails;
-            }
-        }
-
-
-        public static Member getMemberByNoochId(string NoochId)
-        {
-            using (NOOCHEntities obj = new NOOCHEntities())
-            {
-                var memDetails = (from c in obj.Members where c.Nooch_ID == NoochId select c).SingleOrDefault();
-                return memDetails;
             }
         }
 
@@ -561,58 +832,17 @@ namespace LanLordlAPIs.Classes.Utility
                     result = noochConnection.SaveChanges();
                 }
 
-                return SendEmail(Constants.TEMPLATE_FORGOT_PASSWORD, fromAddress,
-                    primaryMail, "Reset your Nooch password", tokens
-                    , null);
+                return SendEmail(Constants.TEMPLATE_FORGOT_PASSWORD, fromAddress, primaryMail, "Reset your Nooch password", tokens, null);
             }
             catch (Exception ex)
             {
+                Logger.Error("CommonHelper -> SendPasswordMail FAILED - [Exception: " + ex + "]");
                 return false;
             }
         }
 
 
-        public static Landlord AddNewLandlordEntryInDb(string fName, string lName, string email, string pw, bool eMailSatusToSet, bool phoneStatusToSet, string ip, Guid memberGuid)
-        {
-            try
-            {
-                using (NOOCHEntities obj = new NOOCHEntities())
-                {
-                    Landlord ll = new Landlord();
-                    ll.LandlordId = Guid.NewGuid();
-                    ll.FirstName = GetEncryptedData(fName.ToLower().Trim());
-                    ll.LastName = GetEncryptedData(lName.ToLower().Trim());
-                    ll.eMail = GetEncryptedData(email.ToLower().Trim());
-                    ll.IsEmailVerfieid = eMailSatusToSet;
-                    ll.IsPhoneVerified = phoneStatusToSet;
-                    ll.Status = "Active";
-                    ll.Type = "Landlord";
-                    ll.SubType = "Basic";
-                    ll.MemberId = memberGuid;
-                    ll.IsDeleted = false;
-                    ll.DateCreated = DateTime.Now;
-                    ll.IpAddresses = ip;
-                    ll.IsIdVerified = false;
 
-                    obj.Landlords.Add(ll);
-                    obj.SaveChanges();
-
-                    return ll;
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("CommonHelper -> AddNewLandlordEntryInDb FAILED - [Exception: " + ex + "]");
-                return null;
-            }
-        }
-
-
-        public static string GetEmailTemplate(string physicalPath)
-        {
-            using (var sr = new StreamReader(physicalPath))
-                return sr.ReadToEnd();
-        }
 
 
         public static bool SendEmail(string templateName, string fromAddress, string toAddress, string subject, IEnumerable<KeyValuePair<string, string>> replacements, string bodyText)
@@ -803,25 +1033,6 @@ namespace LanLordlAPIs.Classes.Utility
         }
 
 
-        public static string GetMemberNameByUserName(string userName)
-        {
-            var userNameLowerCase = CommonHelper.GetEncryptedData(userName.ToLower());
-            userName = CommonHelper.GetEncryptedData(userName);
-
-            using (var noochConnection = new NOOCHEntities())
-            {
-                var noochMember = (from c in noochConnection.Members where c.UserName == userName && c.IsDeleted == false select c).FirstOrDefault();
-
-                if (noochMember != null)
-                {
-                    return CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(noochMember.FirstName))) + " "
-                           + CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(noochMember.LastName)));
-                }
-            }
-            return null;
-        }
-
-
         public static string ResendVerificationLink(string Username)
         {
             //1. Check if user exists or not
@@ -888,8 +1099,9 @@ namespace LanLordlAPIs.Classes.Utility
     }
 
 
-    //All utility classes goes here--------------------------------XXXXXXXXXXXXXXXXXXXXXXXXX-------------------------
-
+    /*****************************/
+    /****   Utility Classes   ****/
+    /*****************************/
     public class AccessTokenValidationOutput
     {
         public bool IsTokenOk { get; set; }
@@ -897,5 +1109,4 @@ namespace LanLordlAPIs.Classes.Utility
         public string AccessToken { get; set; }
         public string ErrorMessage { get; set; }
     }
-    //All utility classes up there----------------------------------XXXXXXXXXXXXXXXXXXXXXXXXX------------------------
 }

@@ -142,4 +142,19 @@ namespace LanLordlAPIs.Models.Input_Models
         public bool IsAddedWithProperty { get; set; }
     }
 
+    public class AddNewTenantInput
+    {
+        public string propertyId { get; set; }
+        public string unitId { get; set; }
+        public string rent { get; set; }
+        public basicLandlordPayload authData { get; set; }
+        public TenantInfo tenant { get; set; }
+    }
+
+    public class TenantInfo
+    {
+        public string email { get; set; }
+        public string firstName { get; set; }
+        public string lastName { get; set; }
+    }
 }
