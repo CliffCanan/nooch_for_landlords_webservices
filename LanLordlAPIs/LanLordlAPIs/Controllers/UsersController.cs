@@ -618,6 +618,7 @@ namespace LanLordlAPIs.Controllers
             {
                 Guid landlordguidId = new Guid(User.DeviceInfo.LandlorId);
                 result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, User.DeviceInfo.AccessToken);
+                result.IsSuccess = false;
 
                 if (result.AuthTokenValidation.IsTokenOk)
                 {
@@ -625,12 +626,12 @@ namespace LanLordlAPIs.Controllers
 
                     using (NOOCHEntities obj = new NOOCHEntities())
                     {
-                        //reading details from db
-                        var lanlordObj = (from c in obj.Landlords
+                        // Get details from DB
+                        var landlordObj = (from c in obj.Landlords
                                           where c.LandlordId == landlordguidId
                                           select c).FirstOrDefault();
-
-                        if (lanlordObj != null)
+                        Logger.Info("UsersController -> EditUserInfo Checkpoint #0");
+                        if (landlordObj != null)
                         {
                             if (User.UserInfo.InfoType == "Personal")
                             {
@@ -655,20 +656,18 @@ namespace LanLordlAPIs.Controllers
                                     }
 
                                     // Now store info in DB
-                                    lanlordObj.FirstName = CommonHelper.GetEncryptedData(firstName.Trim());
-                                    lanlordObj.LastName = CommonHelper.GetEncryptedData(lastName.Trim());
+                                    landlordObj.FirstName = CommonHelper.GetEncryptedData(firstName.Trim());
+                                    landlordObj.LastName = CommonHelper.GetEncryptedData(lastName.Trim());
                                     if (!String.IsNullOrEmpty(User.UserInfo.DOB))
                                     {
-                                        lanlordObj.DateOfBirth = Convert.ToDateTime(User.UserInfo.DOB);
+                                        landlordObj.DateOfBirth = Convert.ToDateTime(User.UserInfo.DOB);
                                     }
                                     if (!String.IsNullOrEmpty(User.UserInfo.SSN) &&
                                         User.UserInfo.SSN.Length == 4)
                                     {
-                                        lanlordObj.SSN = CommonHelper.GetEncryptedData(User.UserInfo.SSN);
+                                        landlordObj.SSN = CommonHelper.GetEncryptedData(User.UserInfo.SSN);
                                     }
-                                    lanlordObj.DateModified = DateTime.Now;
-
-                                    obj.SaveChanges();
+                                    landlordObj.DateModified = DateTime.Now;
 
                                     result.IsSuccess = true;
                                     result.ErrorMessage = "OK";
@@ -686,21 +685,16 @@ namespace LanLordlAPIs.Controllers
                             {
                                 #region Editing Company Info
 
-                                if (String.IsNullOrEmpty(User.UserInfo.CompanyName))
+                                if (!String.IsNullOrEmpty(User.UserInfo.CompanyName))
                                 {
-                                    result.ErrorMessage = "Company name missing.";
-                                    return result;
+                                    landlordObj.CompanyName = CommonHelper.GetEncryptedData(CommonHelper.UppercaseFirst(User.UserInfo.CompanyName));
                                 }
 
-                                // Now store company info in DB
-                                lanlordObj.CompanyName = CommonHelper.GetEncryptedData(CommonHelper.UppercaseFirst(User.UserInfo.CompanyName));
                                 if (!String.IsNullOrEmpty(User.UserInfo.CompanyEID))
                                 {
-                                    lanlordObj.CompanyEIN = CommonHelper.GetEncryptedData(User.UserInfo.CompanyEID);
+                                    landlordObj.CompanyEIN = CommonHelper.GetEncryptedData(User.UserInfo.CompanyEID);
                                 }
-                                lanlordObj.DateModified = DateTime.Now;
-
-                                obj.SaveChanges();
+                                landlordObj.DateModified = DateTime.Now;
 
                                 result.IsSuccess = true;
                                 result.ErrorMessage = "OK";
@@ -718,52 +712,36 @@ namespace LanLordlAPIs.Controllers
                                     return result;
                                 }
 
-                                if (String.IsNullOrEmpty(User.UserInfo.MobileNumber))
-                                {
-                                    result.ErrorMessage = "Contact number missing.";
-                                    return result;
-                                }
-
-                                if (String.IsNullOrEmpty(User.UserInfo.AddressLine1))
-                                {
-                                    result.ErrorMessage = "Address missing.";
-                                    return result;
-                                }
-
                                 string userEmailNew = CommonHelper.GetEncryptedData(User.UserInfo.UserEmail.ToLower().Trim());
 
                                 // Check if given email is already registered or not
-                                var lanlorddetailsbyEmail = (from c in obj.Landlords
+                                var lanlordDetailsByEmail = (from c in obj.Landlords
                                                              where c.eMail == userEmailNew &&
                                                                    c.LandlordId != landlordguidId
                                                              select c).FirstOrDefault();
 
-                                if (lanlorddetailsbyEmail != null)
+                                if (lanlordDetailsByEmail != null)
                                 {
                                     result.ErrorMessage = "User with given email already exists.";
                                     return result;
                                 }
 
-                                // Now store all contact info in DB
-                                lanlordObj.DateModified = DateTime.Now;
-
-                                if (lanlordObj.eMail != userEmailNew)
+                                if (landlordObj.eMail != userEmailNew)
                                 {
-                                    lanlordObj.IsEmailVerfieid = false;
-                                    lanlordObj.eMail = userEmailNew;
+                                    landlordObj.IsEmailVerfieid = false;
+                                    landlordObj.eMail = userEmailNew;
                                 }
 
-                                if (String.IsNullOrEmpty(User.UserInfo.MobileNumber))
+                                if (!String.IsNullOrEmpty(User.UserInfo.MobileNumber))
                                 {
-                                    if (CommonHelper.RemovePhoneNumberFormatting(lanlordObj.MobileNumber) != CommonHelper.RemovePhoneNumberFormatting(User.UserInfo.MobileNumber))
+                                    if (CommonHelper.RemovePhoneNumberFormatting(landlordObj.MobileNumber) != CommonHelper.RemovePhoneNumberFormatting(User.UserInfo.MobileNumber))
                                     {
-                                        lanlordObj.MobileNumber = CommonHelper.RemovePhoneNumberFormatting(User.UserInfo.MobileNumber);
+                                        landlordObj.MobileNumber = CommonHelper.RemovePhoneNumberFormatting(User.UserInfo.MobileNumber);
                                     }
                                 }
 
-                                lanlordObj.AddressLineOne = CommonHelper.GetEncryptedData(User.UserInfo.AddressLine1);
-
-                                obj.SaveChanges();
+                                landlordObj.AddressLineOne = CommonHelper.GetEncryptedData(User.UserInfo.AddressLine1);
+                                landlordObj.DateModified = DateTime.Now;
 
                                 result.IsSuccess = true;
                                 result.ErrorMessage = "OK";
@@ -774,34 +752,138 @@ namespace LanLordlAPIs.Controllers
                             else if (User.UserInfo.InfoType == "Social")
                             {
                                 #region Editing Social Info
+                                                                landlordObj.DateModified = DateTime.Now;
+                                                                landlordObj.DateModified = DateTime.Now;
 
                                 // Now store all social info in DB
 
                                 if (!String.IsNullOrEmpty(User.UserInfo.TwitterHandle))
                                 {
-                                    lanlordObj.TwitterHandle = User.UserInfo.TwitterHandle;
+                                    landlordObj.TwitterHandle = User.UserInfo.TwitterHandle;
                                 }
                                 if (!String.IsNullOrEmpty(User.UserInfo.FbUrl))
                                 {
-                                    lanlordObj.FBId = User.UserInfo.FbUrl;
+                                    landlordObj.FBId = User.UserInfo.FbUrl;
                                 }
                                 if (!String.IsNullOrEmpty(User.UserInfo.InstaUrl))
                                 {
-                                    lanlordObj.InstagramUrl = User.UserInfo.InstaUrl;
+                                    landlordObj.InstagramUrl = User.UserInfo.InstaUrl;
                                 }
 
-                                obj.SaveChanges();
+                                landlordObj.DateModified = DateTime.Now;
 
                                 result.IsSuccess = true;
                                 result.ErrorMessage = "OK";
 
                                 #endregion Editing Social Info
                             }
+                            Logger.Info("UsersController -> EditUserInfo Checkpoint #1");
+                            obj.SaveChanges();
                         }
                         else
                         {
+                            Logger.Error("UsersController -> EditUserInfo FAILED - Landlord ID Not Found");
                             result.ErrorMessage = "Given landlord ID not found.";
                         }
+
+                        #region Update MEMBERS Table
+
+                        // CLIFF (10/15/15): Since all the Synapse methods take the data from the Members Table,
+                        //                   we have to also save any of that data for Landlords in the Members Table 
+                        //                   ...even though we have most of the same data in the Landlords table.  We shouldn't have duplicated everything :-(
+                        
+                        Guid memGuidId = new Guid(User.DeviceInfo.MemberId);
+
+                        var memberObj = (from c in obj.Members
+                                         where c.MemberId == memGuidId && c.IsDeleted == false
+                                         select c).FirstOrDefault();
+                        Logger.Info("UsersController -> EditUserInfo Checkpoint #2");
+                        if (memberObj != null)
+                        {
+                            if (!String.IsNullOrEmpty(User.UserInfo.FullName))
+                            {
+                                string firstName = "", lastName = "";
+                                string[] nameAftetSplit = User.UserInfo.FullName.Trim().ToLower().Split(' ');
+                                Logger.Info("UsersController -> EditUserInfo Checkpoint #3");
+                                if (nameAftetSplit.Length > 1)
+                                {
+                                    firstName = CommonHelper.UppercaseFirst(nameAftetSplit[0]);
+
+                                    for (int i = 1; i < nameAftetSplit.Length; i++)
+                                    {
+                                        lastName += CommonHelper.UppercaseFirst(nameAftetSplit[i]) + " ";
+                                    }
+                                }
+                                memberObj.FirstName = CommonHelper.GetEncryptedData(firstName.Trim());
+                                memberObj.LastName = CommonHelper.GetEncryptedData(lastName.Trim());
+                            }
+                            Logger.Info("UsersController -> EditUserInfo Checkpoint #4");
+                            if (!String.IsNullOrEmpty(User.UserInfo.DOB))
+                            {
+                                memberObj.DateOfBirth = Convert.ToDateTime(User.UserInfo.DOB);
+                            }
+                            if (!String.IsNullOrEmpty(User.UserInfo.SSN) &&
+                                User.UserInfo.SSN.Length == 4)
+                            {
+                                memberObj.SSN = CommonHelper.GetEncryptedData(User.UserInfo.SSN);
+                            }
+                            Logger.Info("UsersController -> EditUserInfo Checkpoint #5");
+                            if (!String.IsNullOrEmpty(User.UserInfo.AddressLine1))
+                            {
+                                memberObj.Address = CommonHelper.GetEncryptedData(User.UserInfo.AddressLine1);
+                            }
+                            if (!String.IsNullOrEmpty(User.UserInfo.Zip))
+                            {
+                                memberObj.Zipcode = CommonHelper.GetEncryptedData(User.UserInfo.Zip);
+                            }
+                            if (!String.IsNullOrEmpty(User.UserInfo.MobileNumber))
+                            {
+                                string newPhoneClean = CommonHelper.RemovePhoneNumberFormatting(User.UserInfo.MobileNumber);
+
+                                if (CommonHelper.RemovePhoneNumberFormatting(memberObj.ContactNumber) != newPhoneClean)
+                                {
+                                    //if (!IsPhoneNumberAlreadyRegistered(contactNumber))
+                                    //{
+                                    memberObj.ContactNumber = newPhoneClean;
+                                    memberObj.IsVerifiedPhone = true;  // CLIFF (10/22/15) - Twilio is not working, so automatically validating all new phone numbers for Landlords...
+
+                                    #region SendingSMSVerificaion
+
+                                    try
+                                    {
+                                        string MessageBody = "Reply with 'GO' to this message to confirm your phone number on Nooch.";
+                                        string SMSresult = CommonHelper.SendSMS(newPhoneClean, MessageBody, memberObj.MemberId.ToString());
+
+                                        Logger.Info("UsersController -> EditUserInfo -> SMS Verification sent to [" + User.UserInfo.MobileNumber + "] successfully.");
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Logger.Error("UsersController -> EditUserInfo -> SMS Verification NOT sent to [" +
+                                            User.UserInfo.MobileNumber + "], [Exception: " + ex + "]");
+                                    }
+
+                                    #endregion SendingSMSVerificaion
+                                    //}
+                                    //else
+                                    //{
+                                    //    return "Phone Number already registered with Nooch";
+                                    //}
+                                }
+                            }
+
+                            memberObj.DateModified = DateTime.Now;
+
+                            obj.SaveChanges();
+
+                            result.IsSuccess = true;
+                            result.ErrorMessage = "OK";
+                        }
+                        else
+                        {
+                            Logger.Error("UsersController -> EditUserInfo FAILED - Member ID Not Found");
+                        }
+
+                        #endregion Update MEMBERS Table
                     }
                 }
                 else
@@ -811,7 +893,7 @@ namespace LanLordlAPIs.Controllers
             }
             catch (Exception ex)
             {
-                Logger.Error("Landlords API -> UsersController -> EditUserInfo FAILED - [Outer Exception: " + ex.ToString() + "]");
+                Logger.Error("UsersController -> EditUserInfo FAILED - [Outer Exception: " + ex.ToString() + "]");
                 result.ErrorMessage = "Server error";
             }
 

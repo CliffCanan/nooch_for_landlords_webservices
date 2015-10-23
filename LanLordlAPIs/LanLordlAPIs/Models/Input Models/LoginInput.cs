@@ -24,6 +24,7 @@ namespace LanLordlAPIs.Models.Input_Models
     {
         public string LandlorId { get; set; }
         public string AccessToken { get; set; }
+        public string MemberId { get; set; }
     }
 
     public class ResendVerificationEmailAndSMSInput
