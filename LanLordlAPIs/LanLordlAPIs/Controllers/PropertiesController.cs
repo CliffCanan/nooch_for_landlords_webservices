@@ -855,14 +855,16 @@ namespace LanLordlAPIs.Controllers
                     Member landlordDetailsInMembersTable = null;
                     using (NOOCHEntities obj = new NOOCHEntities())
                     {
-                        var deta =
-                            (from c in obj.Landlords where c.LandlordId == landlordGuid select c)
-                                .FirstOrDefault();
+                        var deta = (from c in obj.Landlords
+                                    where c.LandlordId == landlordGuid
+                                    select c).FirstOrDefault();
 
                         if (deta != null)
                         {
-                            landlordDetailsInMembersTable = (from c in obj.Members where c.MemberId == deta.MemberId select c)
-                                .FirstOrDefault();
+                            landlordDetailsInMembersTable = (from c in obj.Members
+                                                             where c.MemberId == deta.MemberId
+                                                             select c).FirstOrDefault();
+
                             landlordMemberId = CommonHelper.ConvertToGuid(deta.MemberId.ToString());
                         }
                     }
@@ -1045,45 +1047,11 @@ namespace LanLordlAPIs.Controllers
                         #endregion
 
 
+                        #region Sending email to New TENANT
+
                         string LandlordFirstName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(landlordDetailsInMembersTable.FirstName)));
                         string LandlordLastName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(landlordDetailsInMembersTable.LastName)));
                         string CancelRequestLinkForLandlord = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/CancelRequest.aspx?TransactionId=" + trans.TransactionId + "&MemberId=" + landlordDetailsInMembersTable.MemberId + "&UserType=U6De3haw2r4mSgweNpdgXQ==");
-
-
-                        #region Sending Email to Landord
-
-                        var tokens = new Dictionary<string, string>
-												 {
-													{Constants.PLACEHOLDER_FIRST_NAME, LandlordFirstName},
-													{Constants.PLACEHOLDER_NEWUSER,email},  // this is email of new tenant
-													{Constants.PLACEHOLDER_TRANSFER_AMOUNT,s32[0].ToString()},
-													{Constants.PLACEHLODER_CENTS,s32[1].ToString()},
-													{Constants.PLACEHOLDER_OTHER_LINK,CancelRequestLinkForLandlord},
-													{Constants.MEMO,memo}
-												 };
-
-                        var fromAddress = CommonHelper.GetValueFromConfig("transfersMail");
-
-                        try
-                        {
-                            CommonHelper.SendEmail("requestSent", fromAddress, CommonHelper.GetDecryptedData(landlordDetailsInMembersTable.UserName),
-                                "Your payment request to " + email + " is pending on Nooch",
-                                 tokens, null);
-
-
-                            Logger.Info("PropertiesController -> RequestSent email sent to - [ " + CommonHelper.GetDecryptedData(landlordDetailsInMembersTable.UserName) + " ] ");
-                        }
-                        catch (Exception ex)
-                        {
-
-
-                            Logger.Error("PropertiesController -> RequestSent email NOT sent to - [ " + CommonHelper.GetDecryptedData(landlordDetailsInMembersTable.UserName) + " ] " + " , [Exception: " + ex + "]");
-                        }
-
-                        #endregion
-
-
-                        #region Sending email to New TENANT
 
                         // Send email to Request Receiver -- sending UserType LinkSource TransType as encrypted along with request
                         // In this case UserType would = 'New'
@@ -1095,6 +1063,7 @@ namespace LanLordlAPIs.Controllers
 
                         string rejectRequestLinkForTenant = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/rejectMoney.aspx?TransactionId=" + trans.TransactionId + "&UserType=U6De3haw2r4mSgweNpdgXQ==&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==&TransType=T3EMY1WWZ9IscHIj3dbcNw==&IsRentTrans=true");
                         string paylink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/payRequest.aspx?TransactionId=" + trans.TransactionId);
+                        
                         var tokens2 = new Dictionary<string, string>
 												 {
 													{Constants.PLACEHOLDER_FIRST_NAME, LandlordFirstName},
@@ -1108,7 +1077,7 @@ namespace LanLordlAPIs.Controllers
 												 };
                         try
                         {
-                            CommonHelper.SendEmail("requestReceivedToNewUser", fromAddress, email,
+                            CommonHelper.SendEmail("requestReceivedToNewUser", "rentpayments@nooch.com", email,
                                 LandlordFirstName + " " + LandlordLastName + " requested Rent payment of " + "$" + s22 + " with Nooch",
                                  tokens2, null);
 

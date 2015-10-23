@@ -580,6 +580,8 @@ namespace LanLordlAPIs.Controllers
                                 }
 
                                 // Now check the values in the Member Table and use them if they are verified
+                                // NOTE:  In general, let's try to use the Member Table info b/c all the existing services for Synapse, email/phone verification, etc. use that table.
+                                res.MobileNumber = !String.IsNullOrEmpty(memberObj.ContactNumber) ? CommonHelper.FormatPhoneNumber(memberObj.ContactNumber) : "";
                                 res.IsPhoneVerified = (memberObj.IsVerifiedPhone == true) ? true : res.IsPhoneVerified;
                                 res.IsEmailVerified = (memberObj.Status == "Active") ? true : false;
                             }
@@ -628,9 +630,9 @@ namespace LanLordlAPIs.Controllers
                     {
                         // Get details from DB
                         var landlordObj = (from c in obj.Landlords
-                                          where c.LandlordId == landlordguidId
-                                          select c).FirstOrDefault();
-                        Logger.Info("UsersController -> EditUserInfo Checkpoint #0");
+                                           where c.LandlordId == landlordguidId
+                                           select c).FirstOrDefault();
+
                         if (landlordObj != null)
                         {
                             if (User.UserInfo.InfoType == "Personal")
@@ -708,7 +710,7 @@ namespace LanLordlAPIs.Controllers
 
                                 if (String.IsNullOrEmpty(User.UserInfo.UserEmail))
                                 {
-                                    result.ErrorMessage = "eMail missing.";
+                                    result.ErrorMessage = "Email missing!";
                                     return result;
                                 }
 
@@ -752,8 +754,8 @@ namespace LanLordlAPIs.Controllers
                             else if (User.UserInfo.InfoType == "Social")
                             {
                                 #region Editing Social Info
-                                                                landlordObj.DateModified = DateTime.Now;
-                                                                landlordObj.DateModified = DateTime.Now;
+                                landlordObj.DateModified = DateTime.Now;
+                                landlordObj.DateModified = DateTime.Now;
 
                                 // Now store all social info in DB
 
@@ -777,7 +779,7 @@ namespace LanLordlAPIs.Controllers
 
                                 #endregion Editing Social Info
                             }
-                            Logger.Info("UsersController -> EditUserInfo Checkpoint #1");
+
                             obj.SaveChanges();
                         }
                         else
@@ -791,20 +793,20 @@ namespace LanLordlAPIs.Controllers
                         // CLIFF (10/15/15): Since all the Synapse methods take the data from the Members Table,
                         //                   we have to also save any of that data for Landlords in the Members Table 
                         //                   ...even though we have most of the same data in the Landlords table.  We shouldn't have duplicated everything :-(
-                        
+
                         Guid memGuidId = new Guid(User.DeviceInfo.MemberId);
 
                         var memberObj = (from c in obj.Members
                                          where c.MemberId == memGuidId && c.IsDeleted == false
                                          select c).FirstOrDefault();
-                        Logger.Info("UsersController -> EditUserInfo Checkpoint #2");
+
                         if (memberObj != null)
                         {
                             if (!String.IsNullOrEmpty(User.UserInfo.FullName))
                             {
                                 string firstName = "", lastName = "";
                                 string[] nameAftetSplit = User.UserInfo.FullName.Trim().ToLower().Split(' ');
-                                Logger.Info("UsersController -> EditUserInfo Checkpoint #3");
+
                                 if (nameAftetSplit.Length > 1)
                                 {
                                     firstName = CommonHelper.UppercaseFirst(nameAftetSplit[0]);
@@ -817,7 +819,7 @@ namespace LanLordlAPIs.Controllers
                                 memberObj.FirstName = CommonHelper.GetEncryptedData(firstName.Trim());
                                 memberObj.LastName = CommonHelper.GetEncryptedData(lastName.Trim());
                             }
-                            Logger.Info("UsersController -> EditUserInfo Checkpoint #4");
+
                             if (!String.IsNullOrEmpty(User.UserInfo.DOB))
                             {
                                 memberObj.DateOfBirth = Convert.ToDateTime(User.UserInfo.DOB);
@@ -827,7 +829,6 @@ namespace LanLordlAPIs.Controllers
                             {
                                 memberObj.SSN = CommonHelper.GetEncryptedData(User.UserInfo.SSN);
                             }
-                            Logger.Info("UsersController -> EditUserInfo Checkpoint #5");
                             if (!String.IsNullOrEmpty(User.UserInfo.AddressLine1))
                             {
                                 memberObj.Address = CommonHelper.GetEncryptedData(User.UserInfo.AddressLine1);
@@ -836,37 +837,40 @@ namespace LanLordlAPIs.Controllers
                             {
                                 memberObj.Zipcode = CommonHelper.GetEncryptedData(User.UserInfo.Zip);
                             }
+
                             if (!String.IsNullOrEmpty(User.UserInfo.MobileNumber))
                             {
                                 string newPhoneClean = CommonHelper.RemovePhoneNumberFormatting(User.UserInfo.MobileNumber);
 
                                 if (CommonHelper.RemovePhoneNumberFormatting(memberObj.ContactNumber) != newPhoneClean)
                                 {
-                                    //if (!IsPhoneNumberAlreadyRegistered(contactNumber))
-                                    //{
-                                    memberObj.ContactNumber = newPhoneClean;
-                                    memberObj.IsVerifiedPhone = true;  // CLIFF (10/22/15) - Twilio is not working, so automatically validating all new phone numbers for Landlords...
-
-                                    #region SendingSMSVerificaion
-
-                                    try
+                                    //if (!CommonHelper.IsPhoneNumberAlreadyRegistered(newPhoneClean).isAlreadyRegistered)
+                                    if (memberObj.IsVerifiedPhone != true)
                                     {
-                                        string MessageBody = "Reply with 'GO' to this message to confirm your phone number on Nooch.";
-                                        string SMSresult = CommonHelper.SendSMS(newPhoneClean, MessageBody, memberObj.MemberId.ToString());
+                                        memberObj.ContactNumber = newPhoneClean;
+                                        memberObj.IsVerifiedPhone = false;
 
-                                        Logger.Info("UsersController -> EditUserInfo -> SMS Verification sent to [" + User.UserInfo.MobileNumber + "] successfully.");
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Logger.Error("UsersController -> EditUserInfo -> SMS Verification NOT sent to [" +
-                                            User.UserInfo.MobileNumber + "], [Exception: " + ex + "]");
-                                    }
+                                        #region SendingSMSVerificaion
 
-                                    #endregion SendingSMSVerificaion
-                                    //}
+                                        try
+                                        {
+                                            string MessageBody = "Reply with 'GO' to this message to confirm your phone number on Nooch.";
+                                            string SMSresult = CommonHelper.SendSMS(newPhoneClean, MessageBody, memberObj.MemberId.ToString());
+
+                                            Logger.Info("UsersController -> EditUserInfo -> SMS Verification sent to [" + User.UserInfo.MobileNumber + "] successfully.");
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Logger.Error("UsersController -> EditUserInfo -> SMS Verification NOT sent to [" +
+                                                User.UserInfo.MobileNumber + "], [Exception: " + ex + "]");
+                                        }
+
+                                        #endregion SendingSMSVerificaion
+                                    }
                                     //else
                                     //{
-                                    //    return "Phone Number already registered with Nooch";
+                                    //    result.ErrorMessage = "Phone Number already registered with Nooch";
+                                    //    return result;
                                     //}
                                 }
                             }
@@ -1013,32 +1017,46 @@ namespace LanLordlAPIs.Controllers
 
                                     if (CommonHelper.RemovePhoneNumberFormatting(memberObj.ContactNumber) != newPhoneClean)
                                     {
-                                        //if (!IsPhoneNumberAlreadyRegistered(contactNumber))
-                                        //{
-                                        memberObj.ContactNumber = newPhoneClean;
-                                        memberObj.IsVerifiedPhone = true;  // CLIFF (10/22/15) - Twilio is not working, so automatically validating all new phone numbers for Landlords...
+                                        var IsPhoneAlreadyRegistered = CommonHelper.IsPhoneNumberAlreadyRegistered(newPhoneClean);
 
-                                        #region SendingSMSVerificaion
-
-                                        try
+                                        //if (!IsPhoneAlreadyRegistered.isAlreadyRegistered)
+                                        if (memberObj.IsVerifiedPhone != true)
                                         {
-                                            string MessageBody = "Reply with 'GO' to this message to confirm your phone number on Nooch.";
-                                            string SMSresult = CommonHelper.SendSMS(newPhoneClean, MessageBody, memberObj.MemberId.ToString());
+                                            memberObj.ContactNumber = newPhoneClean;
+                                            memberObj.IsVerifiedPhone = false;
 
-                                            Logger.Info("UsersController -> submitLandlordIdVerWiz -> SMS Verification sent to [" + landlordsInput.phone + "] successfully.");
+                                            #region SendingSMSVerificaion
+
+                                            try
+                                            {
+                                                string MessageBody = "Reply with 'GO' to this message to confirm your phone number on Nooch.";
+                                                string SMSresult = CommonHelper.SendSMS(newPhoneClean, MessageBody, memberObj.MemberId.ToString());
+
+                                                Logger.Info("UsersController -> submitLandlordIdVerWiz -> SMS Verification sent to [" + landlordsInput.phone + "] successfully.");
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                Logger.Error("UsersController -> submitLandlordIdVerWiz -> SMS Verification NOT sent to [" +
+                                                    landlordsInput.phone + "], [Exception: " + ex + "]");
+                                            }
+
+                                            #endregion
                                         }
-                                        catch (Exception ex)
+                                        else
                                         {
-                                            Logger.Error("UsersController -> submitLandlordIdVerWiz -> SMS Verification NOT sent to [" +
-                                                landlordsInput.phone + "], [Exception: " + ex + "]");
-                                        }
+                                            Logger.Info("UsersController -> submitLandlordIdVerWiz - Phone Number Already Verified - [Phone: " + newPhoneClean + "]");
 
-                                        #endregion
-                                        //}
-                                        //else
-                                        //{
-                                        //    return "Phone Number already registered with Nooch";
-                                        //}
+                                            //if (IsPhoneAlreadyRegistered.memberMatched != null)
+                                            //{
+                                            //    string memberWithThatPhone_userName = CommonHelper.GetDecryptedData(IsPhoneAlreadyRegistered.memberMatched.UserName);
+                                            //    Logger.Info("UsersController -> submitLandlordIdVerWiz - Phone Number Already Registered by [" + memberWithThatPhone_userName + "], " +
+                                            //                "[isPhoneVerified (for the user who already registered this number): " + IsPhoneAlreadyRegistered.memberMatched.IsVerifiedPhone + "]");
+                                            //}
+                                            // CLIFF (10/23/15): Not sure how we should handle this for Landlords. Probably should enforce unique phone numbers, but for now just 
+                                            //                   to avoid any issues with early Landlord users, let's just save the phone and allow.
+                                            //res.msg = "Phone Number already registered with Nooch";
+                                            //return res;
+                                        }
                                     }
                                 }
 
@@ -1051,7 +1069,7 @@ namespace LanLordlAPIs.Controllers
                             }
                             else
                             {
-                                Logger.Error("Landlords API -> UsersController -> submitLandlordIdVerWiz FAILED - Member Not Found");
+                                Logger.Error("UsersController -> submitLandlordIdVerWiz FAILED - Member Not Found");
                             }
 
                             #endregion Update MEMBERS Table
@@ -1198,20 +1216,24 @@ namespace LanLordlAPIs.Controllers
         /// <summary>
         /// To resend activation email to a Landlord.
         /// </summary>
-        /// <param name="property"></param>
+        /// <param name="input"></param>
         [HttpPost]
         [ActionName("ResendVerificationEmailAndSMS")]
-        public LoginResult ResendVerificationEmailAndSMS(ResendVerificationEmailAndSMSInput property)
+        public LoginResult ResendVerificationEmailAndSMS(ResendVerificationEmailAndSMSInput input)
         {
+            Logger.Info("UsersController -> ResendVerificationEmailAndSMS Initiated - [LandlordID: " + input.UserId + "], [Type: " + input.RequestFor + "]");
+
             LoginResult result = new LoginResult();
             result.IsSuccess = false;
+            result.ErrorMessage = "Initial";
 
             try
             {
                 using (NOOCHEntities obj = new NOOCHEntities())
                 {
-                    Guid userGUID = new Guid(property.UserId);
-                    switch (property.UserType)
+                    Guid userGUID = new Guid(input.UserId);
+
+                    switch (input.UserType)
                     {
                         case "Landlord":
 
@@ -1223,7 +1245,7 @@ namespace LanLordlAPIs.Controllers
 
                             if (landlordDetails != null)
                             {
-                                switch (property.RequestFor)
+                                switch (input.RequestFor)
                                 {
                                     case "Email":
                                         string s = CommonHelper.ResendVerificationLink(CommonHelper.GetDecryptedData(landlordDetails.eMail));
@@ -1238,13 +1260,27 @@ namespace LanLordlAPIs.Controllers
                                         }
                                         break;
                                     case "SMS":
-                                        string s2 = CommonHelper.ResendVerificationSMS(CommonHelper.GetDecryptedData(landlordDetails.eMail));
-                                        if (s2 == "Success")
+
+                                        #region SendingSMSVerificaion
+
+                                        try
                                         {
+                                            string MessageBody = "Reply with 'GO' to this message to confirm your phone number on Nooch.";
+                                            string SMSresult = CommonHelper.SendSMS(landlordDetails.MobileNumber, MessageBody, landlordDetails.MemberId.ToString());
+
+                                            result.ErrorMessage = SMSresult;
                                             result.IsSuccess = true;
+
+                                            Logger.Info("UsersController -> ResendVerificationEmailAndSMS -> SMS Verification sent to [" + landlordDetails.MobileNumber + "] successfully.");
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Logger.Error("UsersController -> ResendVerificationEmailAndSMS -> SMS Verification NOT sent to [" +
+                                                landlordDetails.MobileNumber + "], [Exception: " + ex + "]");
+                                            result.ErrorMessage = "Exception on sending SMS";
                                         }
 
-                                        result.ErrorMessage = s2;
+                                        #endregion
 
                                         break;
                                     default:
@@ -1259,11 +1295,13 @@ namespace LanLordlAPIs.Controllers
                         case "Tenant":
                             #region Tenants Related Operations
 
-                            var tenantDetails =
-                                                    (from c in obj.Tenants where c.TenantId == userGUID select c).FirstOrDefault();
+                            var tenantDetails = (from c in obj.Tenants
+                                                 where c.TenantId == userGUID
+                                                 select c).FirstOrDefault();
+
                             if (tenantDetails != null)
                             {
-                                switch (property.RequestFor)
+                                switch (input.RequestFor)
                                 {
                                     case "Email":
                                         string s = CommonHelper.ResendVerificationLink(CommonHelper.GetDecryptedData(tenantDetails.eMail));
@@ -1311,7 +1349,7 @@ namespace LanLordlAPIs.Controllers
             catch (Exception ex)
             {
                 Logger.Error("UsersControllers -> ResendVerificationEmailAndSMS FAILED - [UserID: " +
-                             property.UserId + " ], [Exception: " + ex.Message + "]");
+                             input.UserId + " ], [Exception: " + ex.Message + "]");
 
                 result.ErrorMessage = "Server error, retry later!";
             }

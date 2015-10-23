@@ -656,7 +656,42 @@ namespace LanLordlAPIs.Classes.Utility
         }
 
 
+        public static IsPhoneAlreadyRegistered IsPhoneNumberAlreadyRegistered(string PhoneNumberToSearch)
+        {
+            IsPhoneAlreadyRegistered res = new IsPhoneAlreadyRegistered();
 
+            if (!String.IsNullOrEmpty(PhoneNumberToSearch))
+            {
+                string NumAltOne = "+" + PhoneNumberToSearch;
+                string NumAltTwo = "+1" + PhoneNumberToSearch;
+                string BlankNumCase = CommonHelper.GetEncryptedData(" ");
+
+                using (NOOCHEntities obj = new NOOCHEntities())
+                {
+                    var memberObj = (from c in obj.Members
+                                     where (c.ContactNumber == PhoneNumberToSearch || c.ContactNumber == NumAltOne || c.ContactNumber == NumAltTwo) &&
+                                            c.IsDeleted == false &&
+                                            c.ContactNumber != BlankNumCase
+                                     select c).FirstOrDefault();
+
+                    if (memberObj == null)
+                    {
+                        res.isAlreadyRegistered = false;
+                    }
+                    else
+                    {
+                        res.memberMatched = memberObj;
+                        res.isAlreadyRegistered = true;
+                    }
+                }
+            }
+            else
+            {
+                res.isAlreadyRegistered = false;
+            }
+
+            return res;
+        }
 
         public static string FormatPhoneNumber(string sourcePhone)
         {
@@ -1006,18 +1041,10 @@ namespace LanLordlAPIs.Classes.Utility
 
         public static string ResendVerificationSMS(string Username)
         {
-            //1. Check if user exists
-            //2. Check if phone is already verified
-
-            bool IsValidMember = false;
             string s = IsDuplicateMember(Username);
 
             if (s != "Not a nooch member.")
             {
-                // member exists, now check if Phone is already verified
-                IsValidMember = true;
-                // checking if phone is already activated
-                // getting MemberId
                 Username = CommonHelper.GetEncryptedData(Username);
 
                 using (var noochConnection = new NOOCHEntities())
@@ -1147,5 +1174,11 @@ namespace LanLordlAPIs.Classes.Utility
         public bool IsTokenUpdated { get; set; }
         public string AccessToken { get; set; }
         public string ErrorMessage { get; set; }
+    }
+
+    public class IsPhoneAlreadyRegistered
+    {
+        public bool isAlreadyRegistered { get; set; }
+        public Member memberMatched { get; set; }
     }
 }
