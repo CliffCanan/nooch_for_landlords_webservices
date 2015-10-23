@@ -16,6 +16,45 @@ namespace LanLordlAPIs.Classes.Utility
 {
     public class CommonHelper
     {
+        public static string GetRandomTransactionTrackingId()
+        {
+
+            const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var random = new Random();
+            int j = 1;
+            using (NOOCHEntities obj = new NOOCHEntities())
+            {
+                for (int i = 0; i <= j; i++)
+                {
+                    var randomId = new string(
+                        Enumerable.Repeat(chars, 9)
+                            .Select(s => s[random.Next(s.Length)])
+                            .ToArray());
+
+                    var memberEntity = getTransactionByTrackingId(randomId);
+
+                    if (memberEntity == null)
+                    {
+                        return randomId;
+                    }
+
+                    j += i + 1;
+                }
+            }
+            return null;
+
+        }
+
+        public static Transaction getTransactionByTrackingId(string transTrackId)
+        {
+            using (NOOCHEntities obj = new NOOCHEntities())
+            {
+                var memDetails = (from c in obj.Transactions
+                                  where c.TransactionTrackingId == transTrackId
+                                  select c).SingleOrDefault();
+                return memDetails;
+            }
+        }
         public static string GetEncryptedData(string sourceData)
         {
             try
@@ -299,7 +338,7 @@ namespace LanLordlAPIs.Classes.Utility
         }
 
 
-        public static Tenant AddNewTenantRecordInDB(Guid guid, string fName, string lName, string email, bool isEmVer, DateTime? dob, string ssn, string address1, string city, string state, string zip, string phone, bool isPhVer)
+        public static Tenant AddNewTenantRecordInDB(Guid guid, string fName, string lName, string email, bool isEmVer, DateTime? dob, string ssn, string address1, string city, string state, string zip, string phone, bool isPhVer, Guid memberId)
         {
             try
             {

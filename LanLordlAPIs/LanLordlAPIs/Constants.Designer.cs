@@ -61,6 +61,24 @@ namespace LanLordlAPIs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to $Memo$.
+        /// </summary>
+        internal static string MEMO {
+            get {
+                return ResourceManager.GetString("MEMO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to $Cents$.
+        /// </summary>
+        internal static string PLACEHLODER_CENTS {
+            get {
+                return ResourceManager.GetString("PLACEHLODER_CENTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to $FirstName$.
         /// </summary>
         internal static string PLACEHOLDER_FIRST_NAME {
@@ -75,6 +93,15 @@ namespace LanLordlAPIs {
         internal static string PLACEHOLDER_LAST_NAME {
             get {
                 return ResourceManager.GetString("PLACEHOLDER_LAST_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to $NewUser$.
+        /// </summary>
+        internal static string PLACEHOLDER_NEWUSER {
+            get {
+                return ResourceManager.GetString("PLACEHOLDER_NEWUSER", resourceCulture);
             }
         }
         
@@ -97,11 +124,47 @@ namespace LanLordlAPIs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to $PayLink$.
+        /// </summary>
+        internal static string PLACEHOLDER_PAY_LINK {
+            get {
+                return ResourceManager.GetString("PLACEHOLDER_PAY_LINK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to $PinNumber$.
         /// </summary>
         internal static string PLACEHOLDER_PINNUMBER {
             get {
                 return ResourceManager.GetString("PLACEHOLDER_PINNUMBER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to $RejectLink$.
+        /// </summary>
+        internal static string PLACEHOLDER_REJECT_LINK {
+            get {
+                return ResourceManager.GetString("PLACEHOLDER_REJECT_LINK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to $SenderFullName$.
+        /// </summary>
+        internal static string PLACEHOLDER_SENDER_FULL_NAME {
+            get {
+                return ResourceManager.GetString("PLACEHOLDER_SENDER_FULL_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to $Transfer_Amount$.
+        /// </summary>
+        internal static string PLACEHOLDER_TRANSFER_AMOUNT {
+            get {
+                return ResourceManager.GetString("PLACEHOLDER_TRANSFER_AMOUNT", resourceCulture);
             }
         }
         

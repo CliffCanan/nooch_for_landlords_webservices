@@ -117,11 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="MEMO" xml:space="preserve">
+    <value>$Memo$</value>
+  </data>
+  <data name="PLACEHLODER_CENTS" xml:space="preserve">
+    <value>$Cents$</value>
+  </data>
   <data name="PLACEHOLDER_FIRST_NAME" xml:space="preserve">
     <value>$FirstName$</value>
   </data>
   <data name="PLACEHOLDER_LAST_NAME" xml:space="preserve">
     <value>$LastName$</value>
+  </data>
+  <data name="PLACEHOLDER_NEWUSER" xml:space="preserve">
+    <value>$NewUser$</value>
   </data>
   <data name="PLACEHOLDER_OTHER_LINK" xml:space="preserve">
     <value>$Other_Link$</value>
@@ -129,8 +138,20 @@
   <data name="PLACEHOLDER_PASSWORDLINK" xml:space="preserve">
     <value>$PasswordLink$</value>
   </data>
+  <data name="PLACEHOLDER_PAY_LINK" xml:space="preserve">
+    <value>$PayLink$</value>
+  </data>
   <data name="PLACEHOLDER_PINNUMBER" xml:space="preserve">
     <value>$PinNumber$</value>
+  </data>
+  <data name="PLACEHOLDER_REJECT_LINK" xml:space="preserve">
+    <value>$RejectLink$</value>
+  </data>
+  <data name="PLACEHOLDER_SENDER_FULL_NAME" xml:space="preserve">
+    <value>$SenderFullName$</value>
+  </data>
+  <data name="PLACEHOLDER_TRANSFER_AMOUNT" xml:space="preserve">
+    <value>$Transfer_Amount$</value>
   </data>
   <data name="STATUS_REGISTERED" xml:space="preserve">
     <value>Registered</value>

@@ -837,7 +837,8 @@ namespace LanLordlAPIs.Controllers
 
             try
             {
-                Guid tenantGuid = new Guid(); // NOTE:  'TenantId' = 'MemberId'
+                Guid memberId = Guid.NewGuid();
+                Guid tenantGuid = Guid.NewGuid(); // NOTE:  'TenantId' = 'MemberId'
                 Guid unitGuid = new Guid(input.unitId);
                 Guid landlordGuid = new Guid(input.authData.LandlordId);
 
@@ -849,6 +850,24 @@ namespace LanLordlAPIs.Controllers
 
                 if (landlordTokenCheck.IsTokenOk)
                 {
+                    // getting landlord's MemberId
+                    Guid landlordMemberId = new Guid();
+                    Member landlordDetailsInMembersTable = null;
+                    using (NOOCHEntities obj = new NOOCHEntities())
+                    {
+                        var deta =
+                            (from c in obj.Landlords where c.LandlordId == landlordGuid select c)
+                                .FirstOrDefault();
+
+                        if (deta != null)
+                        {
+                            landlordDetailsInMembersTable = (from c in obj.Members where c.MemberId == deta.MemberId select c)
+                                .FirstOrDefault();
+                            landlordMemberId = CommonHelper.ConvertToGuid(deta.MemberId.ToString());
+                        }
+                    }
+
+
                     // Check if regular Nooch member (non-Landlord) exists with given email id
                     CheckAndRegisterMemberByEmailResult mem = CommonHelper.CheckIfMemberExistsWithGivenEmailId(input.tenant.email);
 
@@ -857,10 +876,11 @@ namespace LanLordlAPIs.Controllers
                     if (mem.IsSuccess && mem.ErrorMessage == "No user found.")
                     {
                         // Create New Member Record
-                        CommonHelper.AddNewMemberRecordInDB(tenantGuid, firstName, lastName, email);
+                        CommonHelper.AddNewMemberRecordInDB(memberId, firstName, lastName, email);
+
 
                         // Create New Tenant Record
-                        CommonHelper.AddNewTenantRecordInDB(tenantGuid, firstName, lastName, email, false, null, null, null, null, null, null, null, false);
+                        CommonHelper.AddNewTenantRecordInDB(tenantGuid, firstName, lastName, email, false, null, null, null, null, null, null, null, false, memberId);
                     }
                     else // Member with that email already exists
                     {
@@ -879,7 +899,7 @@ namespace LanLordlAPIs.Controllers
                         bool isPhVer = mem.MemberDetails.IsVerifiedPhone == true ? true : false;
 
                         // Create New Tenant Record
-                        CommonHelper.AddNewTenantRecordInDB(tenantGuid, firstName, lastName, email, isEmVer, dob, ssn, address, city, state, zip, phone, isPhVer);
+                        CommonHelper.AddNewTenantRecordInDB(tenantGuid, firstName, lastName, email, isEmVer, dob, ssn, address, city, state, zip, phone, isPhVer, mem.MemberDetails.MemberId);
                     }
 
                     #endregion Create New Member & Tenant Records
@@ -928,13 +948,193 @@ namespace LanLordlAPIs.Controllers
 
                     try
                     {
-                        string rentAmount = input.rent;
-                        string landlordName = "";
-                        string propertyName = "";
-                        string unitNum = "";
+                        #region Making transaction object
 
-                        CommonHelper.SendEmail(Constants.TEMPLATE_REGISTRATION, CommonHelper.GetValueFromConfig("welcomeMail"),
-                                                    email, "NEW Tenant Created :-) $" + input.rent, null, null);
+                        // SenderId - this would be MemberId of new user who was just created in Members table.
+                        // RecepientID - this would be landlord's MemberId 
+
+                        // TransactionType -- would be Rent -- TBD with Cliff
+                        Transaction trans = new Transaction();
+                        using (NOOCHEntities obj = new NOOCHEntities())
+                        {
+
+
+                            // this is required in transactions table..but for landlords we won't have it....setting some fix values for this
+                            #region Making entry in GeoLocations table
+                            GeoLocation gl = new GeoLocation()
+                            {
+                                LocationId = Guid.NewGuid(),
+                                Latitude = 23.23,
+                                Longitude = 23.23,
+                                Altitude = 23.23,
+                                AddressLine1 = "",
+                                AddressLine2 = "",
+                                City = "",
+                                State = "",
+                                Country = "",
+                                ZipCode = "",
+                                DateCreated = DateTime.Now
+                            };
+
+                            obj.GeoLocations.Add(gl);
+                            obj.SaveChanges();
+                            #endregion
+
+
+                            // making transactions table data
+
+                            #region Entry in transactions table.
+                            trans.TransactionId = Guid.NewGuid();
+                            trans.SenderId = memberId;
+                            trans.RecipientId = landlordMemberId;
+                            trans.TransactionDate = DateTime.Now;
+                            trans.Amount = Convert.ToDecimal(input.rent);
+                            trans.TransactionType = CommonHelper.GetEncryptedData("Rent");
+                            trans.TransactionStatus = "Pending";
+
+                            trans.GeoLocation = gl;
+                            trans.TransactionTrackingId = CommonHelper.GetRandomTransactionTrackingId();
+                            trans.TransactionFee = 0;
+                            trans.InvitationSentTo = null;
+
+                            trans.IsPhoneInvitation = false;
+                            trans.InvitationSentTo = email;
+
+                            trans.DeviceId = null;
+                            trans.DisputeStatus = null;
+                            trans.Memo = "Rent request.";
+                            trans.Picture = null;
+
+                            obj.Transactions.Add(trans);
+                            obj.SaveChanges();
+                            #endregion
+
+                        }
+
+                        #endregion
+
+                        // sending email notifications to both users
+
+                        // email to Landlord along with link to cancel request
+                        #region Transaction Stuff to be used for email notif to Tenant ( New ) and Landlor
+                        string s22 = trans.Amount.ToString("n2");
+                        string[] s32 = s22.Split('.');
+                        string memo = "";
+                        if (trans.Memo != null && trans.Memo != "")
+                        {
+                            if (trans.Memo.Length > 3)
+                            {
+                                string firstThreeChars = trans.Memo.Substring(0, 3).ToLower();
+                                bool startWithFor = firstThreeChars.Equals("for");
+
+                                if (startWithFor)
+                                {
+                                    memo = trans.Memo;
+                                }
+                                else
+                                {
+                                    memo = "For " + trans.Memo;
+                                }
+                            }
+                            else
+                            {
+                                memo = "For " + trans.Memo;
+                            }
+
+                        }
+                        #endregion
+
+
+                        string LandlordFirstName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(landlordDetailsInMembersTable.FirstName)));
+                        string LandlordLastName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(landlordDetailsInMembersTable.LastName)));
+                        string CancelRequestLinkForLandlord = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/CancelRequest.aspx?TransactionId=" + trans.TransactionId + "&MemberId=" + landlordDetailsInMembersTable.MemberId + "&UserType=U6De3haw2r4mSgweNpdgXQ==");
+
+
+                        #region Sending Email to Landord
+
+                        var tokens = new Dictionary<string, string>
+												 {
+													{Constants.PLACEHOLDER_FIRST_NAME, LandlordFirstName},
+													{Constants.PLACEHOLDER_NEWUSER,email},  // this is email of new tenant
+													{Constants.PLACEHOLDER_TRANSFER_AMOUNT,s32[0].ToString()},
+													{Constants.PLACEHLODER_CENTS,s32[1].ToString()},
+													{Constants.PLACEHOLDER_OTHER_LINK,CancelRequestLinkForLandlord},
+													{Constants.MEMO,memo}
+												 };
+
+                        var fromAddress = CommonHelper.GetValueFromConfig("transfersMail");
+
+                        try
+                        {
+                            CommonHelper.SendEmail("requestSent", fromAddress, CommonHelper.GetDecryptedData(landlordDetailsInMembersTable.UserName),
+                                "Your payment request to " + email + " is pending on Nooch",
+                                 tokens, null);
+
+
+                            Logger.Info("PropertiesController -> RequestSent email sent to - [ " + CommonHelper.GetDecryptedData(landlordDetailsInMembersTable.UserName) + " ] ");
+                        }
+                        catch (Exception ex)
+                        {
+
+
+                            Logger.Error("PropertiesController -> RequestSent email NOT sent to - [ " + CommonHelper.GetDecryptedData(landlordDetailsInMembersTable.UserName) + " ] " + " , [Exception: " + ex + "]");
+                        }
+
+                        #endregion
+
+
+                        #region Sending email to New TENANT
+
+                        // Send email to Request Receiver -- sending UserType LinkSource TransType as encrypted along with request
+                        // In this case UserType would = 'New'
+                        // TransType would = 'Request'
+                        // and link source would = 'Email'
+
+                        // added new parameter to identify If user is invited by Landlord IsRentTrans
+
+
+                        string rejectRequestLinkForTenant = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/rejectMoney.aspx?TransactionId=" + trans.TransactionId + "&UserType=U6De3haw2r4mSgweNpdgXQ==&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==&TransType=T3EMY1WWZ9IscHIj3dbcNw==&IsRentTrans=true");
+                        string paylink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/payRequest.aspx?TransactionId=" + trans.TransactionId);
+                        var tokens2 = new Dictionary<string, string>
+												 {
+													{Constants.PLACEHOLDER_FIRST_NAME, LandlordFirstName},
+													{Constants.PLACEHOLDER_NEWUSER,email},
+													{Constants.PLACEHOLDER_TRANSFER_AMOUNT,s32[0].ToString()},
+													{Constants.PLACEHLODER_CENTS,s32[1].ToString()},
+													{Constants.PLACEHOLDER_REJECT_LINK,rejectRequestLinkForTenant},
+													{Constants.PLACEHOLDER_SENDER_FULL_NAME,LandlordFirstName + " " + LandlordLastName},
+													{Constants.MEMO,memo},
+													{Constants.PLACEHOLDER_PAY_LINK,paylink}
+												 };
+                        try
+                        {
+                            CommonHelper.SendEmail("requestReceivedToNewUser", fromAddress, email,
+                                LandlordFirstName + " " + LandlordLastName + " requested Rent payment of " + "$" + s22 + " with Nooch",
+                                 tokens2, null);
+
+                            Logger.Info("PropertiesController -> requestReceivedToNewUser email sent to - [ " + email + " ] successfully.");
+
+                        }
+                        catch (Exception ex)
+                        {
+
+                            Logger.Error("PropertiesController -> requestReceivedToNewUser email NOT sent to - [ " + email + " ] " + " , [Exception: " + ex + "]");
+                        }
+
+                        #endregion
+
+
+
+                        //string rentAmount = input.rent;
+                        //string landlordName = "";
+                        //string propertyName = "";
+                        //string unitNum = "";
+
+                        //CommonHelper.SendEmail(Constants.TEMPLATE_REGISTRATION, CommonHelper.GetValueFromConfig("welcomeMail"),
+                        //                            email, "NEW Tenant Created :-) $" + input.rent, null, null);
+
+                        result.success = true;
+                        result.msg = "Request made successfully.";
                     }
                     catch (Exception)
                     {
