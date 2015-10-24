@@ -850,9 +850,10 @@ namespace LanLordlAPIs.Controllers
 
                 if (landlordTokenCheck.IsTokenOk)
                 {
-                    // getting landlord's MemberId
+                    // Get Landlord's MemberId
                     Guid landlordMemberId = new Guid();
                     Member landlordDetailsInMembersTable = null;
+
                     using (NOOCHEntities obj = new NOOCHEntities())
                     {
                         var deta = (from c in obj.Landlords
@@ -867,66 +868,57 @@ namespace LanLordlAPIs.Controllers
 
                             landlordMemberId = CommonHelper.ConvertToGuid(deta.MemberId.ToString());
                         }
-                    }
 
 
-                    // Check if regular Nooch member (non-Landlord) exists with given email id
-                    CheckAndRegisterMemberByEmailResult mem = CommonHelper.CheckIfMemberExistsWithGivenEmailId(input.tenant.email);
 
-                    #region Create New Member & Tenant Records
+                        // Check if regular Nooch member (non-Landlord) exists with given email id
+                        CheckAndRegisterMemberByEmailResult mem = CommonHelper.CheckIfMemberExistsWithGivenEmailId(input.tenant.email);
 
-                    if (mem.IsSuccess && mem.ErrorMessage == "No user found.")
-                    {
-                        // Create New Member Record
-                        CommonHelper.AddNewMemberRecordInDB(memberId, firstName, lastName, email);
+                        #region Create New Member & Tenant Records
+
+                        if (mem.IsSuccess && mem.ErrorMessage == "No user found.")
+                        {
+                            Logger.Info("PropertiesController -> InviteTenant - About to create a New MEMBER Record - [MemberID: " + memberId.ToString() + "]");
+
+                            // Create New Member Record
+                            CommonHelper.AddNewMemberRecordInDB(memberId, firstName, lastName, email);
+
+                            Logger.Info("PropertiesController -> InviteTenant - About to create a New TENANT Record - [MemberID: " + tenantGuid.ToString() + "]");
+                            // Create New Tenant Record
+                            CommonHelper.AddNewTenantRecordInDB(tenantGuid, firstName, lastName, email, false, null, null, null, null, null, null, null, false, memberId);
+                        }
+                        else // Member with that email already exists
+                        {
+                            Logger.Info("PropertiesController -> InviteTenant - Member already existing, so just creating a new TENANT Record - [MemberID: " + mem.MemberDetails.MemberId.ToString() + "]");
+
+                            tenantGuid = mem.MemberDetails.MemberId;
+                            firstName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(mem.MemberDetails.FirstName));
+                            lastName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(mem.MemberDetails.LastName));
+                            email = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(mem.MemberDetails.UserName));
+                            bool isEmVer = (mem.MemberDetails.Status == "Active" || mem.MemberDetails.Status == "NonRegistered") ? true : false;
+                            DateTime? dob = mem.MemberDetails.DateOfBirth;
+                            string ssn = !String.IsNullOrEmpty(mem.MemberDetails.SSN) ? CommonHelper.GetDecryptedData(mem.MemberDetails.SSN) : null;
+                            string address = !String.IsNullOrEmpty(mem.MemberDetails.Address) ? CommonHelper.GetDecryptedData(mem.MemberDetails.Address) : null;
+                            string city = !String.IsNullOrEmpty(mem.MemberDetails.City) ? CommonHelper.GetDecryptedData(mem.MemberDetails.City) : null;
+                            string state = !String.IsNullOrEmpty(mem.MemberDetails.Status) ? CommonHelper.GetDecryptedData(mem.MemberDetails.Status) : null;
+                            string zip = !String.IsNullOrEmpty(mem.MemberDetails.Zipcode) ? CommonHelper.GetDecryptedData(mem.MemberDetails.Zipcode) : null;
+                            string phone = mem.MemberDetails.ContactNumber;
+                            bool isPhVer = mem.MemberDetails.IsVerifiedPhone == true ? true : false;
+
+                            // Create New Tenant Record
+                            CommonHelper.AddNewTenantRecordInDB(tenantGuid, firstName, lastName, email, isEmVer, dob, ssn, address, city, state, zip, phone, isPhVer, mem.MemberDetails.MemberId);
+                        }
+
+                        #endregion Create New Member & Tenant Records
 
 
-                        // Create New Tenant Record
-                        CommonHelper.AddNewTenantRecordInDB(tenantGuid, firstName, lastName, email, false, null, null, null, null, null, null, null, false, memberId);
-                    }
-                    else // Member with that email already exists
-                    {
-                        tenantGuid = mem.MemberDetails.MemberId;
-                        firstName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(mem.MemberDetails.FirstName));
-                        lastName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(mem.MemberDetails.LastName));
-                        email = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(mem.MemberDetails.UserName));
-                        bool isEmVer = (mem.MemberDetails.Status == "Active" || mem.MemberDetails.Status == "NonRegistered") ? true : false;
-                        DateTime? dob = mem.MemberDetails.DateOfBirth;
-                        string ssn = !String.IsNullOrEmpty(mem.MemberDetails.SSN) ? CommonHelper.GetDecryptedData(mem.MemberDetails.SSN) : null;
-                        string address = !String.IsNullOrEmpty(mem.MemberDetails.Address) ? CommonHelper.GetDecryptedData(mem.MemberDetails.Address) : null;
-                        string city = !String.IsNullOrEmpty(mem.MemberDetails.City) ? CommonHelper.GetDecryptedData(mem.MemberDetails.City) : null;
-                        string state = !String.IsNullOrEmpty(mem.MemberDetails.Status) ? CommonHelper.GetDecryptedData(mem.MemberDetails.Status) : null;
-                        string zip = !String.IsNullOrEmpty(mem.MemberDetails.Zipcode) ? CommonHelper.GetDecryptedData(mem.MemberDetails.Zipcode) : null;
-                        string phone = mem.MemberDetails.ContactNumber;
-                        bool isPhVer = mem.MemberDetails.IsVerifiedPhone == true ? true : false;
-
-                        // Create New Tenant Record
-                        CommonHelper.AddNewTenantRecordInDB(tenantGuid, firstName, lastName, email, isEmVer, dob, ssn, address, city, state, zip, phone, isPhVer, mem.MemberDetails.MemberId);
-                    }
-
-                    #endregion Create New Member & Tenant Records
-
-
-                    #region Create New 'UnitsOccupiedByTenant' Record
-
-                    int saveToDB = 0;
-
-                    using (NOOCHEntities obj = new NOOCHEntities())
-                    {
-                        // NOTE: The "PropertyUnits" table and "UnitsOccupiedByTenant" table aren't organized in the best way...
-                        //       The Start Date, Lease Term ("AgreementLength" in UOBT) should be in UNITS table and are not.
-                        //       UOBT table should have a status field and a Property ID (aleady has UnitID)
-                        /*var uitInDb = (from c in obj.PropertyUnits
-                                        where c.UnitId == unitGuid && c.IsDeleted == false
-                                        select c).FirstOrDefault();
-
-                        if (unitInDb != null)
-                        {}*/
+                        #region Create New 'UnitsOccupiedByTenant' Record
 
                         UnitsOccupiedByTenant uobt = new UnitsOccupiedByTenant();
                         uobt.TenantId = tenantGuid; // NOTE: 'TenantId' = 'MemberId'
                         uobt.UnitId = unitGuid;
-                        uobt.IsDeleted = false;
+                        //uobt.iso
+                        //uobt.IsDeleted = false;
 
                         /*if (!String.IsNullOrEmpty(input.Unit.RentDuration) && !String.IsNullOrEmpty(input.Unit.RentStartDate))
                         {
@@ -935,34 +927,70 @@ namespace LanLordlAPIs.Controllers
                         }*/
 
                         obj.UnitsOccupiedByTenants.Add(uobt);
-                        saveToDB = obj.SaveChanges();
-                    }
-                    #endregion Create New 'UnitsOccupiedByTenant' Record
 
-                    if (saveToDB > 0)
-                    {
-                        result.success = true;
-                    }
-                    else
-                    {
-                        result.msg = "Failed to save new tenant in UOBT table!";
+                        #endregion Create New 'UnitsOccupiedByTenant' Record
+
+
+                        #region Update Unit Record in PropertyUnits Table
+
+                        try
+                        {
+                            Logger.Info("PropertiesController -> InviteTenant - About to update Property UNITS table - [UnitID: " + unitGuid + "]");
+
+                            // NOTE: The "PropertyUnits" table and "UnitsOccupiedByTenant" table aren't organized in the best way...
+                            //       The Start Date, Lease Term ("AgreementLength" in UOBT) should be in UNITS table and are not.
+                            //       UOBT table should have a status field and a Property ID (aleady has UnitID)
+                            var unitInDb = (from c in obj.PropertyUnits
+                                            where c.UnitId == unitGuid && c.IsDeleted == false
+                                            select c).FirstOrDefault();
+
+                            if (unitInDb != null)
+                            {
+                                unitInDb.IsOccupied = true;
+                                unitInDb.MemberId = tenantGuid;
+                                unitInDb.IsHidden = false;
+                                unitInDb.ModifiedOn = DateTime.Now;
+                                unitInDb.Status = "Pending Invite";
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error("PropertiesController -> InviteTenant - EXCEPTION when attempting to udpate Property UNITS table - [Exception: " + ex + "]");
+                        }
+
+                        #endregion Update Unit Record in PropertyUnits Table
+
+                        int saveToDB = 0;
+
+                        saveToDB = obj.SaveChanges();
+                        if (saveToDB > 0)
+                        {
+                            Logger.Info("PropertiesController -> InviteTenant - All DB Tables SAVED SUCCESSFULLY");
+                            result.success = true;
+                        }
+                        else
+                        {
+                            Logger.Error("PropertiesController -> InviteTenant - FAILED to save All DB Tables");
+                            result.msg = "Failed to save new tenant in UOBT table!";
+                        }
                     }
 
                     try
                     {
-                        #region Making transaction object
+                        #region Making Transaction Object
 
                         // SenderId - this would be MemberId of new user who was just created in Members table.
                         // RecepientID - this would be landlord's MemberId 
 
-                        // TransactionType -- would be Rent -- TBD with Cliff
                         Transaction trans = new Transaction();
+
                         using (NOOCHEntities obj = new NOOCHEntities())
                         {
+                            Logger.Info("PropertiesController -> InviteTenant - About to Create New Transaction Object");
 
-
-                            // this is required in transactions table..but for landlords we won't have it....setting some fix values for this
                             #region Making entry in GeoLocations table
+
+                            // Geolocations record is required for transactions table, but not needed for Landlords... so just setting some filler values here
                             GeoLocation gl = new GeoLocation()
                             {
                                 LocationId = Guid.NewGuid(),
@@ -980,13 +1008,17 @@ namespace LanLordlAPIs.Controllers
 
                             obj.GeoLocations.Add(gl);
                             obj.SaveChanges();
+
                             #endregion
 
+                            
+                            // Making Transactions object
+                            #region Add Entry To Transactions Table
 
-                            // making transactions table data
+                            Guid newTransId = Guid.NewGuid();
+                            Logger.Info("PropertiesController -> InviteTenant - About to Add New Transaction Object to DB - [TransactionID: " + newTransId + "]");
 
-                            #region Entry in transactions table.
-                            trans.TransactionId = Guid.NewGuid();
+                            trans.TransactionId = newTransId;
                             trans.SenderId = memberId;
                             trans.RecipientId = landlordMemberId;
                             trans.TransactionDate = DateTime.Now;
@@ -1009,18 +1041,25 @@ namespace LanLordlAPIs.Controllers
 
                             obj.Transactions.Add(trans);
                             obj.SaveChanges();
-                            #endregion
 
+                            #endregion Add Entry To Transactions Table
                         }
 
-                        #endregion
+                        #endregion Making Transaction Object
 
-                        // sending email notifications to both users
+                        Logger.Info("PropertiesController -> InviteTenant - New Transaction Added To DB - Now sending email to tenant");
 
-                        // email to Landlord along with link to cancel request
-                        #region Transaction Stuff to be used for email notif to Tenant ( New ) and Landlor
+                        #region Send Email to New TENANT
+
+                        #region Setup Email Variables
+
+                        string LandlordFirstName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(landlordDetailsInMembersTable.FirstName)));
+                        string LandlordLastName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(landlordDetailsInMembersTable.LastName)));
+                        string CancelRequestLinkForLandlord = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/CancelRequest.aspx?TransactionId=" + trans.TransactionId + "&MemberId=" + landlordDetailsInMembersTable.MemberId + "&UserType=U6De3haw2r4mSgweNpdgXQ==");
+
                         string s22 = trans.Amount.ToString("n2");
                         string[] s32 = s22.Split('.');
+
                         string memo = "";
                         if (trans.Memo != null && trans.Memo != "")
                         {
@@ -1042,28 +1081,18 @@ namespace LanLordlAPIs.Controllers
                             {
                                 memo = "For " + trans.Memo;
                             }
-
                         }
-                        #endregion
 
-
-                        #region Sending email to New TENANT
-
-                        string LandlordFirstName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(landlordDetailsInMembersTable.FirstName)));
-                        string LandlordLastName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(landlordDetailsInMembersTable.LastName)));
-                        string CancelRequestLinkForLandlord = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/CancelRequest.aspx?TransactionId=" + trans.TransactionId + "&MemberId=" + landlordDetailsInMembersTable.MemberId + "&UserType=U6De3haw2r4mSgweNpdgXQ==");
-
-                        // Send email to Request Receiver -- sending UserType LinkSource TransType as encrypted along with request
+                        // Send email to Request Receiver - Send 'UserType', 'LinkSource', 'TransType' as encrypted
                         // In this case UserType would = 'New'
                         // TransType would = 'Request'
                         // and link source would = 'Email'
 
                         // added new parameter to identify If user is invited by Landlord IsRentTrans
 
-
                         string rejectRequestLinkForTenant = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/rejectMoney.aspx?TransactionId=" + trans.TransactionId + "&UserType=U6De3haw2r4mSgweNpdgXQ==&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==&TransType=T3EMY1WWZ9IscHIj3dbcNw==&IsRentTrans=true");
-                        string paylink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/payRequest.aspx?TransactionId=" + trans.TransactionId);
-                        
+                        string paylink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/payRequest.aspx?TransactionId=" + trans.TransactionId + "&IsRentTrans=true");
+
                         var tokens2 = new Dictionary<string, string>
 												 {
 													{Constants.PLACEHOLDER_FIRST_NAME, LandlordFirstName},
@@ -1075,6 +1104,9 @@ namespace LanLordlAPIs.Controllers
 													{Constants.MEMO,memo},
 													{Constants.PLACEHOLDER_PAY_LINK,paylink}
 												 };
+
+                        #endregion Setup Email Variables
+
                         try
                         {
                             CommonHelper.SendEmail("requestReceivedToNewUser", "rentpayments@nooch.com", email,
@@ -1086,12 +1118,11 @@ namespace LanLordlAPIs.Controllers
                         }
                         catch (Exception ex)
                         {
-
-                            Logger.Error("PropertiesController -> requestReceivedToNewUser email NOT sent to - [ " + email + " ] " + " , [Exception: " + ex + "]");
+                            Logger.Error("PropertiesController -> Invite Tenant - EXCEPTION on trying to send requestReceivedToNewUser email NOT sent to: [" + email + "]" + ", [Exception: " + ex + "]");
+                            result.msg = "Exception on trying to send email to new tenant";
                         }
 
-                        #endregion
-
+                        #endregion Send Email to New TENANT
 
 
                         //string rentAmount = input.rent;
@@ -1107,7 +1138,7 @@ namespace LanLordlAPIs.Controllers
                     }
                     catch (Exception)
                     {
-                        result.msg = " [Exception on trying to send email to new tenant]";
+                        result.msg = "";
                     }
                 }
                 else
@@ -1174,11 +1205,9 @@ namespace LanLordlAPIs.Controllers
                             currentProperty.Zip = propertyInDb.Zip ?? "";
                             currentProperty.State = propertyInDb.State ?? "";
                             currentProperty.ContactNumber = propertyInDb.ContactNumber ?? "";
-
                             currentProperty.DefaultDueDate = propertyInDb.DefaultDueDate ?? "";
                             currentProperty.DateAdded = propertyInDb.DateAdded != null ? Convert.ToDateTime(propertyInDb.DateAdded).ToShortDateString() : "";
                             currentProperty.DateModified = propertyInDb.DateModified != null ? Convert.ToDateTime(propertyInDb.DateModified).ToShortDateString() : "";
-
                             currentProperty.LandlordId = propertyInDb.LandlordId.ToString();
                             currentProperty.MemberId = propertyInDb.MemberId != null ? propertyInDb.MemberId.ToString() : "";
                             currentProperty.PropertyImage = propertyInDb.PropertyImage ?? "";
@@ -1186,6 +1215,8 @@ namespace LanLordlAPIs.Controllers
                             currentProperty.IsDeleted = propertyInDb.IsDeleted;
 
                             #region Get Bank Details For This Property
+
+                            Logger.Info("PropertiesController -> GetPropertyDetailsPageData - About to attempt to get Synapse Bank info - [PropertyID: " + Property.PropertyId + "]");
 
                             BankDetailsResult bdetails = new BankDetailsResult();
                             if (propertyInDb.MemberId != null)
@@ -1286,6 +1317,8 @@ namespace LanLordlAPIs.Controllers
                             // Get all units of this property
                             #region Get All Units For This Property
 
+                            Logger.Info("PropertiesController -> GetPropertyDetailsPageData - About to attempt to get All Units - [PropertyID: " + Property.PropertyId + "]");
+
                             var allUnits = (from d in obj.PropertyUnits
                                             where d.PropertyId == propertyInDb.PropertyId &&
                                                  (d.IsDeleted == false || d.IsDeleted == null)
@@ -1331,7 +1364,13 @@ namespace LanLordlAPIs.Controllers
                                     bool isRentPaid = Convert.ToBoolean(obj.IsRentPaidByTenantForGivenUnitId(currentUnit.UnitId).FirstOrDefault());
                                     bool isemail = Convert.ToBoolean(obj.IsEmailIdVerifiedOfTenantInGivenUnitId(currentUnit.UnitId).FirstOrDefault());
                                     bool isphone = Convert.ToBoolean(obj.IsPhoneVerifiedOfTenantInGivenUnitId(currentUnit.UnitId).FirstOrDefault());
-                                    bool isaccount = Convert.ToBoolean(obj.IsBankAccountAddedOfTenantInGivenUnitId(currentUnit.UnitId).FirstOrDefault());
+
+                                    Logger.Info("PropertiesController -> GetPropertyDetailsPageData - INSIDE FOR LOOP *** Checkpoint #3.3 *** ");
+
+                                    // CLIFF (10/23/15): THIS PROCEDURE IS CAUSING A PROBLEM WHEN THERE IS MORE THAN ONE RESULT
+                                    //                   i.e. more than 1 record with the given Tenant/MemberID in the UnitsOccupiedByTenants Table.
+                                    //                   I think it's possibly b/c when we Invite a Tenant to a unit, we are not deleting any existing record in UOBT table...
+                                    //bool isaccount = Convert.ToBoolean(obj.IsBankAccountAddedOfTenantInGivenUnitId(currentUnit.UnitId).FirstOrDefault());
 
                                     DateTime? d = obj.GetLastRentPaymentDateForGivenUnitId(currentUnit.UnitId).FirstOrDefault();
                                     string lastPayDate = "";
@@ -1340,12 +1379,12 @@ namespace LanLordlAPIs.Controllers
                                     {
                                         lastPayDate = Convert.ToDateTime(d).ToShortDateString();
                                     }
-
+                                    
                                     currentUnit.LastRentPaidOn = lastPayDate;
                                     currentUnit.IsRentPaidForThisMonth = isRentPaid;
                                     currentUnit.IsEmailVerified = isemail;
                                     currentUnit.IsPhoneVerified = isphone;
-                                    currentUnit.IsBankAccountAdded = isaccount;
+                                    //currentUnit.IsBankAccountAdded = isaccount;
 
                                     if (!String.IsNullOrEmpty(s))
                                     {
@@ -1460,8 +1499,7 @@ namespace LanLordlAPIs.Controllers
             }
             catch (Exception ex)
             {
-                Logger.Error("Landlords API -> Properties -> LoadProperties - [LandlordID: " +
-                             Property.User.LandlorId + " ], [Exception: " + ex + "]");
+                Logger.Error("PropertiesController -> GetPropertyDetailsPageData FAILED - Outer Exception - [PropertyID: " + Property.User.LandlorId + " ], [Exception: " + ex + "]");
                 result.ErrorMessage = "Error while getting properties list. Retry later!";
             }
 

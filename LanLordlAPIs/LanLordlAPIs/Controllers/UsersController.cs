@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Http;
 using System.Web.Services.Protocols;
@@ -560,7 +561,12 @@ namespace LanLordlAPIs.Controllers
                                                     ? CommonHelper.GetDecryptedData(landlordObj.CompanyEIN)
                                                     : "";
 
-                            res.UserImageUrl = landlordObj.UserPic;
+                            string timestamp = DateTime.Now.ToString().Trim();
+                            timestamp = digitsOnly.Replace(timestamp, "");
+
+                            string picWithTimestamp = landlordObj.UserPic + "#" + timestamp; // Add timestamp
+
+                            res.UserImageUrl = picWithTimestamp;
                             res.TenantsCount = obj.GetTenantsCountForGivenLandlord(User.LandlorId).SingleOrDefault().ToString();
                             res.PropertiesCount = obj.GetPropertiesCountForGivenLandlord(User.LandlorId).SingleOrDefault().ToString();
                             res.UnitsCount = obj.GetUnitsCountForGivenLandlord(User.LandlorId).SingleOrDefault().ToString();
@@ -1785,5 +1791,7 @@ namespace LanLordlAPIs.Controllers
 
             return result;
         }
+
+        private static Regex digitsOnly = new Regex(@"[^\d]");
     }
 }
