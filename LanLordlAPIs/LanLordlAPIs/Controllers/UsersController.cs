@@ -1106,7 +1106,7 @@ namespace LanLordlAPIs.Controllers
             PasswordResetOutputClass res = new PasswordResetOutputClass();
             res.IsSuccess = false;
 
-            var getMember = CommonHelper.getMemberByEmailId(userName.eMail);
+            var getMember = CommonHelper.GetMemberByEmailId(userName.eMail);
 
             try
             {

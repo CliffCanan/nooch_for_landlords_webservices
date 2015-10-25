@@ -116,7 +116,7 @@ namespace LanLordlAPIs.Models.Input_Models
     public class AddOrEditUnitInput
     {
         public string PropertyId { get; set; }
-        public GetProfileDataInput User { get; set; }
+        public basicLandlordPayload User { get; set; }
         public AddOrEditUnit_Unit Unit { get; set; }
     }
 
@@ -130,6 +130,7 @@ namespace LanLordlAPIs.Models.Input_Models
 
         public bool IsTenantAdded { get; set; }
         public string TenantId { get; set; }
+        public string TenantEm { get; set; }
         public string UnitId { get; set; }
 
         public string RentStartDate { get; set; }

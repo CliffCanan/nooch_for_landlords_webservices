@@ -149,39 +149,72 @@ namespace LanLordlAPIs.Classes.Utility
             return ConfigurationManager.AppSettings[key];
         }
 
-        public static Member getMemberByEmailId(string eMailID)
+        public static Member GetMemberByEmailId(string eMailID)
         {
-            using (NOOCHEntities obj = new NOOCHEntities())
-            {
-                string email = eMailID.Trim().ToLower();
-                email = CommonHelper.GetEncryptedData(email);
+            Member memberObj = new Member();
 
-                var memDetails = (from c in obj.Members
-                                  where c.UserName == email && c.IsDeleted == false
-                                  select c).SingleOrDefault();
-                return memDetails;
+            try
+            {
+                using (NOOCHEntities obj = new NOOCHEntities())
+                {
+                    string email = eMailID.Trim().ToLower();
+                    email = CommonHelper.GetEncryptedData(email);
+
+                    memberObj = (from c in obj.Members
+                                 where (c.UserName == email || c.UserNameLowerCase == email) &&
+                                        c.IsDeleted == false
+                                 select c).SingleOrDefault();
+
+                }
             }
+            catch (Exception ex)
+            {
+                Logger.Error("CommonHelper -> getMemberByEmailId EXCEPTION - [" + ex + "]");
+            }
+
+            return memberObj;
         }
 
         public static Member getMemberByNoochId(string NoochId)
         {
-            using (NOOCHEntities obj = new NOOCHEntities())
+            Member memberObj = new Member();
+
+            try
             {
-                var memDetails = (from c in obj.Members
-                                  where c.Nooch_ID == NoochId
-                                  select c).SingleOrDefault();
-                return memDetails;
+                using (NOOCHEntities obj = new NOOCHEntities())
+                {
+                    memberObj = (from c in obj.Members
+                                 where c.Nooch_ID == NoochId
+                                 select c).SingleOrDefault();
+                }
             }
+            catch (Exception ex)
+            {
+                Logger.Error("CommonHelper -> getMemberByNoochId EXCEPTION - [" + ex + "]");
+            }
+
+            return memberObj;
         }
 
         public static string GetMemberIdOfLandlord(Guid landlorID)
         {
-            using (NOOCHEntities obj = new NOOCHEntities())
+            string result = string.Empty;
+
+            try
             {
-                return (from c in obj.Landlords
-                        where c.LandlordId == landlorID
-                        select c.MemberId).SingleOrDefault().ToString();
+                using (NOOCHEntities obj = new NOOCHEntities())
+                {
+                    result = (from c in obj.Landlords
+                              where c.LandlordId == landlorID
+                              select c.MemberId).SingleOrDefault().ToString();
+                }
             }
+            catch (Exception ex)
+            {
+                Logger.Error("CommonHelper -> getMemberByNoochId EXCEPTION - [" + ex + "]");
+            }
+
+            return result;
         }
 
         public static string GetMemberNameByUserName(string userName)
@@ -189,18 +222,65 @@ namespace LanLordlAPIs.Classes.Utility
             var userNameLowerCase = CommonHelper.GetEncryptedData(userName.ToLower());
             userName = CommonHelper.GetEncryptedData(userName);
 
-            using (var noochConnection = new NOOCHEntities())
+            using (var obj = new NOOCHEntities())
             {
-                var noochMember = (from c in noochConnection.Members where c.UserName == userName && c.IsDeleted == false select c).FirstOrDefault();
+                var memberObj = (from c in obj.Members
+                                 where c.UserName == userName && c.IsDeleted == false
+                                 select c).FirstOrDefault();
 
-                if (noochMember != null)
+                if (memberObj != null)
                 {
-                    return CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(noochMember.FirstName))) + " "
-                           + CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(noochMember.LastName)));
+                    return CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(memberObj.FirstName))) + " " +
+                           CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(memberObj.LastName)));
                 }
             }
             return null;
         }
+
+        public static Property GetPropertyByPropId(Guid propId)
+        {
+            Property prop = new Property();
+
+            try
+            {
+                using (NOOCHEntities obj = new NOOCHEntities())
+                {
+                    prop = (from p in obj.Properties
+                            where p.PropertyId == propId && p.IsDeleted == false
+                            select p).SingleOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("CommonHelper -> GetPropertyByPropId EXCEPTION - [" + ex + "]");
+            }
+
+            return prop;
+        }
+
+        public static PropertyUnit GetUnitByUnitId(string unitId)
+        {
+            Guid unitGuid = new Guid(unitId);
+
+            PropertyUnit unit = new PropertyUnit();
+
+            try
+            {
+                using (NOOCHEntities obj = new NOOCHEntities())
+                {
+                    unit = (from u in obj.PropertyUnits
+                            where u.UnitId == unitGuid && u.IsDeleted == false
+                            select u).SingleOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("CommonHelper -> GetPropertyByPropId EXCEPTION - [" + ex + "]");
+            }
+
+            return unit;
+        }
+
 
         public static string getReferralCode(String memberId)
         {
@@ -1108,7 +1188,7 @@ namespace LanLordlAPIs.Classes.Utility
             if (s != "Not a nooch member.")
             {
                 // getting MemberId
-                Member mem = getMemberByEmailId(Username);
+                Member mem = GetMemberByEmailId(Username);
                 string MemberId = mem.MemberId.ToString();
 
                 var userNameLowerCase = CommonHelper.GetEncryptedData(Username.ToLower());
