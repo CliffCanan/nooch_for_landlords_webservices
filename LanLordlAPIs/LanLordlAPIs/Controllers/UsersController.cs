@@ -1654,13 +1654,13 @@ namespace LanLordlAPIs.Controllers
                                     // getting all tenants of given landlord
                                     string propId = User.EmailInfo.PropertyId;
 
-                                    List<GetTenantsInGivenPropertyId_Result1> allTenantsOfLl = obj.GetTenantsInGivenPropertyId(propId).ToList();
+                                    List<GetTenantsInGivenPropertyId_Result2> allTenantsOfLl = obj.GetTenantsInGivenPropertyId(propId).ToList();
 
                                     if (allTenantsOfLl.Count > 0)
                                     {
                                         string emailtobesentfrom = CommonHelper.GetDecryptedData(lanlorddetails.eMail);
 
-                                        foreach (GetTenantsInGivenPropertyId_Result1 ten in allTenantsOfLl)
+                                        foreach (GetTenantsInGivenPropertyId_Result2 ten in allTenantsOfLl)
                                         {
                                             string emailtobesentto = CommonHelper.GetDecryptedData(ten.TenantEmail);
                                             string bodytext = User.EmailInfo.MessageToBeSent;
