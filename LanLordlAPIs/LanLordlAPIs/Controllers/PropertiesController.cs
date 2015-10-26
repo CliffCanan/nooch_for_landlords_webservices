@@ -195,11 +195,11 @@ namespace LanLordlAPIs.Controllers
 
                                     if (!String.IsNullOrEmpty(unitInput.Unit.RentDuration))
                                     {
-                                        uobt.AgreementLength = unitInput.Unit.RentDuration;
+                                        pu.LeaseLength = unitInput.Unit.RentDuration;
                                     }
                                     if (!String.IsNullOrEmpty(unitInput.Unit.RentStartDate))
                                     {
-                                        uobt.RentStartFrom = unitInput.Unit.RentStartDate;
+                                        pu.RentStartDate = Convert.ToDateTime( unitInput.Unit.RentStartDate);
                                     }
 
                                     obj.UnitsOccupiedByTenants.Add(uobt);
@@ -351,14 +351,15 @@ namespace LanLordlAPIs.Controllers
                                     uobt.UnitId = unitGuid;
                                     uobt.IsDeleted = false;
 
-                                    if (!String.IsNullOrEmpty(unitInput.Unit.RentDuration))
-                                    {
-                                        uobt.AgreementLength = unitInput.Unit.RentDuration;
-                                    }
-                                    if (!String.IsNullOrEmpty(unitInput.Unit.RentStartDate))
-                                    {
-                                        uobt.RentStartFrom = unitInput.Unit.RentStartDate;
-                                    }
+                                    //not needed anymore I guess
+                                    //if (!String.IsNullOrEmpty(unitInput.Unit.RentDuration))
+                                    //{
+                                    //    uobt.AgreementLength = unitInput.Unit.RentDuration;
+                                    //}
+                                    //if (!String.IsNullOrEmpty(unitInput.Unit.RentStartDate))
+                                    //{
+                                    //    uobt.RentStartFrom = unitInput.Unit.RentStartDate;
+                                    //}
 
                                     obj.UnitsOccupiedByTenants.Add(uobt);
 
@@ -960,14 +961,15 @@ namespace LanLordlAPIs.Controllers
                             uobt.UnitId = unitGuid;
                             uobt.IsDeleted = false;
 
-                            if (!String.IsNullOrEmpty(input.leaseLength))
-                            {
-                                uobt.AgreementLength = input.leaseLength;
-                            }
-                            if (!String.IsNullOrEmpty(input.startDate))
-                            {
-                                uobt.RentStartFrom = input.startDate;
-                            }
+                            //this needs to be shifted in property units table
+                            //if (!String.IsNullOrEmpty(input.leaseLength))
+                            //{
+                            //    uobt.AgreementLength = input.leaseLength;
+                            //}
+                            //if (!String.IsNullOrEmpty(input.startDate))
+                            //{
+                            //    uobt.RentStartFrom = input.startDate;
+                            //}
 
                             obj.UnitsOccupiedByTenants.Add(uobt);
 
@@ -1492,15 +1494,15 @@ namespace LanLordlAPIs.Controllers
 
                                     trc.UnitNumber = v.UnitNumber;
                                     trc.TenantEmail = CommonHelper.GetDecryptedData(v.TenantEmail);
-                                    trc.ImageUrl = v.UserPic ?? "https://www.noochme.com/noochweb/Assets/Images/userpic-default.png";  // will modify it after testing
+                                    trc.ImageUrl = v.Photo ?? "https://www.noochme.com/noochweb/Assets/Images/userpic-default.png";  // will modify it after testing
                                     trc.UnitRent = v.UnitRent ?? "";
                                     trc.LastRentPaidOn = Convert.ToDateTime(v.LastPaymentDate).ToString("MMM d, yyyy") ?? "";
                                     trc.IsRentPaidForThisMonth = v.IsPaymentDueForThisMonth ?? false;
-                                    trc.IsPhoneVerified = v.IsPhoneVerfied ?? false;
-                                    trc.IsEmailVerified = v.IsEmailVerified ?? false;
-                                    trc.IsDocumentsVerified = v.IsIdDocumentVerified ?? false;
+                                    trc.IsPhoneVerified = v.IsVerifiedPhone ?? false;
+                                    //trc.IsEmailVerified = v.IsVerifiedWithSynapse ?? false;
+                                    //trc.IsDocumentsVerified = v.IsVerifiedWithSynapse?? false;
 
-                                    if (!String.IsNullOrEmpty(v.BankAccountId.ToString()))
+                                    if (v.IsVerifiedWithSynapse??false)
                                     {
                                         trc.IsBankAccountAdded = true;
                                     }

@@ -218,6 +218,9 @@
     <Compile Include="Models\db Model\GetTenantsInGivenPropertyId_Result1.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\db Model\GetTenantsInGivenPropertyId_Result2.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\db Model\InviteCode.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

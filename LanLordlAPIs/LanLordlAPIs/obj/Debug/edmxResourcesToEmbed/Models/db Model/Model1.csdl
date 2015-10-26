@@ -138,7 +138,6 @@
     <EntitySet Name="MemberNotifications" EntityType="Self.MemberNotification" />
     <EntitySet Name="MemberPrivacySettings" EntityType="Self.MemberPrivacySetting" />
     <EntitySet Name="Tenants" EntityType="Self.Tenant" />
-    <EntitySet Name="UnitsOccupiedByTenants" EntityType="NOOCHModel.UnitsOccupiedByTenant" />
     <FunctionImport Name="GetTenantsCountInGivenPropertyId" ReturnType="Collection(Int32)">
       <Parameter Name="vPropertyId" Mode="In" Type="String" />
     </FunctionImport>
@@ -146,9 +145,6 @@
     <EntitySet Name="InviteCodes" EntityType="NOOCHModel.InviteCode" />
     <EntitySet Name="AuthenticationTokens" EntityType="NOOCHModel.AuthenticationToken" />
     <EntitySet Name="PasswordResetRequests" EntityType="NOOCHModel.PasswordResetRequest" />
-    <FunctionImport Name="GetTenantsInGivenPropertyId" ReturnType="Collection(NOOCHModel.GetTenantsInGivenPropertyId_Result1)">
-      <Parameter Name="vPropertyId" Mode="In" Type="String" />
-    </FunctionImport>
     <FunctionImport Name="GetPropertiesCountForGivenLandlord" ReturnType="Collection(Int32)">
       <Parameter Name="vLandlordId" Mode="In" Type="String" />
     </FunctionImport>
@@ -171,7 +167,6 @@
       <Parameter Name="vUserId" Mode="In" Type="String" />
     </FunctionImport>
     <EntitySet Name="Properties" EntityType="NOOCHModel.Property" />
-    <EntitySet Name="PropertyUnits" EntityType="NOOCHModel.PropertyUnit" />
     <FunctionImport Name="GetTenantNameForGivenUnitId" ReturnType="Collection(String)">
       <Parameter Name="vUnitId" Mode="In" Type="String" />
     </FunctionImport>
@@ -223,23 +218,12 @@
       <End Role="Member" EntitySet="Members" />
       <End Role="Transaction" EntitySet="Transactions" />
     </AssociationSet>
+    <EntitySet Name="PropertyUnits" EntityType="NOOCHModel.PropertyUnit" />
+    <EntitySet Name="UnitsOccupiedByTenants" EntityType="NOOCHModel.UnitsOccupiedByTenant" />
+    <FunctionImport Name="GetTenantsInGivenPropertyId" ReturnType="Collection(NOOCHModel.GetTenantsInGivenPropertyId_Result2)">
+      <Parameter Name="vPropertyId" Mode="In" Type="String" />
+    </FunctionImport>
   </EntityContainer>
-  <EntityType Name="UnitsOccupiedByTenant">
-    <Key>
-      <PropertyRef Name="Id" />
-    </Key>
-    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="UnitId" Type="Guid" />
-    <Property Name="TenantId" Type="Guid" />
-    <Property Name="OccupiedOn" Type="DateTime" Precision="3" />
-    <Property Name="IsDeleted" Type="Boolean" />
-    <Property Name="ModifiedOn" Type="DateTime" Precision="3" />
-    <Property Name="LastPaymentDate" Type="DateTime" Precision="3" />
-    <Property Name="LastPaymentAmount" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="IsPaymentDueForThisMonth" Type="Boolean" />
-    <Property Name="RentStartFrom" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="AgreementLength" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-  </EntityType>
   <EntityType Name="TenantsIdDocument">
     <Key>
       <PropertyRef Name="Id" />
@@ -342,29 +326,6 @@
     <Property Name="IsSingleUnit" Type="Boolean" />
     <Property Name="IsDeleted" Type="Boolean" />
     <Property Name="DefaulBank" Type="Int32" />
-  </EntityType>
-  <EntityType Name="PropertyUnit">
-    <Key>
-      <PropertyRef Name="UnitId" />
-    </Key>
-    <Property Name="UnitId" Type="Guid" Nullable="false" />
-    <Property Name="PropertyId" Type="Guid" />
-    <Property Name="UnitNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="UnitRent" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="BankAccountId" Type="Guid" />
-    <Property Name="DateAdded" Type="DateTime" Precision="3" />
-    <Property Name="ModifiedOn" Type="DateTime" Precision="3" />
-    <Property Name="LandlordId" Type="Guid" />
-    <Property Name="MemberId" Type="Guid" />
-    <Property Name="UnitImage" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="IsDeleted" Type="Boolean" />
-    <Property Name="IsHidden" Type="Boolean" />
-    <Property Name="IsOccupied" Type="Boolean" />
-    <Property Name="Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="DueDate" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="UnitNickName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="RentStartDate" Type="DateTime" Precision="3" />
-    <Property Name="LeaseLength" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
   </EntityType>
   <EntityType Name="Member">
     <Key>
@@ -585,4 +546,57 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <EntityType Name="PropertyUnit">
+    <Key>
+      <PropertyRef Name="UnitId" />
+    </Key>
+    <Property Name="UnitId" Type="Guid" Nullable="false" />
+    <Property Name="PropertyId" Type="Guid" />
+    <Property Name="UnitNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="UnitRent" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="BankAccountId" Type="Guid" />
+    <Property Name="DateAdded" Type="DateTime" Precision="3" />
+    <Property Name="ModifiedOn" Type="DateTime" Precision="3" />
+    <Property Name="LandlordId" Type="Guid" />
+    <Property Name="MemberId" Type="Guid" />
+    <Property Name="UnitImage" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="IsDeleted" Type="Boolean" />
+    <Property Name="IsHidden" Type="Boolean" />
+    <Property Name="IsOccupied" Type="Boolean" />
+    <Property Name="Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="DueDate" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="UnitNickName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="RentStartDate" Type="DateTime" Precision="3" />
+    <Property Name="LeaseLength" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="UnitsOccupiedByTenant">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="UnitId" Type="Guid" />
+    <Property Name="TenantId" Type="Guid" />
+    <Property Name="OccupiedOn" Type="DateTime" Precision="3" />
+    <Property Name="IsDeleted" Type="Boolean" />
+    <Property Name="ModifiedOn" Type="DateTime" Precision="3" />
+    <Property Name="LastPaymentDate" Type="DateTime" Precision="3" />
+    <Property Name="LastPaymentAmount" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="IsPaymentDueForThisMonth" Type="Boolean" />
+  </EntityType>
+  <ComplexType Name="GetTenantsInGivenPropertyId_Result2">
+    <Property Type="Guid" Name="TenantId" Nullable="false" />
+    <Property Type="Guid" Name="MemberId" Nullable="false" />
+    <Property Type="String" Name="FirstName" Nullable="true" />
+    <Property Type="String" Name="LastName" Nullable="true" />
+    <Property Type="Boolean" Name="IsVerifiedPhone" Nullable="true" />
+    <Property Type="Boolean" Name="IsVerifiedWithSynapse" Nullable="true" />
+    <Property Type="String" Name="Photo" Nullable="true" MaxLength="500" />
+    <Property Type="String" Name="Status" Nullable="false" MaxLength="20" />
+    <Property Type="DateTime" Name="LastPaymentDate" Nullable="true" Precision="23" />
+    <Property Type="Boolean" Name="IsPaymentDueForThisMonth" Nullable="true" />
+    <Property Type="Guid" Name="UnitId" Nullable="false" />
+    <Property Type="String" Name="UnitRent" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="UnitNumber" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="TenantEmail" Nullable="true" />
+  </ComplexType>
 </Schema>
