@@ -149,6 +149,8 @@ namespace LanLordlAPIs.Models.Input_Models
         public string propertyId { get; set; }
         public string unitId { get; set; }
         public string rent { get; set; }
+        public string startDate { get; set; }
+        public string leaseLength { get; set; }
         public basicLandlordPayload authData { get; set; }
         public TenantInfo tenant { get; set; }
     }
