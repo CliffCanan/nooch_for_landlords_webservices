@@ -246,6 +246,8 @@
     <Property Name="Status" Type="varchar(max)" />
     <Property Name="DueDate" Type="varchar(max)" />
     <Property Name="UnitNickName" Type="varchar(max)" />
+    <Property Name="RentStartDate" Type="datetime" />
+    <Property Name="LeaseLength" Type="varchar(max)" />
   </EntityType>
   <EntityType Name="SynapseBanksOfMembers">
     <Key>
@@ -374,8 +376,6 @@
     <Property Name="LastPaymentDate" Type="datetime" />
     <Property Name="LastPaymentAmount" Type="varchar" MaxLength="50" />
     <Property Name="IsPaymentDueForThisMonth" Type="bit" />
-    <Property Name="RentStartFrom" Type="varchar(max)" />
-    <Property Name="AgreementLength" Type="varchar(max)" />
   </EntityType>
   <Association Name="FK_MemberNotifications_Members">
     <End Role="Members" Type="Self.Members" Multiplicity="1" />

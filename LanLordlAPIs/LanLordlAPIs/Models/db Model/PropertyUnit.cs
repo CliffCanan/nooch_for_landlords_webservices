@@ -30,5 +30,7 @@ namespace LanLordlAPIs.Models.db_Model
         public string Status { get; set; }
         public string DueDate { get; set; }
         public string UnitNickName { get; set; }
+        public Nullable<System.DateTime> RentStartDate { get; set; }
+        public string LeaseLength { get; set; }
     }
 }

@@ -15,6 +15,7 @@
     <Property Name="Country" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
     <Property Name="ZipCode" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
     <Property Name="DateCreated" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="Transactions" Relationship="NOOCHModel.FK_Transactions_GeoLocations" FromRole="GeoLocation" ToRole="Transaction" />
   </EntityType>
   <EntityType Name="Landlord">
     <Key>
@@ -208,6 +209,19 @@
     <AssociationSet Name="FK_PasswordResetRequests_Members" Association="NOOCHModel.FK_PasswordResetRequests_Members">
       <End Role="Member" EntitySet="Members" />
       <End Role="PasswordResetRequest" EntitySet="PasswordResetRequests" />
+    </AssociationSet>
+    <EntitySet Name="Transactions" EntityType="NOOCHModel.Transaction" />
+    <AssociationSet Name="FK_Transactions_GeoLocations" Association="NOOCHModel.FK_Transactions_GeoLocations">
+      <End Role="GeoLocation" EntitySet="GeoLocations" />
+      <End Role="Transaction" EntitySet="Transactions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Transactions_Members2" Association="NOOCHModel.FK_Transactions_Members2">
+      <End Role="Member" EntitySet="Members" />
+      <End Role="Transaction" EntitySet="Transactions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Transactions_Members3" Association="NOOCHModel.FK_Transactions_Members3">
+      <End Role="Member" EntitySet="Members" />
+      <End Role="Transaction" EntitySet="Transactions" />
     </AssociationSet>
   </EntityContainer>
   <EntityType Name="UnitsOccupiedByTenant">
@@ -419,6 +433,8 @@
     <NavigationProperty Name="MemberNotifications" Relationship="NOOCHModel.FK_MemberNotifications_Members" FromRole="Member" ToRole="MemberNotification" />
     <NavigationProperty Name="MemberPrivacySettings" Relationship="NOOCHModel.FK_MemberPrivacySettings_Members" FromRole="Member" ToRole="MemberPrivacySetting" />
     <NavigationProperty Name="PasswordResetRequests" Relationship="NOOCHModel.FK_PasswordResetRequests_Members" FromRole="Member" ToRole="PasswordResetRequest" />
+    <NavigationProperty Name="Transactions" Relationship="NOOCHModel.FK_Transactions_Members2" FromRole="Member" ToRole="Transaction" />
+    <NavigationProperty Name="Transactions1" Relationship="NOOCHModel.FK_Transactions_Members3" FromRole="Member" ToRole="Transaction" />
   </EntityType>
   <EntityType Name="SynapseBanksOfMember">
     <Key>
@@ -489,6 +505,81 @@
       </Principal>
       <Dependent Role="PasswordResetRequest">
         <PropertyRef Name="MemberId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="Transaction">
+    <Key>
+      <PropertyRef Name="TransactionId" />
+    </Key>
+    <Property Name="TransactionId" Type="Guid" Nullable="false" />
+    <Property Name="SenderId" Type="Guid" Nullable="false" />
+    <Property Name="RecipientId" Type="Guid" />
+    <Property Name="DeviceId" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="DisputeTrackingId" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+    <Property Name="Amount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+    <Property Name="TransactionDate" Type="DateTime" Precision="3" />
+    <Property Name="IsPrepaidTransaction" Type="Boolean" Nullable="false" />
+    <Property Name="TransactionFee" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="DisputeStatus" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="TransactionStatus" Type="String" Nullable="false" MaxLength="15" FixedLength="false" Unicode="true" />
+    <Property Name="TransactionType" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="LocationId" Type="Guid" />
+    <Property Name="DisputeDate" Type="DateTime" Precision="3" />
+    <Property Name="ReviewDate" Type="DateTime" Precision="3" />
+    <Property Name="ResolvedDate" Type="DateTime" Precision="3" />
+    <Property Name="TransactionTrackingId" Type="String" MaxLength="9" FixedLength="false" Unicode="false" />
+    <Property Name="AdminNotes" Type="String" MaxLength="3000" FixedLength="false" Unicode="true" />
+    <Property Name="AdminName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Subject" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="RaisedBy" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="RaisedById" Type="Guid" />
+    <Property Name="Memo" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="Picture" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="BankAccountId" Type="Guid" />
+    <Property Name="InvitationSentTo" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+    <Property Name="SenderUpdatedBalanceAfterTransaction" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+    <Property Name="ReceiverUpdatedBalanceAfterTransaction" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+    <Property Name="BankId" Type="Guid" />
+    <Property Name="IsPhoneInvitation" Type="Boolean" />
+    <Property Name="PhoneNumberInvited" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="GeoLocation" Relationship="NOOCHModel.FK_Transactions_GeoLocations" FromRole="Transaction" ToRole="GeoLocation" />
+    <NavigationProperty Name="Member" Relationship="NOOCHModel.FK_Transactions_Members2" FromRole="Transaction" ToRole="Member" />
+    <NavigationProperty Name="Member1" Relationship="NOOCHModel.FK_Transactions_Members3" FromRole="Transaction" ToRole="Member" />
+  </EntityType>
+  <Association Name="FK_Transactions_GeoLocations">
+    <End Type="NOOCHModel.GeoLocation" Role="GeoLocation" Multiplicity="0..1" />
+    <End Type="NOOCHModel.Transaction" Role="Transaction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="GeoLocation">
+        <PropertyRef Name="LocationId" />
+      </Principal>
+      <Dependent Role="Transaction">
+        <PropertyRef Name="LocationId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Transactions_Members2">
+    <End Type="NOOCHModel.Member" Role="Member" Multiplicity="1" />
+    <End Type="NOOCHModel.Transaction" Role="Transaction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Member">
+        <PropertyRef Name="MemberId" />
+      </Principal>
+      <Dependent Role="Transaction">
+        <PropertyRef Name="SenderId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Transactions_Members3">
+    <End Type="NOOCHModel.Member" Role="Member" Multiplicity="0..1" />
+    <End Type="NOOCHModel.Transaction" Role="Transaction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Member">
+        <PropertyRef Name="MemberId" />
+      </Principal>
+      <Dependent Role="Transaction">
+        <PropertyRef Name="RecipientId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
