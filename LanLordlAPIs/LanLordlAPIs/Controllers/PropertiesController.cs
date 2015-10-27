@@ -165,16 +165,20 @@ namespace LanLordlAPIs.Controllers
                             // Now add the new unit
                             PropertyUnit pu = new PropertyUnit();
                             pu.UnitId = Guid.NewGuid();
+                            pu.PropertyId = propertyguidId;
                             pu.DateAdded = DateTime.Now;
                             pu.LandlordId = landlordguidId;
                             pu.UnitRent = unitInput.Unit.Rent;
                             pu.DueDate = unitInput.Unit.DueDate;
-                            pu.PropertyId = propertyguidId;
+                            pu.LeaseLength = unitInput.Unit.LeaseLength;
                             pu.IsDeleted = false;
                             pu.IsHidden = false;
                             pu.UnitNumber = !String.IsNullOrEmpty(unitInput.Unit.UnitNum) ? unitInput.Unit.UnitNum : null;
                             pu.UnitNickName = !String.IsNullOrEmpty(unitInput.Unit.UnitNickName) ? unitInput.Unit.UnitNickName : null;
-
+                            DateTime date = DateTime.Now.AddMonths(1);
+                            DateTime newDate = new DateTime(date.Year, date.Month, 1, 0, 0, 0, date.Kind);
+                            pu.RentStartDate = !String.IsNullOrEmpty(unitInput.Unit.RentStartDate) ? Convert.ToDateTime(unitInput.Unit.RentStartDate.Trim()) : newDate;
+                            
                             if (unitInput.Unit.IsTenantAdded)
                             {
                                 pu.IsOccupied = true;
@@ -193,9 +197,9 @@ namespace LanLordlAPIs.Controllers
                                     uobt.UnitId = pu.UnitId;
                                     uobt.IsDeleted = false;
 
-                                    if (!String.IsNullOrEmpty(unitInput.Unit.RentDuration))
+                                    if (!String.IsNullOrEmpty(unitInput.Unit.LeaseLength))
                                     {
-                                        pu.LeaseLength = unitInput.Unit.RentDuration;
+                                        pu.LeaseLength = unitInput.Unit.LeaseLength;
                                     }
                                     if (!String.IsNullOrEmpty(unitInput.Unit.RentStartDate))
                                     {
@@ -294,21 +298,30 @@ namespace LanLordlAPIs.Controllers
                     using (NOOCHEntities obj = new NOOCHEntities())
                     {
                         // Get Property details from DB
-                        PropertyUnit unitObjFromDb = CommonHelper.GetUnitByUnitId(unitInput.Unit.UnitId);
+                        PropertyUnit unitObj = (from u in obj.PropertyUnits
+                                             where u.UnitId == unitGuid && u.IsDeleted == false
+                                             select u).SingleOrDefault(); 
 
-                        if (unitObjFromDb != null)
+                        if (unitObj != null)
                         {
                             if (String.IsNullOrEmpty(unitInput.Unit.UnitNum) && String.IsNullOrEmpty(unitInput.Unit.UnitNickName))
                             {
                                 result.ErrorMessage = "Either unit number or nickname required.";
                             }
 
-                            unitObjFromDb.UnitNumber = !String.IsNullOrEmpty(unitInput.Unit.UnitNum) ? unitInput.Unit.UnitNum : null;
-                            unitObjFromDb.UnitNickName = !String.IsNullOrEmpty(unitInput.Unit.UnitNickName) ? unitInput.Unit.UnitNickName : null;
+                            unitObj.UnitNumber = !String.IsNullOrEmpty(unitInput.Unit.UnitNum) ? unitInput.Unit.UnitNum : null;
+                            unitObj.UnitNickName = !String.IsNullOrEmpty(unitInput.Unit.UnitNickName) ? unitInput.Unit.UnitNickName : null;
+                            unitObj.UnitRent = unitInput.Unit.Rent;
+                            unitObj.DueDate = unitInput.Unit.DueDate;
+                            unitObj.ModifiedOn = DateTime.Now;
+                            unitObj.LeaseLength = unitInput.Unit.LeaseLength;
+                            DateTime date = DateTime.Now.AddMonths(1);
+                            DateTime newDate = new DateTime(date.Year, date.Month, 1, 0, 0, 0, date.Kind);
+                            unitObj.RentStartDate = !String.IsNullOrEmpty(unitInput.Unit.RentStartDate) ? Convert.ToDateTime(unitInput.Unit.RentStartDate.Trim()) : newDate;
 
                             if (unitInput.Unit.IsTenantAdded)
                             {
-                                unitObjFromDb.IsOccupied = true;
+                                unitObj.IsOccupied = true;
 
                                 // NOTE: 'TenantId' = 'MemberId'
                                 Guid tenantIdForUnit = new Guid(unitInput.Unit.TenantId);
@@ -317,7 +330,7 @@ namespace LanLordlAPIs.Controllers
 
                                 // Check for existing tenants in this unit
                                 var existingTenantsInUnit = (from c in obj.UnitsOccupiedByTenants
-                                                             where c.UnitId == unitObjFromDb.UnitId &&
+                                                             where c.UnitId == unitObj.UnitId &&
                                                                   (c.IsDeleted != true)
                                                              select c).ToList();
 
@@ -342,7 +355,7 @@ namespace LanLordlAPIs.Controllers
 
                                 if (!String.IsNullOrEmpty(unitInput.Unit.TenantId))
                                 {
-                                    unitObjFromDb.Status = "Occupied";
+                                    unitObj.Status = "Occupied";
 
                                     #region Create New 'UnitsOccupiedByTenant' Record
 
@@ -369,7 +382,7 @@ namespace LanLordlAPIs.Controllers
                                 {
                                     #region Invite New Tenant For This Unit
 
-                                    unitObjFromDb.Status = "Pending Invite";
+                                    unitObj.Status = "Pending Invite";
 
                                     TenantInfo ti = new TenantInfo
                                     {
@@ -399,14 +412,9 @@ namespace LanLordlAPIs.Controllers
                             }
                             else
                             {
-                                unitObjFromDb.Status = "Published";
-                                unitObjFromDb.IsOccupied = false;
+                                unitObj.Status = "Published";
+                                unitObj.IsOccupied = false;
                             }
-
-                            unitObjFromDb.UnitRent = unitInput.Unit.Rent;
-                            unitObjFromDb.DueDate = unitInput.Unit.DueDate;
-                            unitObjFromDb.ModifiedOn = DateTime.Now;
-                            //TBD with CLIFF about agreement start date and length
 
                             obj.SaveChanges();
 
@@ -1410,20 +1418,20 @@ namespace LanLordlAPIs.Controllers
                                     //                   I think it's possibly b/c when we Invite a Tenant to a unit, we are not deleting any existing record in UOBT table...
                                     //bool isaccount = Convert.ToBoolean(obj.IsBankAccountAddedOfTenantInGivenUnitId(currentUnit.UnitId).FirstOrDefault());
 
-                                    DateTime? d = obj.GetLastRentPaymentDateForGivenUnitId(currentUnit.UnitId).FirstOrDefault();
-                                    string lastPayDate = "";
+                                    //DateTime? d = obj.GetLastRentPaymentDateForGivenUnitId(currentUnit.UnitId).FirstOrDefault();
+                                    //string lastPayDate = "";
 
-                                    if (d != null)
-                                    {
-                                        lastPayDate = Convert.ToDateTime(d).ToShortDateString();
-                                    }
+                                    //if (d != null)
+                                    //{
+                                    //    lastPayDate = Convert.ToDateTime(d).ToShortDateString();
+                                    //}
 
-                                    currentUnit.LastRentPaidOn = lastPayDate;
+                                    //currentUnit.LastRentPaidOn = lastPayDate;
                                     currentUnit.IsRentPaidForThisMonth = isRentPaid;
                                     currentUnit.IsEmailVerified = isemail;
                                     currentUnit.IsPhoneVerified = isphone;
                                     //currentUnit.IsBankAccountAdded = isaccount;
-
+                                    Logger.Info("PropertiesController -> GetPropertyDetailsPageData - CHECKPOINT 4");
                                     if (!String.IsNullOrEmpty(s))
                                     {
                                         string[] namesSplit = s.Split(' ');
@@ -1458,71 +1466,71 @@ namespace LanLordlAPIs.Controllers
 
                                 AllUnitsListPrepared.Add(currentUnit);
                             }
-
+                            Logger.Info("PropertiesController -> GetPropertyDetailsPageData - CHECKPOINT 6");
                             currentProperty.AllUnits = AllUnitsListPrepared;
                             currentProperty.UnitsCount = AllUnitsListPrepared.Count.ToString();
 
                             #endregion Get All Units For This Property
 
                             currentProperty.TenantsCount = obj.GetTenantsCountInGivenPropertyId(currentProperty.PropertyId).FirstOrDefault().ToString();
-
+                            Logger.Info("PropertiesController -> GetPropertyDetailsPageData - CHECKPOINT 7");
 
                             // Get list of all tenants for this property
                             #region Get All Tenants For This Property
 
-                            var AllTenantsInGivenProperty = obj.GetTenantsInGivenPropertyId(currentProperty.PropertyId).ToList();
+                            //var AllTenantsInGivenProperty = obj.GetTenantsInGivenPropertyId(currentProperty.PropertyId).ToList();
+                            
+                            //List<TenantDetailsResult> TenantsListForThisPropertyPrepared = new List<TenantDetailsResult>();
+                            //Logger.Info("PropertiesController -> GetPropertyDetailsPageData - CHECKPOINT 8");
+                            //if (AllTenantsInGivenProperty.Count > 0)
+                            //{
+                            //    foreach (var v in AllTenantsInGivenProperty)
+                            //    {
+                            //        TenantDetailsResult trc = new TenantDetailsResult();
 
-                            List<TenantDetailsResult> TenantsListForThisPropertyPrepared = new List<TenantDetailsResult>();
+                            //        trc.TenantId = v.TenantId.ToString() ?? "";
+                            //        trc.UnitId = v.UnitId.ToString() ?? "";
 
-                            if (AllTenantsInGivenProperty.Count > 0)
-                            {
-                                foreach (var v in AllTenantsInGivenProperty)
-                                {
-                                    TenantDetailsResult trc = new TenantDetailsResult();
+                            //        if (!String.IsNullOrEmpty(v.FirstName))
+                            //        {
+                            //            trc.Name = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(v.FirstName));
+                            //        }
+                            //        if (!String.IsNullOrEmpty(v.LastName))
+                            //        {
+                            //            trc.Name = trc.Name + " " + CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(v.LastName));
+                            //        }
 
-                                    trc.TenantId = v.TenantId.ToString() ?? "";
-                                    trc.UnitId = v.UnitId.ToString() ?? "";
+                            //        trc.UnitNumber = v.UnitNumber;
+                            //        trc.TenantEmail = CommonHelper.GetDecryptedData(v.TenantEmail);
+                            //        trc.ImageUrl = v.Photo ?? "https://www.noochme.com/noochweb/Assets/Images/userpic-default.png";
+                            //        trc.UnitRent = v.UnitRent ?? "";
+                            //        trc.LastRentPaidOn = Convert.ToDateTime(v.LastPaymentDate).ToString("MMM d, yyyy") ?? "";
+                            //        trc.IsRentPaidForThisMonth = v.IsPaymentDueForThisMonth ?? false;
+                            //        trc.IsPhoneVerified = v.IsVerifiedPhone ?? false;
+                            //        //trc.IsEmailVerified = v.IsVerifiedWithSynapse ?? false;
+                            //        //trc.IsDocumentsVerified = v.IsVerifiedWithSynapse?? false;
 
-                                    if (!String.IsNullOrEmpty(v.FirstName))
-                                    {
-                                        trc.Name = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(v.FirstName));
-                                    }
-                                    if (!String.IsNullOrEmpty(v.LastName))
-                                    {
-                                        trc.Name = trc.Name + " " + CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(v.LastName));
-                                    }
+                            //        if (v.IsVerifiedWithSynapse??false)
+                            //        {
+                            //            trc.IsBankAccountAdded = true;
+                            //        }
+                            //        else
+                            //        {
+                            //            trc.IsBankAccountAdded = false;
+                            //        }
 
-                                    trc.UnitNumber = v.UnitNumber;
-                                    trc.TenantEmail = CommonHelper.GetDecryptedData(v.TenantEmail);
-                                    trc.ImageUrl = v.Photo ?? "https://www.noochme.com/noochweb/Assets/Images/userpic-default.png";  // will modify it after testing
-                                    trc.UnitRent = v.UnitRent ?? "";
-                                    trc.LastRentPaidOn = Convert.ToDateTime(v.LastPaymentDate).ToString("MMM d, yyyy") ?? "";
-                                    trc.IsRentPaidForThisMonth = v.IsPaymentDueForThisMonth ?? false;
-                                    trc.IsPhoneVerified = v.IsVerifiedPhone ?? false;
-                                    //trc.IsEmailVerified = v.IsVerifiedWithSynapse ?? false;
-                                    //trc.IsDocumentsVerified = v.IsVerifiedWithSynapse?? false;
+                            //        TenantsListForThisPropertyPrepared.Add(trc);
+                            //    }
+                            //}
 
-                                    if (v.IsVerifiedWithSynapse??false)
-                                    {
-                                        trc.IsBankAccountAdded = true;
-                                    }
-                                    else
-                                    {
-                                        trc.IsBankAccountAdded = false;
-                                    }
-
-                                    TenantsListForThisPropertyPrepared.Add(trc);
-                                }
-                            }
-
-                            result.TenantsListForThisProperty = TenantsListForThisPropertyPrepared;
+                            //result.TenantsListForThisProperty = TenantsListForThisPropertyPrepared;
 
                             #endregion Get All Tenants For This Property
 
                             result.AllTenantsWithPassedDueDateCount = "0";
 
                             result.PropertyDetails = currentProperty;
-
+                            Logger.Info("PropertiesController -> GetPropertyDetailsPageData - CHECKPOINT 8");
                             result.IsSuccess = true;
                             result.ErrorMessage = "OK";
                         }

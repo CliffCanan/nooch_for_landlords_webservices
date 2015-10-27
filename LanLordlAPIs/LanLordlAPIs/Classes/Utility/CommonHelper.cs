@@ -403,6 +403,7 @@ namespace LanLordlAPIs.Classes.Utility
                     ll.DateCreated = DateTime.Now;
                     ll.IpAddresses = ip;
                     ll.IsIdVerified = false;
+                    ll.UserPic = "http://noochme.com/noochweb/Assets/Images/userpic-default.png";
 
                     obj.Landlords.Add(ll);
                     obj.SaveChanges();

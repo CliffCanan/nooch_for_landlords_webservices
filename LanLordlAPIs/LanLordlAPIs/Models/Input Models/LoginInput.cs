@@ -134,7 +134,7 @@ namespace LanLordlAPIs.Models.Input_Models
         public string UnitId { get; set; }
 
         public string RentStartDate { get; set; }
-        public string RentDuration { get; set; }
+        public string LeaseLength { get; set; }
     }
 
     public class AddNewUnitClass

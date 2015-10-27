@@ -78,14 +78,13 @@ namespace LanLordlAPIs.Controllers
                                 IsVerifiedPhone = false,
                                 IsVerifiedWithSynapse = false,
                                 UDID1 = llDetails.fingerprint,
+                                Country = !String.IsNullOrEmpty(llDetails.country) ? llDetails.country : "US",
 
                                 // some blanks as default
-                                Address = CommonHelper.GetEncryptedData(" "),
-                                State = CommonHelper.GetEncryptedData(" "),
-                                City = CommonHelper.GetEncryptedData(" "),
-                                Zipcode = CommonHelper.GetEncryptedData(" "),
-                                Country = llDetails.country,
-                                ContactNumber = CommonHelper.GetEncryptedData(" ")
+                                Address = CommonHelper.GetEncryptedData(""),
+                                State = CommonHelper.GetEncryptedData(""),
+                                City = CommonHelper.GetEncryptedData(""),
+                                Zipcode = CommonHelper.GetEncryptedData(""),
                             };
 
                             #endregion Create Member Object
