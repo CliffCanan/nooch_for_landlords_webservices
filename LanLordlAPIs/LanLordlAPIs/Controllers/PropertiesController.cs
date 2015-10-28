@@ -1092,10 +1092,9 @@ namespace LanLordlAPIs.Controllers
                                 trans.GeoLocation = gl;
                                 trans.TransactionTrackingId = CommonHelper.GetRandomTransactionTrackingId();
                                 trans.TransactionFee = 0;
-                                trans.InvitationSentTo = null;
 
                                 trans.IsPhoneInvitation = false;
-                                trans.InvitationSentTo = email;
+                                trans.InvitationSentTo = !String.IsNullOrEmpty(email) ? CommonHelper.GetEncryptedData(email) : null;
 
                                 trans.DeviceId = null;
                                 trans.DisputeStatus = null;
@@ -1115,16 +1114,17 @@ namespace LanLordlAPIs.Controllers
                                 #region Send Email to New TENANT
 
                                 #region Setup Email Variables
-
-                                string LandlordFirstName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(landlordDetailsInMembersTable.FirstName)));
-                                string LandlordLastName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(landlordDetailsInMembersTable.LastName)));
-                                string CancelRequestLinkForLandlord = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/CancelRequest.aspx?TransactionId=" + trans.TransactionId + "&MemberId=" + landlordDetailsInMembersTable.MemberId + "&UserType=U6De3haw2r4mSgweNpdgXQ==");
+                                Logger.Info("*** TEST INFO ****    [Landlord FName: " + landlordObj.FirstName + "], [Landlord LName: " + landlordObj.LastName + "]");
+                                string LandlordFirstName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(landlordObj.FirstName)));
+                                string LandlordLastName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(landlordObj.LastName)));
+                                Logger.Info("PropertiesController -> InviteTenant - EMAIL CHECKPOINT #1");
+                                //string CancelRequestLinkForLandlord = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/CancelRequest.aspx?TransactionId=" + trans.TransactionId + "&MemberId=" + landlordDetailsInMembersTable.MemberId + "&UserType=U6De3haw2r4mSgweNpdgXQ==");
 
                                 string s22 = trans.Amount.ToString("n2");
                                 string[] s32 = s22.Split('.');
 
                                 string memo = trans.Memo;
-
+                                Logger.Info("PropertiesController -> InviteTenant - EMAIL CHECKPOINT #2");
                                 // Send email to Request Receiver - Send 'UserType', 'LinkSource', 'TransType' as encrypted
                                 // In this case UserType would = 'New'
                                 // TransType would = 'Request'
@@ -1411,8 +1411,6 @@ namespace LanLordlAPIs.Controllers
                                     bool isemail = Convert.ToBoolean(obj.IsEmailIdVerifiedOfTenantInGivenUnitId(currentUnit.UnitId).FirstOrDefault());
                                     bool isphone = Convert.ToBoolean(obj.IsPhoneVerifiedOfTenantInGivenUnitId(currentUnit.UnitId).FirstOrDefault());
 
-                                    Logger.Info("PropertiesController -> GetPropertyDetailsPageData - INSIDE FOR LOOP *** Checkpoint #3.3 *** ");
-
                                     // CLIFF (10/23/15): THIS PROCEDURE IS CAUSING A PROBLEM WHEN THERE IS MORE THAN ONE RESULT
                                     //                   i.e. more than 1 record with the given Tenant/MemberID in the UnitsOccupiedByTenants Table.
                                     //                   I think it's possibly b/c when we Invite a Tenant to a unit, we are not deleting any existing record in UOBT table...
@@ -1431,7 +1429,7 @@ namespace LanLordlAPIs.Controllers
                                     currentUnit.IsEmailVerified = isemail;
                                     currentUnit.IsPhoneVerified = isphone;
                                     //currentUnit.IsBankAccountAdded = isaccount;
-                                    Logger.Info("PropertiesController -> GetPropertyDetailsPageData - CHECKPOINT 4");
+
                                     if (!String.IsNullOrEmpty(s))
                                     {
                                         string[] namesSplit = s.Split(' ');
@@ -1466,14 +1464,16 @@ namespace LanLordlAPIs.Controllers
 
                                 AllUnitsListPrepared.Add(currentUnit);
                             }
-                            Logger.Info("PropertiesController -> GetPropertyDetailsPageData - CHECKPOINT 6");
+
+                            //Logger.Info("PropertiesController -> GetPropertyDetailsPageData - CHECKPOINT 6");
+                            
                             currentProperty.AllUnits = AllUnitsListPrepared;
                             currentProperty.UnitsCount = AllUnitsListPrepared.Count.ToString();
 
                             #endregion Get All Units For This Property
 
                             currentProperty.TenantsCount = obj.GetTenantsCountInGivenPropertyId(currentProperty.PropertyId).FirstOrDefault().ToString();
-                            Logger.Info("PropertiesController -> GetPropertyDetailsPageData - CHECKPOINT 7");
+                            //Logger.Info("PropertiesController -> GetPropertyDetailsPageData - CHECKPOINT 7");
 
                             // Get list of all tenants for this property
                             #region Get All Tenants For This Property
