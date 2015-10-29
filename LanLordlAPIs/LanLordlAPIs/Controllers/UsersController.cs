@@ -171,7 +171,7 @@ namespace LanLordlAPIs.Controllers
                                 obj.MemberPrivacySettings.Add(memberPrivacySettings);
 
                                 Logger.Info("UserController -> RegisterLandlord - ** NEW LANDLORD ** - NOTIFICATIONS & PRIVACY SETTINGS Created and saved to DB - [MemberID: " + member.MemberId + "]");
-                                
+
                                 #endregion Privacy Settings
 
                                 Logger.Info("UserController -> RegisterLandlord - ** NEW LANDLORD ** - About to created new LANLDORD record - [MemberID: " + member.MemberId + "]");
@@ -1585,6 +1585,8 @@ namespace LanLordlAPIs.Controllers
         [ActionName("SendEmailsToTenants")]
         public CreatePropertyResultOutput SendEmailsToTenants(SendEmailsToTenantsInputClass User)
         {
+            Logger.Info("UsersController -> SendEmailsToTenants Initiated - [LandlordID: " + User.DeviceInfo.LandlorId + "], [TenantID To Send To: " + User.EmailInfo.TenantIdToBeMessaged + "]");
+
             CreatePropertyResultOutput result = new CreatePropertyResultOutput();
             result.IsSuccess = false;
 
@@ -1600,13 +1602,13 @@ namespace LanLordlAPIs.Controllers
                     using (NOOCHEntities obj = new NOOCHEntities())
                     {
                         // Reading landlord details from DB
-                        var lanlorddetails = (from c in obj.Landlords
-                                              where c.LandlordId == landlordguidId
-                                              select c).FirstOrDefault();
+                        var landlordObj = (from c in obj.Landlords
+                                           where c.LandlordId == landlordguidId
+                                           select c).FirstOrDefault();
 
-                        if (lanlorddetails != null)
+                        if (landlordObj != null)
                         {
-                            // Now check if the email is going to just 1 tenant, or all a Property's tenants
+                            // Now check if the email is going to just ONE tenant, or ALL of a Property's tenants
 
                             if (User.EmailInfo.IsForAllOrOne == "One")
                             {
@@ -1616,31 +1618,31 @@ namespace LanLordlAPIs.Controllers
                                 {
                                     if (!String.IsNullOrEmpty(User.EmailInfo.TenantIdToBeMessaged))
                                     {
-                                        Guid tenantguidId = new Guid(User.DeviceInfo.LandlorId);
+                                        Guid tenantguidId = new Guid(User.EmailInfo.TenantIdToBeMessaged);
 
-                                        // Get tenant info
-
-                                        var tenanInfo = (from c in obj.Tenants
+                                        // Get Tenant's info
+                                        var tenantObj = (from c in obj.Tenants
                                                          where c.TenantId == tenantguidId
                                                          select c).FirstOrDefault();
 
-                                        if (tenanInfo != null)
+                                        if (tenantObj != null)
                                         {
-                                            string emailtobesentto = CommonHelper.GetDecryptedData(tenanInfo.eMail);
-                                            string emailtobesentfrom = CommonHelper.GetDecryptedData(lanlorddetails.eMail);
+                                            string toAddress = CommonHelper.GetDecryptedData(tenantObj.eMail);
+                                            string fromAddress = CommonHelper.GetDecryptedData(landlordObj.eMail);
+                                            string landlordFullName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.FirstName)) + " " +
+                                                                      CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.LastName));
 
                                             string bodytext = User.EmailInfo.MessageToBeSent;
 
-                                            CommonHelper.SendEmail(null, emailtobesentfrom, emailtobesentto,
-                                                "New message from " +
-                                                CommonHelper.GetDecryptedData(lanlorddetails.FirstName), null, bodytext);
+                                            CommonHelper.SendEmail(null, fromAddress, toAddress,
+                                                "New message from " + landlordFullName, null, bodytext);
 
                                             result.IsSuccess = true;
-                                            result.ErrorMessage = "Message sent.";
+                                            result.ErrorMessage = "Message sent successfully";
                                         }
                                         else
                                         {
-                                            result.ErrorMessage = "Given tenant not found.";
+                                            result.ErrorMessage = "Given tenant ID not found.";
                                         }
                                     }
                                     else
@@ -1655,7 +1657,6 @@ namespace LanLordlAPIs.Controllers
 
                                 #endregion Sending To A Single Tenant
                             }
-
                             else if (User.EmailInfo.IsForAllOrOne == "All")
                             {
                                 #region Sending To All Tenants For A Given Property
@@ -1669,7 +1670,7 @@ namespace LanLordlAPIs.Controllers
 
                                     if (allTenantsOfLl.Count > 0)
                                     {
-                                        string emailtobesentfrom = CommonHelper.GetDecryptedData(lanlorddetails.eMail);
+                                        string emailtobesentfrom = CommonHelper.GetDecryptedData(landlordObj.eMail);
 
                                         foreach (GetTenantsInGivenPropertyId_Result2 ten in allTenantsOfLl)
                                         {
@@ -1678,8 +1679,8 @@ namespace LanLordlAPIs.Controllers
 
                                             CommonHelper.SendEmail(null, emailtobesentfrom, emailtobesentto,
                                                 "New message from " +
-                                               CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(lanlorddetails.FirstName)) + " " +
-                                               CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(lanlorddetails.LastName)), null, bodytext);
+                                               CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.FirstName)) + " " +
+                                               CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.LastName)), null, bodytext);
                                         }
 
                                         result.IsSuccess = true;
