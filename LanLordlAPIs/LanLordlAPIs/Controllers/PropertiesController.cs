@@ -1478,52 +1478,52 @@ namespace LanLordlAPIs.Controllers
                             // Get list of all tenants for this property
                             #region Get All Tenants For This Property
 
-                            //var AllTenantsInGivenProperty = obj.GetTenantsInGivenPropertyId(currentProperty.PropertyId).ToList();
-                            
-                            //List<TenantDetailsResult> TenantsListForThisPropertyPrepared = new List<TenantDetailsResult>();
-                            //Logger.Info("PropertiesController -> GetPropertyDetailsPageData - CHECKPOINT 8");
-                            //if (AllTenantsInGivenProperty.Count > 0)
-                            //{
-                            //    foreach (var v in AllTenantsInGivenProperty)
-                            //    {
-                            //        TenantDetailsResult trc = new TenantDetailsResult();
+                            var AllTenantsInGivenProperty = obj.GetTenantsInGivenPropertyId(currentProperty.PropertyId).ToList();
 
-                            //        trc.TenantId = v.TenantId.ToString() ?? "";
-                            //        trc.UnitId = v.UnitId.ToString() ?? "";
+                            List<TenantDetailsResult> TenantsListForThisPropertyPrepared = new List<TenantDetailsResult>();
+                            Logger.Info("PropertiesController -> GetPropertyDetailsPageData - CHECKPOINT 8");
+                            if (AllTenantsInGivenProperty.Count > 0)
+                            {
+                                foreach (var v in AllTenantsInGivenProperty)
+                                {
+                                    TenantDetailsResult trc = new TenantDetailsResult();
 
-                            //        if (!String.IsNullOrEmpty(v.FirstName))
-                            //        {
-                            //            trc.Name = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(v.FirstName));
-                            //        }
-                            //        if (!String.IsNullOrEmpty(v.LastName))
-                            //        {
-                            //            trc.Name = trc.Name + " " + CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(v.LastName));
-                            //        }
+                                    trc.TenantId = v.TenantId.ToString() ?? "";
+                                    trc.UnitId = v.UnitId.ToString() ?? "";
 
-                            //        trc.UnitNumber = v.UnitNumber;
-                            //        trc.TenantEmail = CommonHelper.GetDecryptedData(v.TenantEmail);
-                            //        trc.ImageUrl = v.Photo ?? "https://www.noochme.com/noochweb/Assets/Images/userpic-default.png";
-                            //        trc.UnitRent = v.UnitRent ?? "";
-                            //        trc.LastRentPaidOn = Convert.ToDateTime(v.LastPaymentDate).ToString("MMM d, yyyy") ?? "";
-                            //        trc.IsRentPaidForThisMonth = v.IsPaymentDueForThisMonth ?? false;
-                            //        trc.IsPhoneVerified = v.IsVerifiedPhone ?? false;
-                            //        //trc.IsEmailVerified = v.IsVerifiedWithSynapse ?? false;
-                            //        //trc.IsDocumentsVerified = v.IsVerifiedWithSynapse?? false;
+                                    if (!String.IsNullOrEmpty(v.FirstName))
+                                    {
+                                        trc.Name = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(v.FirstName));
+                                    }
+                                    if (!String.IsNullOrEmpty(v.LastName))
+                                    {
+                                        trc.Name = trc.Name + " " + CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(v.LastName));
+                                    }
 
-                            //        if (v.IsVerifiedWithSynapse??false)
-                            //        {
-                            //            trc.IsBankAccountAdded = true;
-                            //        }
-                            //        else
-                            //        {
-                            //            trc.IsBankAccountAdded = false;
-                            //        }
+                                    trc.UnitNumber = v.UnitNumber;
+                                    trc.TenantEmail = CommonHelper.GetDecryptedData(v.TenantEmail);
+                                    trc.ImageUrl = v.Photo ?? "https://www.noochme.com/noochweb/Assets/Images/userpic-default.png";
+                                    trc.UnitRent = v.UnitRent ?? "";
+                                    trc.LastRentPaidOn = Convert.ToDateTime(v.LastPaymentDate).ToString("MMM d, yyyy") ?? "";
+                                    trc.IsRentPaidForThisMonth = v.IsPaymentDueForThisMonth ?? false;
+                                    trc.IsPhoneVerified = v.IsVerifiedPhone ?? false;
+                                    //trc.IsEmailVerified = v.IsVerifiedWithSynapse ?? false;
+                                    //trc.IsDocumentsVerified = v.IsVerifiedWithSynapse?? false;
 
-                            //        TenantsListForThisPropertyPrepared.Add(trc);
-                            //    }
-                            //}
+                                    if (v.IsVerifiedWithSynapse ?? false)
+                                    {
+                                        trc.IsBankAccountAdded = true;
+                                    }
+                                    else
+                                    {
+                                        trc.IsBankAccountAdded = false;
+                                    }
 
-                            //result.TenantsListForThisProperty = TenantsListForThisPropertyPrepared;
+                                    TenantsListForThisPropertyPrepared.Add(trc);
+                                }
+                            }
+
+                            result.TenantsListForThisProperty = TenantsListForThisPropertyPrepared;
 
                             #endregion Get All Tenants For This Property
 
