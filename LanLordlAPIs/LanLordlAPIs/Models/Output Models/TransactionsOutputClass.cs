@@ -1,0 +1,52 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using LanLordlAPIs.Models.db_Model;
+using LanLordlAPIs.Models.Input_Models;
+
+namespace LanLordlAPIs.Models.Output_Models
+{
+    public class TransactionsOutputClass
+    {
+    }
+
+
+    public class ChargeTenantInputClass
+    {
+        public basicLandlordPayload User { get; set; }
+        public ChargeTenantInputTransDetailsClass TransRequest { get; set; }
+    }
+
+    public class ChargeTenantInputTransDetailsClass
+    {
+        
+        public string Memo { get; set; }
+        public string Amount { get; set; }
+        public string TenantId { get; set; }
+        public bool IsRecurring { get; set; }
+    }
+
+
+    public class SynapseDetailsClass
+    {
+        public SynapseBanksOfMember BankDetails { get; set; }
+        public SynapseCreateUserResult UserDetails { get; set; }
+
+        public bool wereBankDetailsFound { get; set; }
+        public bool wereUserDetailsFound { get; set; }
+
+        public string UserDetailsErrMessage { get; set; }
+        public string AccountDetailsErrMessage { get; set; }
+    }
+
+    public class googleURLShortnerResponseClass
+    {
+        public string kind { get; set; }
+        public string id { get; set; }
+        public string longUrl { get; set; }
+
+    }
+
+
+}

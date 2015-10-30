@@ -126,6 +126,9 @@
   <data name="PLACEHOLDER_FIRST_NAME" xml:space="preserve">
     <value>$FirstName$</value>
   </data>
+  <data name="PLACEHOLDER_FRIEND_FIRST_NAME" xml:space="preserve">
+    <value>$FriendFirstName$</value>
+  </data>
   <data name="PLACEHOLDER_LAST_NAME" xml:space="preserve">
     <value>$LastName$</value>
   </data>
@@ -152,6 +155,9 @@
   </data>
   <data name="PLACEHOLDER_TRANSFER_AMOUNT" xml:space="preserve">
     <value>$Transfer_Amount$</value>
+  </data>
+  <data name="PLACEHOLDER_USER_PICTURE" xml:space="preserve">
+    <value>$UserPicture$</value>
   </data>
   <data name="STATUS_REGISTERED" xml:space="preserve">
     <value>Registered</value>

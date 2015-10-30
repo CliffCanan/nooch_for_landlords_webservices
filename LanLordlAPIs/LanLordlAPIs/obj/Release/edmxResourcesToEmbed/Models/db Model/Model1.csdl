@@ -223,6 +223,7 @@
     <FunctionImport Name="GetTenantsInGivenPropertyId" ReturnType="Collection(NOOCHModel.GetTenantsInGivenPropertyId_Result2)">
       <Parameter Name="vPropertyId" Mode="In" Type="String" />
     </FunctionImport>
+    <EntitySet Name="SynapseCreateUserResults" EntityType="NOOCHModel.SynapseCreateUserResult" />
   </EntityContainer>
   <EntityType Name="TenantsIdDocument">
     <Key>
@@ -599,4 +600,31 @@
     <Property Type="String" Name="UnitNumber" Nullable="true" MaxLength="50" />
     <Property Type="String" Name="TenantEmail" Nullable="true" />
   </ComplexType>
+  <EntityType Name="SynapseCreateUserResult">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="MemberId" Type="Guid" />
+    <Property Name="DateCreated" Type="DateTime" Precision="3" />
+    <Property Name="access_token" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="expires_in" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="reason" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="refresh_token" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="success" Type="Boolean" />
+    <Property Name="username" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="user_id" Type="Int32" />
+    <Property Name="IsDeleted" Type="Boolean" />
+    <Property Name="ModifiedOn" Type="DateTime" Precision="3" />
+    <Property Name="IsForNonNoochUser" Type="Boolean" />
+    <Property Name="NonNoochUserEmail" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="TransactionIdFromWhichInvited" Type="Guid" />
+    <Property Name="HasNonNoochUserSignedUp" Type="Boolean" />
+    <Property Name="MemberIdAfterSignup" Type="Guid" />
+    <Property Name="is_business" Type="Boolean" />
+    <Property Name="legal_name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="permission" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="Phone_number" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="photos" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+  </EntityType>
 </Schema>

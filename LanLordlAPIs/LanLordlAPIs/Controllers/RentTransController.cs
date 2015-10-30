@@ -11,6 +11,7 @@ using LanLordlAPIs.Classes.Utility;
 using LanLordlAPIs.Models.db_Model;
 using LanLordlAPIs.Models.Input_Models;
 using LanLordlAPIs.Models.Output_Models;
+using Newtonsoft.Json;
 
 namespace LanLordlAPIs.Controllers
 {
@@ -119,6 +120,416 @@ namespace LanLordlAPIs.Controllers
 
             return result;
         }
+
+        [HttpPost]
+        [ActionName("ChargeTenant")]
+        public CreatePropertyResultOutput AddNewProperty(ChargeTenantInputClass input)
+        {
+            Logger.Info("Landlords API -> RentTrans -> ChargeTenant - Requested by [" + input.User.LandlordId + "]");
+
+            CreatePropertyResultOutput result = new CreatePropertyResultOutput();
+            result.IsSuccess = false;
+
+            Guid Landlord_GUID = CommonHelper.ConvertToGuid(input.User.LandlordId);
+            Guid Tenant_GUID = CommonHelper.ConvertToGuid(input.TransRequest.TenantId);
+
+            try
+            {
+                string requestId = "";
+                #region All checks before execution
+
+                // Check uniqueness of requesting and sending user
+                if (Landlord_GUID == Tenant_GUID)
+                {
+                    result.IsSuccess = false;
+                    result.ErrorMessage = "Not allowed to request money from yourself.";
+                    return result;
+                }
+
+                // Check if request Amount is over per-transaction limit
+                decimal transactionAmount = Convert.ToDecimal(input.TransRequest.Amount);
+
+                if (CommonHelper.isOverTransactionLimit(transactionAmount, "", input.User.LandlordId))
+                {
+                    result.IsSuccess = false;
+                    result.ErrorMessage = "To keep Nooch safe, the maximum amount you can request is $" + Convert.ToDecimal(CommonHelper.GetValueFromConfig("MaximumTransferLimitPerTransaction")).ToString("F2");
+                    return result;
+
+                }
+
+
+                // getting requester and request recepient Members table info
+                var requester = CommonHelper.GetMemberByMemberId(Landlord_GUID);
+                var requestRecipient = CommonHelper.GetMemberByMemberId(Tenant_GUID);
+                if (requester == null)
+                {
+                    result.IsSuccess = false;
+                    result.ErrorMessage = "Requester Member Not Found";
+                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED - Requester Member Not Found - [MemberID: " + Landlord_GUID + "]");
+                    return result;
+
+                }
+                if (requestRecipient == null)
+                {
+                    result.IsSuccess = false;
+                    result.ErrorMessage = "Request Recipient Member Not Found";
+                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED - requestRecipient (who would pay the request) Member Not Found - [MemberID: " + Landlord_GUID + "]");
+                    return result;
+
+                }
+
+                #region Get Request Sender's Synapse Account Details
+
+                var requestorSynInfo = CommonHelper.GetSynapseBankAndUserDetailsforGivenMemberId(input.User.LandlordId);
+
+                if (requestorSynInfo.wereBankDetailsFound != true)
+                {
+                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED -> Request ABORTED: Requester's Synapse bank account NOT FOUND - Request Creator memberId is: [" + input.User.LandlordId + "]");
+                    result.IsSuccess = false;
+                    result.ErrorMessage = "Requester does not have any bank added";
+                    return result;
+                }
+
+                // Check Requestor's Synapse Bank Account status
+                if (requestorSynInfo.BankDetails != null &&
+                    requestorSynInfo.BankDetails.Status != "Verified" &&
+                    requester.IsVerifiedWithSynapse != true)
+                {
+                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED -> Request ABORTED: Requester's Synapse bank account exists but is not Verified and " +
+                        "isVerifiedWithSynapse != true - Request Creator memberId is: [" + input.User.MemberId + "]");
+                    result.ErrorMessage = "Requester does not have any verified bank account.";
+                    result.IsSuccess = false;
+                    return result;
+                }
+
+                #endregion Get Sender's Synapse Account Details
+
+                // @Cliff.. feel free to comment this section if you don't want to check Tenant synapse details
+                #region Get Request Sender's Synapse Account Details
+
+                var requestRecipientSynInfo = CommonHelper.GetSynapseBankAndUserDetailsforGivenMemberId(input.TransRequest.TenantId);
+
+                if (requestRecipientSynInfo.wereBankDetailsFound != true)
+                {
+                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED -> Request ABORTED: Request Recipient's Synapse bank account NOT FOUND - Request Recipient MemberID: [" + input.TransRequest.TenantId + "]");
+                    result.IsSuccess = false;
+                    result.ErrorMessage = "Request recipient does not have any bank added";
+                    return result;
+                }
+
+                // Check Request recepient's Synapse Bank Account status
+                if (requestRecipientSynInfo.BankDetails != null &&
+                    requestRecipientSynInfo.BankDetails.Status != "Verified" &&
+                    requestRecipient.IsVerifiedWithSynapse != true)
+                {
+                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED -> Request ABORTED: Request Recipient's Synapse bank account exists but is not Verified and " +
+                        "isVerifiedWithSynapse != true - Request Recipient MemberID is: [" + input.TransRequest.TenantId + "]");
+                    result.IsSuccess = false;
+                    result.ErrorMessage = "Request recipient does not have any verified bank account.";
+                    return result;
+                }
+
+                #endregion Get Sender's Synapse Account Details
+
+                #endregion
+
+                #region Create new transaction in transactions table
+
+                using (NOOCHEntities obj = new NOOCHEntities())
+                {
+                    Transaction tr = new Transaction();
+                    tr.TransactionId = Guid.NewGuid();
+                    tr.SenderId = Tenant_GUID;
+                    tr.RecipientId = Landlord_GUID;
+                    tr.Amount = Convert.ToDecimal(input.TransRequest.Amount);
+                    tr.TransactionDate = DateTime.Now;
+                    tr.Memo = input.TransRequest.Memo; // this would be the reason why we are charging tenant 
+                    tr.DisputeStatus = null;
+                    tr.TransactionStatus = "Pending";
+                    tr.TransactionType = CommonHelper.GetEncryptedData("Request");
+                    tr.DeviceId = null;
+                    tr.TransactionTrackingId = CommonHelper.GetRandomTransactionTrackingId();
+                    tr.TransactionFee = 0;
+                    tr.IsPhoneInvitation = false;
+                    // we can take advantage of having tenants email id here.
+                    //tr.InvitationSentTo = !String.IsNullOrEmpty(requestDto.MoneySenderEmailId) ? CommonHelper.GetEncryptedData(requestDto.MoneySenderEmailId) : null,
+                    GeoLocation gl = new GeoLocation();
+                    gl.LocationId = Guid.NewGuid();
+                    gl.Latitude = null;
+                    gl.Longitude = null;
+                    gl.Altitude = null;
+                    gl.AddressLine1 = null;
+                    gl.AddressLine2 = null;
+                    gl.City = null;
+                    gl.State = null;
+                    gl.Country = null;
+                    gl.ZipCode = null;
+                    gl.DateCreated = DateTime.Now;
+                    obj.GeoLocations.Add(gl);
+                    obj.SaveChanges();
+
+                    tr.LocationId = gl.LocationId;
+                    try
+                    {
+
+                        obj.Transactions.Add(tr);
+                        obj.SaveChanges();
+                        requestId = tr.TransactionId.ToString();
+                    }
+                    catch (Exception ex)
+                    {
+
+                        Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED - Unable to save Transaction in DB - [Requester MemberID:" + input.User.LandlordId + "]. Exception ---> [ " + ex + " ]");
+                        result.IsSuccess = false;
+                        result.ErrorMessage = "Request failed.";
+                        return result;
+                    }
+
+                }
+
+                #endregion
+
+                #region Send Notifications
+
+                #region Set Up Variables
+
+                var fromAddress = CommonHelper.GetValueFromConfig("transfersMail");
+
+                string RequesterFirstName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requester.FirstName)));
+                string RequesterLastName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requester.LastName)));
+                string RequestReceiverFirstName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requestRecipient.FirstName)));
+                string RequestReceiverLastName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requestRecipient.LastName)));
+
+                string requesterPic = "https://www.noochme.com/noochweb/Assets/Images/userpic-default.png";
+                if (!String.IsNullOrEmpty(requester.Photo) && requester.Photo.Length > 20)
+                {
+                    requesterPic = requester.Photo;
+                }
+
+                string cancelLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/CancelRequest.aspx?TransactionId=" + requestId + "&MemberId=" + input.User.LandlordId + "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
+
+                string wholeAmount = Convert.ToDecimal(input.TransRequest.Amount).ToString("n2");
+                string[] amountArray = wholeAmount.Split('.');
+
+                string memo = "";
+                if (!string.IsNullOrEmpty(input.TransRequest.Memo))
+                {
+                    if (input.TransRequest.Memo.Length > 3)
+                    {
+                        string firstThreeChars = input.TransRequest.Memo.Substring(0, 3).ToLower();
+                        bool startWithFor = firstThreeChars.Equals("for");
+
+                        if (startWithFor)
+                        {
+                            memo = input.TransRequest.Memo.ToString();
+                        }
+                        else
+                        {
+                            memo = "for " + input.TransRequest.Memo.ToString();
+                        }
+                    }
+                    else
+                    {
+                        memo = "for " + input.TransRequest.Memo.ToString();
+                    }
+                }
+
+                #endregion Set Up Variables
+
+
+                // Send email to REQUESTER (person who sent this request)
+                #region Email To Requester
+
+                var tokens = new Dictionary<string, string>
+												 {
+													{Constants.PLACEHOLDER_FIRST_NAME, RequesterFirstName},
+													{Constants.PLACEHOLDER_NEWUSER, RequestReceiverFirstName + " " + RequestReceiverLastName},
+													{Constants.PLACEHOLDER_TRANSFER_AMOUNT, amountArray[0]},
+													{Constants.PLACEHLODER_CENTS, amountArray[1]},
+													{Constants.PLACEHOLDER_OTHER_LINK, cancelLink},
+													{Constants.MEMO, memo}
+												 };
+
+                var toAddress = CommonHelper.GetDecryptedData(requester.UserName);
+                try
+                {
+
+                    CommonHelper.SendEmail("requestSent", fromAddress, toAddress,
+                        "Your payment request to " + RequestReceiverFirstName + " " + RequestReceiverLastName +
+                        " is pending", tokens, null);
+
+                    Logger.Info("Landlords API -> RentTrans -> ChargeTenant -> RequestSent email sent to [" + toAddress + "] successfully.");
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant -> RequestSent email NOT sent to [" + toAddress +
+                                           "], [Exception: " + ex + "]");
+                }
+
+                #endregion Email To Requester
+
+
+                #region Email To Request Recipient
+
+                // Send email to REQUEST RECIPIENT (person who will pay/reject this request)
+                // Include 'UserType', 'LinkSource', and 'TransType' as encrypted along with request
+                // In this case UserType would = 'Nonregistered'  ->  6KX3VJv3YvoyK+cemdsvMA==
+                //              TransType would = 'Request'
+                //              LinkSource would = 'Email'
+                string rejectLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/rejectMoney.aspx?TransactionId=" + requestId + "&UserType=6KX3VJv3YvoyK+cemdsvMA==&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==&TransType=T3EMY1WWZ9IscHIj3dbcNw==");
+                string paylink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/payRequest.aspx?TransactionId=" + requestId + "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
+
+                var tokens2 = new Dictionary<string, string>
+                {
+                    {Constants.PLACEHOLDER_FIRST_NAME, RequestReceiverFirstName},
+                    {Constants.PLACEHOLDER_USER_PICTURE, requesterPic},
+                    {Constants.PLACEHOLDER_SENDER_FULL_NAME, RequesterFirstName + " " + RequesterLastName},
+                    {Constants.PLACEHOLDER_TRANSFER_AMOUNT, amountArray[0]},
+                    {Constants.PLACEHLODER_CENTS, amountArray[1]},
+                    {Constants.MEMO, memo},
+                    {Constants.PLACEHOLDER_REJECT_LINK, rejectLink},
+                    {Constants.PLACEHOLDER_PAY_LINK, paylink},
+                    {Constants.PLACEHOLDER_FRIEND_FIRST_NAME, RequesterFirstName}
+                };
+
+                toAddress = CommonHelper.GetDecryptedData(requestRecipient.UserName);
+
+                try
+                {
+
+
+                    CommonHelper.SendEmail("requestReceivedToExistingNonRegUser", fromAddress, toAddress,
+                    RequesterFirstName + " " + RequesterLastName + " requested " + "$" + wholeAmount.ToString() + " with Nooch", tokens2, null);
+
+                    Logger.Info("Landlords API -> RentTrans -> ChargeTenant ->  requestReceivedToNewUser email sent to [" + toAddress + "] successfully.");
+
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant -> requestReceivedToNewUser email NOT sent to  [" + toAddress +
+                                           "], [Exception: " + ex + "]");
+
+
+                }
+
+                #endregion Email To Request Recipient
+
+
+                // Send SMS to REQUEST RECIPIENT (person who will pay/reject this request)
+                // CLIFF (10/20/15) This block works (tested successfully) but commenting out b/c the Deposit-Money landing page
+                //                  needs to be improved for Mobile screen sizes... not a great experience as it currently is.
+                // Malkit Block code fixed to work with landlords api
+                #region Send SMS To Non-Nooch Transfer Recipient
+
+                /*  string googleUrlAPIKey = CommonHelper.GetValueFromConfig("GoogleURLAPI");
+
+                // shortening URLs from Google
+                string RejectShortLink = rejectLink;
+                string AcceptShortLink = paylink;
+
+                #region Call Google URL Shortener API
+
+                try
+                {
+                    var cli = new WebClient();
+                    cli.Headers[HttpRequestHeader.ContentType] = "application/json";
+                    string response = cli.UploadString("https://www.googleapis.com/urlshortener/v1/url?key=" + googleUrlAPIKey, "{longUrl:\"" + rejectLink + "\"}");
+                    googleURLShortnerResponseClass googlerejectshortlinkresult = JsonConvert.DeserializeObject<googleURLShortnerResponseClass>(response);
+
+                    if (googlerejectshortlinkresult != null)
+                    {
+                        RejectShortLink = googlerejectshortlinkresult.id;
+                    }
+                    else
+                    {
+                        // Google short URL API broke...
+                        Logger.Error("Landlords API -> RentTrans -> ChargeTenant -> - GoogleAPI FAILED for Reject Short Link.");
+                    }
+                    cli.Dispose();
+
+                    // Now shorten Accept link
+
+                    var cli2 = new WebClient();
+                    cli2.Headers[HttpRequestHeader.ContentType] = "application/json";
+                    string response2 = cli2.UploadString("https://www.googleapis.com/urlshortener/v1/url?key=" + googleUrlAPIKey, "{longUrl:\"" + paylink + "\"}");
+                    googleURLShortnerResponseClass googlerejectshortlinkresult2 = JsonConvert.DeserializeObject<googleURLShortnerResponseClass>(response2);
+
+                    if (googlerejectshortlinkresult2 != null)
+                    {
+                        AcceptShortLink = googlerejectshortlinkresult2.id;
+                    }
+                    else
+                    {
+                        // Google short URL API broke...
+                        Logger.Error("Landlords API -> RentTrans -> ChargeTenant -> - GoogleAPI FAILED for Accept Short Link.");
+                    }
+                    cli2.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant -> - GoogleAPI FAILED. [Exception: " + ex + "]");
+                }
+
+                #endregion Call Google URL Shortener API
+
+                string toPhoneNumber = requestRecipient.ContactNumber;
+
+                try
+                {
+                    // Example SMS string: "Cliff Canan charged you $10 using Nooch, a free app for {Memo}. Click here to pay: {LINK}. Or here to reject: {LINK}"
+
+                    // Make sure URL is short version (if Google API failued, use long version of Pay link and exclude the Reject link to save space)
+                    string SMSContent;
+
+                    if (AcceptShortLink.Length < 30) // Google Short links should be ~ 21 characters
+                    {
+                        string memoTxtForSms = memo;
+                        if (memoTxtForSms.Length < 2)
+                        {
+                            memoTxtForSms = "from you";
+                        }
+
+                        SMSContent = RequesterFirstName + " " + RequesterLastName + " charged you $" +
+                                              amountArray[0] + "." + amountArray[1] + " " +
+                                              memoTxtForSms +
+                                              " using Nooch for " + input.TransRequest.Memo + ". Tap here to pay: " + AcceptShortLink +
+                                              ". Or reject: " + RejectShortLink;
+                    }
+                    else // Google Short link API broke, use long version of Pay link
+                    {
+                        SMSContent = RequesterFirstName + " " + RequesterLastName + " charged you $" +
+                                              amountArray[0] + "." + amountArray[1] +
+                                              " using Nooch for " + input.TransRequest.Memo + ". Tap here to pay: " + AcceptShortLink;
+                    }
+
+                    string result2 = CommonHelper.SendSMS(toPhoneNumber, SMSContent, "");
+
+                    Logger.Info("Landlords API -> RentTrans -> ChargeTenant -> SMS sent to recipient [" + toPhoneNumber + "] successfully. [Msg: " + result + "]");
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant -> SMS NOT sent to recipient [" + toPhoneNumber +
+                                           "], [Exception:" + ex + "]");
+                }*/
+
+                #endregion Send SMS To Non-Nooch Transfer Recipient
+
+
+                #endregion Send Notifications
+
+
+                result.IsSuccess = true;
+                result.ErrorMessage = "Ok";
+
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED - [LandlordID: " + input.User.LandlordId + "], [Exception: [ " + ex + " ]");
+                result.ErrorMessage = "Error while chargin tenant. Retry later!";
+            }
+            return result;
+        }
+
 
 
 
@@ -248,14 +659,14 @@ namespace LanLordlAPIs.Controllers
                         }
 
                         var tokens = new Dictionary<string, string>
-												 {
-													{Constants.PLACEHOLDER_FIRST_NAME, RequesterFirstName},
-													{Constants.PLACEHOLDER_NEWUSER,requestDto.MoneySenderEmailId},
-													{Constants.PLACEHOLDER_TRANSFER_AMOUNT,s32[0].ToString()},
-													{Constants.PLACEHLODER_CENTS,s32[1].ToString()},
-													{Constants.PLACEHOLDER_OTHER_LINK,otherlink},
-													{Constants.MEMO,memo}
-												 };
+                                                 {
+                                                    {Constants.PLACEHOLDER_FIRST_NAME, RequesterFirstName},
+                                                    {Constants.PLACEHOLDER_NEWUSER,requestDto.MoneySenderEmailId},
+                                                    {Constants.PLACEHOLDER_TRANSFER_AMOUNT,s32[0].ToString()},
+                                                    {Constants.PLACEHLODER_CENTS,s32[1].ToString()},
+                                                    {Constants.PLACEHOLDER_OTHER_LINK,otherlink},
+                                                    {Constants.MEMO,memo}
+                                                 };
 
                         // Send email to Request Receiver -- sending UserType LinkSource TransType as encrypted along with request
                         // In this case UserType would = 'New'
@@ -264,16 +675,16 @@ namespace LanLordlAPIs.Controllers
                         otherlink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/rejectMoney.aspx?TransactionId=" + requestId + "&UserType=U6De3haw2r4mSgweNpdgXQ==&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==&TransType=T3EMY1WWZ9IscHIj3dbcNw==");
                         string paylink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/payRequest.aspx?TransactionId=" + requestId);
                         var tokens2 = new Dictionary<string, string>
-												 {
-													{Constants.PLACEHOLDER_FIRST_NAME, RequesterFirstName},
-													{Constants.PLACEHOLDER_NEWUSER,requestDto.MoneySenderEmailId},
-													{Constants.PLACEHOLDER_TRANSFER_AMOUNT,s32[0].ToString()},
-													{Constants.PLACEHLODER_CENTS,s32[1].ToString()},
-													{Constants.PLACEHOLDER_REJECT_LINK,otherlink},
-													{Constants.PLACEHOLDER_SENDER_FULL_NAME,RequesterFirstName + " " + RequesterLastName},
-													{Constants.MEMO,memo},
-													{Constants.PLACEHOLDER_PAY_LINK,paylink}
-												 };
+                                                 {
+                                                    {Constants.PLACEHOLDER_FIRST_NAME, RequesterFirstName},
+                                                    {Constants.PLACEHOLDER_NEWUSER,requestDto.MoneySenderEmailId},
+                                                    {Constants.PLACEHOLDER_TRANSFER_AMOUNT,s32[0].ToString()},
+                                                    {Constants.PLACEHLODER_CENTS,s32[1].ToString()},
+                                                    {Constants.PLACEHOLDER_REJECT_LINK,otherlink},
+                                                    {Constants.PLACEHOLDER_SENDER_FULL_NAME,RequesterFirstName + " " + RequesterLastName},
+                                                    {Constants.MEMO,memo},
+                                                    {Constants.PLACEHOLDER_PAY_LINK,paylink}
+                                                 };
                         try
                         {
                             CommonHelper.SendEmail("requestReceivedToNewUser", fromAddress, requestDto.MoneySenderEmailId, null,
@@ -305,5 +716,10 @@ namespace LanLordlAPIs.Controllers
             }
         }
     */
+
+
+
+
+
     }
 }

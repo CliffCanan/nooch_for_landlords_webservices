@@ -88,6 +88,15 @@ namespace LanLordlAPIs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to $FriendFirstName$.
+        /// </summary>
+        internal static string PLACEHOLDER_FRIEND_FIRST_NAME {
+            get {
+                return ResourceManager.GetString("PLACEHOLDER_FRIEND_FIRST_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to $LastName$.
         /// </summary>
         internal static string PLACEHOLDER_LAST_NAME {
@@ -165,6 +174,15 @@ namespace LanLordlAPIs {
         internal static string PLACEHOLDER_TRANSFER_AMOUNT {
             get {
                 return ResourceManager.GetString("PLACEHOLDER_TRANSFER_AMOUNT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to $UserPicture$.
+        /// </summary>
+        internal static string PLACEHOLDER_USER_PICTURE {
+            get {
+                return ResourceManager.GetString("PLACEHOLDER_USER_PICTURE", resourceCulture);
             }
         }
         

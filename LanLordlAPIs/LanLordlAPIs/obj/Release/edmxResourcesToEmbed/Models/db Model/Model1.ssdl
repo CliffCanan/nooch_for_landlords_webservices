@@ -285,6 +285,33 @@
     <Property Name="type_synapse" Type="varchar(max)" />
     <Property Name="is_active" Type="bit" />
   </EntityType>
+  <EntityType Name="SynapseCreateUserResults">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="MemberId" Type="uniqueidentifier" />
+    <Property Name="DateCreated" Type="datetime" />
+    <Property Name="access_token" Type="varchar(max)" />
+    <Property Name="expires_in" Type="varchar" MaxLength="50" />
+    <Property Name="reason" Type="varchar(max)" />
+    <Property Name="refresh_token" Type="varchar(max)" />
+    <Property Name="success" Type="bit" />
+    <Property Name="username" Type="varchar(max)" />
+    <Property Name="user_id" Type="int" />
+    <Property Name="IsDeleted" Type="bit" />
+    <Property Name="ModifiedOn" Type="datetime" />
+    <Property Name="IsForNonNoochUser" Type="bit" />
+    <Property Name="NonNoochUserEmail" Type="varchar(max)" />
+    <Property Name="TransactionIdFromWhichInvited" Type="uniqueidentifier" />
+    <Property Name="HasNonNoochUserSignedUp" Type="bit" />
+    <Property Name="MemberIdAfterSignup" Type="uniqueidentifier" />
+    <Property Name="is_business" Type="bit" />
+    <Property Name="legal_name" Type="varchar(max)" />
+    <Property Name="permission" Type="varchar(max)" />
+    <Property Name="Phone_number" Type="varchar(max)" />
+    <Property Name="photos" Type="varchar(max)" />
+  </EntityType>
   <EntityType Name="Tenants">
     <Key>
       <PropertyRef Name="TenantId" />
@@ -512,6 +539,7 @@
     <EntitySet Name="Properties" EntityType="Self.Properties" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PropertyUnits" EntityType="Self.PropertyUnits" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SynapseBanksOfMembers" EntityType="Self.SynapseBanksOfMembers" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="SynapseCreateUserResults" EntityType="Self.SynapseCreateUserResults" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Tenants" EntityType="Self.Tenants" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="TenantsIdDocuments" EntityType="Self.TenantsIdDocuments" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Transactions" EntityType="Self.Transactions" Schema="dbo" store:Type="Tables" />

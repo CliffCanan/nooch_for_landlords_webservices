@@ -16,6 +16,100 @@ namespace LanLordlAPIs.Classes.Utility
 {
     public class CommonHelper
     {
+
+        public static SynapseDetailsClass GetSynapseBankAndUserDetailsforGivenMemberId(string memberId)
+        {
+            SynapseDetailsClass res = new SynapseDetailsClass();
+
+            try
+            {
+                var id = ConvertToGuid(memberId);
+
+                using (NOOCHEntities noochConnection = new NOOCHEntities())
+                {
+                    // checking user details for given id
+                    
+                    var createSynapseUserObj = (from c in noochConnection.SynapseCreateUserResults where c.MemberId==id && c.IsDeleted==false
+                                                    && c.success!=null select c).FirstOrDefault();
+
+                    if (createSynapseUserObj != null)
+                    {
+                        // This MemberId was found in the SynapseCreateUserResults DB
+                        res.wereUserDetailsFound = true;
+                        res.UserDetails = createSynapseUserObj;
+                        res.UserDetailsErrMessage = "OK";
+                    }
+                    else
+                    {
+                        res.wereUserDetailsFound = false;
+                        res.UserDetails = null;
+                        res.UserDetailsErrMessage = "User synapse details not found.";
+                    }
+
+                    // Now get the user's bank account details
+                    var defaultBank =(from c in noochConnection.SynapseBanksOfMembers where c.MemberId==id && c.IsDefault==true select c).FirstOrDefault();
+
+                    if (defaultBank != null)
+                    {
+                        // Found a Synapse bank account for this user
+                        res.wereBankDetailsFound = true;
+                        res.BankDetails = defaultBank;
+                        res.AccountDetailsErrMessage = "OK";
+                    }
+                    else
+                    {
+                        res.wereBankDetailsFound = false;
+                        res.BankDetails = null;
+                        res.AccountDetailsErrMessage = "User synapse bank not found.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Landlords WEB API -> GetSynapseBankAndUserDetailsforGivenMemberId FAILED - [MemberID: " + memberId + "], [Exception: " + ex + "]");
+            }
+
+            return res;
+        }
+
+        public static bool isOverTransactionLimit(decimal amount, string senderMemId, string recipMemId)
+        {
+            var maxTransferLimitPerPayment = GetValueFromConfig("MaximumTransferLimitPerTransaction");
+
+            if (amount > Convert.ToDecimal(maxTransferLimitPerPayment))
+            {
+                if (senderMemId.ToLower() == "00bd3972-d900-429d-8a0d-28a5ac4a75d7" || // TEAM NOOCH
+                    recipMemId.ToLower() == "00bd3972-d900-429d-8a0d-28a5ac4a75d7")
+                {
+                    Logger.Info("*****  Landlords WEB API -> isOverTransactionLimit - Transaction for TEAM NOOCH, so allowing transaction - [Amount: $" + amount + "]  ****");
+                    return false;
+                }
+                if (senderMemId.ToLower() == "852987e8-d5fe-47e7-a00b-58a80dd15b49" || // Marvis Burns (RentScene)
+                    recipMemId.ToLower() == "852987e8-d5fe-47e7-a00b-58a80dd15b49")
+                {
+                    Logger.Info("*****  Landlords WEB API -> isOverTransactionLimit - Transaction for RENT SCENE, so allowing transaction - [Amount: $" + amount + "]  ****");
+                    return false;
+                }
+
+                if (senderMemId.ToLower() == "c9839463-d2fa-41b6-9b9d-45c7f79420b1" || // Sherri Tan (RentScene - via Marvis Burns)
+                    recipMemId.ToLower() == "c9839463-d2fa-41b6-9b9d-45c7f79420b1")
+                {
+                    Logger.Info("*****  Landlords WEB API -> isOverTransactionLimit - Transaction for RENT SCENE, so allowing transaction - [Amount: $" + amount + "]  ****");
+                    return false;
+                }
+                else if (senderMemId.ToLower() == "8b4b4983-f022-4289-ba6e-48d5affb5484" || // Josh Detweiler (AppJaxx)
+                         recipMemId.ToLower() == "8b4b4983-f022-4289-ba6e-48d5affb5484")
+                {
+                    Logger.Info("*****  Landlords WEB API -> isOverTransactionLimit - Transaction is for APPJAXX, so allowing transaction - [Amount: $" + amount + "]  ****");
+                    return false;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
         public static string GetRandomTransactionTrackingId()
         {
 
@@ -170,6 +264,32 @@ namespace LanLordlAPIs.Classes.Utility
             catch (Exception ex)
             {
                 Logger.Error("CommonHelper -> getMemberByEmailId EXCEPTION - [" + ex + "]");
+            }
+
+            return memberObj;
+        }
+
+
+        public static Member GetMemberByMemberId(Guid meberId)
+        {
+            Member memberObj = new Member();
+
+            try
+            {
+                using (NOOCHEntities obj = new NOOCHEntities())
+                {
+                    
+
+                    memberObj = (from c in obj.Members
+                                 where c.MemberId == meberId &&
+                                        c.IsDeleted == false
+                                 select c).SingleOrDefault();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("CommonHelper -> GetMemberByMemberId EXCEPTION - [" + ex + "]");
             }
 
             return memberObj;

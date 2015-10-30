@@ -290,6 +290,33 @@
           <Property Name="type_synapse" Type="varchar(max)" />
           <Property Name="is_active" Type="bit" />
         </EntityType>
+        <EntityType Name="SynapseCreateUserResults">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MemberId" Type="uniqueidentifier" />
+          <Property Name="DateCreated" Type="datetime" />
+          <Property Name="access_token" Type="varchar(max)" />
+          <Property Name="expires_in" Type="varchar" MaxLength="50" />
+          <Property Name="reason" Type="varchar(max)" />
+          <Property Name="refresh_token" Type="varchar(max)" />
+          <Property Name="success" Type="bit" />
+          <Property Name="username" Type="varchar(max)" />
+          <Property Name="user_id" Type="int" />
+          <Property Name="IsDeleted" Type="bit" />
+          <Property Name="ModifiedOn" Type="datetime" />
+          <Property Name="IsForNonNoochUser" Type="bit" />
+          <Property Name="NonNoochUserEmail" Type="varchar(max)" />
+          <Property Name="TransactionIdFromWhichInvited" Type="uniqueidentifier" />
+          <Property Name="HasNonNoochUserSignedUp" Type="bit" />
+          <Property Name="MemberIdAfterSignup" Type="uniqueidentifier" />
+          <Property Name="is_business" Type="bit" />
+          <Property Name="legal_name" Type="varchar(max)" />
+          <Property Name="permission" Type="varchar(max)" />
+          <Property Name="Phone_number" Type="varchar(max)" />
+          <Property Name="photos" Type="varchar(max)" />
+        </EntityType>
         <EntityType Name="Tenants">
           <Key>
             <PropertyRef Name="TenantId" />
@@ -517,6 +544,7 @@
           <EntitySet Name="Properties" EntityType="Self.Properties" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PropertyUnits" EntityType="Self.PropertyUnits" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SynapseBanksOfMembers" EntityType="Self.SynapseBanksOfMembers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SynapseCreateUserResults" EntityType="Self.SynapseCreateUserResults" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tenants" EntityType="Self.Tenants" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TenantsIdDocuments" EntityType="Self.TenantsIdDocuments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Transactions" EntityType="Self.Transactions" Schema="dbo" store:Type="Tables" />
@@ -771,8 +799,9 @@
           <EntitySet Name="PropertyUnits" EntityType="NOOCHModel.PropertyUnit" />
           <EntitySet Name="UnitsOccupiedByTenants" EntityType="NOOCHModel.UnitsOccupiedByTenant" />
           <FunctionImport Name="GetTenantsInGivenPropertyId" ReturnType="Collection(NOOCHModel.GetTenantsInGivenPropertyId_Result2)">
-            <Parameter Name="vPropertyId" Mode="In" Type="String" />
+          <Parameter Name="vPropertyId" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="SynapseCreateUserResults" EntityType="NOOCHModel.SynapseCreateUserResult" />
         </EntityContainer>
         <EntityType Name="TenantsIdDocument">
           <Key>
@@ -1149,6 +1178,33 @@
           <Property Type="String" Name="UnitNumber" Nullable="true" MaxLength="50" />
           <Property Type="String" Name="TenantEmail" Nullable="true" />
         </ComplexType>
+        <EntityType Name="SynapseCreateUserResult">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MemberId" Type="Guid" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="access_token" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="expires_in" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="reason" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="refresh_token" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="success" Type="Boolean" />
+          <Property Name="username" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="user_id" Type="Int32" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="ModifiedOn" Type="DateTime" Precision="3" />
+          <Property Name="IsForNonNoochUser" Type="Boolean" />
+          <Property Name="NonNoochUserEmail" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="TransactionIdFromWhichInvited" Type="Guid" />
+          <Property Name="HasNonNoochUserSignedUp" Type="Boolean" />
+          <Property Name="MemberIdAfterSignup" Type="Guid" />
+          <Property Name="is_business" Type="Boolean" />
+          <Property Name="legal_name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="permission" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Phone_number" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="photos" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1582,6 +1638,34 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="SynapseCreateUserResults">
+            <EntityTypeMapping TypeName="NOOCHModel.SynapseCreateUserResult">
+              <MappingFragment StoreEntitySet="SynapseCreateUserResults">
+                <ScalarProperty Name="photos" ColumnName="photos" />
+                <ScalarProperty Name="Phone_number" ColumnName="Phone_number" />
+                <ScalarProperty Name="permission" ColumnName="permission" />
+                <ScalarProperty Name="legal_name" ColumnName="legal_name" />
+                <ScalarProperty Name="is_business" ColumnName="is_business" />
+                <ScalarProperty Name="MemberIdAfterSignup" ColumnName="MemberIdAfterSignup" />
+                <ScalarProperty Name="HasNonNoochUserSignedUp" ColumnName="HasNonNoochUserSignedUp" />
+                <ScalarProperty Name="TransactionIdFromWhichInvited" ColumnName="TransactionIdFromWhichInvited" />
+                <ScalarProperty Name="NonNoochUserEmail" ColumnName="NonNoochUserEmail" />
+                <ScalarProperty Name="IsForNonNoochUser" ColumnName="IsForNonNoochUser" />
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="user_id" ColumnName="user_id" />
+                <ScalarProperty Name="username" ColumnName="username" />
+                <ScalarProperty Name="success" ColumnName="success" />
+                <ScalarProperty Name="refresh_token" ColumnName="refresh_token" />
+                <ScalarProperty Name="reason" ColumnName="reason" />
+                <ScalarProperty Name="expires_in" ColumnName="expires_in" />
+                <ScalarProperty Name="access_token" ColumnName="access_token" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

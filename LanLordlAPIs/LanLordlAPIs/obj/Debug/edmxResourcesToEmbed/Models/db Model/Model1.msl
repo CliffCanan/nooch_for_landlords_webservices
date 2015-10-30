@@ -428,5 +428,33 @@
         </ComplexTypeMapping>
       </ResultMapping>
     </FunctionImportMapping>
+    <EntitySetMapping Name="SynapseCreateUserResults">
+      <EntityTypeMapping TypeName="NOOCHModel.SynapseCreateUserResult">
+        <MappingFragment StoreEntitySet="SynapseCreateUserResults">
+          <ScalarProperty Name="photos" ColumnName="photos" />
+          <ScalarProperty Name="Phone_number" ColumnName="Phone_number" />
+          <ScalarProperty Name="permission" ColumnName="permission" />
+          <ScalarProperty Name="legal_name" ColumnName="legal_name" />
+          <ScalarProperty Name="is_business" ColumnName="is_business" />
+          <ScalarProperty Name="MemberIdAfterSignup" ColumnName="MemberIdAfterSignup" />
+          <ScalarProperty Name="HasNonNoochUserSignedUp" ColumnName="HasNonNoochUserSignedUp" />
+          <ScalarProperty Name="TransactionIdFromWhichInvited" ColumnName="TransactionIdFromWhichInvited" />
+          <ScalarProperty Name="NonNoochUserEmail" ColumnName="NonNoochUserEmail" />
+          <ScalarProperty Name="IsForNonNoochUser" ColumnName="IsForNonNoochUser" />
+          <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+          <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+          <ScalarProperty Name="user_id" ColumnName="user_id" />
+          <ScalarProperty Name="username" ColumnName="username" />
+          <ScalarProperty Name="success" ColumnName="success" />
+          <ScalarProperty Name="refresh_token" ColumnName="refresh_token" />
+          <ScalarProperty Name="reason" ColumnName="reason" />
+          <ScalarProperty Name="expires_in" ColumnName="expires_in" />
+          <ScalarProperty Name="access_token" ColumnName="access_token" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
   </EntityContainerMapping>
 </Mapping>
