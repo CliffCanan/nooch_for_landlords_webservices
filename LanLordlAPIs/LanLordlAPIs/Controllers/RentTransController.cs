@@ -123,7 +123,7 @@ namespace LanLordlAPIs.Controllers
 
         [HttpPost]
         [ActionName("ChargeTenant")]
-        public CreatePropertyResultOutput AddNewProperty(ChargeTenantInputClass input)
+        public CreatePropertyResultOutput chargeTenant(ChargeTenantInputClass input)
         {
             Logger.Info("Landlords API -> RentTrans -> ChargeTenant - Requested by [" + input.User.LandlordId + "]");
 
@@ -136,6 +136,7 @@ namespace LanLordlAPIs.Controllers
             try
             {
                 string requestId = "";
+
                 #region All checks before execution
 
                 // Check uniqueness of requesting and sending user
@@ -716,9 +717,6 @@ namespace LanLordlAPIs.Controllers
             }
         }
     */
-
-
-
 
 
     }

@@ -178,8 +178,11 @@ namespace LanLordlAPIs.Controllers
                             DateTime date = DateTime.Now.AddMonths(1);
                             DateTime newDate = new DateTime(date.Year, date.Month, 1, 0, 0, 0, date.Kind);
                             pu.RentStartDate = !String.IsNullOrEmpty(unitInput.Unit.RentStartDate) ? Convert.ToDateTime(unitInput.Unit.RentStartDate.Trim()) : newDate;
-                            
-                            if (unitInput.Unit.IsTenantAdded)
+
+
+                            Logger.Info("***  PROPERTIES CNTRLR -> AddNewUnitInProperty - IsTenantAdded: [" + unitInput.Unit.IsTenantAdded + "],  [Email: " + unitInput.Unit.TenantEmail + "],  [TenantID: " + unitInput.Unit.TenantId + "]");
+
+                            if (unitInput.Unit.IsTenantAdded == "true")
                             {
                                 pu.IsOccupied = true;
 
@@ -210,15 +213,34 @@ namespace LanLordlAPIs.Controllers
 
                                     #endregion Create New 'UnitsOccupiedByTenant' Record
                                 }
-                                else if (!String.IsNullOrEmpty(unitInput.Unit.TenantEm) && unitInput.Unit.TenantEm.Length > 3)
+                                else if (!String.IsNullOrEmpty(unitInput.Unit.TenantEmail) && unitInput.Unit.TenantEmail.Length > 3)
                                 {
-                                    #region Invite New Tenant For This Unit
-
                                     pu.Status = "Pending Invite";
+                                }
+                            }
+                            else
+                            {
+                                pu.Status = "Published";
+                                pu.IsOccupied = false;
+                                return result;
+                            }
+
+                            obj.PropertyUnits.Add(pu);
+                            int saveToDB = obj.SaveChanges();
+
+                            if (saveToDB > 0)
+                            {
+                                if (!String.IsNullOrEmpty(unitInput.Unit.TenantEmail) && unitInput.Unit.TenantEmail.Length > 3)
+                                {
+                                    Logger.Info("***  PROPERTIES CNTRLR -> AddNewUnitInProperty - Tenant ID was not provided, so should invite a new tenant - [Email: " + unitInput.Unit.TenantEmail + "]");
+
+                                    #region Invite New Tenant For This Unit
 
                                     TenantInfo ti = new TenantInfo
                                     {
-                                        email = unitInput.Unit.TenantEm,
+                                        email = unitInput.Unit.TenantEmail,
+                                        firstName = "",
+                                        lastName = ""
                                     };
 
                                     basicLandlordPayload authInfo = new basicLandlordPayload
@@ -233,7 +255,7 @@ namespace LanLordlAPIs.Controllers
                                         authData = authInfo,
                                         rent = unitInput.Unit.Rent,
                                         propertyId = unitInput.PropertyId,
-                                        unitId = unitInput.Unit.UnitId,
+                                        unitId = pu.UnitId.ToString(),
                                         tenant = ti
                                     };
 
@@ -241,19 +263,15 @@ namespace LanLordlAPIs.Controllers
 
                                     #endregion Invite New Tenant For This Unit
                                 }
+
+                                result.IsSuccess = true;
+                                result.ErrorMessage = "OK.";
+                                result.PropertyIdGenerated = pu.UnitId.ToString();
                             }
                             else
                             {
-                                pu.Status = "Published";
-                                pu.IsOccupied = false;
+                                Logger.Error("Properties Cntrlr -> AddNewUnitInProperty - FAILED TO SAVE TO DB");
                             }
-
-                            obj.PropertyUnits.Add(pu);
-                            obj.SaveChanges();
-
-                            result.IsSuccess = true;
-                            result.ErrorMessage = "OK.";
-                            result.PropertyIdGenerated = pu.UnitId.ToString();
                         }
                         else
                         {
@@ -264,7 +282,7 @@ namespace LanLordlAPIs.Controllers
             }
             catch (Exception ex)
             {
-                Logger.Error("Landlords API -> Properties -> AddNewUnitInProperty - [LandlordID: " + unitInput.User.LandlordId + "], [Exception: [" + ex + "]");
+                Logger.Error("Properties Cntrlr -> AddNewUnitInProperty - [LandlordID: " + unitInput.User.LandlordId + "], [Exception: [" + ex + "]");
                 result.ErrorMessage = "Error while creating property. Retry later!";
             }
 
@@ -319,7 +337,7 @@ namespace LanLordlAPIs.Controllers
                             DateTime newDate = new DateTime(date.Year, date.Month, 1, 0, 0, 0, date.Kind);
                             unitObj.RentStartDate = !String.IsNullOrEmpty(unitInput.Unit.RentStartDate) ? Convert.ToDateTime(unitInput.Unit.RentStartDate.Trim()) : newDate;
 
-                            if (unitInput.Unit.IsTenantAdded)
+                            if (unitInput.Unit.IsTenantAdded == "true")
                             {
                                 unitObj.IsOccupied = true;
 
@@ -378,7 +396,7 @@ namespace LanLordlAPIs.Controllers
 
                                     #endregion Create New 'UnitsOccupiedByTenant' Record
                                 }
-                                else if (!String.IsNullOrEmpty(unitInput.Unit.TenantEm) && unitInput.Unit.TenantEm.Length > 3)
+                                else if (!String.IsNullOrEmpty(unitInput.Unit.TenantEmail) && unitInput.Unit.TenantEmail.Length > 3)
                                 {
                                     #region Invite New Tenant For This Unit
 
@@ -386,7 +404,7 @@ namespace LanLordlAPIs.Controllers
 
                                     TenantInfo ti = new TenantInfo
                                     {
-                                        email = unitInput.Unit.TenantEm,
+                                        email = unitInput.Unit.TenantEmail,
                                     };
 
                                     basicLandlordPayload authInfo = new basicLandlordPayload
@@ -753,7 +771,7 @@ namespace LanLordlAPIs.Controllers
             GetAllPropertiesResult result = new GetAllPropertiesResult();
             try
             {
-                Logger.Info("PropertiesController -> LoadProperties - [LandlordID: " + Property.LandlorId + "]");
+                //Logger.Info("PropertiesController -> LoadProperties - [LandlordID: " + Property.LandlorId + "]");
 
                 Guid landlordguidId = new Guid(Property.LandlorId);
                 result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, Property.AccessToken);
@@ -896,7 +914,7 @@ namespace LanLordlAPIs.Controllers
                 if (landlordTokenCheck.IsTokenOk)
                 {
                     Guid memberId = Guid.NewGuid();
-                    Guid tenantGuid = Guid.NewGuid(); // NOTE:  'TenantId' = 'MemberId'
+                    Guid tenantGuid = memberId; // NOTE:  'TenantId' = 'MemberId'
                     Guid unitGuid = new Guid(input.unitId);
                     Guid propGuid = new Guid(input.propertyId);
 
@@ -920,7 +938,6 @@ namespace LanLordlAPIs.Controllers
 
                         if (landlordObj != null)
                         {
-
                             // Check if regular Nooch member (non-Landlord) exists with given email id
                             CheckAndRegisterMemberByEmailResult mem = CommonHelper.CheckIfMemberExistsWithGivenEmailId(input.tenant.email);
 
@@ -939,7 +956,7 @@ namespace LanLordlAPIs.Controllers
                             }
                             else // Member with that email already exists
                             {
-                                Logger.Info("PropertiesController -> InviteTenant - Member already existing, so just creating a new TENANT Record - [MemberID: " + mem.MemberDetails.MemberId.ToString() + "]");
+                                Logger.Info("PropertiesController -> InviteTenant - Member already exists, so just creating a new TENANT Record - [MemberID: " + mem.MemberDetails.MemberId.ToString() + "]");
 
                                 tenantGuid = mem.MemberDetails.MemberId;
                                 firstName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(mem.MemberDetails.FirstName));
@@ -994,7 +1011,7 @@ namespace LanLordlAPIs.Controllers
                                 //       The Start Date, Lease Term ("AgreementLength" in UOBT) should be in UNITS table and are not.
                                 //       UOBT table should have a status field and a Property ID (aleady has UnitID)
                                 unitObj = (from c in obj.PropertyUnits
-                                           where c.UnitId == unitGuid && c.IsDeleted == false
+                                           where c.UnitId == unitGuid// && c.IsDeleted == false
                                            select c).FirstOrDefault();
 
                                 if (unitObj != null)
@@ -1004,6 +1021,11 @@ namespace LanLordlAPIs.Controllers
                                     unitObj.IsHidden = false;
                                     unitObj.ModifiedOn = DateTime.Now;
                                     unitObj.Status = "Pending Invite";
+                                }
+                                else
+                                {
+                                    Logger.Error("***  ERROR... UNIT WAS NOT FOUND IN PROPERTYUNITS TABLE!");
+                                    return result;
                                 }
                             }
                             catch (Exception ex)
@@ -1032,12 +1054,14 @@ namespace LanLordlAPIs.Controllers
                             {
                                 #region Making Transaction Object
 
-                                Logger.Info("PropertiesController -> InviteTenant - About to Create New Transaction Object");
+                                Logger.Info("PropertiesController -> InviteTenant - About to Create New Transaction Object - [PropID: " + propGuid.ToString() + "]");
 
                                 // SenderId - this would be MemberId of new user who was just created in Members table.
                                 // RecepientID - this would be landlord's MemberId 
                                 Property prop = CommonHelper.GetPropertyByPropId(propGuid);
+
                                 string propName = (!String.IsNullOrEmpty(prop.PropName)) ? CommonHelper.UppercaseFirst(prop.PropName) : "";
+
                                 string unitNameToUse = "";
 
                                 if (!String.IsNullOrEmpty(unitObj.UnitNumber))
@@ -1114,17 +1138,17 @@ namespace LanLordlAPIs.Controllers
                                 #region Send Email to New TENANT
 
                                 #region Setup Email Variables
-                                Logger.Info("*** TEST INFO ****    [Landlord FName: " + landlordObj.FirstName + "], [Landlord LName: " + landlordObj.LastName + "]");
+
                                 string LandlordFirstName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(landlordObj.FirstName)));
                                 string LandlordLastName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(landlordObj.LastName)));
-                                Logger.Info("PropertiesController -> InviteTenant - EMAIL CHECKPOINT #1");
+
                                 //string CancelRequestLinkForLandlord = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/CancelRequest.aspx?TransactionId=" + trans.TransactionId + "&MemberId=" + landlordDetailsInMembersTable.MemberId + "&UserType=U6De3haw2r4mSgweNpdgXQ==");
 
                                 string s22 = trans.Amount.ToString("n2");
                                 string[] s32 = s22.Split('.');
 
                                 string memo = trans.Memo;
-                                Logger.Info("PropertiesController -> InviteTenant - EMAIL CHECKPOINT #2");
+
                                 // Send email to Request Receiver - Send 'UserType', 'LinkSource', 'TransType' as encrypted
                                 // In this case UserType would = 'New'
                                 // TransType would = 'Request'
@@ -1194,7 +1218,7 @@ namespace LanLordlAPIs.Controllers
             }
             catch (Exception ex)
             {
-                Logger.Error("PropertiesController -> EditPropertyUnit FAILED - [LandlordID: " + input.authData.LandlordId + " ], " +
+                Logger.Error("PropertiesController -> InviteTenant FAILED - [LandlordID: " + input.authData.LandlordId + " ], " +
                              "[UnitID: " + input.unitId + "], [Exception: " + ex + "]");
                 result.msg = "Error while creating property. Retry later!";
             }
@@ -1481,7 +1505,9 @@ namespace LanLordlAPIs.Controllers
                             var AllTenantsInGivenProperty = obj.GetTenantsInGivenPropertyId(currentProperty.PropertyId).ToList();
 
                             List<TenantDetailsResult> TenantsListForThisPropertyPrepared = new List<TenantDetailsResult>();
-                            Logger.Info("PropertiesController -> GetPropertyDetailsPageData - CHECKPOINT 8");
+
+                            Logger.Info("****   GET PROPERTY DETAILS -> AllTenantsInGivenProperty.Count: [" + AllTenantsInGivenProperty.Count + "]");
+
                             if (AllTenantsInGivenProperty.Count > 0)
                             {
                                 foreach (var v in AllTenantsInGivenProperty)
@@ -1490,7 +1516,7 @@ namespace LanLordlAPIs.Controllers
 
                                     trc.TenantId = v.TenantId.ToString() ?? "";
                                     trc.UnitId = v.UnitId.ToString() ?? "";
-
+                                    
                                     if (!String.IsNullOrEmpty(v.FirstName))
                                     {
                                         trc.Name = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(v.FirstName));
@@ -1530,7 +1556,7 @@ namespace LanLordlAPIs.Controllers
                             result.AllTenantsWithPassedDueDateCount = "0";
 
                             result.PropertyDetails = currentProperty;
-                            Logger.Info("PropertiesController -> GetPropertyDetailsPageData - CHECKPOINT 8");
+
                             result.IsSuccess = true;
                             result.ErrorMessage = "OK";
                         }

@@ -11,7 +11,6 @@ namespace LanLordlAPIs.Models.Output_Models
     {
     }
 
-
     public class ChargeTenantInputClass
     {
         public basicLandlordPayload User { get; set; }
@@ -20,13 +19,11 @@ namespace LanLordlAPIs.Models.Output_Models
 
     public class ChargeTenantInputTransDetailsClass
     {
-        
         public string Memo { get; set; }
         public string Amount { get; set; }
         public string TenantId { get; set; }
         public bool IsRecurring { get; set; }
     }
-
 
     public class SynapseDetailsClass
     {
@@ -47,6 +44,4 @@ namespace LanLordlAPIs.Models.Output_Models
         public string longUrl { get; set; }
 
     }
-
-
 }

@@ -128,9 +128,9 @@ namespace LanLordlAPIs.Models.Input_Models
         public string Rent { get; set; }
         public string DueDate { get; set; }
 
-        public bool IsTenantAdded { get; set; }
+        public string IsTenantAdded { get; set; }
         public string TenantId { get; set; }
-        public string TenantEm { get; set; }
+        public string TenantEmail { get; set; }
         public string UnitId { get; set; }
 
         public string RentStartDate { get; set; }
