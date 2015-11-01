@@ -18,110 +18,6 @@ namespace LanLordlAPIs.Controllers
     public class RentTransController : ApiController
     {
         [HttpPost]
-        [ActionName("AddNewProperty")]
-        public CreatePropertyResultOutput AddNewProperty(AddNewPropertyClass Property)
-        {
-            Logger.Info("Landlords API -> Properties -> AddNewProperty - Requested by [" + Property.User.LandlordId + "]");
-
-            CreatePropertyResultOutput result = new CreatePropertyResultOutput();
-            result.IsSuccess = false;
-
-            try
-            {
-                Guid landlordguidId = new Guid(Property.User.LandlordId);
-
-                result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, Property.User.AccessToken);
-
-                if (result.AuthTokenValidation.IsTokenOk)
-                {
-                    // all set... Data is ready to be saved in DB
-                    string propertyImagePath = CommonHelper.GetValueFromConfig("PhotoUrl") + "propertyDefault.png";
-
-                    if (Property.IsPropertyImageAdded)
-                    {
-                        // Get image URL from Base64 string
-                        string fileName = Property.PropertyName.Trim().Replace("-", "_").Replace(" ", "_").Replace("'", "") + ".png";
-                        propertyImagePath = CommonHelper.SaveBase64AsImage(landlordguidId.ToString().Replace("-", "_") +
-                                            "_property_" + fileName, Property.PropertyImage);
-                    }
-
-                    using (NOOCHEntities obj = new NOOCHEntities())
-                    {
-                        Property prop = new Property
-                        {
-                            PropertyId = Guid.NewGuid(),
-                            PropType = Property.IsMultipleUnitsAdded ? "Multi Unit" : "Single Unit",
-                            PropStatus = "Not Published",
-                            PropName = Property.PropertyName.Trim(),
-                            AddressLineOne = Property.Address.Trim(),
-                            City = Property.City.Trim(),
-                            Zip = Property.Zip.Trim(),
-                            DateAdded = DateTime.Now,
-                            LandlordId = landlordguidId,
-                            MemberId = new Guid(Property.User.MemberId),
-                            PropertyImage = propertyImagePath,
-                            IsSingleUnit = !Property.IsMultipleUnitsAdded,
-                            IsDeleted = false,
-                            DefaultDueDate = "1st of Month"
-                        };
-
-                        obj.Properties.Add(prop);
-                        obj.SaveChanges();
-
-                        // Set type to single unit if only one item passed in property units
-                        if (Property.Unit.Length < 2)
-                        {
-                            prop.IsSingleUnit = true;
-                            prop.PropType = "Single Unit";
-                            obj.SaveChanges();
-                        }
-
-                        // Saving Units (if any)
-                        foreach (AddNewUnitClass unitItem in Property.Unit)
-                        {
-                            PropertyUnit pu = new PropertyUnit();
-                            pu.UnitId = Guid.NewGuid();
-                            pu.PropertyId = prop.PropertyId;
-                            pu.LandlordId = landlordguidId;
-                            pu.DateAdded = DateTime.Now;
-                            pu.IsDeleted = false;
-                            pu.Status = "Not Published";
-
-                            if (prop.IsSingleUnit != true)
-                            {
-                                pu.UnitNumber = unitItem.UnitNum;
-                            }
-                            else
-                            {
-                                pu.UnitNumber = "1";
-                            }
-                            pu.UnitRent = unitItem.Rent;
-                            pu.IsHidden = true;
-                            pu.IsOccupied = false;
-                            pu.MemberId = new Guid(CommonHelper.GetMemberIdOfLandlord(landlordguidId));
-
-                            obj.PropertyUnits.Add(pu);
-                            obj.SaveChanges();
-                        }
-                        result.PropertyIdGenerated = prop.PropertyId.ToString();
-                        result.IsSuccess = true;
-                        result.ErrorMessage = "OK";
-                    }
-                }
-                else
-                {
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Landlords API -> Properties -> AddNewProperty FAILED - [LandlordID: " + Property.User.LandlordId + "], [Exception: [ " + ex + " ]");
-                result.ErrorMessage = "Error while creating property. Retry later!";
-            }
-
-            return result;
-        }
-
-        [HttpPost]
         [ActionName("ChargeTenant")]
         public CreatePropertyResultOutput chargeTenant(ChargeTenantInputClass input)
         {
@@ -137,12 +33,11 @@ namespace LanLordlAPIs.Controllers
             {
                 string requestId = "";
 
-                #region All checks before execution
+                #region All Checks Before Execution
 
                 // Check uniqueness of requesting and sending user
                 if (Landlord_GUID == Tenant_GUID)
                 {
-                    result.IsSuccess = false;
                     result.ErrorMessage = "Not allowed to request money from yourself.";
                     return result;
                 }
@@ -150,44 +45,42 @@ namespace LanLordlAPIs.Controllers
                 // Check if request Amount is over per-transaction limit
                 decimal transactionAmount = Convert.ToDecimal(input.TransRequest.Amount);
 
-                if (CommonHelper.isOverTransactionLimit(transactionAmount, "", input.User.LandlordId))
+                if (CommonHelper.isOverTransactionLimit(transactionAmount, input.TransRequest.TenantId, input.User.LandlordId))
                 {
-                    result.IsSuccess = false;
                     result.ErrorMessage = "To keep Nooch safe, the maximum amount you can request is $" + Convert.ToDecimal(CommonHelper.GetValueFromConfig("MaximumTransferLimitPerTransaction")).ToString("F2");
                     return result;
-
                 }
 
-
-                // getting requester and request recepient Members table info
-                var requester = CommonHelper.GetMemberByMemberId(Landlord_GUID);
+                // Get requester and request recepient Members table info
+                var landlordsMemID = new Guid(CommonHelper.GetMemberIdOfLandlord(Landlord_GUID));
+                var requester = CommonHelper.GetMemberByMemberId(landlordsMemID);
                 var requestRecipient = CommonHelper.GetMemberByMemberId(Tenant_GUID);
+
                 if (requester == null)
                 {
-                    result.IsSuccess = false;
-                    result.ErrorMessage = "Requester Member Not Found";
                     Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED - Requester Member Not Found - [MemberID: " + Landlord_GUID + "]");
-                    return result;
+                    result.ErrorMessage = "Requester Member Not Found";
 
+                    return result;
                 }
                 if (requestRecipient == null)
                 {
-                    result.IsSuccess = false;
-                    result.ErrorMessage = "Request Recipient Member Not Found";
                     Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED - requestRecipient (who would pay the request) Member Not Found - [MemberID: " + Landlord_GUID + "]");
-                    return result;
+                    result.ErrorMessage = "Request Recipient Member Not Found";
 
+                    return result;
                 }
 
                 #region Get Request Sender's Synapse Account Details
 
-                var requestorSynInfo = CommonHelper.GetSynapseBankAndUserDetailsforGivenMemberId(input.User.LandlordId);
+
+                var requestorSynInfo = CommonHelper.GetSynapseBankAndUserDetailsforGivenMemberId(landlordsMemID.ToString());
 
                 if (requestorSynInfo.wereBankDetailsFound != true)
                 {
-                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED -> Request ABORTED: Requester's Synapse bank account NOT FOUND - Request Creator memberId is: [" + input.User.LandlordId + "]");
-                    result.IsSuccess = false;
+                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED -> Request ABORTED: Requester's Synapse bank account NOT FOUND - Request Creator MemberId is: [" + requester.MemberId + "]");
                     result.ErrorMessage = "Requester does not have any bank added";
+
                     return result;
                 }
 
@@ -197,9 +90,9 @@ namespace LanLordlAPIs.Controllers
                     requester.IsVerifiedWithSynapse != true)
                 {
                     Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED -> Request ABORTED: Requester's Synapse bank account exists but is not Verified and " +
-                        "isVerifiedWithSynapse != true - Request Creator memberId is: [" + input.User.MemberId + "]");
+                        "isVerifiedWithSynapse != true - Request Creator memberId is: [" + requester.MemberId + "]");
                     result.ErrorMessage = "Requester does not have any verified bank account.";
-                    result.IsSuccess = false;
+
                     return result;
                 }
 
@@ -208,13 +101,13 @@ namespace LanLordlAPIs.Controllers
                 // @Cliff.. feel free to comment this section if you don't want to check Tenant synapse details
                 #region Get Request Sender's Synapse Account Details
 
-                var requestRecipientSynInfo = CommonHelper.GetSynapseBankAndUserDetailsforGivenMemberId(input.TransRequest.TenantId);
+                /*var requestRecipientSynInfo = CommonHelper.GetSynapseBankAndUserDetailsforGivenMemberId(input.TransRequest.TenantId);
 
                 if (requestRecipientSynInfo.wereBankDetailsFound != true)
                 {
                     Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED -> Request ABORTED: Request Recipient's Synapse bank account NOT FOUND - Request Recipient MemberID: [" + input.TransRequest.TenantId + "]");
-                    result.IsSuccess = false;
                     result.ErrorMessage = "Request recipient does not have any bank added";
+
                     return result;
                 }
 
@@ -225,20 +118,23 @@ namespace LanLordlAPIs.Controllers
                 {
                     Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED -> Request ABORTED: Request Recipient's Synapse bank account exists but is not Verified and " +
                         "isVerifiedWithSynapse != true - Request Recipient MemberID is: [" + input.TransRequest.TenantId + "]");
-                    result.IsSuccess = false;
+
                     result.ErrorMessage = "Request recipient does not have any verified bank account.";
                     return result;
-                }
+                }*/
 
                 #endregion Get Sender's Synapse Account Details
 
-                #endregion
+                #endregion All Checks Before Execution
+
 
                 #region Create new transaction in transactions table
 
                 using (NOOCHEntities obj = new NOOCHEntities())
                 {
                     Transaction tr = new Transaction();
+                    tr.Member = requestRecipient;
+                    tr.Member1 = requester;
                     tr.TransactionId = Guid.NewGuid();
                     tr.SenderId = Tenant_GUID;
                     tr.RecipientId = Landlord_GUID;
@@ -252,6 +148,7 @@ namespace LanLordlAPIs.Controllers
                     tr.TransactionTrackingId = CommonHelper.GetRandomTransactionTrackingId();
                     tr.TransactionFee = 0;
                     tr.IsPhoneInvitation = false;
+
                     // we can take advantage of having tenants email id here.
                     //tr.InvitationSentTo = !String.IsNullOrEmpty(requestDto.MoneySenderEmailId) ? CommonHelper.GetEncryptedData(requestDto.MoneySenderEmailId) : null,
                     GeoLocation gl = new GeoLocation();
@@ -266,26 +163,25 @@ namespace LanLordlAPIs.Controllers
                     gl.Country = null;
                     gl.ZipCode = null;
                     gl.DateCreated = DateTime.Now;
-                    obj.GeoLocations.Add(gl);
-                    obj.SaveChanges();
+                    //obj.GeoLocations.Add(gl);
+                    //obj.SaveChanges();
 
+                    tr.GeoLocation = gl;
                     tr.LocationId = gl.LocationId;
+
                     try
                     {
-
                         obj.Transactions.Add(tr);
                         obj.SaveChanges();
                         requestId = tr.TransactionId.ToString();
                     }
                     catch (Exception ex)
                     {
-
-                        Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED - Unable to save Transaction in DB - [Requester MemberID:" + input.User.LandlordId + "]. Exception ---> [ " + ex + " ]");
+                        Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED - Unable to save Transaction in DB - [Requester MemberID:" + input.User.LandlordId + "], [Exception: [ " + ex.InnerException + " ]");
                         result.IsSuccess = false;
                         result.ErrorMessage = "Request failed.";
                         return result;
                     }
-
                 }
 
                 #endregion
@@ -340,8 +236,11 @@ namespace LanLordlAPIs.Controllers
 
                 // Send email to REQUESTER (person who sent this request)
                 #region Email To Requester
+                var toAddress = CommonHelper.GetDecryptedData(requester.UserName);
 
-                var tokens = new Dictionary<string, string>
+                try
+                {
+                    var tokens = new Dictionary<string, string>
 												 {
 													{Constants.PLACEHOLDER_FIRST_NAME, RequesterFirstName},
 													{Constants.PLACEHOLDER_NEWUSER, RequestReceiverFirstName + " " + RequestReceiverLastName},
@@ -350,10 +249,6 @@ namespace LanLordlAPIs.Controllers
 													{Constants.PLACEHOLDER_OTHER_LINK, cancelLink},
 													{Constants.MEMO, memo}
 												 };
-
-                var toAddress = CommonHelper.GetDecryptedData(requester.UserName);
-                try
-                {
 
                     CommonHelper.SendEmail("requestSent", fromAddress, toAddress,
                         "Your payment request to " + RequestReceiverFirstName + " " + RequestReceiverLastName +
@@ -397,20 +292,16 @@ namespace LanLordlAPIs.Controllers
 
                 try
                 {
-
-
                     CommonHelper.SendEmail("requestReceivedToExistingNonRegUser", fromAddress, toAddress,
                     RequesterFirstName + " " + RequesterLastName + " requested " + "$" + wholeAmount.ToString() + " with Nooch", tokens2, null);
 
-                    Logger.Info("Landlords API -> RentTrans -> ChargeTenant ->  requestReceivedToNewUser email sent to [" + toAddress + "] successfully.");
+                    Logger.Info("RentTrans -> ChargeTenant ->  requestReceivedToNewUser email sent to [" + toAddress + "] successfully.");
 
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant -> requestReceivedToNewUser email NOT sent to  [" + toAddress +
+                    Logger.Error("RentTrans -> ChargeTenant -> requestReceivedToNewUser email NOT sent to  [" + toAddress +
                                            "], [Exception: " + ex + "]");
-
-
                 }
 
                 #endregion Email To Request Recipient

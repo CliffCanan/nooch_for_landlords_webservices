@@ -220,9 +220,8 @@ namespace LanLordlAPIs.Controllers
                             }
                             else
                             {
-                                pu.Status = "Published";
+                                pu.Status = "Vacant";
                                 pu.IsOccupied = false;
-                                return result;
                             }
 
                             obj.PropertyUnits.Add(pu);
@@ -1497,7 +1496,6 @@ namespace LanLordlAPIs.Controllers
                             #endregion Get All Units For This Property
 
                             currentProperty.TenantsCount = obj.GetTenantsCountInGivenPropertyId(currentProperty.PropertyId).FirstOrDefault().ToString();
-                            //Logger.Info("PropertiesController -> GetPropertyDetailsPageData - CHECKPOINT 7");
 
                             // Get list of all tenants for this property
                             #region Get All Tenants For This Property
@@ -1506,7 +1504,7 @@ namespace LanLordlAPIs.Controllers
 
                             List<TenantDetailsResult> TenantsListForThisPropertyPrepared = new List<TenantDetailsResult>();
 
-                            Logger.Info("****   GET PROPERTY DETAILS -> AllTenantsInGivenProperty.Count: [" + AllTenantsInGivenProperty.Count + "]");
+                            //Logger.Info("****   GET PROPERTY DETAILS -> AllTenantsInGivenProperty.Count: [" + AllTenantsInGivenProperty.Count + "]");
 
                             if (AllTenantsInGivenProperty.Count > 0)
                             {

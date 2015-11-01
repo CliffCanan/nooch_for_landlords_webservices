@@ -29,8 +29,11 @@ namespace LanLordlAPIs.Classes.Utility
                 {
                     // checking user details for given id
                     
-                    var createSynapseUserObj = (from c in noochConnection.SynapseCreateUserResults where c.MemberId==id && c.IsDeleted==false
-                                                    && c.success!=null select c).FirstOrDefault();
+                    var createSynapseUserObj = (from c in noochConnection.SynapseCreateUserResults 
+                                                where c.MemberId == id &&
+                                                      c.IsDeleted == false &&
+                                                      c.success != null
+                                                select c).FirstOrDefault();
 
                     if (createSynapseUserObj != null)
                     {
@@ -47,7 +50,9 @@ namespace LanLordlAPIs.Classes.Utility
                     }
 
                     // Now get the user's bank account details
-                    var defaultBank =(from c in noochConnection.SynapseBanksOfMembers where c.MemberId==id && c.IsDefault==true select c).FirstOrDefault();
+                    var defaultBank = (from c in noochConnection.SynapseBanksOfMembers
+                                       where c.MemberId == id && c.IsDefault == true
+                                       select c).FirstOrDefault();
 
                     if (defaultBank != null)
                     {
