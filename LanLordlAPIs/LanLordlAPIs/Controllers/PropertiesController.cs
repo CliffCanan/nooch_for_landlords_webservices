@@ -913,7 +913,7 @@ namespace LanLordlAPIs.Controllers
                 if (landlordTokenCheck.IsTokenOk)
                 {
                     Guid memberId = Guid.NewGuid();
-                    Guid tenantGuid = memberId; // NOTE:  'TenantId' = 'MemberId'
+                    Guid tenantGuid = Guid.NewGuid();
                     Guid unitGuid = new Guid(input.unitId);
                     Guid propGuid = new Guid(input.propertyId);
 
@@ -957,7 +957,7 @@ namespace LanLordlAPIs.Controllers
                             {
                                 Logger.Info("PropertiesController -> InviteTenant - Member already exists, so just creating a new TENANT Record - [MemberID: " + mem.MemberDetails.MemberId.ToString() + "]");
 
-                                tenantGuid = mem.MemberDetails.MemberId;
+                                //tenantGuid = mem.MemberDetails.MemberId;
                                 firstName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(mem.MemberDetails.FirstName));
                                 lastName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(mem.MemberDetails.LastName));
                                 email = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(mem.MemberDetails.UserName));
