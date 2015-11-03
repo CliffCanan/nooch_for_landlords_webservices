@@ -16,7 +16,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/24/2015 14:25:22</publishTime>
     </File>
     <File Include="bin/LanLordlAPIs.dll">
-      <publishTime>10/30/2015 11:22:29</publishTime>
+      <publishTime>11/03/2015 10:55:22</publishTime>
     </File>
     <File Include="bin/log4net.dll">
       <publishTime>10/24/2015 14:25:23</publishTime>
@@ -169,7 +169,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/24/2015 14:25:22</publishTime>
     </File>
     <File Include="Logs/Logs.txt">
-      <publishTime>10/28/2015 13:05:02</publishTime>
+      <publishTime>11/03/2015 10:51:16</publishTime>
     </File>
     <File Include="Models/db Model/Model1.edmx.diagram">
       <publishTime>10/30/2015 10:27:53</publishTime>

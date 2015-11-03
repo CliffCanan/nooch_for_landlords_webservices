@@ -133,8 +133,8 @@ namespace LanLordlAPIs.Controllers
                 using (NOOCHEntities obj = new NOOCHEntities())
                 {
                     Transaction tr = new Transaction();
-                    tr.Member = requestRecipient;
-                    tr.Member1 = requester;
+                    //tr.RecipientId = requester.MemberId;
+                    //tr.SenderId = requestRecipient.MemberId;
                     tr.TransactionId = Guid.NewGuid();
                     tr.SenderId = Tenant_GUID;
                     tr.RecipientId = Landlord_GUID;
