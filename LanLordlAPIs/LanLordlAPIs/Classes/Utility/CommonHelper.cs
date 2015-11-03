@@ -28,8 +28,8 @@ namespace LanLordlAPIs.Classes.Utility
                 using (NOOCHEntities noochConnection = new NOOCHEntities())
                 {
                     // checking user details for given id
-                    
-                    var createSynapseUserObj = (from c in noochConnection.SynapseCreateUserResults 
+
+                    var createSynapseUserObj = (from c in noochConnection.SynapseCreateUserResults
                                                 where c.MemberId == id &&
                                                       c.IsDeleted == false &&
                                                       c.success != null
@@ -283,7 +283,7 @@ namespace LanLordlAPIs.Classes.Utility
             {
                 using (NOOCHEntities obj = new NOOCHEntities())
                 {
-                    
+
 
                     memberObj = (from c in obj.Members
                                  where c.MemberId == meberId &&
@@ -1112,7 +1112,7 @@ namespace LanLordlAPIs.Classes.Utility
                     result = noochConnection.SaveChanges();
                 }
 
-                return SendEmail(Constants.TEMPLATE_FORGOT_PASSWORD, fromAddress, primaryMail, "Reset your Nooch password", tokens, null);
+                return SendEmail(Constants.TEMPLATE_FORGOT_PASSWORD, fromAddress, primaryMail, "Reset your Nooch password", tokens, null, null);
             }
             catch (Exception ex)
             {
@@ -1125,14 +1125,16 @@ namespace LanLordlAPIs.Classes.Utility
 
 
 
-        public static bool SendEmail(string templateName, string fromAddress, string toAddress, string subject, IEnumerable<KeyValuePair<string, string>> replacements, string bodyText)
+        public static bool SendEmail(string templateName, string fromAddress, string toAddress, string subject, IEnumerable<KeyValuePair<string, string>> replacements, string bodyText, string bccEmail)
         {
             try
             {
                 MailMessage mailMessage = new MailMessage();
+
                 string template;
                 string subjectString = subject;
                 string content = string.Empty;
+
                 if (!String.IsNullOrEmpty(templateName))
                 {
                     template = GetEmailTemplate(String.Concat(GetValueFromConfig("EmailTemplatesPath"), templateName, ".txt"));
@@ -1170,6 +1172,11 @@ namespace LanLordlAPIs.Classes.Utility
                 mailMessage.Subject = subjectString;
                 mailMessage.To.Add(toAddress);
 
+                if (!String.IsNullOrEmpty(bccEmail))
+                {
+                    mailMessage.Bcc.Add(bccEmail);
+                }
+
                 SmtpClient smtp = new SmtpClient();
 
                 smtp.Host = "smtp.mandrillapp.com";
@@ -1190,8 +1197,8 @@ namespace LanLordlAPIs.Classes.Utility
             }
             catch (Exception ex)
             {
-                Logger.Error("Landlord CommonHelper -> SendEmail ERROR -> [Template: " + templateName + "], " +
-                                       "[ToAddress: " + toAddress + "],  [Exception: " + ex + "]");
+                Logger.Error("CommonHelper -> SendEmail ERROR -> [Template: " + templateName + "], " +
+                             "[ToAddress: " + toAddress + "],  [Exception: " + ex + "]");
 
                 return false;
             }
@@ -1204,7 +1211,9 @@ namespace LanLordlAPIs.Classes.Utility
 
             using (var noochConnection = new NOOCHEntities())
             {
-                var noochMember = (from c in noochConnection.Members where c.UserName == userNameLowerCase && c.IsDeleted == false select c).FirstOrDefault();
+                var noochMember = (from c in noochConnection.Members
+                                   where c.UserName == userNameLowerCase && c.IsDeleted == false
+                                   select c).FirstOrDefault();
 
                 if (noochMember != null)
                 {
@@ -1342,9 +1351,9 @@ namespace LanLordlAPIs.Classes.Utility
                         };
                         try
                         {
-                            SendEmail(Constants.TEMPLATE_REGISTRATION,
-                                fromAddress, Username,
-                                "Confirm Nooch Registration", tokens, null);
+                            SendEmail(Constants.TEMPLATE_REGISTRATION, fromAddress, Username,
+                                      "Confirm Nooch Registration", tokens, null, null);
+
                             return "Success";
                         }
                         catch (Exception)

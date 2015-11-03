@@ -1023,7 +1023,7 @@ namespace LanLordlAPIs.Controllers
                                 }
                                 else
                                 {
-                                    Logger.Error("***  ERROR... UNIT WAS NOT FOUND IN PROPERTYUNITS TABLE!");
+                                    Logger.Error("Properties Ctrlr -> InviteTenant  ERROR - Unit was not found in PropertyUnits table");
                                     return result;
                                 }
                             }
@@ -1176,7 +1176,7 @@ namespace LanLordlAPIs.Controllers
                                 {
                                     CommonHelper.SendEmail("requestReceivedToNewUser", "rentpayments@nooch.com", email,
                                         "Rent Payment request from " + LandlordFirstName + " " + LandlordLastName,
-                                         tokens2, null);
+                                         tokens2, null, null);
 
                                     Logger.Info("PropertiesController -> requestReceivedToNewUser email sent to - [ " + email + " ] successfully.");
 
@@ -1285,7 +1285,7 @@ namespace LanLordlAPIs.Controllers
 
                             #region Get Bank Details For This Property
 
-                            Logger.Info("PropertiesController -> GetPropertyDetailsPageData - About to attempt to get Synapse Bank info - [PropertyID: " + Property.PropertyId + "]");
+                            //Logger.Info("PropertiesController -> GetPropertyDetailsPageData - About to attempt to get Synapse Bank info - [PropertyID: " + Property.PropertyId + "]");
 
                             BankDetailsResult bdetails = new BankDetailsResult();
                             if (propertyInDb.MemberId != null)
@@ -1487,8 +1487,6 @@ namespace LanLordlAPIs.Controllers
 
                                 AllUnitsListPrepared.Add(currentUnit);
                             }
-
-                            //Logger.Info("PropertiesController -> GetPropertyDetailsPageData - CHECKPOINT 6");
                             
                             currentProperty.AllUnits = AllUnitsListPrepared;
                             currentProperty.UnitsCount = AllUnitsListPrepared.Count.ToString();
@@ -1816,119 +1814,6 @@ namespace LanLordlAPIs.Controllers
                 result.ErrorMessage = "Error while deleting property. Retry later!";
                 return result;
             }
-        }
-
-
-        [HttpPost]
-        [ActionName("GetLandlordsPaymentHistory")]
-        public LandlordsPaymentHistoryClass GetLandlordsPaymentHistory(GetProfileDataInput user)
-        {
-            LandlordsPaymentHistoryClass res = new LandlordsPaymentHistoryClass();
-            res.IsSuccess = false;
-
-            try
-            {
-                Guid landlordguidId = new Guid(user.LandlorId);
-                res.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, user.AccessToken);
-
-                if (res.AuthTokenValidation.IsTokenOk)
-                {
-                    using (NOOCHEntities obj = new NOOCHEntities())
-                    {
-                        // Get Landlord's details from Landlords Table in DB
-                        var landlordObj = (from c in obj.Landlords
-                                           where c.LandlordId == landlordguidId
-                                           select c).FirstOrDefault();
-
-                        List<PaymentHistoryClass> TransactionsListToRet = new List<PaymentHistoryClass>();
-
-                        if (landlordObj != null)
-                        {
-                            // Get all PROPERTIES for given Landlord
-                            var allProps = (from c in obj.Properties
-                                            where c.LandlordId == landlordguidId && c.IsDeleted == false
-                                            select c).ToList();
-
-
-                            foreach (Property p in allProps)
-                            {
-                                // Get all property UNITS in each property
-                                var allUnitsInProp = (from c in obj.PropertyUnits
-                                                      where c.PropertyId == p.PropertyId && c.IsDeleted == false && c.IsOccupied == true
-                                                      select c).ToList();
-
-                                // Iterating through each occupied unit
-                                foreach (PropertyUnit pu in allUnitsInProp)
-                                {
-                                    var allOccupiedUnits = (from c in obj.UnitsOccupiedByTenants
-                                                            where c.UnitId == pu.UnitId
-                                                            select c).ToList();
-
-                                    // Iterating through each occupied unit and checking if any rent for this unit
-                                    foreach (UnitsOccupiedByTenant uobt in allOccupiedUnits)
-                                    {
-                                        // Get transctions from Transactions table where tenant was sender and lanlord was receiver and transaction type "Rent"
-
-                                        var TenantDetails = (from c in obj.Tenants
-                                                             where c.TenantId == uobt.TenantId
-                                                             select c).FirstOrDefault();
-
-                                        var allTrans = (from c in obj.Transactions
-                                                        where c.SenderId == TenantDetails.MemberId && c.RecipientId == landlordObj.MemberId
-                                                        select c).ToList();
-
-
-                                        //got some transactions..adding to main response class
-
-                                        foreach (Transaction t in allTrans)
-                                        {
-                                            PaymentHistoryClass phc = new PaymentHistoryClass();
-                                            phc.Amount = t.Amount.ToString();
-                                            phc.TenantId = uobt.TenantId.ToString();
-                                            phc.TenantName = CommonHelper.GetDecryptedData(TenantDetails.FirstName) + " " +
-                                            CommonHelper.GetDecryptedData(TenantDetails.LastName);
-                                            phc.UnitId = uobt.UnitId.ToString();
-                                            phc.UnitName = pu.UnitNickName;
-                                            phc.UnitNum = pu.UnitNumber;
-                                            phc.TransactionStatus = t.TransactionStatus;
-                                            phc.PropertyId = p.PropertyId.ToString();
-                                            phc.PropertyName = p.PropName;
-                                            phc.PropertyAddress = p.AddressLineOne;
-                                            phc.TransactionDate = Convert.ToDateTime(t.TransactionDate).ToShortDateString();
-
-                                            phc.TransactionId = t.TransactionId.ToString();
-
-                                            TransactionsListToRet.Add(phc);
-                                        }
-                                    }
-                                }
-                            }
-
-                            res.IsSuccess = true;
-                            res.Transactions = TransactionsListToRet;
-                            res.ErrorMessage = "OK";
-                        }
-                        else
-                        {
-                            res.ErrorMessage = "Invalid landlord id.";
-                        }
-
-                        return res;
-                    }
-                }
-                else
-                {
-                    res.IsSuccess = false;
-                    res.ErrorMessage = "Auth token failure";
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Landlords API -> Properties -> GetLandlordsPaymentHistory. Error while GetLandlordsPaymentHistory request from LandlorgId - [ " + user.LandlorId + " ] . Exception details [ " + ex + " ]");
-                res.IsSuccess = false;
-                res.ErrorMessage = "Error while logging on. Retry.";
-            }
-            return res;
         }
 
     }

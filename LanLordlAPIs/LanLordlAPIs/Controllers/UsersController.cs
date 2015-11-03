@@ -206,7 +206,7 @@ namespace LanLordlAPIs.Controllers
                                     try
                                     {
                                         CommonHelper.SendEmail(Constants.TEMPLATE_REGISTRATION, fromAddress,
-                                                llDetails.eMail.Trim(), "Confirm your email on Nooch", tokens, null);
+                                                llDetails.eMail.Trim(), "Confirm your email on Nooch", tokens, null, "NewLandlord@nooch.com");
 
                                         Logger.Info("UserController -> RegisterLandlord - Registration email sent to [" + llDetails.eMail.Trim() + "] successfully.");
                                     }
@@ -283,6 +283,7 @@ namespace LanLordlAPIs.Controllers
         public LoginResult Login(LoginInput User)
         {
             LoginResult result = new LoginResult();
+            result.IsSuccess = false;
 
             try
             {
@@ -298,8 +299,6 @@ namespace LanLordlAPIs.Controllers
                         result.ErrorMessage = "Invalid login information provided.";
                         return result;
                     }
-
-                    Logger.Info("Landlords API -> Users -> Login. Login requested by [" + User.UserName + "]");
 
                     #region All authentication code in this block
 
@@ -343,10 +342,13 @@ namespace LanLordlAPIs.Controllers
                         result.AccessToken = landlordEntity.WebAccessToken;
                         result.MemberId = landlordEntity.MemberId.ToString();
                         result.LandlordId = landlordEntity.LandlordId.ToString();
+
+                        Logger.Info("Users Cntrlr -> Login requested by [" + User.UserName + "]");
                     }
                     else
                     {
-                        result.IsSuccess = false;
+                        Logger.Error("Users Cntrlr -> Login FAILED - [Username: " + User.UserName + "]");
+
                         result.ErrorMessage = "Invalid Username password or Member not active.";
                         return result;
                     }
@@ -358,8 +360,8 @@ namespace LanLordlAPIs.Controllers
             }
             catch (Exception ex)
             {
-                Logger.Error("Landlords API -> Users -> Login. Error while login request from username  - [ " + User.UserName + " ] . Exception details [ " + ex + " ]");
-                result.IsSuccess = false;
+                Logger.Error("Users Cntrlr -> Login EXCEPTION - [Username: " + User.UserName + "], [Exception: " + ex + "]");
+
                 result.ErrorMessage = "Error while logging on. Retry.";
                 return result;
             }
@@ -1608,6 +1610,10 @@ namespace LanLordlAPIs.Controllers
 
                         if (landlordObj != null)
                         {
+                            string fromAddress = CommonHelper.GetDecryptedData(landlordObj.eMail);
+                            string landlordFullName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.FirstName)) + " " +
+                                                      CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.LastName));
+
                             // Now check if the email is going to just ONE tenant, or ALL of a Property's tenants
 
                             if (User.EmailInfo.IsForAllOrOne == "One")
@@ -1628,14 +1634,11 @@ namespace LanLordlAPIs.Controllers
                                         if (tenantObj != null)
                                         {
                                             string toAddress = CommonHelper.GetDecryptedData(tenantObj.eMail);
-                                            string fromAddress = CommonHelper.GetDecryptedData(landlordObj.eMail);
-                                            string landlordFullName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.FirstName)) + " " +
-                                                                      CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.LastName));
 
                                             string bodytext = User.EmailInfo.MessageToBeSent;
 
                                             CommonHelper.SendEmail(null, fromAddress, toAddress,
-                                                "New message from " + landlordFullName, null, bodytext);
+                                                "New message from " + landlordFullName, null, bodytext, null);
 
                                             result.IsSuccess = true;
                                             result.ErrorMessage = "Message sent successfully";
@@ -1663,7 +1666,7 @@ namespace LanLordlAPIs.Controllers
 
                                 try
                                 {
-                                    // getting all tenants of given landlord
+                                    // Get all Tenants of given Landlord for given Property
                                     string propId = User.EmailInfo.PropertyId;
 
                                     List<GetTenantsInGivenPropertyId_Result2> allTenantsOfLl = obj.GetTenantsInGivenPropertyId(propId).ToList();
@@ -1678,9 +1681,7 @@ namespace LanLordlAPIs.Controllers
                                             string bodytext = User.EmailInfo.MessageToBeSent;
 
                                             CommonHelper.SendEmail(null, emailtobesentfrom, emailtobesentto,
-                                                "New message from " +
-                                               CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.FirstName)) + " " +
-                                               CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.LastName)), null, bodytext);
+                                                "New message from " + landlordFullName, null, bodytext, null);
                                         }
 
                                         result.IsSuccess = true;
@@ -1725,7 +1726,11 @@ namespace LanLordlAPIs.Controllers
         }
 
 
-        // to change password for given user
+        /// <summary>
+        /// To change password for given user
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns>GenericInternalResponse object</returns>
         [HttpPost]
         [ActionName("ChangeUserPassword")]
         public GenericInternalResponse ChangeUserPassword(UpdatePasswordInput input)
@@ -1797,7 +1802,7 @@ namespace LanLordlAPIs.Controllers
             }
             catch (Exception ex)
             {
-                Logger.Error("Landlords API -> UsersController -> EditUserInfo FAILED - [Outer Exception: " + ex.ToString() + "]");
+                Logger.Error("UsersController -> EditUserInfo FAILED - [Outer Exception: " + ex.ToString() + "]");
                 result.msg = "Server error";
             }
 
