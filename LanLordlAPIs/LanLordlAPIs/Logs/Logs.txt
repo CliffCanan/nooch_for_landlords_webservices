@@ -1889,3 +1889,5 @@ INFO  2015-10-03 14:54:19,830 768582ms Logger                 Info              
 INFO  2015-10-03 14:54:20,518 769270ms Logger                 Info               - PropertiesController -> LoadProperties - [LandlordID: 21d4e1ee-865c-40dd-b841-15807546daae]
 INFO  2015-10-03 14:54:22,705 771456ms Logger                 Info               - PropertiesController -> GetPropertyDetailsPageData Initiated - [LandlordID: 21d4e1ee-865c-40dd-b841-15807546daae]
 INFO  2015-10-03 14:54:22,756 771507ms Logger                 Info               - Landlords API -> Users -> GetUserInfo. GetUserInfo requested by [21d4e1ee-865c-40dd-b841-15807546daae]
+INFO  2015-11-03 10:46:48,812 345028ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenant - Requested by [21D4E1EE-865C-40DD-B841-15807546DAAD]
+INFO  2015-11-03 10:51:11,192 607409ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenant - Requested by [21D4E1EE-865C-40DD-B841-15807546DAAD]
