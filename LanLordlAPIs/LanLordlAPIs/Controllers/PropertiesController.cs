@@ -101,7 +101,7 @@ namespace LanLordlAPIs.Controllers
                                 pu.UnitRent = unitItem.Rent;
                                 pu.IsHidden = true;
                                 pu.IsOccupied = false;
-                                pu.MemberId = new Guid(CommonHelper.GetMemberIdOfLandlord(landlordguidId));
+                                pu.MemberId = new Guid(CommonHelper.GetLandlordsMemberIdFromLandlordId(landlordguidId));
 
                                 obj.PropertyUnits.Add(pu);
                                 obj.SaveChanges();

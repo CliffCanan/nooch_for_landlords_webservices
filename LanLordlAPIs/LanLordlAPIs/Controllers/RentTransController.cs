@@ -26,11 +26,12 @@ namespace LanLordlAPIs.Controllers
             CreatePropertyResultOutput result = new CreatePropertyResultOutput();
             result.IsSuccess = false;
 
-            Guid Landlord_GUID = CommonHelper.ConvertToGuid(input.User.LandlordId);
-            Guid Tenant_GUID = CommonHelper.ConvertToGuid(input.TransRequest.TenantId);
-
             try
             {
+                Guid Landlord_GUID = CommonHelper.ConvertToGuid(input.User.LandlordId);
+                Guid Tenant_GUID = CommonHelper.ConvertToGuid(input.TransRequest.TenantId);
+                var landlordsMemID = new Guid(CommonHelper.GetLandlordsMemberIdFromLandlordId(Landlord_GUID));
+
                 string requestId = "";
 
                 #region All Checks Before Execution
@@ -52,7 +53,6 @@ namespace LanLordlAPIs.Controllers
                 }
 
                 // Get requester and request recepient Members table info
-                var landlordsMemID = new Guid(CommonHelper.GetMemberIdOfLandlord(Landlord_GUID));
                 var requester = CommonHelper.GetMemberByMemberId(landlordsMemID);
                 var requestRecipient = CommonHelper.GetMemberByMemberId(Tenant_GUID);
 
