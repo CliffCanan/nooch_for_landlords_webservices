@@ -30,7 +30,7 @@ namespace LanLordlAPIs.Controllers
             {
                 Guid Landlord_GUID = CommonHelper.ConvertToGuid(input.User.LandlordId);
                 Guid Tenant_GUID = CommonHelper.ConvertToGuid(input.TransRequest.TenantId);
-                var landlordsMemID = new Guid(CommonHelper.GetLandlordsMemberIdFromLandlordId(Landlord_GUID));
+                Guid landlordsMemID = new Guid(CommonHelper.GetLandlordsMemberIdFromLandlordId(Landlord_GUID));
 
                 string requestId = "";
 
@@ -54,7 +54,9 @@ namespace LanLordlAPIs.Controllers
 
                 // Get requester and request recepient Members table info
                 var requester = CommonHelper.GetMemberByMemberId(landlordsMemID);
+                var requesterLandlordObj = CommonHelper.GetLandlordByLandlordId(Landlord_GUID); // Only need this for the Photo for the email template... Members table doesn't have it.
                 var requestRecipient = CommonHelper.GetMemberByMemberId(Tenant_GUID);
+                
 
                 if (requester == null)
                 {
@@ -137,7 +139,7 @@ namespace LanLordlAPIs.Controllers
                     //tr.SenderId = requestRecipient.MemberId;
                     tr.TransactionId = Guid.NewGuid();
                     tr.SenderId = Tenant_GUID;
-                    tr.RecipientId = Landlord_GUID;
+                    tr.RecipientId = landlordsMemID;
                     tr.Amount = Convert.ToDecimal(input.TransRequest.Amount);
                     tr.TransactionDate = DateTime.Now;
                     tr.Memo = input.TransRequest.Memo; // this would be the reason why we are charging tenant 
@@ -190,15 +192,33 @@ namespace LanLordlAPIs.Controllers
 
                 #region Set Up Variables
 
-                var fromAddress = CommonHelper.GetValueFromConfig("transfersMail");
+                string fromAddress = CommonHelper.GetValueFromConfig("transfersMail");
 
-                string RequesterFirstName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requester.FirstName)));
-                string RequesterLastName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requester.LastName)));
-                string RequestReceiverFirstName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requestRecipient.FirstName)));
-                string RequestReceiverLastName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requestRecipient.LastName)));
+                string RequesterFirstName = !String.IsNullOrEmpty(requester.FirstName) 
+                                            ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requester.FirstName)))
+                                            : "";
+                string RequesterLastName = !String.IsNullOrEmpty(requester.LastName)
+                                           ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requester.LastName)))
+                                           : "";
+                string RequestReceiverFirstName = !String.IsNullOrEmpty(requestRecipient.FirstName)
+                                                  ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requestRecipient.FirstName)))
+                                                  : "";
+                string RequestReceiverLastName = !String.IsNullOrEmpty(requestRecipient.LastName)
+                                                 ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requestRecipient.LastName)))
+                                                 : "";
+                string RequestReceiverFullName = (RequestReceiverFirstName.Length > 2 && RequestReceiverLastName.Length > 2)
+                                                 ? RequestReceiverFirstName + " " + RequestReceiverLastName
+                                                 : CommonHelper.GetDecryptedData(requestRecipient.UserName);
 
+                Logger.Info("RequesterFirstName: [" + RequesterFirstName + "], RequesterLastName: [" + RequesterLastName + "], RequestReceiverFirstName: [" + RequestReceiverFirstName +
+                            "], RequestReceiverLastName: [" + RequestReceiverLastName + "], RequestReceiverFullName: [" + RequestReceiverFullName + "]");
+                
                 string requesterPic = "https://www.noochme.com/noochweb/Assets/Images/userpic-default.png";
-                if (!String.IsNullOrEmpty(requester.Photo) && requester.Photo.Length > 20)
+                if (!String.IsNullOrEmpty(requesterLandlordObj.UserPic) && requesterLandlordObj.UserPic.Length > 20)
+                {
+                    requesterPic = requesterLandlordObj.UserPic;
+                }
+                else if (!String.IsNullOrEmpty(requester.Photo) && requester.Photo.Length > 20)
                 {
                     requesterPic = requester.Photo;
                 }
@@ -236,22 +256,25 @@ namespace LanLordlAPIs.Controllers
 
                 // Send email to REQUESTER (person who sent this request)
                 #region Email To Requester
-                var toAddress = CommonHelper.GetDecryptedData(requester.UserName);
+                string toAddress = CommonHelper.GetDecryptedData(requester.UserName);
 
                 try
                 {
                     var tokens = new Dictionary<string, string>
 												 {
 													{Constants.PLACEHOLDER_FIRST_NAME, RequesterFirstName},
-													{Constants.PLACEHOLDER_NEWUSER, RequestReceiverFirstName + " " + RequestReceiverLastName},
+													{Constants.PLACEHOLDER_NEWUSER, RequestReceiverFullName},
 													{Constants.PLACEHOLDER_TRANSFER_AMOUNT, amountArray[0]},
 													{Constants.PLACEHLODER_CENTS, amountArray[1]},
 													{Constants.PLACEHOLDER_OTHER_LINK, cancelLink},
 													{Constants.MEMO, memo}
 												 };
 
+                    Logger.Info("memo: [" + memo + "], wholeAmount: [" + wholeAmount + "], cancelLink: [" + cancelLink +
+                            "], toAddress: [" + toAddress + "], fromAddress: [" + fromAddress + "]");
+
                     CommonHelper.SendEmail("requestSent", fromAddress, toAddress,
-                        "Your payment request to " + RequestReceiverFirstName + " " + RequestReceiverLastName +
+                        "Your payment request to " + RequestReceiverFullName +
                         " is pending", tokens, null, null);
 
                     Logger.Info("Landlords API -> RentTrans -> ChargeTenant -> RequestSent email sent to [" + toAddress + "] successfully.");
@@ -295,7 +318,7 @@ namespace LanLordlAPIs.Controllers
                     CommonHelper.SendEmail("requestReceivedToExistingNonRegUser", fromAddress, toAddress,
                     RequesterFirstName + " " + RequesterLastName + " requested " + "$" + wholeAmount.ToString() + " with Nooch", tokens2, null, null);
 
-                    Logger.Info("RentTrans -> ChargeTenant ->  requestReceivedToNewUser email sent to [" + toAddress + "] successfully.");
+                    Logger.Info("RentTrans -> ChargeTenant ->  requestReceivedToNewUser email sent to [" + toAddress + "] successfully");
 
                 }
                 catch (Exception ex)
@@ -485,13 +508,10 @@ namespace LanLordlAPIs.Controllers
                                                                      where c.TenantId == uobt.TenantId
                                                                      select c).FirstOrDefault();*/
 
-                                                Logger.Info("Rent Trans Cntrlr -> GetLandlordsPaymentHistory CHECKPOINT #1 - [UOBT.UNIT ID: " + uobt.UnitId + "], [UOBT.TENANT ID: " + uobt.TenantId + "]");
 
                                                 var TenantMemberDetails = (from c in obj.Members
                                                                            where c.MemberId == uobt.TenantId && c.IsDeleted == false
                                                                            select c).FirstOrDefault();
-
-                                                Logger.Info("Rent Trans Cntrlr -> GetLandlordsPaymentHistory CHECKPOINT #2 - [Tenants MemberId: " + TenantMemberDetails.MemberId.ToString() + "]");
 
 
                                                 var allTrans = (from c in obj.Transactions
@@ -499,7 +519,6 @@ namespace LanLordlAPIs.Controllers
                                                                      (c.RecipientId == landlordObj.MemberId || c.RecipientId == landlordObj.LandlordId)
                                                                 select c).ToList();
 
-                                                Logger.Info("Rent Trans Cntrlr -> GetLandlordsPaymentHistory CHECKPOINT #3");
 
                                                 foreach (Transaction t in allTrans)
                                                 {

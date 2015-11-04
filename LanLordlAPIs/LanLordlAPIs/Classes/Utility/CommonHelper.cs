@@ -180,7 +180,7 @@ namespace LanLordlAPIs.Classes.Utility
             }
             catch (Exception ex)
             {
-                Logger.Error("Landlord Common Helper -> GetDecryptedData FAILED - [SourceData: [" + sourceData + ", [Exception: " + ex + "]");
+                Logger.Error("Landlord Common Helper -> GetDecryptedData FAILED - [SourceData: " + sourceData + ", [Exception: " + ex + "]");
             }
             return string.Empty;
         }
@@ -275,7 +275,7 @@ namespace LanLordlAPIs.Classes.Utility
         }
 
 
-        public static Member GetMemberByMemberId(Guid meberId)
+        public static Member GetMemberByMemberId(Guid memberId)
         {
             Member memberObj = new Member();
 
@@ -286,7 +286,7 @@ namespace LanLordlAPIs.Classes.Utility
 
 
                     memberObj = (from c in obj.Members
-                                 where c.MemberId == meberId &&
+                                 where c.MemberId == memberId &&
                                         c.IsDeleted == false
                                  select c).SingleOrDefault();
 
@@ -319,6 +319,31 @@ namespace LanLordlAPIs.Classes.Utility
             }
 
             return memberObj;
+        }
+
+        public static Landlord GetLandlordByLandlordId(Guid landlordId)
+        {
+            Landlord landlordObj = new Landlord();
+
+            try
+            {
+                using (NOOCHEntities obj = new NOOCHEntities())
+                {
+
+
+                    landlordObj = (from c in obj.Landlords
+                                 where c.LandlordId == landlordId &&
+                                        c.IsDeleted == false
+                                 select c).SingleOrDefault();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("CommonHelper -> GetLandlordByLandlordId EXCEPTION - [" + ex + "]");
+            }
+
+            return landlordObj;
         }
 
         public static string GetLandlordsMemberIdFromLandlordId(Guid landlorID)
@@ -1164,17 +1189,24 @@ namespace LanLordlAPIs.Classes.Utility
                     mailMessage.Body = bodyText;
                 }
 
-                switch (fromAddress)
+                if (!String.IsNullOrEmpty(fromAddress))
                 {
-                    case "receipts@nooch.com":
-                        mailMessage.From = new MailAddress(fromAddress, "Nooch Receipts");
-                        break;
-                    case "support@nooch.com":
-                        mailMessage.From = new MailAddress(fromAddress, "Nooch Support");
-                        break;
-                    default:
-                        mailMessage.From = new MailAddress(fromAddress, "Nooch Admin");
-                        break;
+                    switch (fromAddress)
+                    {
+                        case "receipts@nooch.com":
+                            mailMessage.From = new MailAddress(fromAddress, "Nooch Receipts");
+                            break;
+                        case "support@nooch.com":
+                            mailMessage.From = new MailAddress(fromAddress, "Nooch Support");
+                            break;
+                        default:
+                            mailMessage.From = new MailAddress(fromAddress, "Nooch Admin");
+                            break;
+                    }
+                }
+                else
+                {
+                    mailMessage.From = new MailAddress(fromAddress, "Nooch Admin");
                 }
                 mailMessage.IsBodyHtml = true;
                 mailMessage.Subject = subjectString;
