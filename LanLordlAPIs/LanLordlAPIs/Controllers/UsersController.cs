@@ -860,10 +860,11 @@ namespace LanLordlAPIs.Controllers
 
                                 if (CommonHelper.RemovePhoneNumberFormatting(memberObj.ContactNumber) != newPhoneClean)
                                 {
+                                    memberObj.ContactNumber = newPhoneClean;
+
                                     //if (!CommonHelper.IsPhoneNumberAlreadyRegistered(newPhoneClean).isAlreadyRegistered)
                                     if (memberObj.IsVerifiedPhone != true)
                                     {
-                                        memberObj.ContactNumber = newPhoneClean;
                                         memberObj.IsVerifiedPhone = false;
 
                                         #region SendingSMSVerificaion
@@ -1159,8 +1160,7 @@ namespace LanLordlAPIs.Controllers
         [ActionName("GetAccountCompletetionStatsOfGivenLandlord")]
         public GetAccountCompletionStatsResultClass GetAccountCompletetionStatsOfGivenLandlord(GetProfileDataInput Property)
         {
-            Logger.Info("UsersController -> GetAccountCompletetionStatsOfGivenLandlord Initiated - [LandlordID: " +
-                            Property.LandlorId + "]");
+            //Logger.Info("UsersController -> GetAccountCompletetionStatsOfGivenLandlord Initiated - [LandlordID: " + Property.LandlorId + "]");
 
             GetAccountCompletionStatsResultClass result = new GetAccountCompletionStatsResultClass();
             result.IsSuccess = false;
@@ -1181,7 +1181,7 @@ namespace LanLordlAPIs.Controllers
                         result.IsAccountAdded = Convert.ToBoolean(obj.IsBankAccountAddedforGivenLandlordOrTenant("Landlord", Property.LandlorId).SingleOrDefault());
 
                         // CLIFF (10/26/15): These values are only checking Landlords table, and not Members Table, which is where we update the user's "Status" on the Email Verification landing page
-                        //                   The Angular controller is instead saving and using the value from GetUserInfo(), which does check the Members Table
+                        //                   The Angular controller is instead saving and using the value from GetUserInfo(), which does check the Members Table... so these 2 lines should be unneccessary
                         //result.IsEmailVerified = Convert.ToBoolean(obj.IsEmailVerifiedforGivenLandlordOrTenant("Landlord", Property.LandlorId).SingleOrDefault());
                         //result.IsPhoneVerified = Convert.ToBoolean(obj.IsPhoneVerifiedforGivenLandlordOrTenant("Landlord", Property.LandlorId).SingleOrDefault());
 
@@ -1222,7 +1222,7 @@ namespace LanLordlAPIs.Controllers
             }
             catch (Exception ex)
             {
-                Logger.Error("UsersControllers -> GetAccountCompletionStatsOfGivenLandlord FAILED - [LandlordID: " +
+                Logger.Error("UsersController -> GetAccountCompletionStatsOfGivenLandlord FAILED - [LandlordID: " +
                              Property.LandlorId + "], [Exception: " + ex.Message + "]");
 
                 result.ErrorMessage = "Error while getting properties list. Retry later!";

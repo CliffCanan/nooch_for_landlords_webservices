@@ -367,6 +367,27 @@ namespace LanLordlAPIs.Classes.Utility
             return result;
         }
 
+        public static string GetTenantsMemberIdFromTenantId(string tenantId)
+        {
+            string result = string.Empty;
+
+            try
+            {
+                using (NOOCHEntities obj = new NOOCHEntities())
+                {
+                    result = (from c in obj.Tenants
+                              where c.TenantId == new Guid(tenantId)
+                              select c.MemberId).SingleOrDefault().ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("CommonHelper -> GetTenantsMemberIdFromTenantId FAILED - [TenantID: " + tenantId + "], [Exception: " + ex + "]");
+            }
+
+            return result;
+        }
+
         public static string GetMemberNameByUserName(string userName)
         {
             try
@@ -586,7 +607,7 @@ namespace LanLordlAPIs.Classes.Utility
                     Tenant tenant = new Tenant
                     {
                         TenantId = guid,
-                        MemberId = guid,
+                        MemberId = memberId,
                         FirstName = GetEncryptedData(fName.Trim().ToLower()),
                         LastName = GetEncryptedData(lName.Trim().ToLower()),
                         eMail = GetEncryptedData(email.Trim().ToLower()),

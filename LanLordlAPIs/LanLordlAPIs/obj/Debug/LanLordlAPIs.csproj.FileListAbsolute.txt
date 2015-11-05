@@ -193,7 +193,6 @@ C:\Users\Cliff Canan\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\bin\Twilio.Api
 C:\Users\Cliff Canan\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\bin\Antlr3.Runtime.pdb
 C:\Users\Cliff Canan\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\bin\Newtonsoft.Json.xml
 C:\Users\Cliff Canan\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\bin\System.Web.Http.WebHost.xml
-C:\Users\Cliff Canan\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\obj\Debug\LanLordlAPIs.csprojResolveAssemblyReference.cache
 C:\Users\Cliff Canan\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\obj\Debug\LanLordlAPIs.Constants.resources
 C:\Users\Cliff Canan\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\obj\Debug\LanLordlAPIs.csproj.GenerateResource.Cache
 C:\Users\Cliff Canan\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\obj\Debug\LanLordlAPIs.dll

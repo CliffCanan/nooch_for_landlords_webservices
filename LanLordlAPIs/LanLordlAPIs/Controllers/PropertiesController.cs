@@ -206,7 +206,7 @@ namespace LanLordlAPIs.Controllers
                                     }
                                     if (!String.IsNullOrEmpty(unitInput.Unit.RentStartDate))
                                     {
-                                        pu.RentStartDate = Convert.ToDateTime( unitInput.Unit.RentStartDate);
+                                        pu.RentStartDate = Convert.ToDateTime(unitInput.Unit.RentStartDate);
                                     }
 
                                     obj.UnitsOccupiedByTenants.Add(uobt);
@@ -307,6 +307,10 @@ namespace LanLordlAPIs.Controllers
             {
                 Guid landlordGuid = new Guid(unitInput.User.LandlordId);
                 Guid unitGuid = new Guid(unitInput.Unit.UnitId);
+                Guid tenantId = (unitInput.Unit.IsTenantAdded == "true" && !String.IsNullOrEmpty(unitInput.Unit.TenantId))
+                                ? new Guid(unitInput.Unit.TenantId)
+                                : new Guid();
+
 
                 result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordGuid, unitInput.User.AccessToken);
 
@@ -314,10 +318,11 @@ namespace LanLordlAPIs.Controllers
                 {
                     using (NOOCHEntities obj = new NOOCHEntities())
                     {
-                        // Get Property details from DB
+                        // Get UNIT from DB
                         PropertyUnit unitObj = (from u in obj.PropertyUnits
-                                             where u.UnitId == unitGuid && u.IsDeleted == false
-                                             select u).SingleOrDefault(); 
+                                                where u.UnitId == unitGuid &&
+                                                      u.IsDeleted == false
+                                                select u).SingleOrDefault();
 
                         if (unitObj != null)
                         {
@@ -336,19 +341,15 @@ namespace LanLordlAPIs.Controllers
                             DateTime newDate = new DateTime(date.Year, date.Month, 1, 0, 0, 0, date.Kind);
                             unitObj.RentStartDate = !String.IsNullOrEmpty(unitInput.Unit.RentStartDate) ? Convert.ToDateTime(unitInput.Unit.RentStartDate.Trim()) : newDate;
 
-                            if (unitInput.Unit.IsTenantAdded == "true")
+
+                            #region Delete Any Existing Tenants For This Unit
+
+                            try
                             {
-                                unitObj.IsOccupied = true;
-
-                                // NOTE: 'TenantId' = 'MemberId'
-                                Guid tenantIdForUnit = new Guid(unitInput.Unit.TenantId);
-
-                                #region Delete Any Existing Tenants For This Unit
-
                                 // Check for existing tenants in this unit
                                 var existingTenantsInUnit = (from c in obj.UnitsOccupiedByTenants
                                                              where c.UnitId == unitObj.UnitId &&
-                                                                  (c.IsDeleted != true)
+                                                                   c.IsDeleted != true
                                                              select c).ToList();
 
                                 if (existingTenantsInUnit.Count > 0) // CLIFF (10/25/15): Should only ever be 1 tenant per unit (unless we add roommate features later)
@@ -356,8 +357,10 @@ namespace LanLordlAPIs.Controllers
                                     // Tenant found... checking if same tenant or different
                                     foreach (UnitsOccupiedByTenant n in existingTenantsInUnit)
                                     {
-                                        if (n.TenantId != tenantIdForUnit)
+                                        if (n.TenantId != tenantId)
                                         {
+                                            Logger.Info("PropertiesController -> EditPropertyUnit - Deleting existing tenant - [TenantID: " + n.TenantId + "], [UnitId: " + unitObj.UnitId + "]");
+
                                             // Cliff (10/15/15): Let's keep them un-deleted for now... just do nothing to them (Maybe notify them by email... but not right now)
                                             // UPDATE (10/25/15): This is actually unlikely to ever happen for a while.  Landlords will usually be adding NEW users... they wouldn't be selecting an existing
                                             //                    user that has a Tenant ID yet (until it gets created ealier inside this method).  We might add more functionality where Landlords
@@ -367,8 +370,18 @@ namespace LanLordlAPIs.Controllers
                                         }
                                     }
                                 }
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error("PropertiesController -> EditPropertyUnit EXCEPTION on trying to delete existing tenant in this unit - [Exception: " + ex.Message + "]");
+                            }
 
-                                #endregion Delete Any Existing Tenants For This Unit
+                            #endregion Delete Any Existing Tenants For This Unit
+
+
+                            if (unitInput.Unit.IsTenantAdded == "true")
+                            {
+                                unitObj.IsOccupied = true;
 
                                 if (!String.IsNullOrEmpty(unitInput.Unit.TenantId))
                                 {
@@ -377,19 +390,9 @@ namespace LanLordlAPIs.Controllers
                                     #region Create New 'UnitsOccupiedByTenant' Record
 
                                     UnitsOccupiedByTenant uobt = new UnitsOccupiedByTenant();
-                                    uobt.TenantId = tenantIdForUnit; // NOTE: 'TenantId' = 'MemberId'
+                                    uobt.TenantId = tenantId;
                                     uobt.UnitId = unitGuid;
                                     uobt.IsDeleted = false;
-
-                                    //not needed anymore I guess
-                                    //if (!String.IsNullOrEmpty(unitInput.Unit.RentDuration))
-                                    //{
-                                    //    uobt.AgreementLength = unitInput.Unit.RentDuration;
-                                    //}
-                                    //if (!String.IsNullOrEmpty(unitInput.Unit.RentStartDate))
-                                    //{
-                                    //    uobt.RentStartFrom = unitInput.Unit.RentStartDate;
-                                    //}
 
                                     obj.UnitsOccupiedByTenants.Add(uobt);
 
@@ -924,8 +927,8 @@ namespace LanLordlAPIs.Controllers
                     string email = input.tenant.email;
 
                     // Get Landlord's MemberId
-                    Guid landlordMemberId = new Guid();
-                    Member landlordDetailsInMembersTable = null;
+                    Guid landlordMemberId;
+                    //Member landlordDetailsInMembersTable = null;
 
                     using (NOOCHEntities obj = new NOOCHEntities())
                     {
@@ -1487,7 +1490,7 @@ namespace LanLordlAPIs.Controllers
 
                                 AllUnitsListPrepared.Add(currentUnit);
                             }
-                            
+
                             currentProperty.AllUnits = AllUnitsListPrepared;
                             currentProperty.UnitsCount = AllUnitsListPrepared.Count.ToString();
 
@@ -1502,7 +1505,7 @@ namespace LanLordlAPIs.Controllers
 
                             List<TenantDetailsResult> TenantsListForThisPropertyPrepared = new List<TenantDetailsResult>();
 
-                            //Logger.Info("****   GET PROPERTY DETAILS -> AllTenantsInGivenProperty.Count: [" + AllTenantsInGivenProperty.Count + "]");
+                            Logger.Info("****   GET PROPERTY DETAILS -> AllTenantsInGivenProperty.Count: [" + AllTenantsInGivenProperty.Count + "]");
 
                             if (AllTenantsInGivenProperty.Count > 0)
                             {
@@ -1512,7 +1515,7 @@ namespace LanLordlAPIs.Controllers
 
                                     trc.TenantId = v.TenantId.ToString() ?? "";
                                     trc.UnitId = v.UnitId.ToString() ?? "";
-                                    
+
                                     if (!String.IsNullOrEmpty(v.FirstName))
                                     {
                                         trc.Name = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(v.FirstName));

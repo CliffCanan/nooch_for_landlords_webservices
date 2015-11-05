@@ -485,15 +485,21 @@ namespace LanLordlAPIs.Controllers
                                 {
                                     // Get all property UNITS in each property
                                     var allUnitsInProp = (from c in obj.PropertyUnits
-                                                          where c.PropertyId == p.PropertyId && c.IsDeleted == false && c.IsOccupied == true
+                                                          where c.PropertyId == p.PropertyId && 
+                                                                c.IsDeleted == false &&
+                                                                c.IsOccupied == true
                                                           select c).ToList();
+
+                                    Logger.Info("1. - THERE ARE [" + allUnitsInProp.Count + "] UNITS in this Property: [" + p.PropName + "]");
 
                                     // Iterating through each occupied unit
                                     foreach (PropertyUnit pu in allUnitsInProp)
                                     {
                                         var allOccupiedUnits = (from c in obj.UnitsOccupiedByTenants
-                                                                where c.UnitId == pu.UnitId
+                                                                where c.UnitId == pu.UnitId && c.IsDeleted == false
                                                                 select c).ToList();
+
+                                        Logger.Info("2. - THERE ARE [" + allOccupiedUnits.Count + "] UOBT for Unit Num: [" + pu.UnitNumber + "]");
 
                                         #region Loop Through UnitsOccupiedByTenants
 
@@ -508,17 +514,22 @@ namespace LanLordlAPIs.Controllers
                                                                      where c.TenantId == uobt.TenantId
                                                                      select c).FirstOrDefault();*/
 
+                                                Logger.Info("3. - UOBT.TenantId is: [" + uobt.TenantId + "]");
+
+                                                Guid tenantMemberGuid = new Guid(CommonHelper.GetTenantsMemberIdFromTenantId(uobt.TenantId.ToString()));
 
                                                 var TenantMemberDetails = (from c in obj.Members
-                                                                           where c.MemberId == uobt.TenantId && c.IsDeleted == false
+                                                                           where c.MemberId == tenantMemberGuid &&
+                                                                                 c.IsDeleted == false
                                                                            select c).FirstOrDefault();
 
 
                                                 var allTrans = (from c in obj.Transactions
                                                                 where c.SenderId == TenantMemberDetails.MemberId &&
-                                                                     (c.RecipientId == landlordObj.MemberId || c.RecipientId == landlordObj.LandlordId)
+                                                                      c.RecipientId == landlordObj.MemberId
                                                                 select c).ToList();
 
+                                                Logger.Info("3. - THERE ARE [" + allTrans.Count + "] TRANSACTIONS where SenderId = [" + TenantMemberDetails.MemberId + "], RecipientId = [" + landlordObj.MemberId + "]");
 
                                                 foreach (Transaction t in allTrans)
                                                 {
@@ -555,7 +566,7 @@ namespace LanLordlAPIs.Controllers
                                             }
                                             catch (Exception ex)
                                             {
-                                                Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Innter) - [LandlordID: " + landlord.LandlordId + "], [Exception: " + ex.InnerException + " ]");
+                                                Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: " + landlord.LandlordId + "], [Exception: " + ex.Message + " ]");
                                             }
                                         }
                                         #endregion Loop Through UnitsOccupiedByTenants
