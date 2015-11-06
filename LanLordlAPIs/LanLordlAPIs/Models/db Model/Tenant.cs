@@ -36,5 +36,6 @@ namespace LanLordlAPIs.Models.db_Model
         public string UserPic { get; set; }
         public Nullable<bool> IsIdDocumentVerified { get; set; }
         public Nullable<bool> IsAnyRentPaid { get; set; }
+        public Nullable<bool> IsAutopayOn { get; set; }
     }
 }

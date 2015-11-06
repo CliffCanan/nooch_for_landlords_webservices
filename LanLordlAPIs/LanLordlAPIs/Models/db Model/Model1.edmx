@@ -343,6 +343,7 @@
           <Property Name="UserPic" Type="varchar(max)" />
           <Property Name="IsIdDocumentVerified" Type="bit" />
           <Property Name="IsAnyRentPaid" Type="bit" />
+          <Property Name="IsAutopayOn" Type="bit" />
         </EntityType>
         <EntityType Name="TenantsIdDocuments">
           <Key>
@@ -709,6 +710,7 @@
           <Property Name="UserPic" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="IsIdDocumentVerified" Type="Boolean" />
           <Property Name="IsAnyRentPaid" Type="Boolean" />
+          <Property Name="IsAutopayOn" Type="Boolean" />
         </EntityType>
         <EntityContainer Name="NOOCHEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="GeoLocations" EntityType="Self.GeoLocation" />
@@ -1320,6 +1322,7 @@
           <EntitySetMapping Name="Tenants">
             <EntityTypeMapping TypeName="NOOCHModel.Tenant">
               <MappingFragment StoreEntitySet="Tenants">
+                <ScalarProperty Name="IsAutopayOn" ColumnName="IsAutopayOn" />
                 <ScalarProperty Name="IsAnyRentPaid" ColumnName="IsAnyRentPaid" />
                 <ScalarProperty Name="IsIdDocumentVerified" ColumnName="IsIdDocumentVerified" />
                 <ScalarProperty Name="TenantId" ColumnName="TenantId" />
