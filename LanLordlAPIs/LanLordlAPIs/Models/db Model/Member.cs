@@ -21,6 +21,8 @@ namespace LanLordlAPIs.Models.db_Model
             this.PasswordResetRequests = new HashSet<PasswordResetRequest>();
             this.Transactions = new HashSet<Transaction>();
             this.Transactions1 = new HashSet<Transaction>();
+            this.AutoPayTransactions = new HashSet<AutoPayTransaction>();
+            this.AutoPayTransactions1 = new HashSet<AutoPayTransaction>();
         }
     
         public System.Guid MemberId { get; set; }
@@ -91,5 +93,7 @@ namespace LanLordlAPIs.Models.db_Model
         public virtual ICollection<PasswordResetRequest> PasswordResetRequests { get; set; }
         public virtual ICollection<Transaction> Transactions { get; set; }
         public virtual ICollection<Transaction> Transactions1 { get; set; }
+        public virtual ICollection<AutoPayTransaction> AutoPayTransactions { get; set; }
+        public virtual ICollection<AutoPayTransaction> AutoPayTransactions1 { get; set; }
     }
 }

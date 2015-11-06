@@ -131,6 +131,7 @@
     <Property Name="UserPic" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
     <Property Name="IsIdDocumentVerified" Type="Boolean" />
     <Property Name="IsAnyRentPaid" Type="Boolean" />
+    <Property Name="IsAutopayOn" Type="Boolean" />
   </EntityType>
   <EntityContainer Name="NOOCHEntities" annotation:LazyLoadingEnabled="true">
     <EntitySet Name="GeoLocations" EntityType="Self.GeoLocation" />
@@ -224,6 +225,27 @@
       <Parameter Name="vPropertyId" Mode="In" Type="String" />
     </FunctionImport>
     <EntitySet Name="SynapseCreateUserResults" EntityType="NOOCHModel.SynapseCreateUserResult" />
+    <EntitySet Name="AutoPayTransactions" EntityType="NOOCHModel.AutoPayTransaction" />
+    <AssociationSet Name="FK_AutoPayTransactions_Members" Association="NOOCHModel.FK_AutoPayTransactions_Members">
+      <End Role="Member" EntitySet="Members" />
+      <End Role="AutoPayTransaction" EntitySet="AutoPayTransactions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AutoPayTransactions_Members1" Association="NOOCHModel.FK_AutoPayTransactions_Members1">
+      <End Role="Member" EntitySet="Members" />
+      <End Role="AutoPayTransaction" EntitySet="AutoPayTransactions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AutoPayTransactions_Properties" Association="NOOCHModel.FK_AutoPayTransactions_Properties">
+      <End Role="Property" EntitySet="Properties" />
+      <End Role="AutoPayTransaction" EntitySet="AutoPayTransactions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AutoPayTransactions_PropertyUnits" Association="NOOCHModel.FK_AutoPayTransactions_PropertyUnits">
+      <End Role="PropertyUnit" EntitySet="PropertyUnits" />
+      <End Role="AutoPayTransaction" EntitySet="AutoPayTransactions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_AutoPayTransactions_UnitsOccupiedByTenants" Association="NOOCHModel.FK_AutoPayTransactions_UnitsOccupiedByTenants">
+      <End Role="UnitsOccupiedByTenant" EntitySet="UnitsOccupiedByTenants" />
+      <End Role="AutoPayTransaction" EntitySet="AutoPayTransactions" />
+    </AssociationSet>
   </EntityContainer>
   <EntityType Name="TenantsIdDocument">
     <Key>
@@ -327,6 +349,7 @@
     <Property Name="IsSingleUnit" Type="Boolean" />
     <Property Name="IsDeleted" Type="Boolean" />
     <Property Name="DefaulBank" Type="Int32" />
+    <NavigationProperty Name="AutoPayTransactions" Relationship="NOOCHModel.FK_AutoPayTransactions_Properties" FromRole="Property" ToRole="AutoPayTransaction" />
   </EntityType>
   <EntityType Name="Member">
     <Key>
@@ -399,6 +422,8 @@
     <NavigationProperty Name="PasswordResetRequests" Relationship="NOOCHModel.FK_PasswordResetRequests_Members" FromRole="Member" ToRole="PasswordResetRequest" />
     <NavigationProperty Name="Transactions" Relationship="NOOCHModel.FK_Transactions_Members2" FromRole="Member" ToRole="Transaction" />
     <NavigationProperty Name="Transactions1" Relationship="NOOCHModel.FK_Transactions_Members3" FromRole="Member" ToRole="Transaction" />
+    <NavigationProperty Name="AutoPayTransactions" Relationship="NOOCHModel.FK_AutoPayTransactions_Members" FromRole="Member" ToRole="AutoPayTransaction" />
+    <NavigationProperty Name="AutoPayTransactions1" Relationship="NOOCHModel.FK_AutoPayTransactions_Members1" FromRole="Member" ToRole="AutoPayTransaction" />
   </EntityType>
   <EntityType Name="SynapseBanksOfMember">
     <Key>
@@ -569,6 +594,7 @@
     <Property Name="UnitNickName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
     <Property Name="RentStartDate" Type="DateTime" Precision="3" />
     <Property Name="LeaseLength" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="AutoPayTransactions" Relationship="NOOCHModel.FK_AutoPayTransactions_PropertyUnits" FromRole="PropertyUnit" ToRole="AutoPayTransaction" />
   </EntityType>
   <EntityType Name="UnitsOccupiedByTenant">
     <Key>
@@ -583,6 +609,7 @@
     <Property Name="LastPaymentDate" Type="DateTime" Precision="3" />
     <Property Name="LastPaymentAmount" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
     <Property Name="IsPaymentDueForThisMonth" Type="Boolean" />
+    <NavigationProperty Name="AutoPayTransactions" Relationship="NOOCHModel.FK_AutoPayTransactions_UnitsOccupiedByTenants" FromRole="UnitsOccupiedByTenant" ToRole="AutoPayTransaction" />
   </EntityType>
   <ComplexType Name="GetTenantsInGivenPropertyId_Result2">
     <Property Type="Guid" Name="TenantId" Nullable="false" />
@@ -627,4 +654,85 @@
     <Property Name="Phone_number" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
     <Property Name="photos" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
   </EntityType>
+  <EntityType Name="AutoPayTransaction">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="SenderId" Type="Guid" />
+    <Property Name="RecepientId" Type="Guid" />
+    <Property Name="UnitId" Type="Guid" />
+    <Property Name="PropertyId" Type="Guid" />
+    <Property Name="UOBTId" Type="Int32" />
+    <Property Name="Memo" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="StartDate" Type="DateTime" Precision="3" />
+    <Property Name="EndDate" Type="DateTime" Precision="3" />
+    <Property Name="Frequency" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="IsAllCancelledByLandlord" Type="Boolean" />
+    <NavigationProperty Name="Member" Relationship="NOOCHModel.FK_AutoPayTransactions_Members" FromRole="AutoPayTransaction" ToRole="Member" />
+    <NavigationProperty Name="Member1" Relationship="NOOCHModel.FK_AutoPayTransactions_Members1" FromRole="AutoPayTransaction" ToRole="Member" />
+    <NavigationProperty Name="Property" Relationship="NOOCHModel.FK_AutoPayTransactions_Properties" FromRole="AutoPayTransaction" ToRole="Property" />
+    <NavigationProperty Name="PropertyUnit" Relationship="NOOCHModel.FK_AutoPayTransactions_PropertyUnits" FromRole="AutoPayTransaction" ToRole="PropertyUnit" />
+    <NavigationProperty Name="UnitsOccupiedByTenant" Relationship="NOOCHModel.FK_AutoPayTransactions_UnitsOccupiedByTenants" FromRole="AutoPayTransaction" ToRole="UnitsOccupiedByTenant" />
+  </EntityType>
+  <Association Name="FK_AutoPayTransactions_Members">
+    <End Type="NOOCHModel.Member" Role="Member" Multiplicity="0..1" />
+    <End Type="NOOCHModel.AutoPayTransaction" Role="AutoPayTransaction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Member">
+        <PropertyRef Name="MemberId" />
+      </Principal>
+      <Dependent Role="AutoPayTransaction">
+        <PropertyRef Name="SenderId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AutoPayTransactions_Members1">
+    <End Type="NOOCHModel.Member" Role="Member" Multiplicity="0..1" />
+    <End Type="NOOCHModel.AutoPayTransaction" Role="AutoPayTransaction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Member">
+        <PropertyRef Name="MemberId" />
+      </Principal>
+      <Dependent Role="AutoPayTransaction">
+        <PropertyRef Name="RecepientId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AutoPayTransactions_Properties">
+    <End Type="NOOCHModel.Property" Role="Property" Multiplicity="0..1" />
+    <End Type="NOOCHModel.AutoPayTransaction" Role="AutoPayTransaction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Property">
+        <PropertyRef Name="PropertyId" />
+      </Principal>
+      <Dependent Role="AutoPayTransaction">
+        <PropertyRef Name="PropertyId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AutoPayTransactions_PropertyUnits">
+    <End Type="NOOCHModel.PropertyUnit" Role="PropertyUnit" Multiplicity="0..1" />
+    <End Type="NOOCHModel.AutoPayTransaction" Role="AutoPayTransaction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PropertyUnit">
+        <PropertyRef Name="UnitId" />
+      </Principal>
+      <Dependent Role="AutoPayTransaction">
+        <PropertyRef Name="UnitId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_AutoPayTransactions_UnitsOccupiedByTenants">
+    <End Type="NOOCHModel.UnitsOccupiedByTenant" Role="UnitsOccupiedByTenant" Multiplicity="0..1" />
+    <End Type="NOOCHModel.AutoPayTransaction" Role="AutoPayTransaction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="UnitsOccupiedByTenant">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="AutoPayTransaction">
+        <PropertyRef Name="UOBTId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
 </Schema>

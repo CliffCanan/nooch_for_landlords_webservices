@@ -110,6 +110,7 @@
     <EntitySetMapping Name="Tenants">
       <EntityTypeMapping TypeName="NOOCHModel.Tenant">
         <MappingFragment StoreEntitySet="Tenants">
+          <ScalarProperty Name="IsAutopayOn" ColumnName="IsAutopayOn" />
           <ScalarProperty Name="IsAnyRentPaid" ColumnName="IsAnyRentPaid" />
           <ScalarProperty Name="IsIdDocumentVerified" ColumnName="IsIdDocumentVerified" />
           <ScalarProperty Name="TenantId" ColumnName="TenantId" />
@@ -452,6 +453,23 @@
           <ScalarProperty Name="access_token" ColumnName="access_token" />
           <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
           <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="AutoPayTransactions">
+      <EntityTypeMapping TypeName="NOOCHModel.AutoPayTransaction">
+        <MappingFragment StoreEntitySet="AutoPayTransactions">
+          <ScalarProperty Name="IsAllCancelledByLandlord" ColumnName="IsAllCancelledByLandlord" />
+          <ScalarProperty Name="Frequency" ColumnName="Frequency" />
+          <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+          <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+          <ScalarProperty Name="Memo" ColumnName="Memo" />
+          <ScalarProperty Name="UOBTId" ColumnName="UOBTId" />
+          <ScalarProperty Name="PropertyId" ColumnName="PropertyId" />
+          <ScalarProperty Name="UnitId" ColumnName="UnitId" />
+          <ScalarProperty Name="RecepientId" ColumnName="RecepientId" />
+          <ScalarProperty Name="SenderId" ColumnName="SenderId" />
           <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>
       </EntityTypeMapping>

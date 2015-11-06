@@ -14,6 +14,11 @@ namespace LanLordlAPIs.Models.db_Model
     
     public partial class UnitsOccupiedByTenant
     {
+        public UnitsOccupiedByTenant()
+        {
+            this.AutoPayTransactions = new HashSet<AutoPayTransaction>();
+        }
+    
         public int Id { get; set; }
         public Nullable<System.Guid> UnitId { get; set; }
         public Nullable<System.Guid> TenantId { get; set; }
@@ -23,5 +28,7 @@ namespace LanLordlAPIs.Models.db_Model
         public Nullable<System.DateTime> LastPaymentDate { get; set; }
         public string LastPaymentAmount { get; set; }
         public Nullable<bool> IsPaymentDueForThisMonth { get; set; }
+    
+        public virtual ICollection<AutoPayTransaction> AutoPayTransactions { get; set; }
     }
 }
