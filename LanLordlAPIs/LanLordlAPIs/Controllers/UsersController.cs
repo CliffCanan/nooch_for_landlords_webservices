@@ -205,7 +205,7 @@ namespace LanLordlAPIs.Controllers
 
                                     try
                                     {
-                                        CommonHelper.SendEmail(Constants.TEMPLATE_REGISTRATION, fromAddress,
+                                        CommonHelper.SendEmail(Constants.TEMPLATE_REGISTRATION, fromAddress, null,
                                                 llDetails.eMail.Trim(), "Confirm your email on Nooch", tokens, null, "NewLandlord@nooch.com");
 
                                         Logger.Info("UserController -> RegisterLandlord - Registration email sent to [" + llDetails.eMail.Trim() + "] successfully.");
@@ -1587,6 +1587,10 @@ namespace LanLordlAPIs.Controllers
         [ActionName("SendEmailsToTenants")]
         public CreatePropertyResultOutput SendEmailsToTenants(SendEmailsToTenantsInputClass User)
         {
+            // CLIFF (11/5/15): STUFF TO ADD FOR THIS METHOD:
+            // • Let landlord write an optional subject line (add 1 string value to the SendEmailsToTenantsInputClass)
+            // • Let Landlord BCC themsef (add checkmark to the interface, boolean to SendEmailsToTenantsInputClass)
+
             Logger.Info("UsersController -> SendEmailsToTenants Initiated - [LandlordID: " + User.DeviceInfo.LandlorId + "], [TenantID To Send To: " + User.EmailInfo.TenantIdToBeMessaged + "]");
 
             CreatePropertyResultOutput result = new CreatePropertyResultOutput();
@@ -1614,6 +1618,8 @@ namespace LanLordlAPIs.Controllers
                             string landlordFullName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.FirstName)) + " " +
                                                       CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.LastName));
 
+                            string bccEmail = User.EmailInfo.shouldBccLandlord == true ? fromAddress : null;
+
                             // Now check if the email is going to just ONE tenant, or ALL of a Property's tenants
 
                             if (User.EmailInfo.IsForAllOrOne == "One")
@@ -1637,8 +1643,8 @@ namespace LanLordlAPIs.Controllers
 
                                             string bodytext = User.EmailInfo.MessageToBeSent;
 
-                                            CommonHelper.SendEmail(null, fromAddress, toAddress,
-                                                "New message from " + landlordFullName, null, bodytext, null);
+                                            CommonHelper.SendEmail(null, fromAddress, landlordFullName, toAddress,
+                                                "New message from " + landlordFullName, null, bodytext, bccEmail);
 
                                             result.IsSuccess = true;
                                             result.ErrorMessage = "Message sent successfully";
@@ -1673,15 +1679,13 @@ namespace LanLordlAPIs.Controllers
 
                                     if (allTenantsOfLl.Count > 0)
                                     {
-                                        string emailtobesentfrom = CommonHelper.GetDecryptedData(landlordObj.eMail);
-
                                         foreach (GetTenantsInGivenPropertyId_Result2 ten in allTenantsOfLl)
                                         {
                                             string emailtobesentto = CommonHelper.GetDecryptedData(ten.TenantEmail);
                                             string bodytext = User.EmailInfo.MessageToBeSent;
 
-                                            CommonHelper.SendEmail(null, emailtobesentfrom, emailtobesentto,
-                                                "New message from " + landlordFullName, null, bodytext, null);
+                                            CommonHelper.SendEmail(null, fromAddress, landlordFullName, emailtobesentto,
+                                                "New message from " + landlordFullName, null, bodytext, bccEmail);
                                         }
 
                                         result.IsSuccess = true;

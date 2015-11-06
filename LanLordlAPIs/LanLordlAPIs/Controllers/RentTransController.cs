@@ -56,7 +56,7 @@ namespace LanLordlAPIs.Controllers
                 var requester = CommonHelper.GetMemberByMemberId(landlordsMemID);
                 var requesterLandlordObj = CommonHelper.GetLandlordByLandlordId(Landlord_GUID); // Only need this for the Photo for the email template... Members table doesn't have it.
                 var requestRecipient = CommonHelper.GetMemberByMemberId(Tenant_GUID);
-                
+
 
                 if (requester == null)
                 {
@@ -194,12 +194,14 @@ namespace LanLordlAPIs.Controllers
 
                 string fromAddress = CommonHelper.GetValueFromConfig("transfersMail");
 
-                string RequesterFirstName = !String.IsNullOrEmpty(requester.FirstName) 
+                string RequesterFirstName = !String.IsNullOrEmpty(requester.FirstName)
                                             ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requester.FirstName)))
                                             : "";
                 string RequesterLastName = !String.IsNullOrEmpty(requester.LastName)
                                            ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requester.LastName)))
                                            : "";
+                string RequesterEmail = CommonHelper.GetDecryptedData(requester.UserName);
+
                 string RequestReceiverFirstName = !String.IsNullOrEmpty(requestRecipient.FirstName)
                                                   ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requestRecipient.FirstName)))
                                                   : "";
@@ -212,7 +214,7 @@ namespace LanLordlAPIs.Controllers
 
                 Logger.Info("RequesterFirstName: [" + RequesterFirstName + "], RequesterLastName: [" + RequesterLastName + "], RequestReceiverFirstName: [" + RequestReceiverFirstName +
                             "], RequestReceiverLastName: [" + RequestReceiverLastName + "], RequestReceiverFullName: [" + RequestReceiverFullName + "]");
-                
+
                 string requesterPic = "https://www.noochme.com/noochweb/Assets/Images/userpic-default.png";
                 if (!String.IsNullOrEmpty(requesterLandlordObj.UserPic) && requesterLandlordObj.UserPic.Length > 20)
                 {
@@ -256,7 +258,6 @@ namespace LanLordlAPIs.Controllers
 
                 // Send email to REQUESTER (person who sent this request)
                 #region Email To Requester
-                string toAddress = CommonHelper.GetDecryptedData(requester.UserName);
 
                 try
                 {
@@ -271,17 +272,17 @@ namespace LanLordlAPIs.Controllers
 												 };
 
                     Logger.Info("memo: [" + memo + "], wholeAmount: [" + wholeAmount + "], cancelLink: [" + cancelLink +
-                            "], toAddress: [" + toAddress + "], fromAddress: [" + fromAddress + "]");
+                            "], toAddress: [" + RequesterEmail + "], fromAddress: [" + fromAddress + "]");
 
-                    CommonHelper.SendEmail("requestSent", fromAddress, toAddress,
+                    CommonHelper.SendEmail("requestSent", fromAddress, null, RequesterEmail,
                         "Your payment request to " + RequestReceiverFullName +
                         " is pending", tokens, null, null);
 
-                    Logger.Info("Landlords API -> RentTrans -> ChargeTenant -> RequestSent email sent to [" + toAddress + "] successfully.");
+                    Logger.Info("Landlords API -> RentTrans -> ChargeTenant -> RequestSent email sent to [" + RequesterEmail + "] successfully.");
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant -> RequestSent email NOT sent to [" + toAddress +
+                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant -> RequestSent email NOT sent to [" + RequesterEmail +
                                            "], [Exception: " + ex + "]");
                 }
 
@@ -311,11 +312,11 @@ namespace LanLordlAPIs.Controllers
                     {Constants.PLACEHOLDER_FRIEND_FIRST_NAME, RequesterFirstName}
                 };
 
-                toAddress = CommonHelper.GetDecryptedData(requestRecipient.UserName);
+                string toAddress = CommonHelper.GetDecryptedData(requestRecipient.UserName);
 
                 try
                 {
-                    CommonHelper.SendEmail("requestReceivedToExistingNonRegUser", fromAddress, toAddress,
+                    CommonHelper.SendEmail("requestReceivedToExistingNonRegUser", fromAddress, RequesterFirstName + " " + RequesterLastName, toAddress,
                     RequesterFirstName + " " + RequesterLastName + " requested " + "$" + wholeAmount.ToString() + " with Nooch", tokens2, null, null);
 
                     Logger.Info("RentTrans -> ChargeTenant ->  requestReceivedToNewUser email sent to [" + toAddress + "] successfully");
@@ -485,12 +486,12 @@ namespace LanLordlAPIs.Controllers
                                 {
                                     // Get all property UNITS in each property
                                     var allUnitsInProp = (from c in obj.PropertyUnits
-                                                          where c.PropertyId == p.PropertyId && 
+                                                          where c.PropertyId == p.PropertyId &&
                                                                 c.IsDeleted == false &&
                                                                 c.IsOccupied == true
                                                           select c).ToList();
 
-                                    Logger.Info("1. - THERE ARE [" + allUnitsInProp.Count + "] UNITS in this Property: [" + p.PropName + "]");
+                                    //Logger.Info("1. - THERE ARE [" + allUnitsInProp.Count + "] UNITS in this Property: [" + p.PropName + "]");
 
                                     // Iterating through each occupied unit
                                     foreach (PropertyUnit pu in allUnitsInProp)
@@ -499,7 +500,7 @@ namespace LanLordlAPIs.Controllers
                                                                 where c.UnitId == pu.UnitId && c.IsDeleted == false
                                                                 select c).ToList();
 
-                                        Logger.Info("2. - THERE ARE [" + allOccupiedUnits.Count + "] UOBT for Unit Num: [" + pu.UnitNumber + "]");
+                                        //Logger.Info("2. - THERE ARE [" + allOccupiedUnits.Count + "] UOBT for Unit Num: [" + pu.UnitNumber + "]");
 
                                         #region Loop Through UnitsOccupiedByTenants
 
@@ -514,7 +515,7 @@ namespace LanLordlAPIs.Controllers
                                                                      where c.TenantId == uobt.TenantId
                                                                      select c).FirstOrDefault();*/
 
-                                                Logger.Info("3. - UOBT.TenantId is: [" + uobt.TenantId + "]");
+                                                //Logger.Info("3. - UOBT.TenantId is: [" + uobt.TenantId + "]");
 
                                                 Guid tenantMemberGuid = new Guid(CommonHelper.GetTenantsMemberIdFromTenantId(uobt.TenantId.ToString()));
 
@@ -557,7 +558,7 @@ namespace LanLordlAPIs.Controllers
                                                     phc.TenantStatus = TenantMemberDetails.Status;
                                                     phc.TenantName = !String.IsNullOrEmpty(TenantMemberDetails.FirstName)
                                                                  ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(TenantMemberDetails.FirstName)) + " " +
-                                                                   CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(TenantMemberDetails.LastName)) 
+                                                                   CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(TenantMemberDetails.LastName))
                                                                  : "";
                                                     phc.TenantEmail = !String.IsNullOrEmpty(TenantMemberDetails.UserName) ? CommonHelper.GetDecryptedData(TenantMemberDetails.UserName) : null;
 
@@ -785,7 +786,5 @@ namespace LanLordlAPIs.Controllers
             }
         }
     */
-
-
     }
 }

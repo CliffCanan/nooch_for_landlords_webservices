@@ -252,9 +252,11 @@ namespace LanLordlAPIs.Controllers
                                     AddNewTenantInput inviteTenantInputs = new AddNewTenantInput
                                     {
                                         authData = authInfo,
-                                        rent = unitInput.Unit.Rent,
                                         propertyId = unitInput.PropertyId,
                                         unitId = pu.UnitId.ToString(),
+                                        rent = unitInput.Unit.Rent,
+                                        startDate = unitInput.Unit.RentStartDate,
+                                        leaseLength = unitInput.Unit.LeaseLength,
                                         tenant = ti
                                     };
 
@@ -419,10 +421,12 @@ namespace LanLordlAPIs.Controllers
                                     AddNewTenantInput inviteTenantInputs = new AddNewTenantInput
                                     {
                                         authData = authInfo,
+                                        propertyId = unitObj.PropertyId.ToString(),
+                                        unitId = unitObj.UnitId.ToString(),
                                         rent = unitInput.Unit.Rent,
-                                        propertyId = unitInput.PropertyId,
-                                        unitId = unitInput.Unit.UnitId,
-                                        tenant = ti
+                                        startDate = unitInput.Unit.RentStartDate,
+                                        leaseLength = unitInput.Unit.LeaseLength,
+                                        tenant = ti,
                                     };
 
                                     InviteTenant(inviteTenantInputs);
@@ -920,8 +924,6 @@ namespace LanLordlAPIs.Controllers
                     Guid unitGuid = new Guid(input.unitId);
                     Guid propGuid = new Guid(input.propertyId);
 
-                    PropertyUnit unitObj = new PropertyUnit();
-
                     string firstName = input.tenant.firstName;
                     string lastName = input.tenant.lastName;
                     string email = input.tenant.email;
@@ -940,281 +942,285 @@ namespace LanLordlAPIs.Controllers
 
                         if (landlordObj != null)
                         {
-                            // Check if regular Nooch member (non-Landlord) exists with given email id
-                            CheckAndRegisterMemberByEmailResult mem = CommonHelper.CheckIfMemberExistsWithGivenEmailId(input.tenant.email);
+                            // Get Unit Object from DB
+                            PropertyUnit unitObj = (from c in obj.PropertyUnits
+                                                    where c.UnitId == unitGuid
+                                                    select c).FirstOrDefault();
 
-                            #region Create New Member & Tenant Records
-
-                            if (mem.IsSuccess && mem.ErrorMessage == "No user found.")
+                            if (unitObj != null)
                             {
-                                Logger.Info("PropertiesController -> InviteTenant - About to create a New MEMBER Record - [MemberID: " + memberId.ToString() + "]");
+                                // Check if regular Nooch member (non-Landlord) exists with given email id
+                                CheckAndRegisterMemberByEmailResult mem = CommonHelper.CheckIfMemberExistsWithGivenEmailId(input.tenant.email);
 
-                                // Create New Member Record
-                                CommonHelper.AddNewMemberRecordInDB(memberId, firstName, lastName, email);
+                                CheckIfTenantExistsResult ten = CommonHelper.CheckIfTenantExistsWithGivenEmailId(input.tenant.email);
 
-                                Logger.Info("PropertiesController -> InviteTenant - About to create a New TENANT Record - [MemberID: " + tenantGuid.ToString() + "]");
-                                // Create New Tenant Record
-                                CommonHelper.AddNewTenantRecordInDB(tenantGuid, firstName, lastName, email, false, null, null, null, null, null, null, null, false, memberId);
-                            }
-                            else // Member with that email already exists
-                            {
-                                Logger.Info("PropertiesController -> InviteTenant - Member already exists, so just creating a new TENANT Record - [MemberID: " + mem.MemberDetails.MemberId.ToString() + "]");
+                                #region Create New Member & Tenant Records
 
-                                //tenantGuid = mem.MemberDetails.MemberId;
-                                firstName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(mem.MemberDetails.FirstName));
-                                lastName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(mem.MemberDetails.LastName));
-                                email = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(mem.MemberDetails.UserName));
-                                bool isEmVer = (mem.MemberDetails.Status == "Active" || mem.MemberDetails.Status == "NonRegistered") ? true : false;
-                                DateTime? dob = mem.MemberDetails.DateOfBirth;
-                                string ssn = !String.IsNullOrEmpty(mem.MemberDetails.SSN) ? CommonHelper.GetDecryptedData(mem.MemberDetails.SSN) : null;
-                                string address = !String.IsNullOrEmpty(mem.MemberDetails.Address) ? CommonHelper.GetDecryptedData(mem.MemberDetails.Address) : null;
-                                string city = !String.IsNullOrEmpty(mem.MemberDetails.City) ? CommonHelper.GetDecryptedData(mem.MemberDetails.City) : null;
-                                string state = !String.IsNullOrEmpty(mem.MemberDetails.Status) ? CommonHelper.GetDecryptedData(mem.MemberDetails.Status) : null;
-                                string zip = !String.IsNullOrEmpty(mem.MemberDetails.Zipcode) ? CommonHelper.GetDecryptedData(mem.MemberDetails.Zipcode) : null;
-                                string phone = mem.MemberDetails.ContactNumber;
-                                bool isPhVer = mem.MemberDetails.IsVerifiedPhone == true ? true : false;
-
-                                // Create New Tenant Record
-                                CommonHelper.AddNewTenantRecordInDB(tenantGuid, firstName, lastName, email, isEmVer, dob, ssn, address, city, state, zip, phone, isPhVer, mem.MemberDetails.MemberId);
-                            }
-
-                            #endregion Create New Member & Tenant Records
-
-
-                            #region Create New 'UnitsOccupiedByTenant' Record
-
-                            UnitsOccupiedByTenant uobt = new UnitsOccupiedByTenant();
-                            uobt.TenantId = tenantGuid; // NOTE: 'TenantId' = 'MemberId'
-                            uobt.UnitId = unitGuid;
-                            uobt.IsDeleted = false;
-
-                            //this needs to be shifted in property units table
-                            //if (!String.IsNullOrEmpty(input.leaseLength))
-                            //{
-                            //    uobt.AgreementLength = input.leaseLength;
-                            //}
-                            //if (!String.IsNullOrEmpty(input.startDate))
-                            //{
-                            //    uobt.RentStartFrom = input.startDate;
-                            //}
-
-                            obj.UnitsOccupiedByTenants.Add(uobt);
-
-                            #endregion Create New 'UnitsOccupiedByTenant' Record
-
-
-                            #region Update Unit Record in PropertyUnits Table
-
-                            try
-                            {
-                                Logger.Info("PropertiesController -> InviteTenant - About to update Property UNITS table - [UnitID: " + unitGuid + "]");
-
-                                // NOTE: The "PropertyUnits" table and "UnitsOccupiedByTenant" table aren't organized in the best way...
-                                //       The Start Date, Lease Term ("AgreementLength" in UOBT) should be in UNITS table and are not.
-                                //       UOBT table should have a status field and a Property ID (aleady has UnitID)
-                                unitObj = (from c in obj.PropertyUnits
-                                           where c.UnitId == unitGuid// && c.IsDeleted == false
-                                           select c).FirstOrDefault();
-
-                                if (unitObj != null)
+                                if (mem.IsSuccess &&
+                                    mem.ErrorMessage == "No user found." &&
+                                    ten.ErrorMessage == "No tenant found")
                                 {
+                                    // Create New Member Record
+                                    Logger.Info("PropertiesController -> InviteTenant - About to create a New MEMBER Record - [MemberID (just created): " + memberId.ToString() + "]");
+                                    CommonHelper.AddNewMemberRecordInDB(memberId, firstName, lastName, email);
+
+                                    // Create New Tenant Record
+                                    Logger.Info("PropertiesController -> InviteTenant - About to create a New TENANT Record - [TenantID (just created): " + tenantGuid.ToString() + "]");
+                                    CommonHelper.AddNewTenantRecordInDB(tenantGuid, firstName, lastName, email, false, null, null, null, null, null, null, null, false, memberId);
+                                }
+                                else if (ten.ErrorMessage == "No tenant found") // Member with that email already exists
+                                {
+                                    Logger.Info("PropertiesController -> InviteTenant - Member already exists, so just creating a new TENANT Record - [MemberID: " + mem.MemberDetails.MemberId.ToString() + "],  - [TenantID (Just created): " + tenantGuid.ToString() + "]");
+
+                                    firstName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(mem.MemberDetails.FirstName));
+                                    lastName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(mem.MemberDetails.LastName));
+                                    email = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(mem.MemberDetails.UserName));
+                                    bool isEmVer = (mem.MemberDetails.Status == "Active" || mem.MemberDetails.Status == "NonRegistered") ? true : false;
+                                    DateTime? dob = mem.MemberDetails.DateOfBirth;
+                                    string ssn = !String.IsNullOrEmpty(mem.MemberDetails.SSN) ? CommonHelper.GetDecryptedData(mem.MemberDetails.SSN) : null;
+                                    string address = !String.IsNullOrEmpty(mem.MemberDetails.Address) ? CommonHelper.GetDecryptedData(mem.MemberDetails.Address) : null;
+                                    string city = !String.IsNullOrEmpty(mem.MemberDetails.City) ? CommonHelper.GetDecryptedData(mem.MemberDetails.City) : null;
+                                    string state = !String.IsNullOrEmpty(mem.MemberDetails.Status) ? CommonHelper.GetDecryptedData(mem.MemberDetails.Status) : null;
+                                    string zip = !String.IsNullOrEmpty(mem.MemberDetails.Zipcode) ? CommonHelper.GetDecryptedData(mem.MemberDetails.Zipcode) : null;
+                                    string phone = mem.MemberDetails.ContactNumber;
+                                    bool isPhVer = mem.MemberDetails.IsVerifiedPhone == true ? true : false;
+
+                                    // Create New Tenant Record
+                                    CommonHelper.AddNewTenantRecordInDB(tenantGuid, firstName, lastName, email, isEmVer, dob, ssn, address, city, state, zip, phone, isPhVer, mem.MemberDetails.MemberId);
+                                }
+                                else if (ten.IsSuccess == false &&
+                                         ten.TenantDetails.TenantId != null)
+                                {
+                                    // Unlikely to ever get here. Only would if a Landlord tries to invite a Tenant that somehow
+                                    // does NOT have a Member record, but does have a Tenant record, which shouldn't be possible.
+                                    tenantGuid = ten.TenantDetails.TenantId;
+                                    Logger.Info("PropertiesController -> InviteTenant - Tenant already exists - [Email: " + input.tenant.email +
+                                                "], [TenantID: " + ten.TenantDetails.TenantId.ToString() + "]");
+                                }
+
+                                #endregion Create New Member & Tenant Records
+
+
+                                #region Create New 'UnitsOccupiedByTenant' Record
+
+                                UnitsOccupiedByTenant uobt = new UnitsOccupiedByTenant();
+                                uobt.TenantId = tenantGuid; // NOTE: 'TenantId' = 'MemberId'
+                                uobt.UnitId = unitGuid;
+                                uobt.IsDeleted = false;
+
+                                obj.UnitsOccupiedByTenants.Add(uobt);
+
+                                #endregion Create New 'UnitsOccupiedByTenant' Record
+
+
+                                #region Update Unit Record in PropertyUnits Table
+
+                                try
+                                {
+                                    Logger.Info("PropertiesController -> InviteTenant - About to update Property UNITS table - [UnitID: " + unitGuid + "]");
+
+                                    // NOTE: The "PropertyUnits" table and "UnitsOccupiedByTenant" table aren't organized in the best way...
+                                    //       UOBT table should have a status field and a Property ID (aleady has UnitID)
                                     unitObj.IsOccupied = true;
                                     unitObj.MemberId = tenantGuid;
                                     unitObj.IsHidden = false;
                                     unitObj.ModifiedOn = DateTime.Now;
                                     unitObj.Status = "Pending Invite";
                                 }
+                                catch (Exception ex)
+                                {
+                                    Logger.Error("PropertiesController -> InviteTenant - EXCEPTION when attempting to udpate Property UNITS table - [Exception: " + ex + "]");
+                                }
+
+                                #endregion Update Unit Record in PropertyUnits Table
+
+                                int saveToDB = 0;
+
+                                saveToDB = obj.SaveChanges();
+                                if (saveToDB > 0)
+                                {
+                                    Logger.Info("PropertiesController -> InviteTenant - All DB Tables SAVED SUCCESSFULLY");
+                                    result.success = true;
+                                }
                                 else
                                 {
-                                    Logger.Error("Properties Ctrlr -> InviteTenant  ERROR - Unit was not found in PropertyUnits table");
-                                    return result;
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Logger.Error("PropertiesController -> InviteTenant - EXCEPTION when attempting to udpate Property UNITS table - [Exception: " + ex + "]");
-                            }
-
-                            #endregion Update Unit Record in PropertyUnits Table
-
-                            int saveToDB = 0;
-
-                            saveToDB = obj.SaveChanges();
-                            if (saveToDB > 0)
-                            {
-                                Logger.Info("PropertiesController -> InviteTenant - All DB Tables SAVED SUCCESSFULLY");
-                                result.success = true;
-                            }
-                            else
-                            {
-                                Logger.Error("PropertiesController -> InviteTenant - FAILED to save All DB Tables");
-                                result.msg = "Failed to save new tenant in UOBT table!";
-                            }
-
-
-                            try
-                            {
-                                #region Making Transaction Object
-
-                                Logger.Info("PropertiesController -> InviteTenant - About to Create New Transaction Object - [PropID: " + propGuid.ToString() + "]");
-
-                                // SenderId - this would be MemberId of new user who was just created in Members table.
-                                // RecepientID - this would be landlord's MemberId 
-                                Property prop = CommonHelper.GetPropertyByPropId(propGuid);
-
-                                string propName = (!String.IsNullOrEmpty(prop.PropName)) ? CommonHelper.UppercaseFirst(prop.PropName) : "";
-
-                                string unitNameToUse = "";
-
-                                if (!String.IsNullOrEmpty(unitObj.UnitNumber))
-                                {
-                                    unitNameToUse = unitObj.UnitNumber;
-                                }
-                                else if (!String.IsNullOrEmpty(unitObj.UnitNickName))
-                                {
-                                    unitNameToUse = CommonHelper.UppercaseFirst(unitObj.UnitNickName);
+                                    Logger.Error("PropertiesController -> InviteTenant - FAILED to save All DB Tables");
+                                    result.msg = "Failed to save new tenant in UOBT table!";
                                 }
 
-                                Transaction trans = new Transaction();
-
-                                #region Making entry in GeoLocations table
-
-                                // Geolocations record is required for transactions table, but not needed for Landlords... so just setting some filler values here
-                                GeoLocation gl = new GeoLocation()
-                                {
-                                    LocationId = Guid.NewGuid(),
-                                    Latitude = 23.23,
-                                    Longitude = 23.23,
-                                    Altitude = 23.23,
-                                    AddressLine1 = "",
-                                    AddressLine2 = "",
-                                    City = "",
-                                    State = "",
-                                    Country = "",
-                                    ZipCode = "",
-                                    DateCreated = DateTime.Now
-                                };
-
-                                obj.GeoLocations.Add(gl);
-                                obj.SaveChanges();
-
-                                #endregion
-
-
-                                // Making Transactions object
-                                #region Add Entry To Transactions Table
-
-                                Guid newTransId = Guid.NewGuid();
-                                Logger.Info("PropertiesController -> InviteTenant - About to Add New Transaction Object to DB - [TransactionID: " + newTransId + "]");
-
-                                trans.TransactionId = newTransId;
-                                trans.SenderId = memberId;
-                                trans.RecipientId = landlordObj.MemberId;
-                                trans.TransactionDate = DateTime.Now;
-                                trans.Amount = Convert.ToDecimal(input.rent);
-                                trans.TransactionType = CommonHelper.GetEncryptedData("Rent");
-                                trans.TransactionStatus = "Pending";
-
-                                trans.GeoLocation = gl;
-                                trans.TransactionTrackingId = CommonHelper.GetRandomTransactionTrackingId();
-                                trans.TransactionFee = 0;
-
-                                trans.IsPhoneInvitation = false;
-                                trans.InvitationSentTo = !String.IsNullOrEmpty(email) ? CommonHelper.GetEncryptedData(email) : null;
-
-                                trans.DeviceId = null;
-                                trans.DisputeStatus = null;
-                                trans.Memo = DateTime.Now.ToString("MMM") + " Rent - " + unitNameToUse + " " + propName;
-                                trans.Picture = null;
-
-                                obj.Transactions.Add(trans);
-                                obj.SaveChanges();
-
-                                #endregion Add Entry To Transactions Table
-
-
-                                #endregion Making Transaction Object
-
-                                Logger.Info("PropertiesController -> InviteTenant - New Transaction Added To DB - Now sending email to tenant");
-
-                                #region Send Email to New TENANT
-
-                                #region Setup Email Variables
-
-                                string LandlordFirstName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(landlordObj.FirstName)));
-                                string LandlordLastName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(landlordObj.LastName)));
-
-                                //string CancelRequestLinkForLandlord = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/CancelRequest.aspx?TransactionId=" + trans.TransactionId + "&MemberId=" + landlordDetailsInMembersTable.MemberId + "&UserType=U6De3haw2r4mSgweNpdgXQ==");
-
-                                string s22 = trans.Amount.ToString("n2");
-                                string[] s32 = s22.Split('.');
-
-                                string memo = trans.Memo;
-
-                                // Send email to Request Receiver - Send 'UserType', 'LinkSource', 'TransType' as encrypted
-                                // In this case UserType would = 'New'
-                                // TransType would = 'Request'
-                                // and link source would = 'Email'
-
-                                // added new parameter to identify If user is invited by Landlord IsRentTrans
-
-                                string rejectRequestLinkForTenant = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/rejectMoney.aspx?TransactionId=" + trans.TransactionId + "&UserType=U6De3haw2r4mSgweNpdgXQ==&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==&TransType=T3EMY1WWZ9IscHIj3dbcNw==&IsRentTrans=true");
-                                string paylink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/payRequest.aspx?TransactionId=" + trans.TransactionId + "&IsRentTrans=true");
-
-                                var tokens2 = new Dictionary<string, string>
-												 {
-													{Constants.PLACEHOLDER_FIRST_NAME, LandlordFirstName},
-													{Constants.PLACEHOLDER_NEWUSER,email},
-													{Constants.PLACEHOLDER_TRANSFER_AMOUNT,s32[0].ToString()},
-													{Constants.PLACEHLODER_CENTS,s32[1].ToString()},
-													{Constants.PLACEHOLDER_REJECT_LINK,rejectRequestLinkForTenant},
-													{Constants.PLACEHOLDER_SENDER_FULL_NAME,LandlordFirstName + " " + LandlordLastName},
-													{Constants.MEMO,memo},
-													{Constants.PLACEHOLDER_PAY_LINK,paylink}
-												 };
-
-                                #endregion Setup Email Variables
 
                                 try
                                 {
-                                    CommonHelper.SendEmail("requestReceivedToNewUser", "rentpayments@nooch.com", email,
-                                        "Rent Payment request from " + LandlordFirstName + " " + LandlordLastName,
-                                         tokens2, null, null);
+                                    #region Making Transaction Object
 
-                                    Logger.Info("PropertiesController -> requestReceivedToNewUser email sent to - [ " + email + " ] successfully.");
+                                    Logger.Info("PropertiesController -> InviteTenant - About to Create New Transaction Object - [PropID: " + propGuid.ToString() + "]");
 
+                                    // SenderId - this would be MemberId of new user who was just created in Members table.
+                                    // RecepientID - this would be landlord's MemberId 
+                                    Property prop = CommonHelper.GetPropertyByPropId(propGuid);
+
+                                    string propName = (!String.IsNullOrEmpty(prop.PropName)) ? CommonHelper.UppercaseFirst(prop.PropName) : "";
+
+                                    string unitNameToUse = "";
+
+                                    if (!String.IsNullOrEmpty(unitObj.UnitNumber))
+                                    {
+                                        unitNameToUse = unitObj.UnitNumber;
+                                    }
+                                    else if (!String.IsNullOrEmpty(unitObj.UnitNickName))
+                                    {
+                                        unitNameToUse = CommonHelper.UppercaseFirst(unitObj.UnitNickName);
+                                    }
+
+                                    Transaction trans = new Transaction();
+
+                                    #region Making entry in GeoLocations table
+
+                                    // Geolocations record is required for transactions table, but not needed for Landlords... so just setting some filler values here
+                                    GeoLocation gl = new GeoLocation()
+                                    {
+                                        LocationId = Guid.NewGuid(),
+                                        Latitude = 23.23,
+                                        Longitude = 23.23,
+                                        Altitude = 23.23,
+                                        AddressLine1 = "",
+                                        AddressLine2 = "",
+                                        City = "",
+                                        State = "",
+                                        Country = "",
+                                        ZipCode = "",
+                                        DateCreated = DateTime.Now
+                                    };
+
+                                    obj.GeoLocations.Add(gl);
+                                    obj.SaveChanges();
+
+                                    #endregion
+
+
+                                    // Making Transactions object
+                                    #region Add Entry To Transactions Table
+
+                                    Guid newTransId = Guid.NewGuid();
+                                    Logger.Info("PropertiesController -> InviteTenant - About to Add New Transaction Object to DB - [TransactionID: " + newTransId + "]");
+
+                                    trans.TransactionId = newTransId;
+                                    trans.SenderId = memberId;
+                                    trans.RecipientId = landlordObj.MemberId;
+                                    trans.TransactionDate = DateTime.Now;
+                                    trans.Amount = Convert.ToDecimal(input.rent);
+                                    trans.TransactionType = CommonHelper.GetEncryptedData("Rent");
+                                    trans.TransactionStatus = "Pending";
+
+                                    trans.GeoLocation = gl;
+                                    trans.TransactionTrackingId = CommonHelper.GetRandomTransactionTrackingId();
+                                    trans.TransactionFee = 0;
+
+                                    trans.IsPhoneInvitation = false;
+                                    trans.InvitationSentTo = !String.IsNullOrEmpty(email) ? CommonHelper.GetEncryptedData(email) : null;
+
+                                    trans.DeviceId = null;
+                                    trans.DisputeStatus = null;
+                                    trans.Memo = DateTime.Now.ToString("MMM") + " Rent - " + unitNameToUse + " " + propName;
+                                    trans.Picture = null;
+
+                                    obj.Transactions.Add(trans);
+                                    obj.SaveChanges();
+
+                                    #endregion Add Entry To Transactions Table
+
+
+                                    #endregion Making Transaction Object
+
+                                    Logger.Info("PropertiesController -> InviteTenant - New Transaction Added To DB - Now sending email to tenant");
+
+                                    #region Send Email to New TENANT
+
+                                    #region Setup Email Variables
+
+                                    string LandlordFirstName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(landlordObj.FirstName)));
+                                    string LandlordLastName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(landlordObj.LastName)));
+                                    string LandlordFullName = LandlordFirstName + " " + LandlordLastName;
+                                    string landlordEmail = CommonHelper.GetDecryptedData(landlordObj.eMail);
+
+                                    //string CancelRequestLinkForLandlord = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/CancelRequest.aspx?TransactionId=" + trans.TransactionId + "&MemberId=" + landlordDetailsInMembersTable.MemberId + "&UserType=U6De3haw2r4mSgweNpdgXQ==");
+
+                                    string rentAmount = trans.Amount.ToString("n2");
+                                    string[] rentAmountArray = rentAmount.Split('.');
+
+                                    string memo = trans.Memo;
+
+                                    // Send email to Request Receiver - Send 'UserType', 'LinkSource', 'TransType' as encrypted
+                                    // In this case UserType would = 'New'
+                                    // TransType would = 'Request'
+                                    // and link source would = 'Email'
+
+                                    // added new parameter to identify If user is invited by Landlord IsRentTrans
+
+                                    string rejectRequestLinkForTenant = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/rejectMoney.aspx?TransactionId=" + trans.TransactionId + "&UserType=U6De3haw2r4mSgweNpdgXQ==&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==&TransType=T3EMY1WWZ9IscHIj3dbcNw==&IsRentTrans=true");
+                                    string paylink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/payRequest.aspx?TransactionId=" + trans.TransactionId + "&IsRentTrans=true");
+
+                                    var tokens2 = new Dictionary<string, string>
+												 {
+													{Constants.PLACEHOLDER_FIRST_NAME, LandlordFirstName},
+													{Constants.PLACEHOLDER_NEWUSER, email},
+													{Constants.PLACEHOLDER_TRANSFER_AMOUNT, rentAmountArray[0].ToString()},
+													{Constants.PLACEHLODER_CENTS, rentAmountArray[1].ToString()},
+													{Constants.PLACEHOLDER_REJECT_LINK, rejectRequestLinkForTenant},
+													{Constants.PLACEHOLDER_SENDER_FULL_NAME, LandlordFirstName + " " + LandlordLastName},
+													{Constants.MEMO, memo},
+													{Constants.PLACEHOLDER_PAY_LINK, paylink}
+												 };
+
+                                    #endregion Setup Email Variables
+
+                                    try
+                                    {
+                                        CommonHelper.SendEmail("requestReceivedToNewUser", landlordEmail, LandlordFullName, email,
+                                            "Rent Payment request from " + LandlordFirstName + " " + LandlordLastName,
+                                             tokens2, null, null);
+
+                                        Logger.Info("PropertiesController -> requestReceivedToNewUser email sent to - [ " + email + " ] successfully.");
+
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Logger.Error("PropertiesController -> Invite Tenant - EXCEPTION on trying to send requestReceivedToNewUser email NOT sent to: [" + email + "]" + ", [Exception: " + ex + "]");
+                                        result.msg = "Exception on trying to send email to new tenant";
+                                    }
+
+                                    #endregion Send Email to New TENANT
+
+
+                                    //string rentAmount = input.rent;
+                                    //string landlordName = "";
+                                    //string propertyName = "";
+                                    //string unitNum = "";
+
+                                    //CommonHelper.SendEmail(Constants.TEMPLATE_REGISTRATION, CommonHelper.GetValueFromConfig("welcomeMail"),
+                                    //                            email, "NEW Tenant Created :-) $" + input.rent, null, null);
+
+                                    result.success = true;
+                                    result.msg = "Request made successfully.";
                                 }
                                 catch (Exception ex)
                                 {
-                                    Logger.Error("PropertiesController -> Invite Tenant - EXCEPTION on trying to send requestReceivedToNewUser email NOT sent to: [" + email + "]" + ", [Exception: " + ex + "]");
-                                    result.msg = "Exception on trying to send email to new tenant";
+                                    Logger.Error("PropertiesController -> InviteTenant EXCEPTION in block for sending invite to new tenant - [New Tenant Email: " +
+                                                 input.tenant.email + "], [Exception: " + ex + "]");
+                                    result.msg = "Invite Tenant Exception [1205]";
                                 }
-
-                                #endregion Send Email to New TENANT
-
-
-                                //string rentAmount = input.rent;
-                                //string landlordName = "";
-                                //string propertyName = "";
-                                //string unitNum = "";
-
-                                //CommonHelper.SendEmail(Constants.TEMPLATE_REGISTRATION, CommonHelper.GetValueFromConfig("welcomeMail"),
-                                //                            email, "NEW Tenant Created :-) $" + input.rent, null, null);
-
-                                result.success = true;
-                                result.msg = "Request made successfully.";
                             }
-                            catch (Exception ex)
+                            else
                             {
-                                Logger.Error("PropertiesController -> InviteTenant EXCEPTION in block for sending invite to new tenant - [New Tenant Email: " + input.tenant.email +
-                                             "], [Exception: " + ex + "]");
-                                result.msg = "Invite Tenant Exception [1136]";
+                                result.msg = "Unit not found!";
+                                Logger.Error("Properties Ctrlr -> InviteTenant ERROR - Unit was not found in PropertyUnits table - [UnitID: " + input.unitId + "]");
                             }
                         }
                     }
                 }
                 else
                 {
+                    Logger.Error("Properties Ctrlr -> InviteTenant ERROR - Problem with auth token! - [PropertyID: " + input.propertyId + "], [UnitID: " + input.unitId + "]");
                     result.msg = "Problem with auth token!";
                 }
             }
@@ -1734,15 +1740,15 @@ namespace LanLordlAPIs.Controllers
         public CreatePropertyResultOutput DeletePropertyUnit(SetPropertyStatusClass unitInput)
         {
             Logger.Info("Properties Controller -> DeletePropertyUnit Initiated - [Landlord ID: " +
-            unitInput.User.LandlorId + "], [Unit Id: " + unitInput.PropertyId + "]");
+                        unitInput.User.LandlorId + "], [Unit Id: " + unitInput.PropertyId + "]");
 
             CreatePropertyResultOutput result = new CreatePropertyResultOutput();
             result.IsSuccess = false;
 
             try
             {
-                Guid landlordguidId = new Guid(unitInput.User.LandlorId);
-                result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, unitInput.User.AccessToken);
+                Guid landlordGuidId = new Guid(unitInput.User.LandlorId);
+                result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordGuidId, unitInput.User.AccessToken);
 
                 if (result.AuthTokenValidation.IsTokenOk)
                 {
@@ -1779,8 +1785,9 @@ namespace LanLordlAPIs.Controllers
                                         foreach (UnitsOccupiedByTenant u in uobtObj)
                                         {
                                             u.IsDeleted = true;
-                                            obj.SaveChanges();
                                         }
+
+                                        obj.SaveChanges();
                                     }
                                 }
                                 catch (Exception ex)

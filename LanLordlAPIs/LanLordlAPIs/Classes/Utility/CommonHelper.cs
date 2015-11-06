@@ -332,9 +332,9 @@ namespace LanLordlAPIs.Classes.Utility
 
 
                     landlordObj = (from c in obj.Landlords
-                                 where c.LandlordId == landlordId &&
-                                        c.IsDeleted == false
-                                 select c).SingleOrDefault();
+                                   where c.LandlordId == landlordId &&
+                                          c.IsDeleted == false
+                                   select c).SingleOrDefault();
 
                 }
             }
@@ -1047,18 +1047,20 @@ namespace LanLordlAPIs.Classes.Utility
 
 
 
-        public static CheckAndRegisterMemberByEmailResult CheckIfMemberExistsWithGivenEmailId(string eMailId)
+        public static CheckAndRegisterMemberByEmailResult CheckIfMemberExistsWithGivenEmailId(string email)
         {
             CheckAndRegisterMemberByEmailResult result = new CheckAndRegisterMemberByEmailResult();
+            result.IsSuccess = false;
 
             try
             {
-                if (String.IsNullOrEmpty(eMailId))
+                if (String.IsNullOrEmpty(email))
                 {
-                    return null;
+                    result.ErrorMessage = "Missing email to check!";
+                    return result;
                 }
 
-                string email = eMailId.Trim().ToLower();
+                email = email.Trim().ToLower();
                 email = CommonHelper.GetEncryptedData(email);
 
                 using (NOOCHEntities obj = new NOOCHEntities())
@@ -1070,7 +1072,6 @@ namespace LanLordlAPIs.Classes.Utility
                     if (existingMemberDetails != null)
                     {
                         // user already exists
-                        result.IsSuccess = false;
                         result.ErrorMessage = "OK";
                         result.MemberDetails = existingMemberDetails;
                     }
@@ -1078,15 +1079,57 @@ namespace LanLordlAPIs.Classes.Utility
                     {
                         result.IsSuccess = true;
                         result.ErrorMessage = "No user found.";
-                        return result;
                     }
                 }
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Logger.Error("CheckIfMemberExistsWithGivenEmailId while checking " + eMailId);
-                result.IsSuccess = false;
+                Logger.Error("CommonHelper -> CheckIfMemberExistsWithGivenEmailId FAILED - [Email: " + email + "], [Exception: " + ex.Message + "]");
+                result.ErrorMessage = "Server Error.";
+                return result;
+            }
+        }
+
+        public static CheckIfTenantExistsResult CheckIfTenantExistsWithGivenEmailId(string email)
+        {
+            CheckIfTenantExistsResult result = new CheckIfTenantExistsResult();
+            result.IsSuccess = false;
+
+            try
+            {
+                if (String.IsNullOrEmpty(email))
+                {
+                    result.ErrorMessage = "Missing email to check!";
+                    return result;
+                }
+
+                email = email.Trim().ToLower();
+                email = CommonHelper.GetEncryptedData(email);
+
+                using (NOOCHEntities obj = new NOOCHEntities())
+                {
+                    var existingMemberDetails = (from c in obj.Tenants
+                                                 where c.eMail == email && c.IsDeleted == false
+                                                 select c).FirstOrDefault();
+
+                    if (existingMemberDetails != null)
+                    {
+                        // user already exists
+                        result.ErrorMessage = "Tenant already exists";
+                        result.TenantDetails = existingMemberDetails;
+                    }
+                    else
+                    {
+                        result.IsSuccess = true;
+                        result.ErrorMessage = "No tenant found";
+                    }
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("CommonHelper -> CheckIfTenantExistsWithGivenEmailId FAILED - [Email: " + email + "], [Exception: " + ex.Message + "]");
                 result.ErrorMessage = "Server Error.";
                 return result;
             }
@@ -1166,7 +1209,7 @@ namespace LanLordlAPIs.Classes.Utility
                     result = noochConnection.SaveChanges();
                 }
 
-                return SendEmail(Constants.TEMPLATE_FORGOT_PASSWORD, fromAddress, primaryMail, "Reset your Nooch password", tokens, null, null);
+                return SendEmail(Constants.TEMPLATE_FORGOT_PASSWORD, fromAddress, null, primaryMail, "Reset your Nooch password", tokens, null, null);
             }
             catch (Exception ex)
             {
@@ -1179,7 +1222,7 @@ namespace LanLordlAPIs.Classes.Utility
 
 
 
-        public static bool SendEmail(string templateName, string fromAddress, string toAddress, string subject, IEnumerable<KeyValuePair<string, string>> replacements, string bodyText, string bccEmail)
+        public static bool SendEmail(string templateName, string fromAddress, string fromName, string toAddress, string subject, IEnumerable<KeyValuePair<string, string>> replacements, string bodyText, string bccEmail)
         {
             try
             {
@@ -1221,14 +1264,17 @@ namespace LanLordlAPIs.Classes.Utility
                             mailMessage.From = new MailAddress(fromAddress, "Nooch Support");
                             break;
                         default:
-                            mailMessage.From = new MailAddress(fromAddress, "Nooch Admin");
+                            mailMessage.From = !String.IsNullOrEmpty(fromName)
+                                               ? new MailAddress(fromAddress, fromName)
+                                               : new MailAddress(fromAddress, "Nooch Admin");
                             break;
                     }
                 }
                 else
                 {
-                    mailMessage.From = new MailAddress(fromAddress, "Nooch Admin");
+                    mailMessage.From = new MailAddress("team@nooch.com", "Nooch Admin");
                 }
+                Logger.Info("CommonHelper -> SendEmail [DisplayName: " + mailMessage.From.DisplayName.ToString() + "], [Address: " + mailMessage.From.Address.ToString() + "]");
                 mailMessage.IsBodyHtml = true;
                 mailMessage.Subject = subjectString;
                 mailMessage.To.Add(toAddress);
@@ -1416,21 +1462,20 @@ namespace LanLordlAPIs.Classes.Utility
                         };
                         try
                         {
-                            SendEmail(Constants.TEMPLATE_REGISTRATION, fromAddress, Username,
+                            SendEmail(Constants.TEMPLATE_REGISTRATION, fromAddress, null, Username,
                                       "Confirm Nooch Registration", tokens, null, null);
 
                             return "Success";
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
                             Logger.Error("CommonHelper -> ResendVerificationLink - Member activation email not sent to [" +
-                                                   Username + "].");
+                                          Username + "], [Exception: " + ex.Message + "]");
                             return "Failure";
                         }
                     }
                     else
                     {
-                        // already activated send failure
                         return "Already Activated.";
                     }
                 }

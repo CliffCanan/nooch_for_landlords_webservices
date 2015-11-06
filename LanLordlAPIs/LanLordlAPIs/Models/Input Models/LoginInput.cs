@@ -62,15 +62,17 @@ namespace LanLordlAPIs.Models.Input_Models
     public class SendEmailsToTenantsInputClass
     {
         public GetProfileDataInput DeviceInfo { get; set; }
-        public SendEmailsToTenantsInternalClass EmailInfo { get; set; }
+        public SendEmailsToTenants_EmailInfo EmailInfo { get; set; }
     }
 
-    public class SendEmailsToTenantsInternalClass
+    public class SendEmailsToTenants_EmailInfo
     {
-        public string IsForAllOrOne { get; set; }
-        public string MessageToBeSent { get; set; }
         public string TenantIdToBeMessaged { get; set; }
         public string PropertyId { get; set; }
+        public string IsForAllOrOne { get; set; }
+        public string messageSubject { get; set; }
+        public string MessageToBeSent { get; set; }
+        public bool shouldBccLandlord { get; set; }
     }
 
     public class RegisterLandlordInput

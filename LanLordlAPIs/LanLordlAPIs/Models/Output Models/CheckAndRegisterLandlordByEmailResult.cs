@@ -19,4 +19,11 @@ namespace LanLordlAPIs.Models.Output_Models
         public bool IsSuccess { get; set; }
         public Member MemberDetails { get; set; }
     }
+
+    public class CheckIfTenantExistsResult
+    {
+        public string ErrorMessage { get; set; }
+        public bool IsSuccess { get; set; }
+        public Tenant TenantDetails { get; set; }
+    }
 }
