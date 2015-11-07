@@ -373,6 +373,7 @@
     <EntitySetMapping Name="PropertyUnits">
       <EntityTypeMapping TypeName="NOOCHModel.PropertyUnit">
         <MappingFragment StoreEntitySet="PropertyUnits">
+          <ScalarProperty Name="LeaseDocumentPath" ColumnName="LeaseDocumentPath" />
           <ScalarProperty Name="LeaseLength" ColumnName="LeaseLength" />
           <ScalarProperty Name="RentStartDate" ColumnName="RentStartDate" />
           <ScalarProperty Name="UnitNickName" ColumnName="UnitNickName" />

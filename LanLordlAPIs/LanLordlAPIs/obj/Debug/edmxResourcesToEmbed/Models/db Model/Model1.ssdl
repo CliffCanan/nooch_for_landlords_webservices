@@ -264,6 +264,7 @@
     <Property Name="UnitNickName" Type="varchar(max)" />
     <Property Name="RentStartDate" Type="datetime" />
     <Property Name="LeaseLength" Type="varchar(max)" />
+    <Property Name="LeaseDocumentPath" Type="varchar(max)" />
   </EntityType>
   <EntityType Name="SynapseBanksOfMembers">
     <Key>

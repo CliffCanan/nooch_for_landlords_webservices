@@ -269,6 +269,7 @@
           <Property Name="UnitNickName" Type="varchar(max)" />
           <Property Name="RentStartDate" Type="datetime" />
           <Property Name="LeaseLength" Type="varchar(max)" />
+          <Property Name="LeaseDocumentPath" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="SynapseBanksOfMembers">
           <Key>
@@ -1271,6 +1272,7 @@
           <Property Name="RentStartDate" Type="DateTime" Precision="3" />
           <Property Name="LeaseLength" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="AutoPayTransactions" Relationship="NOOCHModel.FK_AutoPayTransactions_PropertyUnits" FromRole="PropertyUnit" ToRole="AutoPayTransaction" />
+          <Property Name="LeaseDocumentPath" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="UnitsOccupiedByTenant">
           <Key>
@@ -1789,6 +1791,7 @@
           <EntitySetMapping Name="PropertyUnits">
             <EntityTypeMapping TypeName="NOOCHModel.PropertyUnit">
               <MappingFragment StoreEntitySet="PropertyUnits">
+                <ScalarProperty Name="LeaseDocumentPath" ColumnName="LeaseDocumentPath" />
                 <ScalarProperty Name="LeaseLength" ColumnName="LeaseLength" />
                 <ScalarProperty Name="RentStartDate" ColumnName="RentStartDate" />
                 <ScalarProperty Name="UnitNickName" ColumnName="UnitNickName" />

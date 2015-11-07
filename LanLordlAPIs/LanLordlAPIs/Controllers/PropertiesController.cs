@@ -1826,5 +1826,96 @@ namespace LanLordlAPIs.Controllers
             }
         }
 
+
+        // service to store lease document of given unit id
+        [HttpPost]
+        [ActionName("UploadPropertyUnitLeasePDF")]
+        public LoginResult UploadPropertyUnitLeasePDF(string propertyUnitId)
+        {
+            GetProfileDataInput User = new GetProfileDataInput();
+
+            LoginResult result = new LoginResult();
+            result.IsSuccess = false;
+
+            try
+            {
+
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    result.ErrorMessage = "File not passed to server.";
+                    return result;
+
+                }
+                
+
+                var file = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
+
+                if (file != null && file.ContentLength > 0)
+                {
+                    Guid propUnitId = CommonHelper.ConvertToGuid(propertyUnitId);
+
+                    Logger.Info("Properties Controller -> UploadPropertyUnitLeasePDF -> [PropID: " + propertyUnitId + "]");
+
+                    if (!String.IsNullOrEmpty(propertyUnitId))
+                    {
+                        using (NOOCHEntities obj = new NOOCHEntities())
+                        {
+                           
+
+                            var fileExtension = Path.GetExtension(file.FileName);
+                            var fileName = propUnitId.ToString().Replace("-", "_").Replace("'", "").Trim() + fileExtension;
+
+                            Logger.Info("PROPERTIES CONTROLLER -> UploadPropertyUnitLeasePDF -> [fileName: " + fileName + "]");
+
+                            var path = Path.Combine(
+                                        HttpContext.Current.Server.MapPath(CommonHelper.GetValueFromConfig("LeaseDocumentsPath")),
+                                        fileName);
+
+                            if (File.Exists(path))
+                            {
+                                File.Delete(path);
+                            }
+
+                            file.SaveAs(path);
+
+                            var propDetails = (from c in obj.PropertyUnits
+                                               where c.UnitId == propUnitId
+                                               select c).FirstOrDefault();
+
+                            if (propDetails != null)
+                            {
+                                propDetails.LeaseDocumentPath = CommonHelper.GetValueFromConfig("LeaseDocumentsUrl") + fileName;
+                                obj.SaveChanges();
+
+                                result.IsSuccess = true;
+                                result.ErrorMessage = propDetails.LeaseDocumentPath;
+                            }
+                            else
+                            {
+                                result.ErrorMessage = "Invalid property unit Id passed.";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Prop ID was invalid
+                        result.ErrorMessage = "No or invalid property unit id passed.";
+                    }
+                }
+                else
+                {
+                    // No file selected
+                    result.ErrorMessage = "No or invalid file passed.";
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("PropertiesController -> UploadPropertyUnitLeasePDF FAILED - [PropertyUnitId: " + propertyUnitId + " ] . Exception details [ " + ex.Message + " ]");
+                result.ErrorMessage = "Error while uploading pdf. Retry.";
+            }
+
+            return result;
+        }
+
     }
 }

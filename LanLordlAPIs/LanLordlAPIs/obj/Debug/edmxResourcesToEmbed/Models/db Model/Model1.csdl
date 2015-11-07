@@ -595,6 +595,7 @@
     <Property Name="RentStartDate" Type="DateTime" Precision="3" />
     <Property Name="LeaseLength" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
     <NavigationProperty Name="AutoPayTransactions" Relationship="NOOCHModel.FK_AutoPayTransactions_PropertyUnits" FromRole="PropertyUnit" ToRole="AutoPayTransaction" />
+    <Property Name="LeaseDocumentPath" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
   </EntityType>
   <EntityType Name="UnitsOccupiedByTenant">
     <Key>
