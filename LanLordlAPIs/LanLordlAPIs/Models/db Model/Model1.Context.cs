@@ -44,6 +44,7 @@ namespace LanLordlAPIs.Models.db_Model
         public DbSet<PropertyUnit> PropertyUnits { get; set; }
         public DbSet<UnitsOccupiedByTenant> UnitsOccupiedByTenants { get; set; }
         public DbSet<SynapseCreateUserResult> SynapseCreateUserResults { get; set; }
+        public DbSet<AutoPayTransaction> AutoPayTransactions { get; set; }
     
         public virtual ObjectResult<Nullable<int>> GetTenantsCountInGivenPropertyId(string vPropertyId)
         {

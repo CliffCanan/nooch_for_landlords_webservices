@@ -176,6 +176,8 @@ namespace LanLordlAPIs.Controllers
                         obj.Transactions.Add(tr);
                         obj.SaveChanges();
                         requestId = tr.TransactionId.ToString();
+
+
                     }
                     catch (Exception ex)
                     {

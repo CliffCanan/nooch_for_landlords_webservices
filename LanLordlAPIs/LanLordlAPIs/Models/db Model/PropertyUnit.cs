@@ -14,6 +14,11 @@ namespace LanLordlAPIs.Models.db_Model
     
     public partial class PropertyUnit
     {
+        public PropertyUnit()
+        {
+            this.AutoPayTransactions = new HashSet<AutoPayTransaction>();
+        }
+    
         public System.Guid UnitId { get; set; }
         public Nullable<System.Guid> PropertyId { get; set; }
         public string UnitNumber { get; set; }
@@ -32,5 +37,8 @@ namespace LanLordlAPIs.Models.db_Model
         public string UnitNickName { get; set; }
         public Nullable<System.DateTime> RentStartDate { get; set; }
         public string LeaseLength { get; set; }
+        public string LeaseDocumentPath { get; set; }
+    
+        public virtual ICollection<AutoPayTransaction> AutoPayTransactions { get; set; }
     }
 }
