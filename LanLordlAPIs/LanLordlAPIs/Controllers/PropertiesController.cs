@@ -1653,8 +1653,6 @@ namespace LanLordlAPIs.Controllers
         [ActionName("UploadPropertyImage")]
         public LoginResult UploadPropertyImage()
         {
-            GetProfileDataInput User = new GetProfileDataInput();
-
             LoginResult result = new LoginResult();
             result.IsSuccess = false;
 
@@ -1722,7 +1720,7 @@ namespace LanLordlAPIs.Controllers
             }
             catch (Exception ex)
             {
-                Logger.Error("PropertiesController -> UploadPropertyImage FAILED - [LandlordID: " + User.LandlorId + " ] . Exception details [ " + ex.Message + " ]");
+                Logger.Error("PropertiesController -> UploadPropertyImage FAILED - [Exception: " + ex.Message + " ]");
                 result.ErrorMessage = "Error while uploading image. Retry.";
             }
 
@@ -1830,76 +1828,76 @@ namespace LanLordlAPIs.Controllers
         // service to store lease document of given unit id
         [HttpPost]
         [ActionName("UploadPropertyUnitLeasePDF")]
-        public LoginResult UploadPropertyUnitLeasePDF(string propertyUnitId)
+        public LoginResult UploadPropertyUnitLeasePDF()
         {
-            GetProfileDataInput User = new GetProfileDataInput();
+            Logger.Info("Properties Controller -> UploadPropertyUnitLeasePDF Inititated");
 
             LoginResult result = new LoginResult();
             result.IsSuccess = false;
 
             try
             {
-
                 if (!Request.Content.IsMimeMultipartContent())
                 {
                     result.ErrorMessage = "File not passed to server.";
                     return result;
-
                 }
-                
 
                 var file = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
 
                 if (file != null && file.ContentLength > 0)
                 {
-                    Guid propUnitId = CommonHelper.ConvertToGuid(propertyUnitId);
+                    string[] unitId = HttpContext.Current.Request.Form.GetValues("UnitId");
 
-                    Logger.Info("Properties Controller -> UploadPropertyUnitLeasePDF -> [PropID: " + propertyUnitId + "]");
-
-                    if (!String.IsNullOrEmpty(propertyUnitId))
+                    if (unitId != null && unitId.Length > 0)
                     {
-                        using (NOOCHEntities obj = new NOOCHEntities())
+                        if (!String.IsNullOrEmpty(unitId[0]))
                         {
-                           
+                            Logger.Info("Properties Controller -> UploadPropertyUnitLeasePDF -> [UnitID: " + unitId[0] + "]");
 
-                            var fileExtension = Path.GetExtension(file.FileName);
-                            var fileName = propUnitId.ToString().Replace("-", "_").Replace("'", "").Trim() + fileExtension;
+                            Guid propUnitId = CommonHelper.ConvertToGuid(unitId[0]);
 
-                            Logger.Info("PROPERTIES CONTROLLER -> UploadPropertyUnitLeasePDF -> [fileName: " + fileName + "]");
-
-                            var path = Path.Combine(
-                                        HttpContext.Current.Server.MapPath(CommonHelper.GetValueFromConfig("LeaseDocumentsPath")),
-                                        fileName);
-
-                            if (File.Exists(path))
+                            using (NOOCHEntities obj = new NOOCHEntities())
                             {
-                                File.Delete(path);
-                            }
+                                var fileExtension = Path.GetExtension(file.FileName);
+                                var fileName = propUnitId.ToString().Replace("-", "_").Replace("'", "").Trim() + fileExtension;
 
-                            file.SaveAs(path);
+                                Logger.Info("Properties Controller -> UploadPropertyUnitLeasePDF -> [File Name: " + fileName + "]");
 
-                            var propDetails = (from c in obj.PropertyUnits
-                                               where c.UnitId == propUnitId
-                                               select c).FirstOrDefault();
+                                var path = Path.Combine(
+                                            HttpContext.Current.Server.MapPath(CommonHelper.GetValueFromConfig("LeaseDocumentsPath")),
+                                            fileName);
 
-                            if (propDetails != null)
-                            {
-                                propDetails.LeaseDocumentPath = CommonHelper.GetValueFromConfig("LeaseDocumentsUrl") + fileName;
-                                obj.SaveChanges();
+                                if (File.Exists(path))
+                                {
+                                    File.Delete(path);
+                                }
 
-                                result.IsSuccess = true;
-                                result.ErrorMessage = propDetails.LeaseDocumentPath;
-                            }
-                            else
-                            {
-                                result.ErrorMessage = "Invalid property unit Id passed.";
+                                file.SaveAs(path);
+
+                                var propDetails = (from c in obj.PropertyUnits
+                                                   where c.UnitId == propUnitId
+                                                   select c).FirstOrDefault();
+
+                                if (propDetails != null)
+                                {
+                                    propDetails.LeaseDocumentPath = CommonHelper.GetValueFromConfig("LeaseDocumentsUrl") + fileName;
+                                    obj.SaveChanges();
+
+                                    result.IsSuccess = true;
+                                    result.ErrorMessage = propDetails.LeaseDocumentPath;
+                                }
+                                else
+                                {
+                                    result.ErrorMessage = "Invalid property unit Id passed.";
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        // Prop ID was invalid
-                        result.ErrorMessage = "No or invalid property unit id passed.";
+                        else
+                        {
+                            // Prop ID was invalid
+                            result.ErrorMessage = "No or invalid property unit id passed.";
+                        }
                     }
                 }
                 else
@@ -1910,12 +1908,11 @@ namespace LanLordlAPIs.Controllers
             }
             catch (Exception ex)
             {
-                Logger.Error("PropertiesController -> UploadPropertyUnitLeasePDF FAILED - [PropertyUnitId: " + propertyUnitId + " ] . Exception details [ " + ex.Message + " ]");
-                result.ErrorMessage = "Error while uploading pdf. Retry.";
+                Logger.Error("PropertiesController -> UploadPropertyUnitLeasePDF FAILED - [Exception: " + ex.Message + " ]");
+                result.ErrorMessage = "Error while uploading PDF!";
             }
 
             return result;
         }
-
     }
 }
