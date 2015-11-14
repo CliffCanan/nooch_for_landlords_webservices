@@ -1291,6 +1291,7 @@ namespace LanLordlAPIs.Controllers
                             currentProperty.PropertyImage = propertyInDb.PropertyImage ?? "";
                             currentProperty.IsSingleUnit = propertyInDb.IsSingleUnit;
                             currentProperty.IsDeleted = propertyInDb.IsDeleted;
+                           
 
                             #region Get Bank Details For This Property
 
@@ -1432,6 +1433,8 @@ namespace LanLordlAPIs.Controllers
                                 currentUnit.IsDeleted = unitX.IsDeleted;
                                 currentUnit.IsHidden = unitX.IsHidden;
                                 currentUnit.IsOccupied = unitX.IsOccupied;
+                                currentUnit.LeaseDocPath = unitX.LeaseDocumentPath ?? "";
+                                
 
                                 if (currentUnit.IsOccupied == true)
                                 {

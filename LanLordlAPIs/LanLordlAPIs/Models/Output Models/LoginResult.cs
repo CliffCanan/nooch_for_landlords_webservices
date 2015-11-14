@@ -242,6 +242,7 @@ namespace LanLordlAPIs.Models.Output_Models
         public Nullable<bool> IsDeleted { get; set; }
         public string DefaulBank { get; set; }
 
+        
         public List<PropertyUnitClass> AllUnits { get; set; }
 
         public string UnitsCount { get; set; }
@@ -304,6 +305,7 @@ namespace LanLordlAPIs.Models.Output_Models
         public Nullable<bool> IsOccupied { get; set; }
         public string Status { get; set; }
         public string DueDate { get; set; }
+        public string LeaseDocPath { get; set; }
     }
 
 
