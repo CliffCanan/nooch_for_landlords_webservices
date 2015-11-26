@@ -444,8 +444,8 @@ namespace LanLordlAPIs.Controllers
                             // Member with that email already exists
                             #region New Landlord But Existing Member
 
-                            Landlord l = CommonHelper.AddNewLandlordEntryInDb(User.FirstName,
-                                User.LastName, User.eMail, "", true, true,
+                            Landlord l = CommonHelper.AddNewLandlordEntryInDb(User.FirstName.Trim().ToLower(),
+                                User.LastName.Trim().ToLower(), User.eMail, "", true, true,
                                 User.Ip, memberTableData.MemberId);
 
                             if (l != null)
@@ -513,8 +513,8 @@ namespace LanLordlAPIs.Controllers
                             Nooch_ID = noochRandomId,
                             MemberId = Guid.NewGuid(),
                             UserName = CommonHelper.GetEncryptedData(User.eMail),
-                            FirstName = CommonHelper.GetEncryptedData(User.FirstName),
-                            LastName = CommonHelper.GetEncryptedData(User.LastName),
+                            FirstName = CommonHelper.GetEncryptedData(User.FirstName.Trim().ToLower()),
+                            LastName = CommonHelper.GetEncryptedData(User.LastName.Trim().ToLower()),
                             SecondaryEmail = User.eMail,
                             RecoveryEmail = User.eMail,
                             Password = CommonHelper.GetEncryptedData(" "),
@@ -626,8 +626,8 @@ namespace LanLordlAPIs.Controllers
                             Logger.Info("UserController -> LoginWithFB - ** NEW LANDLORD ** - About to created new LANLDORD record - [MemberID: " + member.MemberId + "]");
 
                             // Finally, make an entry in Landlords Table 
-                            Landlord l = CommonHelper.AddNewLandlordEntryInDb(User.FirstName,
-                                User.LastName, User.eMail, " ", false, false,
+                            Landlord l = CommonHelper.AddNewLandlordEntryInDb(User.FirstName.Trim().ToLower(),
+                                User.LastName.Trim().ToLower(), User.eMail, " ", false, false,
                                 User.Ip, member.MemberId);
 
                             if (l != null && authTokenAddedToDB > 0)
