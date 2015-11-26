@@ -59,6 +59,7 @@
     <Property Name="LastSeenOn" Type="DateTime" Precision="3" />
     <Property Name="IsAnyRentReceived" Type="Boolean" />
     <Property Name="IsIdVerified" Type="Boolean" />
+    <Property Name="FacebookUserId" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
   </EntityType>
   <EntityType Name="MemberNotification">
     <Key>
@@ -424,6 +425,8 @@
     <NavigationProperty Name="Transactions1" Relationship="NOOCHModel.FK_Transactions_Members3" FromRole="Member" ToRole="Transaction" />
     <NavigationProperty Name="AutoPayTransactions" Relationship="NOOCHModel.FK_AutoPayTransactions_Members" FromRole="Member" ToRole="AutoPayTransaction" />
     <NavigationProperty Name="AutoPayTransactions1" Relationship="NOOCHModel.FK_AutoPayTransactions_Members1" FromRole="Member" ToRole="AutoPayTransaction" />
+    <Property Name="TransferLimit" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="FacebookUserId" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
   </EntityType>
   <EntityType Name="SynapseBanksOfMember">
     <Key>

@@ -21,6 +21,7 @@
     <EntitySetMapping Name="Landlords">
       <EntityTypeMapping TypeName="NOOCHModel.Landlord">
         <MappingFragment StoreEntitySet="Landlords">
+          <ScalarProperty Name="FacebookUserId" ColumnName="FacebookUserId" />
           <ScalarProperty Name="IsIdVerified" ColumnName="IsIdVerified" />
           <ScalarProperty Name="IsAnyRentReceived" ColumnName="IsAnyRentReceived" />
           <ScalarProperty Name="LastSeenOn" ColumnName="LastSeenOn" />
@@ -231,6 +232,8 @@
     <EntitySetMapping Name="Members">
       <EntityTypeMapping TypeName="NOOCHModel.Member">
         <MappingFragment StoreEntitySet="Members">
+          <ScalarProperty Name="FacebookUserId" ColumnName="FacebookUserId" />
+          <ScalarProperty Name="TransferLimit" ColumnName="TransferLimit" />
           <ScalarProperty Name="IsVerifiedWithSynapse" ColumnName="IsVerifiedWithSynapse" />
           <ScalarProperty Name="VerificationDocumentPath" ColumnName="VerificationDocumentPath" />
           <ScalarProperty Name="PhoneVerifiedOn" ColumnName="PhoneVerifiedOn" />

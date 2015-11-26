@@ -368,6 +368,364 @@ namespace LanLordlAPIs.Controllers
         }
 
 
+        [HttpPost]
+        [ActionName("LoginWithFB")]
+        public LoginResult LoginWithFB(LoginwithFBInput User)
+        {
+            LoginResult result = new LoginResult();
+            result.IsSuccess = false;
+
+            try
+            {
+                using (NOOCHEntities obj = new NOOCHEntities())
+                {
+                    DateTime requestDatetime = DateTime.Now;
+
+
+                    // validating fb login data
+                    if (String.IsNullOrEmpty(User.eMail) ||
+                        String.IsNullOrEmpty(User.FirstName) ||
+                        String.IsNullOrEmpty(User.LastName))
+                    {
+                        result.IsSuccess = false;
+                        result.ErrorMessage = "Invalid login information provided.";
+                        return result;
+                    }
+
+
+                    // checking if user exists with given email id
+                    string userNameLowerCaseEncrypted = CommonHelper.GetEncryptedData(User.eMail.ToLower().Trim());
+                    bool is_User_Already_Registerd_With_Nooch = false;
+                    bool is_User_Already_Registerd_With_Nooch_as_landlord = false;
+
+                    var memberTableData = (from c in obj.Members
+                                           where
+                                               c.UserName == userNameLowerCaseEncrypted && c.FacebookUserId == User.FacebookUserId &&
+                                               c.IsDeleted == false && c.Status == "Active"
+                                           select c).FirstOrDefault();
+                    if (memberTableData != null)
+                    {
+                        is_User_Already_Registerd_With_Nooch = true;
+                        // checking user in landlords table
+
+                        var landlordTableDetails = (from c in obj.Landlords
+                                                    where c.FacebookUserId == User.FacebookUserId && c.IsDeleted == false && c.Status == "Active"
+                                                        && c.eMail == userNameLowerCaseEncrypted
+                                                    select c).FirstOrDefault();
+
+                        if (landlordTableDetails != null)
+                        {
+                            is_User_Already_Registerd_With_Nooch_as_landlord = true;
+
+                            CommonHelper.saveLandlordIp(landlordTableDetails.LandlordId, User.Ip);
+                            landlordTableDetails.DateModified = requestDatetime;
+                            landlordTableDetails.LastSeenOn = requestDatetime;
+
+                            landlordTableDetails.WebAccessToken = CommonHelper.GenerateAccessToken();
+
+                            obj.SaveChanges();
+
+                            result.IsSuccess = true;
+                            result.ErrorMessage = "OK";
+                            result.AccessToken = landlordTableDetails.WebAccessToken;
+                            result.MemberId = landlordTableDetails.MemberId.ToString();
+                            result.LandlordId = landlordTableDetails.LandlordId.ToString();
+
+                            Logger.Info("Users Cntrlr -> Login requested by [" + User.eMail + "] with Facebook");
+
+                            return result;
+
+
+
+                        }
+                        else
+                        {
+                            // send email here for landlord welcome.... if sending in register landlord method
+                            // Member with that email already exists
+                            #region New Landlord But Existing Member
+
+                            Landlord l = CommonHelper.AddNewLandlordEntryInDb(User.FirstName,
+                                User.LastName, User.eMail, "", true, true,
+                                User.Ip, memberTableData.MemberId);
+
+                            if (l != null)
+                            {
+                                result.IsSuccess = true;
+                                result.ErrorMessage = "OK";
+
+
+                                CommonHelper.saveLandlordIp(l.LandlordId, User.Ip);
+                                l.DateModified = requestDatetime;
+                                l.LastSeenOn = requestDatetime;
+
+                                l.WebAccessToken = CommonHelper.GenerateAccessToken();
+                                obj.SaveChanges();
+
+                                result.IsSuccess = true;
+                                result.ErrorMessage = "OK";
+                                result.AccessToken = l.WebAccessToken;
+                                result.MemberId = l.MemberId.ToString();
+                                result.LandlordId = l.LandlordId.ToString();
+
+                                Logger.Info("Users Cntrlr -> Login requested by [" + User.eMail + "]");
+
+                                return result;
+                            }
+                            else
+                            {
+                                // exception while creating account
+                                result.IsSuccess = false;
+                                result.ErrorMessage = "Server error. Retry later! ";
+                                return result;
+                            }
+
+                            #endregion New Landlord But Existing Member
+                        }
+
+
+
+                    }
+                    else
+                    {
+                        // new entry in members table and landlords table
+                        #region Save New Landlord & Member Details In DB
+
+                        // Make new entry in Members Table first
+                        var userNameLowerCase = User.eMail.Trim().ToLower();
+                        string noochRandomId = CommonHelper.GetRandomNoochId();
+
+                        if (noochRandomId == null)
+                        {
+                            result.ErrorMessage = "Some duplicate values are being generated at server. Retry later! ";
+                            result.IsSuccess = false;
+                            return result;
+                        }
+
+
+                        #region Create User Settings & Save To DB
+
+                        #region Create Member Object
+
+                        string randomPin = CommonHelper.GetRandomPinNumber();
+
+                        var member = new Member
+                        {
+                            Nooch_ID = noochRandomId,
+                            MemberId = Guid.NewGuid(),
+                            UserName = CommonHelper.GetEncryptedData(User.eMail),
+                            FirstName = CommonHelper.GetEncryptedData(User.FirstName),
+                            LastName = CommonHelper.GetEncryptedData(User.LastName),
+                            SecondaryEmail = User.eMail,
+                            RecoveryEmail = User.eMail,
+                            Password = CommonHelper.GetEncryptedData(" "),
+                            PinNumber = CommonHelper.GetEncryptedData(randomPin),
+                            Status = Constants.STATUS_REGISTERED,
+
+                            IsDeleted = false,
+                            DateCreated = DateTime.Now,
+                            UserNameLowerCase = CommonHelper.GetEncryptedData(userNameLowerCase),
+                            FacebookAccountLogin = null,
+                            InviteCodeIdUsed = null,
+                            Type = "Landlord",
+                            IsVerifiedPhone = false,
+                            IsVerifiedWithSynapse = false,
+                            UDID1 = !String.IsNullOrEmpty(User.UserFingerPrints) ? User.UserFingerPrints : null,
+                            Country = "US",
+
+                            // some blanks as default
+                            Address = CommonHelper.GetEncryptedData(""),
+                            State = CommonHelper.GetEncryptedData(""),
+                            City = CommonHelper.GetEncryptedData(""),
+                            Zipcode = CommonHelper.GetEncryptedData(""),
+                        };
+
+                        #endregion Create Member Object
+
+                        obj.Members.Add(member);
+
+                        Logger.Info("UserController -> LoginWithFB - ** NEW LANDLORD ** - MEMBER Created, about to save to DB - [MemberID: " + member.MemberId + "]");
+                        try
+                        {
+                            obj.SaveChanges();
+
+                            CommonHelper.setReferralCode(member.MemberId);
+                            var tokenId = Guid.NewGuid();
+
+                            #region Create Authentication Token
+
+                            var requestId = Guid.Empty;
+
+                            var token = new AuthenticationToken
+                            {
+                                TokenId = tokenId,
+                                MemberId = member.MemberId,
+                                IsActivated = false,
+                                DateGenerated = DateTime.Now,
+                                FriendRequestId = requestId
+                            };
+                            // Now save the token details into Authentication tokens DB table  
+                            obj.AuthenticationTokens.Add(token);
+                            int authTokenAddedToDB = obj.SaveChanges();
+
+                            Logger.Info("UserController -> LoginWithFB - ** NEW LANDLORD ** - AUTH TOKEN Created and saved to DB - [MemberID: " + member.MemberId + "]");
+
+                            #endregion Create Authentication Token
+
+
+                            #region Notification Settings
+
+                            var memberNotification = new MemberNotification
+                            {
+                                NotificationId = Guid.NewGuid(),
+
+                                MemberId = member.MemberId,
+                                FriendRequest = true,
+                                InviteRequestAccept = true,
+                                TransferSent = true,
+                                TransferReceived = true,
+                                TransferAttemptFailure = true,
+                                NoochToBank = true,
+                                BankToNooch = true,
+                                EmailFriendRequest = true,
+                                EmailInviteRequestAccept = true,
+                                EmailTransferSent = true,
+                                EmailTransferReceived = true,
+                                EmailTransferAttemptFailure = true,
+                                TransferUnclaimed = true,
+                                BankToNoochRequested = true,
+                                BankToNoochCompleted = true,
+                                NoochToBankRequested = true,
+                                NoochToBankCompleted = true,
+                                InviteReminder = true,
+                                LowBalance = true,
+                                ValidationRemainder = true,
+                                ProductUpdates = true,
+                                NewAndUpdate = true,
+                                DateCreated = DateTime.Now
+                            };
+                            obj.MemberNotifications.Add(memberNotification);
+
+                            #endregion Notification Settings
+
+
+                            #region Privacy Settings
+
+                            var memberPrivacySettings = new MemberPrivacySetting
+                            {
+                                MemberId = member.MemberId,
+                                AllowSharing = true,
+                                ShowInSearch = true,
+                                DateCreated = DateTime.Now
+                            };
+                            obj.MemberPrivacySettings.Add(memberPrivacySettings);
+
+                            Logger.Info("UserController -> LoginWithFB - ** NEW LANDLORD ** - NOTIFICATIONS & PRIVACY SETTINGS Created and saved to DB - [MemberID: " + member.MemberId + "]");
+
+                            #endregion Privacy Settings
+
+                            Logger.Info("UserController -> LoginWithFB - ** NEW LANDLORD ** - About to created new LANLDORD record - [MemberID: " + member.MemberId + "]");
+
+                            // Finally, make an entry in Landlords Table 
+                            Landlord l = CommonHelper.AddNewLandlordEntryInDb(User.FirstName,
+                                User.LastName, User.eMail, " ", false, false,
+                                User.Ip, member.MemberId);
+
+                            if (l != null && authTokenAddedToDB > 0)
+                            {
+                                #region Send Verification email
+
+                                // Send registration email to member with autogenerated token 
+                                var fromAddress = CommonHelper.GetValueFromConfig("welcomeMail");
+                                var link = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
+                                           "Registration/Activation.aspx?tokenId=" + tokenId + "&type=ll&llem=" + userNameLowerCase);
+
+                                var tokens = new Dictionary<string, string>
+                                        {
+                                            {
+                                                Constants.PLACEHOLDER_FIRST_NAME,
+                                                CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(member.FirstName))
+                                            },
+                                            {
+                                                Constants.PLACEHOLDER_LAST_NAME,
+                                                CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(member.LastName))
+                                            },
+                                            {Constants.PLACEHOLDER_OTHER_LINK, link}
+                                        };
+
+                                try
+                                {
+                                    CommonHelper.SendEmail(Constants.TEMPLATE_REGISTRATION, fromAddress, null,
+                                            User.eMail.Trim(), "Confirm your email on Nooch", tokens, null, "NewLandlord@nooch.com");
+
+                                    Logger.Info("UserController -> LoginWithFB - Registration email sent to [" + User.eMail.Trim() + "] successfully.");
+                                }
+                                catch (Exception ex)
+                                {
+                                    Logger.Error("UserController -> LoginWithFB - Registration email NOT sent to [" +
+                                                           User.eMail.Trim() + "], [Exception: " + ex + "]");
+                                }
+
+                                #endregion Send Verification email
+
+                                CommonHelper.saveLandlordIp(l.LandlordId, User.Ip);
+                                l.DateModified = requestDatetime;
+                                l.LastSeenOn = requestDatetime;
+
+                                l.WebAccessToken = CommonHelper.GenerateAccessToken();
+
+                                obj.SaveChanges();
+
+                                result.IsSuccess = true;
+                                result.ErrorMessage = "OK";
+                                result.AccessToken = l.WebAccessToken;
+                                result.MemberId = l.MemberId.ToString();
+                                result.LandlordId = l.LandlordId.ToString();
+
+
+                                return result;
+
+
+
+
+                            }
+                            else
+                            {
+                                // exception while creating account
+                                result.ErrorMessage = "Server error. Retry later! ";
+                                result.IsSuccess = false;
+                                return result;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error("UsersController -> RegisterLandlord FAILED while making account for: [" + User.eMail + "], [Exception: " + ex.Message + "]");
+                            result.ErrorMessage = "Some duplicate values are being generated at server. Retry later! ";
+                            result.IsSuccess = false;
+                            return result;
+                        }
+                        #endregion Create User Settings & Save To DB
+
+
+                        #endregion Save New Landlord & Member Details In DB
+
+                    }
+
+
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Users Cntrlr -> Login EXCEPTION - [Username: " + User.eMail + "], [Exception: " + ex + "]");
+
+                result.ErrorMessage = "Error while logging on. Retry.";
+                result.IsSuccess = false;
+                return result;
+            }
+        }
+
+
         /// <summary>
         /// To save a landlord user's profile picture.
         /// </summary>

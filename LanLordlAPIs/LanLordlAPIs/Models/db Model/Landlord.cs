@@ -52,5 +52,6 @@ namespace LanLordlAPIs.Models.db_Model
         public Nullable<System.DateTime> LastSeenOn { get; set; }
         public Nullable<bool> IsAnyRentReceived { get; set; }
         public Nullable<bool> IsIdVerified { get; set; }
+        public string FacebookUserId { get; set; }
     }
 }

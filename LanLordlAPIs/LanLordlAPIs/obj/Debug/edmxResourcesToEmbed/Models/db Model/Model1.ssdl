@@ -99,6 +99,7 @@
     <Property Name="LastSeenOn" Type="datetime" />
     <Property Name="IsAnyRentReceived" Type="bit" />
     <Property Name="IsIdVerified" Type="bit" />
+    <Property Name="FacebookUserId" Type="varchar(max)" />
   </EntityType>
   <EntityType Name="MemberNotifications">
     <Key>
@@ -209,6 +210,8 @@
     <Property Name="PhoneVerifiedOn" Type="datetime" />
     <Property Name="VerificationDocumentPath" Type="varchar(max)" />
     <Property Name="IsVerifiedWithSynapse" Type="bit" />
+    <Property Name="TransferLimit" Type="varchar(max)" />
+    <Property Name="FacebookUserId" Type="varchar(max)" />
   </EntityType>
   <EntityType Name="PasswordResetRequests">
     <Key>

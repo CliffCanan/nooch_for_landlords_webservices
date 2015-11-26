@@ -20,6 +20,21 @@ namespace LanLordlAPIs.Models.Input_Models
         public string Ip { get; set; }
     }
 
+
+    // for login with facebook input
+    public class LoginwithFBInput
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string eMail { get; set; }
+        public string Gender { get; set; }
+        public string PhotoUrl { get; set; }
+
+        public string FacebookUserId { get; set; }
+        public string UserFingerPrints { get; set; }
+        public string Ip { get; set; }
+    }
+
     public class GetProfileDataInput
     {
         public string LandlorId { get; set; }

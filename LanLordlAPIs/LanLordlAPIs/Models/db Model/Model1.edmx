@@ -104,6 +104,7 @@
           <Property Name="LastSeenOn" Type="datetime" />
           <Property Name="IsAnyRentReceived" Type="bit" />
           <Property Name="IsIdVerified" Type="bit" />
+          <Property Name="FacebookUserId" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="MemberNotifications">
           <Key>
@@ -214,6 +215,8 @@
           <Property Name="PhoneVerifiedOn" Type="datetime" />
           <Property Name="VerificationDocumentPath" Type="varchar(max)" />
           <Property Name="IsVerifiedWithSynapse" Type="bit" />
+          <Property Name="TransferLimit" Type="varchar(max)" />
+          <Property Name="FacebookUserId" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="PasswordResetRequests">
           <Key>
@@ -736,6 +739,7 @@
           <Property Name="LastSeenOn" Type="DateTime" Precision="3" />
           <Property Name="IsAnyRentReceived" Type="Boolean" />
           <Property Name="IsIdVerified" Type="Boolean" />
+          <Property Name="FacebookUserId" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="MemberNotification">
           <Key>
@@ -1101,6 +1105,8 @@
           <NavigationProperty Name="Transactions1" Relationship="NOOCHModel.FK_Transactions_Members3" FromRole="Member" ToRole="Transaction" />
           <NavigationProperty Name="AutoPayTransactions" Relationship="NOOCHModel.FK_AutoPayTransactions_Members" FromRole="Member" ToRole="AutoPayTransaction" />
           <NavigationProperty Name="AutoPayTransactions1" Relationship="NOOCHModel.FK_AutoPayTransactions_Members1" FromRole="Member" ToRole="AutoPayTransaction" />
+          <Property Name="TransferLimit" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="FacebookUserId" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="SynapseBanksOfMember">
           <Key>
@@ -1439,6 +1445,7 @@
           <EntitySetMapping Name="Landlords">
             <EntityTypeMapping TypeName="NOOCHModel.Landlord">
               <MappingFragment StoreEntitySet="Landlords">
+                <ScalarProperty Name="FacebookUserId" ColumnName="FacebookUserId" />
                 <ScalarProperty Name="IsIdVerified" ColumnName="IsIdVerified" />
                 <ScalarProperty Name="IsAnyRentReceived" ColumnName="IsAnyRentReceived" />
                 <ScalarProperty Name="LastSeenOn" ColumnName="LastSeenOn" />
@@ -1649,6 +1656,8 @@
           <EntitySetMapping Name="Members">
             <EntityTypeMapping TypeName="NOOCHModel.Member">
               <MappingFragment StoreEntitySet="Members">
+                <ScalarProperty Name="FacebookUserId" ColumnName="FacebookUserId" />
+                <ScalarProperty Name="TransferLimit" ColumnName="TransferLimit" />
                 <ScalarProperty Name="IsVerifiedWithSynapse" ColumnName="IsVerifiedWithSynapse" />
                 <ScalarProperty Name="VerificationDocumentPath" ColumnName="VerificationDocumentPath" />
                 <ScalarProperty Name="PhoneVerifiedOn" ColumnName="PhoneVerifiedOn" />
