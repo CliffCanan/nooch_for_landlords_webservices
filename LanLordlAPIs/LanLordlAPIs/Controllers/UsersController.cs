@@ -400,7 +400,7 @@ namespace LanLordlAPIs.Controllers
 
                     var memberTableData = (from c in obj.Members
                                            where
-                                               c.UserName == userNameLowerCaseEncrypted && c.FacebookUserId == User.FacebookUserId &&
+                                               c.UserName == userNameLowerCaseEncrypted &&
                                                c.IsDeleted == false && c.Status == "Active"
                                            select c).FirstOrDefault();
                     if (memberTableData != null)
@@ -409,7 +409,7 @@ namespace LanLordlAPIs.Controllers
                         // checking user in landlords table
 
                         var landlordTableDetails = (from c in obj.Landlords
-                                                    where c.FacebookUserId == User.FacebookUserId && c.IsDeleted == false && c.Status == "Active"
+                                                    where  c.IsDeleted == false && c.Status == "Active"
                                                         && c.eMail == userNameLowerCaseEncrypted
                                                     select c).FirstOrDefault();
 
@@ -445,7 +445,7 @@ namespace LanLordlAPIs.Controllers
                             #region New Landlord But Existing Member
 
                             Landlord l = CommonHelper.AddNewLandlordEntryInDb(User.FirstName.Trim().ToLower(),
-                                User.LastName.Trim().ToLower(), User.eMail, "", true, true,
+                                User.LastName.Trim().ToLower(), User.eMail, CommonHelper.GetEncryptedData(" "), true, true,
                                 User.Ip, memberTableData.MemberId);
 
                             if (l != null)
@@ -512,7 +512,7 @@ namespace LanLordlAPIs.Controllers
                         {
                             Nooch_ID = noochRandomId,
                             MemberId = Guid.NewGuid(),
-                            UserName = CommonHelper.GetEncryptedData(User.eMail),
+                            UserName = CommonHelper.GetEncryptedData(User.eMail.Trim().ToLower()),
                             FirstName = CommonHelper.GetEncryptedData(User.FirstName.Trim().ToLower()),
                             LastName = CommonHelper.GetEncryptedData(User.LastName.Trim().ToLower()),
                             SecondaryEmail = User.eMail,
@@ -537,6 +537,7 @@ namespace LanLordlAPIs.Controllers
                             State = CommonHelper.GetEncryptedData(""),
                             City = CommonHelper.GetEncryptedData(""),
                             Zipcode = CommonHelper.GetEncryptedData(""),
+                            FacebookUserId = User.FacebookUserId
                         };
 
                         #endregion Create Member Object
@@ -627,7 +628,7 @@ namespace LanLordlAPIs.Controllers
 
                             // Finally, make an entry in Landlords Table 
                             Landlord l = CommonHelper.AddNewLandlordEntryInDb(User.FirstName.Trim().ToLower(),
-                                User.LastName.Trim().ToLower(), User.eMail, " ", false, false,
+                                User.LastName.Trim().ToLower(), User.eMail,CommonHelper.GetEncryptedData(" "), false, false,
                                 User.Ip, member.MemberId);
 
                             if (l != null && authTokenAddedToDB > 0)
