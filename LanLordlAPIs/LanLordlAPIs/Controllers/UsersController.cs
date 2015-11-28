@@ -401,7 +401,7 @@ namespace LanLordlAPIs.Controllers
                     var memberTableData = (from c in obj.Members
                                            where
                                                c.UserName == userNameLowerCaseEncrypted &&
-                                               c.IsDeleted == false && c.Status == "Active"
+                                               c.IsDeleted == false && (c.Status == "Active" || c.Status == "Registered" || c.Status == "NonRegistered")
                                            select c).FirstOrDefault();
                     if (memberTableData != null)
                     {
@@ -445,7 +445,7 @@ namespace LanLordlAPIs.Controllers
                             #region New Landlord But Existing Member
 
                             Landlord l = CommonHelper.AddNewLandlordEntryInDb(User.FirstName.Trim().ToLower(),
-                                User.LastName.Trim().ToLower(), User.eMail, CommonHelper.GetEncryptedData(" "), true, true,
+                                User.LastName.Trim().ToLower(), User.eMail.ToLower().Trim(), CommonHelper.GetEncryptedData(" "), true, true,
                                 User.Ip, memberTableData.MemberId);
 
                             if (l != null)
@@ -628,7 +628,7 @@ namespace LanLordlAPIs.Controllers
 
                             // Finally, make an entry in Landlords Table 
                             Landlord l = CommonHelper.AddNewLandlordEntryInDb(User.FirstName.Trim().ToLower(),
-                                User.LastName.Trim().ToLower(), User.eMail,CommonHelper.GetEncryptedData(" "), false, false,
+                                User.LastName.Trim().ToLower(), User.eMail.ToLower().Trim(),CommonHelper.GetEncryptedData(" "), false, false,
                                 User.Ip, member.MemberId);
 
                             if (l != null && authTokenAddedToDB > 0)
@@ -668,19 +668,22 @@ namespace LanLordlAPIs.Controllers
 
                                 #endregion Send Verification email
 
-                                CommonHelper.saveLandlordIp(l.LandlordId, User.Ip);
-                                l.DateModified = requestDatetime;
-                                l.LastSeenOn = requestDatetime;
 
-                                l.WebAccessToken = CommonHelper.GenerateAccessToken();
+                                Landlord lIndb = obj.Landlords.Find(l.LandlordId);
+
+                                CommonHelper.saveLandlordIp(l.LandlordId, User.Ip);
+                                lIndb.DateModified = requestDatetime;
+                                lIndb.LastSeenOn = requestDatetime;
+
+                                lIndb.WebAccessToken = CommonHelper.GenerateAccessToken();
 
                                 obj.SaveChanges();
 
                                 result.IsSuccess = true;
                                 result.ErrorMessage = "OK";
-                                result.AccessToken = l.WebAccessToken;
-                                result.MemberId = l.MemberId.ToString();
-                                result.LandlordId = l.LandlordId.ToString();
+                                result.AccessToken = lIndb.WebAccessToken;
+                                result.MemberId = lIndb.MemberId.ToString();
+                                result.LandlordId = lIndb.LandlordId.ToString();
 
 
                                 return result;
