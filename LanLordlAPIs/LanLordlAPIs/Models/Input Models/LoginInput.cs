@@ -35,6 +35,20 @@ namespace LanLordlAPIs.Models.Input_Models
         public string Ip { get; set; }
     }
 
+
+    public class LoginwithGoogleInput
+    {
+        public string Name { get; set; }
+        
+        public string eMail { get; set; }
+        public string Gender { get; set; }
+        public string PhotoUrl { get; set; }
+
+        public string GoogleUserId { get; set; }
+        public string UserFingerPrints { get; set; }
+        public string Ip { get; set; }
+    }
+
     public class GetProfileDataInput
     {
         public string LandlorId { get; set; }
