@@ -86,7 +86,7 @@ namespace LanLordlAPIs.Controllers
                                 IsVerifiedWithSynapse = false,
                                 UDID1 = !String.IsNullOrEmpty(llDetails.fingerprint) ? llDetails.fingerprint : null,
                                 Country = !String.IsNullOrEmpty(llDetails.country) ? llDetails.country : "US",
-                                
+
                                 // some blanks as default
                                 Address = CommonHelper.GetEncryptedData(""),
                                 State = CommonHelper.GetEncryptedData(""),
@@ -418,7 +418,7 @@ namespace LanLordlAPIs.Controllers
                         // checking user in landlords table
 
                         var landlordTableDetails = (from c in obj.Landlords
-                                                    where  c.IsDeleted == false && c.Status == "Active"
+                                                    where c.IsDeleted == false && c.Status == "Active"
                                                         && c.eMail == userNameLowerCaseEncrypted
                                                     select c).FirstOrDefault();
 
@@ -538,10 +538,34 @@ namespace LanLordlAPIs.Controllers
 
                         #endregion Create Member Object
 
+
+                        if (!String.IsNullOrEmpty(User.PhotoUrl))
+                        {
+                            try
+                            {
+                                var webClient = new WebClient();
+                                byte[] imageBytes = webClient.DownloadData(User.PhotoUrl);
+
+                                if (imageBytes != null)
+                                {
+                                    member.Photo = SaveImageForGivenUser(imageBytes, member.MemberId.ToString());
+                                }
+                                else
+                                {
+                                    member.Photo = CommonHelper.GetValueFromConfig("UserPhotoUrl") + "gv_no_photo.png";
+                                }
+                            }
+                            catch (Exception)
+                            {
+
+                                Logger.Error("UserController -> LoginWithGoogle - Error occurred while getting user image from url - [MemberID: " + member.MemberId + "]");
+                            }
+                        }
+
                         obj.Members.Add(member);
 
                         Logger.Info("UserController -> LoginWithFB - ** NEW LANDLORD ** - MEMBER Created, about to save to DB - [MemberID: " + member.MemberId + "]");
-                        
+
                         try
                         {
                             obj.SaveChanges();
@@ -625,7 +649,7 @@ namespace LanLordlAPIs.Controllers
 
                             // Finally, make an entry in Landlords Table 
                             Landlord l = CommonHelper.AddNewLandlordEntryInDb(User.FirstName.Trim().ToLower(),
-                                User.LastName.Trim().ToLower(), User.eMail.ToLower().Trim(),CommonHelper.GetEncryptedData(" "), false, false,
+                                User.LastName.Trim().ToLower(), User.eMail.ToLower().Trim(), CommonHelper.GetEncryptedData(" "), false, false,
                                 User.Ip, false, member.MemberId);
 
                             if (l != null && authTokenAddedToDB > 0)
@@ -694,7 +718,7 @@ namespace LanLordlAPIs.Controllers
                         catch (Exception ex)
                         {
                             Logger.Error("UsersController -> RegisterLandlord FAILED while making account for: [" + User.eMail + "], [Exception: " + ex.Message + "]");
-                            
+
                             result.ErrorMessage = "Some duplicate values are being generated at server. Retry later! ";
                             return result;
                         }
@@ -715,6 +739,78 @@ namespace LanLordlAPIs.Controllers
         }
 
 
+        public void SaveLandlordImage(string landlordId, string imageUrl)
+        {
+            try
+            {
+                
+                // updating landlord table
+                using (NOOCHEntities obj = new NOOCHEntities())
+                {
+                    Guid lid = CommonHelper.ConvertToGuid(landlordId);
+                    Landlord lIndb = obj.Landlords.Find(lid);
+                    if (lIndb != null)
+                    {
+                        lIndb.UserPic = imageUrl;
+                        obj.SaveChanges();
+                    }
+                }
+
+
+            }
+            catch (Exception exE)
+            {
+                Logger.Error(
+                    "UserController -> LoginWithGoogle - SaveLandlordImage Error occured while saving landlord image- [LandlordId: " +
+                    landlordId + "] Error -> " + exE);
+                
+                
+            }
+        }
+
+
+        public string SaveImageForGivenUser(byte[] imageData, string memberId)
+        {
+            string imageUrlMade = "";
+
+            try
+            {
+
+                if (imageData != null)
+                {
+                    // Make  image from bytes
+                    string filename = HttpContext.Current.Server.MapPath("UploadedImages/UsersImages/") +
+                                      memberId + ".png";
+                    using (FileStream fs = new FileStream(filename, FileMode.Create, FileAccess.ReadWrite))
+                    {
+                        fs.Write(imageData, 0, (int) imageData.Length);
+                    }
+                    imageUrlMade = CommonHelper.GetValueFromConfig("UserPhotoUrl") + memberId + ".png";
+                }
+                else
+                {
+                    imageUrlMade = CommonHelper.GetValueFromConfig("UserPhotoUrl") + "gv_no_photo.png";
+                }
+
+
+                return imageUrlMade;
+
+            }
+            catch (Exception exE)
+            {
+
+                Logger.Error(
+                    "UserController -> LoginWithGoogle - Error occured while getting user image from Google- [MemberID: " +
+                    memberId + "] Error -> " + exE);
+                return imageUrlMade;
+            }
+        }
+
+
+
+
+
+
         // to login with google
         [HttpPost]
         [ActionName("LoginWithGoogle")]
@@ -731,7 +827,7 @@ namespace LanLordlAPIs.Controllers
 
                     // validating login data
                     if (String.IsNullOrEmpty(User.eMail) ||
-                        String.IsNullOrEmpty(User.Name) )
+                        String.IsNullOrEmpty(User.Name))
                     {
                         result.ErrorMessage = "Invalid login information provided.";
                         return result;
@@ -742,7 +838,7 @@ namespace LanLordlAPIs.Controllers
                     if (UserNameSplit.Count() == 1 || !UserNameSplit.Any())
                     {
                         firstName = User.Name.Trim().ToLower();
-                        
+
                     }
                     if (UserNameSplit.Count() == 2)
                     {
@@ -753,9 +849,9 @@ namespace LanLordlAPIs.Controllers
                     {
                         firstName = UserNameSplit[0].Trim().ToLower();
 
-                        for (int i = 1; i < UserNameSplit.Count() ; i++)
+                        for (int i = 1; i < UserNameSplit.Count(); i++)
                         {
-                            lastName +=  UserNameSplit[i]+" " ;
+                            lastName += UserNameSplit[i] + " ";
                         }
 
                         lastName = lastName.Trim().ToLower();
@@ -829,7 +925,7 @@ namespace LanLordlAPIs.Controllers
                                 result.MemberId = l.MemberId.ToString();
                                 result.LandlordId = l.LandlordId.ToString();
 
-                                Logger.Info("Users Cntrlr -> Login requested by [" + User.eMail + "]");
+                                Logger.Info("Users Cntrlr -> LoginWithGoogle requested by [" + User.eMail + "]");
 
                                 return result;
                             }
@@ -894,17 +990,47 @@ namespace LanLordlAPIs.Controllers
                             State = CommonHelper.GetEncryptedData(""),
                             City = CommonHelper.GetEncryptedData(""),
                             Zipcode = CommonHelper.GetEncryptedData(""),
-                          GoogleUserId= User.GoogleUserId
+                            GoogleUserId = User.GoogleUserId
                         };
 
                         #endregion Create Member Object
 
+
+                        if (!String.IsNullOrEmpty(User.PhotoUrl))
+                        {
+                            try
+                            {
+                                var webClient = new WebClient();
+                                byte[] imageBytes = webClient.DownloadData(User.PhotoUrl);
+
+                                if (imageBytes != null)
+                                {
+                                    member.Photo = SaveImageForGivenUser(imageBytes, member.MemberId.ToString());
+                                }
+                                else
+                                {
+                                    member.Photo = CommonHelper.GetValueFromConfig("UserPhotoUrl") + "gv_no_photo.png";
+                                }
+                            }
+                            catch (Exception)
+                            {
+
+                                Logger.Error("UserController -> LoginWithGoogle - Error occurred while getting user image from url - [MemberID: " + member.MemberId + "]");
+                            }
+                        }
+
                         obj.Members.Add(member);
 
-                        Logger.Info("UserController -> LoginWithFB - ** NEW LANDLORD ** - MEMBER Created, about to save to DB - [MemberID: " + member.MemberId + "]");
+                        Logger.Info("UserController -> LoginWithGoogle - ** NEW LANDLORD ** - MEMBER Created, about to save to DB - [MemberID: " + member.MemberId + "]");
                         try
                         {
                             obj.SaveChanges();
+
+                            // saving image if passed
+
+                            
+
+
 
                             CommonHelper.setReferralCode(member.MemberId);
                             var tokenId = Guid.NewGuid();
@@ -1036,6 +1162,8 @@ namespace LanLordlAPIs.Controllers
 
                                 obj.SaveChanges();
 
+                                SaveLandlordImage(lIndb.LandlordId.ToString(), member.Photo);
+
                                 result.IsSuccess = true;
                                 result.ErrorMessage = "OK";
                                 result.AccessToken = lIndb.WebAccessToken;
@@ -1054,9 +1182,9 @@ namespace LanLordlAPIs.Controllers
                         catch (Exception ex)
                         {
                             Logger.Error("UsersController -> RegisterLandlord FAILED while making account for: [" + User.eMail + "], [Exception: " + ex.Message + "]");
-                            
+
                             result.ErrorMessage = "Some duplicate values are being generated at server. Retry later! ";
-                            
+
                             return result;
                         }
 

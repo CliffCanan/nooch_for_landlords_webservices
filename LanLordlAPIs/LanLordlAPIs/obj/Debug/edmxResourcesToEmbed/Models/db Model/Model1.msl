@@ -232,6 +232,7 @@
     <EntitySetMapping Name="Members">
       <EntityTypeMapping TypeName="NOOCHModel.Member">
         <MappingFragment StoreEntitySet="Members">
+          <ScalarProperty Name="GoogleUserId" ColumnName="GoogleUserId" />
           <ScalarProperty Name="FacebookUserId" ColumnName="FacebookUserId" />
           <ScalarProperty Name="TransferLimit" ColumnName="TransferLimit" />
           <ScalarProperty Name="IsVerifiedWithSynapse" ColumnName="IsVerifiedWithSynapse" />

@@ -427,6 +427,7 @@
     <NavigationProperty Name="AutoPayTransactions1" Relationship="NOOCHModel.FK_AutoPayTransactions_Members1" FromRole="Member" ToRole="AutoPayTransaction" />
     <Property Name="TransferLimit" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
     <Property Name="FacebookUserId" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="GoogleUserId" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
   </EntityType>
   <EntityType Name="SynapseBanksOfMember">
     <Key>

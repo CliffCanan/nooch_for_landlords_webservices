@@ -2028,3 +2028,4 @@ INFO  2015-11-28 16:42:41,842 69403ms Logger                 Info               
 INFO  2015-11-28 16:42:41,888 69449ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: Nooch Support], [Address: support@nooch.com]
 INFO  2015-11-28 16:42:46,222 73783ms Logger                 Info               - UserController -> LoginWithFB - Registration email sent to [malkitsingh01@gmail.com] successfully.
 INFO  2015-11-28 16:46:33,152 300712ms Logger                 Info               - Users Cntrlr -> Login requested by [malkitsingh01@gmail.com] with Facebook
+INFO  2015-12-01 15:31:01,765 1769270ms Logger                 Info               - Users Cntrlr -> LoginWithGoogle requested by [malkitsingh01@gmail.com] with Google
