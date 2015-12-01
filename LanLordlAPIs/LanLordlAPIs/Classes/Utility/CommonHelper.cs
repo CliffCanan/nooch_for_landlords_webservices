@@ -561,7 +561,7 @@ namespace LanLordlAPIs.Classes.Utility
         }
 
 
-        public static Landlord AddNewLandlordEntryInDb(string fName, string lName, string email, string pw, bool eMailSatusToSet, bool phoneStatusToSet, string ip, Guid memberGuid)
+        public static Landlord AddNewLandlordEntryInDb(string fName, string lName, string email, string pw, bool eMailSatusToSet, bool phoneStatusToSet, string ip, bool isBiz, Guid memberGuid)
         {
             try
             {
@@ -576,7 +576,7 @@ namespace LanLordlAPIs.Classes.Utility
                     ll.IsPhoneVerified = phoneStatusToSet;
                     ll.Status = "Active";
                     ll.Type = "Landlord";
-                    ll.SubType = "Basic";
+                    ll.SubType = isBiz ? "Business" : "Basic";
                     ll.MemberId = memberGuid;
                     ll.IsDeleted = false;
                     ll.DateCreated = DateTime.Now;

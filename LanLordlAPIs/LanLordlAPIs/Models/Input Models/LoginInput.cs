@@ -113,6 +113,9 @@ namespace LanLordlAPIs.Models.Input_Models
         public string fingerprint { get; set; }
         public string ip { get; set; }
         public string country { get; set; }
+        public bool isBusiness { get; set; }
+
+        public bool shouldSendEmails { get; set; }
     }
 
     public class SetPropertyStatusClass
