@@ -89,6 +89,7 @@ namespace LanLordlAPIs.Models.db_Model
         public Nullable<bool> IsVerifiedWithSynapse { get; set; }
         public string TransferLimit { get; set; }
         public string FacebookUserId { get; set; }
+        public string GoogleUserId { get; set; }
     
         public virtual ICollection<MemberNotification> MemberNotifications { get; set; }
         public virtual ICollection<MemberPrivacySetting> MemberPrivacySettings { get; set; }

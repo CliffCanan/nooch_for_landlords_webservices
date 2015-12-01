@@ -893,8 +893,8 @@ namespace LanLordlAPIs.Controllers
                             Address = CommonHelper.GetEncryptedData(""),
                             State = CommonHelper.GetEncryptedData(""),
                             City = CommonHelper.GetEncryptedData(""),
-                            Zipcode = CommonHelper.GetEncryptedData("")
-                          //  FacebookUserId = User.FacebookUserId
+                            Zipcode = CommonHelper.GetEncryptedData(""),
+                          GoogleUserId= User.GoogleUserId
                         };
 
                         #endregion Create Member Object
