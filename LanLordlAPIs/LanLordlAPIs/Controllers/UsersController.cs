@@ -70,8 +70,8 @@ namespace LanLordlAPIs.Controllers
                                 UserName = CommonHelper.GetEncryptedData(llDetails.eMail),
                                 FirstName = CommonHelper.GetEncryptedData(llDetails.FirstName),
                                 LastName = CommonHelper.GetEncryptedData(llDetails.LastName),
-                                SecondaryEmail = llDetails.eMail,
-                                RecoveryEmail = llDetails.eMail,
+                                SecondaryEmail = CommonHelper.GetEncryptedData(llDetails.eMail),
+                                RecoveryEmail = CommonHelper.GetEncryptedData(llDetails.eMail),
                                 Password = CommonHelper.GetEncryptedData(llDetails.Password),
                                 PinNumber = CommonHelper.GetEncryptedData(randomPin),
                                 Status = Constants.STATUS_REGISTERED,
@@ -236,6 +236,7 @@ namespace LanLordlAPIs.Controllers
                                 else
                                 {
                                     // exception while creating account
+                                    Logger.Error("User Controller -> RegisterLandlord FAILED - ERROR WHILE CREATING ACCOUNT - Email: [" + llDetails.eMail + "]");
                                     result.ErrorMessage = "Server error. Retry later! ";
                                 }
                             }
@@ -244,6 +245,7 @@ namespace LanLordlAPIs.Controllers
                                 Logger.Error("UsersController -> RegisterLandlord FAILED while making account for: [" + llDetails.eMail + "], [Exception: " + ex.Message + "]");
                                 result.ErrorMessage = "Some duplicate values are being generated at server. Retry later! ";
                             }
+
                             #endregion Create User Settings & Save To DB
                         }
 
@@ -511,8 +513,8 @@ namespace LanLordlAPIs.Controllers
                             UserName = CommonHelper.GetEncryptedData(User.eMail.Trim().ToLower()),
                             FirstName = CommonHelper.GetEncryptedData(User.FirstName.Trim().ToLower()),
                             LastName = CommonHelper.GetEncryptedData(User.LastName.Trim().ToLower()),
-                            SecondaryEmail = User.eMail,
-                            RecoveryEmail = User.eMail,
+                            SecondaryEmail = CommonHelper.GetEncryptedData(User.eMail),
+                            RecoveryEmail = CommonHelper.GetEncryptedData(User.eMail),
                             Password = CommonHelper.GetEncryptedData(" "),
                             PinNumber = CommonHelper.GetEncryptedData(randomPin),
                             Status = Constants.STATUS_REGISTERED,
@@ -968,8 +970,8 @@ namespace LanLordlAPIs.Controllers
                             UserName = CommonHelper.GetEncryptedData(User.eMail.Trim().ToLower()),
                             FirstName = CommonHelper.GetEncryptedData(firstName),
                             LastName = CommonHelper.GetEncryptedData(lastName),
-                            SecondaryEmail = User.eMail,
-                            RecoveryEmail = User.eMail,
+                            SecondaryEmail = CommonHelper.GetEncryptedData(User.eMail),
+                            RecoveryEmail = CommonHelper.GetEncryptedData(User.eMail),
                             Password = CommonHelper.GetEncryptedData(" "),
                             PinNumber = CommonHelper.GetEncryptedData(randomPin),
                             Status = Constants.STATUS_REGISTERED,

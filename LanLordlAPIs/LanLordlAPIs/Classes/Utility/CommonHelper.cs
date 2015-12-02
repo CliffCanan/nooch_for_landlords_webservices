@@ -1139,37 +1139,38 @@ namespace LanLordlAPIs.Classes.Utility
         public static CheckAndRegisterLandlordByEmailResult checkAndRegisterLandlordByemailId(string eMailID)
         {
             CheckAndRegisterLandlordByEmailResult result = new CheckAndRegisterLandlordByEmailResult();
+            result.IsSuccess = false;
+
             try
             {
                 string email = eMailID.Trim().ToLower();
                 email = CommonHelper.GetEncryptedData(email);
+
                 using (NOOCHEntities obj = new NOOCHEntities())
                 {
-                    var existingMemberDetails = (from c in obj.Landlords where c.eMail == email && c.IsDeleted == false select c).FirstOrDefault();
+                    var existingMemberDetails = (from c in obj.Landlords
+                                                 where c.eMail == email && c.IsDeleted == false
+                                                 select c).FirstOrDefault();
+                    
                     if (existingMemberDetails != null)
                     {
-
-                        result.IsSuccess = false;
                         result.ErrorMessage = "Landlord already exists with given eMail id.";
                         result.LanlordDetails = existingMemberDetails;
                     }
                     else
                     {
-                        // registering new landlord
                         result.IsSuccess = true;
                         result.ErrorMessage = "No user found.";
-                        return result;
                     }
                 }
-                return result;
             }
             catch (Exception ex)
             {
                 Logger.Error("Landlord Common Helper -> checkAndRegisterLandlordByemailId FAIELD - [Exception: " + ex.Message + "], [Email: " + eMailID + "]");
-                result.IsSuccess = false;
                 result.ErrorMessage = "Server Error.";
-                return result;
             }
+            
+            return result;
         }
 
 
