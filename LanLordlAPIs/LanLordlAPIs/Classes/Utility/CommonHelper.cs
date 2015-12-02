@@ -656,7 +656,7 @@ namespace LanLordlAPIs.Classes.Utility
                         UserName = GetEncryptedData(email.Trim()),
                         UserNameLowerCase = GetEncryptedData(email.Trim().ToLower()),
                         SecondaryEmail = GetEncryptedData(email.Trim()),
-                        RecoveryEmail = email.Trim(),
+                        RecoveryEmail = GetEncryptedData(email.Trim()),
 
                         Password = "",
                         PinNumber = GetRandomPinNumber(),
