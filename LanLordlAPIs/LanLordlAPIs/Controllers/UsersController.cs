@@ -1437,7 +1437,10 @@ namespace LanLordlAPIs.Controllers
                                 // NOTE:  In general, let's try to use the Member Table info b/c all the existing services for Synapse, email/phone verification, etc. use that table.
                                 res.MobileNumber = !String.IsNullOrEmpty(memberObj.ContactNumber) ? CommonHelper.FormatPhoneNumber(memberObj.ContactNumber) : "";
                                 res.IsPhoneVerified = (memberObj.IsVerifiedPhone == true) ? true : res.IsPhoneVerified;
-                                res.IsEmailVerified = (memberObj.Status == "Active") ? true : false;
+                                if (res.IsEmailVerified != true)
+                                {
+                                    res.IsEmailVerified = (memberObj.Status == "Active") ? true : false;
+                                }
                             }
                         }
 
@@ -2093,7 +2096,6 @@ namespace LanLordlAPIs.Controllers
                     switch (input.UserType)
                     {
                         case "Landlord":
-
                             #region Landlord Related Operations
 
                             var landlordDetails = (from c in obj.Landlords

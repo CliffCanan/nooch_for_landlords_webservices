@@ -906,7 +906,8 @@ namespace LanLordlAPIs.Controllers
         [ActionName("InviteTenant")]
         public GenericInternalResponse InviteTenant(AddNewTenantInput input)
         {
-            Logger.Info("PropertiesController -> InviteTenant Initiated - [LandlordID: " + input.authData.LandlordId + "]");
+            Logger.Info("PropertiesController -> InviteTenant Initiated - [LandlordID: " + input.authData.LandlordId +
+                        "], Tenant: [" + input.tenant + "], Unit #: [" + input.unitId + "]");
 
             GenericInternalResponse result = new GenericInternalResponse();
             result.success = false;
