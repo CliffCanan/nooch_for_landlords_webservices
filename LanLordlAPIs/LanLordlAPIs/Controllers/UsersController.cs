@@ -1790,6 +1790,13 @@ namespace LanLordlAPIs.Controllers
 
                         if (landlordObj != null)
                         {
+
+                            // which value represent what -- NOTE for future reference
+                            // 1  -  Property name + Unit number
+                            // 2 -   Property name + Unit number + Month
+                            // 3 -  Property name + Unit number + Tenant Last Name (space permitting)
+
+
                             landlordObj.MemoFormula = Convert.ToInt16(User.FormulaToUse);
                             obj.SaveChanges();
                             result.IsSuccess = true;
