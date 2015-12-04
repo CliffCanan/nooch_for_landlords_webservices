@@ -21,6 +21,7 @@
     <EntitySetMapping Name="Landlords">
       <EntityTypeMapping TypeName="NOOCHModel.Landlord">
         <MappingFragment StoreEntitySet="Landlords">
+          <ScalarProperty Name="MemoFormula" ColumnName="MemoFormula" />
           <ScalarProperty Name="FacebookUserId" ColumnName="FacebookUserId" />
           <ScalarProperty Name="IsIdVerified" ColumnName="IsIdVerified" />
           <ScalarProperty Name="IsAnyRentReceived" ColumnName="IsAnyRentReceived" />

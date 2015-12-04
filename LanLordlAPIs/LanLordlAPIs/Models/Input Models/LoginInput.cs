@@ -70,6 +70,14 @@ namespace LanLordlAPIs.Models.Input_Models
         public LandlordProfileInfoInputClass UserInfo { get; set; }
     }
 
+    public class SaveMemoFormulaInputClass
+    {
+        public string FormulaToUse { get; set; }
+
+        public GetProfileDataInput DeviceInfo { get; set; }
+        
+    }
+
     public class UpdatePasswordInput
     {
         public GetProfileDataInput AuthInfo { get; set; }

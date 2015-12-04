@@ -1762,6 +1762,70 @@ namespace LanLordlAPIs.Controllers
             return result;
         }
 
+        [HttpPost]
+        [ActionName("SaveMemoFormula")]
+        public CreatePropertyResultOutput SaveMemoFormula(SaveMemoFormulaInputClass User)
+        {
+            Logger.Info("UsersController -> EditUserInfo Initiated - [LandlordID: " + User.DeviceInfo.LandlorId + "]");
+
+            CreatePropertyResultOutput result = new CreatePropertyResultOutput();
+            result.IsSuccess = false;
+
+            try
+            {
+                Guid landlordguidId = new Guid(User.DeviceInfo.LandlorId);
+                result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, User.DeviceInfo.AccessToken);
+                result.IsSuccess = false;
+
+                if (result.AuthTokenValidation.IsTokenOk)
+                {
+                    // valid access token continue with edit
+
+                    using (NOOCHEntities obj = new NOOCHEntities())
+                    {
+                        // Get details from DB
+                        var landlordObj = (from c in obj.Landlords
+                                           where c.LandlordId == landlordguidId
+                                           select c).FirstOrDefault();
+
+                        if (landlordObj != null)
+                        {
+
+                            // which value represent what -- NOTE for future reference
+                            // 1  -  Property name + Unit number
+                            // 2 -   Property name + Unit number + Month
+                            // 3 -  Property name + Unit number + Tenant Last Name (space permitting)
+
+
+                            landlordObj.MemoFormula = Convert.ToInt16(User.FormulaToUse);
+                            obj.SaveChanges();
+                            result.IsSuccess = true;
+                            result.ErrorMessage = "OK";
+                       
+                        }
+                        else
+                        {
+                            Logger.Error("UsersController -> SaveMemoFormula FAILED - Landlord ID Not Found");
+                            result.ErrorMessage = "Given landlord ID not found.";
+                        }
+
+                    }
+                }
+                else
+                {
+                    result.ErrorMessage = result.AuthTokenValidation.ErrorMessage;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("UsersController -> SaveMemoFormula FAILED - [Outer Exception: " + ex.ToString() + "]");
+                result.ErrorMessage = "Server error";
+            }
+
+            return result;
+        }
+
+        
 
         [HttpPost]
         [ActionName("submitLandlordIdVerWiz")]
