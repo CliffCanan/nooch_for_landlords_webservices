@@ -53,5 +53,6 @@ namespace LanLordlAPIs.Models.db_Model
         public Nullable<bool> IsAnyRentReceived { get; set; }
         public Nullable<bool> IsIdVerified { get; set; }
         public string FacebookUserId { get; set; }
+        public Nullable<int> MemoFormula { get; set; }
     }
 }
