@@ -288,6 +288,8 @@ namespace LanLordlAPIs.Models.Output_Models
         public string MemberId { get; set; }
         public string TenantName { get; set; }
         public string TenantEmail { get; set; }
+        public string RentStartDate { get; set; }
+        public string LeaseLength { get; set; }
 
         // rent
         public string LastRentPaidOn { get; set; }

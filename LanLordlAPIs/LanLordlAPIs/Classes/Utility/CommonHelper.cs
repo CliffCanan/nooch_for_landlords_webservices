@@ -1477,7 +1477,6 @@ namespace LanLordlAPIs.Classes.Utility
                         return "Already Activated.";
                     }
                 }
-
             }
             else
             {

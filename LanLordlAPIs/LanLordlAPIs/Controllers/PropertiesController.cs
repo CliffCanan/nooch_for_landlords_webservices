@@ -300,7 +300,14 @@ namespace LanLordlAPIs.Controllers
         [ActionName("EditPropertyUnit")]
         public CreatePropertyResultOutput EditPropertyUnit(AddOrEditUnitInput unitInput)
         {
-            Logger.Info("PropertiesController -> EditPropertyUnit Initiated - [LandlordID: " + unitInput.User.LandlordId + "]");
+            Logger.Info("PropertiesController -> EditPropertyUnit Initiated - [LandlordID: " + unitInput.User.LandlordId +
+                        "], UnitID: [" + unitInput.Unit.UnitId +
+                        "], Unit #: [" + unitInput.Unit.UnitNum +
+                        "], isNewUnit: [" + unitInput.Unit.isNewUnit +
+                        "], Rnet Amount: [" + unitInput.Unit.Rent +
+                        "], RentStartDate: [" + unitInput.Unit.RentStartDate +
+                        "], IsTenantAdded: [" + unitInput.Unit.IsTenantAdded +
+                        "], TenantId: [" + unitInput.Unit.TenantId + "]");
 
             CreatePropertyResultOutput result = new CreatePropertyResultOutput();
             result.IsSuccess = false;
@@ -341,7 +348,9 @@ namespace LanLordlAPIs.Controllers
                             unitObj.LeaseLength = unitInput.Unit.LeaseLength;
                             DateTime date = DateTime.Now.AddMonths(1);
                             DateTime newDate = new DateTime(date.Year, date.Month, 1, 0, 0, 0, date.Kind);
-                            unitObj.RentStartDate = !String.IsNullOrEmpty(unitInput.Unit.RentStartDate) ? Convert.ToDateTime(unitInput.Unit.RentStartDate.Trim()) : newDate;
+                            unitObj.RentStartDate = !String.IsNullOrEmpty(unitInput.Unit.RentStartDate)
+                                                    ? Convert.ToDateTime(unitInput.Unit.RentStartDate.Trim())
+                                                    : newDate;
 
 
                             #region Delete Any Existing Tenants For This Unit
@@ -1424,6 +1433,10 @@ namespace LanLordlAPIs.Controllers
                                 currentUnit.UnitNickname = unitX.UnitNickName ?? "";
 
                                 currentUnit.UnitRent = unitX.UnitRent ?? "";
+                                currentUnit.RentStartDate = unitX.RentStartDate != null
+                                                            ? Convert.ToDateTime(unitX.RentStartDate).ToString("MM/dd/yyyyy")
+                                                            : null;
+                                currentUnit.LeaseLength = unitX.LeaseLength;
                                 currentUnit.BankAccountId = unitX.BankAccountId != null ? unitX.BankAccountId.ToString() : "";
                                 currentUnit.DateAdded = unitX.DateAdded != null ? Convert.ToDateTime(unitX.DateAdded).ToShortDateString() : "";
                                 currentUnit.ModifiedOn = unitX.ModifiedOn != null ? Convert.ToDateTime(unitX.ModifiedOn).ToShortDateString() : "";
