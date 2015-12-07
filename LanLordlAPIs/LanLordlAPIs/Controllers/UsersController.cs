@@ -2665,6 +2665,8 @@ namespace LanLordlAPIs.Controllers
 
             try
             {
+                Logger.Info("UsersController -> EditUserInfo Initiated - LandlordID: [" + input.AuthInfo.LandlorId + "]");
+
                 if (String.IsNullOrEmpty(input.newPw))
                 {
                     result.msg = "No new password sent!";

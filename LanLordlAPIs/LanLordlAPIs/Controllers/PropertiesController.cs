@@ -304,7 +304,7 @@ namespace LanLordlAPIs.Controllers
                         "], UnitID: [" + unitInput.Unit.UnitId +
                         "], Unit #: [" + unitInput.Unit.UnitNum +
                         "], isNewUnit: [" + unitInput.Unit.isNewUnit +
-                        "], Rnet Amount: [" + unitInput.Unit.Rent +
+                        "], Rent Amount: [" + unitInput.Unit.Rent +
                         "], RentStartDate: [" + unitInput.Unit.RentStartDate +
                         "], IsTenantAdded: [" + unitInput.Unit.IsTenantAdded +
                         "], TenantId: [" + unitInput.Unit.TenantId + "]");
@@ -356,9 +356,11 @@ namespace LanLordlAPIs.Controllers
 
                             #region Delete Any Existing Tenants For This Unit
 
+                            var sameOrNewTenant = 0;
+
                             try
                             {
-                                // Check for existing tenants in this unit
+                                // Check for existing tenants in this unit's UOBT
                                 var existingTenantsInUnit = (from c in obj.UnitsOccupiedByTenants
                                                              where c.UnitId == unitObj.UnitId &&
                                                                    c.IsDeleted != true
@@ -398,6 +400,10 @@ namespace LanLordlAPIs.Controllers
                                             n.ModifiedOn = DateTime.Now;
                                             obj.SaveChanges();
                                         }
+                                        else
+                                        {
+                                            sameOrNewTenant += 1;
+                                        }
                                     }
                                 }
                             }
@@ -419,16 +425,20 @@ namespace LanLordlAPIs.Controllers
 
                                     #region Create New 'UnitsOccupiedByTenant' Record
 
-                                    UnitsOccupiedByTenant uobt = new UnitsOccupiedByTenant();
-                                    uobt.TenantId = tenantId;
-                                    uobt.UnitId = unitGuid;
-                                    uobt.IsDeleted = false;
+                                    if (sameOrNewTenant == 0)
+                                    {
+                                        UnitsOccupiedByTenant uobt = new UnitsOccupiedByTenant();
+                                        uobt.TenantId = tenantId;
+                                        uobt.UnitId = unitGuid;
+                                        uobt.IsDeleted = false;
 
-                                    obj.UnitsOccupiedByTenants.Add(uobt);
+                                        obj.UnitsOccupiedByTenants.Add(uobt);
+                                    }
 
                                     #endregion Create New 'UnitsOccupiedByTenant' Record
                                 }
-                                else if (!String.IsNullOrEmpty(unitInput.Unit.TenantEmail) && unitInput.Unit.TenantEmail.Length > 3)
+                                else if (!String.IsNullOrEmpty(unitInput.Unit.TenantEmail) &&
+                                         unitInput.Unit.TenantEmail.Length > 3)
                                 {
                                     #region Invite New Tenant For This Unit
 
@@ -500,7 +510,8 @@ namespace LanLordlAPIs.Controllers
         [ActionName("EditProperty")]
         public CreatePropertyResultOutput EditProperty(AddNewPropertyClass Property)
         {
-            Logger.Info("Landlords API -> Properties -> AddNewProperty Initiated - [LandlordID: " + Property.User.LandlordId + "]");
+            Logger.Info("PropertiesController -> EditProperty Initiated - [LandlordID: " +
+                        Property.User.LandlordId + "], PropertyID: [" + Property.PropertyId + "]");
 
             CreatePropertyResultOutput result = new CreatePropertyResultOutput();
             result.IsSuccess = false;
@@ -1068,7 +1079,7 @@ namespace LanLordlAPIs.Controllers
 
                                 int saveToDB = 0;
                                 saveToDB = obj.SaveChanges();
-                                
+
                                 if (saveToDB > 0)
                                 {
                                     Logger.Info("PropertiesController -> InviteTenant - All DB Tables SAVED SUCCESSFULLY");
@@ -1520,7 +1531,7 @@ namespace LanLordlAPIs.Controllers
                                     }
 
                                     currentUnit.TenantEmail = !String.IsNullOrEmpty(tEmail) ? CommonHelper.GetDecryptedData(tEmail) : "";
-                                    currentUnit.ImageUrl = timgurl ?? "";
+                                    currentUnit.ImageUrl = timgurl ?? "https://www.noochme.com/noochweb/Assets/Images/userpic-default.png";
                                 }
                                 else
                                 {

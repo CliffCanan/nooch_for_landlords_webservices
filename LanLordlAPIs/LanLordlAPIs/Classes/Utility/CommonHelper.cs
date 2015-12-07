@@ -787,50 +787,53 @@ namespace LanLordlAPIs.Classes.Utility
 
 
 
-        public static bool saveLandlordIp(Guid LandlorId, string IP)
+        public static bool saveLandlordIp(Guid LandlordId, string IP)
         {
             try
             {
+                //Logger.Info("CommonHelper -> saveLandlordIP Initiated - LandlordID: [" + LandlordId + "], IP: [" + IP + "]");
+
                 using (NOOCHEntities obj = new NOOCHEntities())
                 {
-                    var lanlorddetails = (from c in obj.Landlords
-                                          where c.LandlordId == LandlorId
-                                          select c).FirstOrDefault();
+                    var lanlordObj = (from c in obj.Landlords
+                                      where c.LandlordId == LandlordId
+                                      select c).FirstOrDefault();
 
-                    if (lanlorddetails == null) return false;
+                    if (lanlordObj == null) return false;
 
-                    if (!String.IsNullOrEmpty(lanlorddetails.IpAddresses))
+                    if (!String.IsNullOrEmpty(lanlordObj.IpAddresses))
                     {
                         string IPsListPrepared = "";
                         //trying to split and see how many old ips we have
-                        string[] recenips = lanlorddetails.IpAddresses.Split(',');
-                        if (recenips.Length >= 5)
+                        string[] existingIps = lanlordObj.IpAddresses.Split(',');
+
+                        if (existingIps.Length >= 5)
                         {
                             for (int i = 0; i < 4; i++)
                             {
                                 if (i == 0)
                                 {
-                                    IPsListPrepared = recenips[i];
+                                    IPsListPrepared = existingIps[i];
                                 }
                                 else if (i == 4)
                                 {
-                                    IPsListPrepared = IPsListPrepared + ", " + recenips[i];
+                                    IPsListPrepared = IPsListPrepared + ", " + existingIps[i];
                                     break;
                                 }
                                 else
                                 {
-                                    IPsListPrepared = IPsListPrepared + ", " + recenips[i];
+                                    IPsListPrepared = IPsListPrepared + ", " + existingIps[i];
                                 }
                             }
                             IPsListPrepared = IPsListPrepared + ", " + IP;
                         }
                         else
                         {
-                            IPsListPrepared = lanlorddetails.IpAddresses + ", " + IP;
+                            IPsListPrepared = lanlordObj.IpAddresses + ", " + IP;
                         }
 
                         // Update IP in DB
-                        lanlorddetails.IpAddresses = IPsListPrepared;
+                        lanlordObj.IpAddresses = IPsListPrepared;
                         obj.SaveChanges();
 
                         return true;
@@ -840,7 +843,7 @@ namespace LanLordlAPIs.Classes.Utility
             }
             catch (Exception ex)
             {
-                Logger.Error("Landlords API -> CommonHelper -> saveLandlordIp. Error while updating IP address - [ " + IP + " ] for Landlor Id [ " + LandlorId + " ], [Exception: " + ex + " ]");
+                Logger.Error("Landlords API -> CommonHelper -> saveLandlordIp. Error while updating IP address - [ " + IP + " ] for Landlor Id [ " + LandlordId + " ], [Exception: " + ex + " ]");
                 return false;
             }
         }
@@ -1151,7 +1154,7 @@ namespace LanLordlAPIs.Classes.Utility
                     var existingMemberDetails = (from c in obj.Landlords
                                                  where c.eMail == email && c.IsDeleted == false
                                                  select c).FirstOrDefault();
-                    
+
                     if (existingMemberDetails != null)
                     {
                         result.ErrorMessage = "Landlord already exists with given eMail id.";
@@ -1169,7 +1172,7 @@ namespace LanLordlAPIs.Classes.Utility
                 Logger.Error("Landlord Common Helper -> checkAndRegisterLandlordByemailId FAIELD - [Exception: " + ex.Message + "], [Email: " + eMailID + "]");
                 result.ErrorMessage = "Server Error.";
             }
-            
+
             return result;
         }
 
