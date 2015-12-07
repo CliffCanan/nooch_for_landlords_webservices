@@ -33,13 +33,16 @@ namespace LanLordlAPIs.Models.Input_Models
         public string FacebookUserId { get; set; }
         public string UserFingerPrints { get; set; }
         public string Ip { get; set; }
+
+        public bool isBusiness { get; set; }
+        public bool shouldSendEmails { get; set; }
     }
 
 
     public class LoginwithGoogleInput
     {
         public string Name { get; set; }
-        
+
         public string eMail { get; set; }
         public string Gender { get; set; }
         public string PhotoUrl { get; set; }
@@ -47,6 +50,9 @@ namespace LanLordlAPIs.Models.Input_Models
         public string GoogleUserId { get; set; }
         public string UserFingerPrints { get; set; }
         public string Ip { get; set; }
+
+        public bool isBusiness { get; set; }
+        public bool shouldSendEmails { get; set; }
     }
 
     public class GetProfileDataInput
@@ -75,7 +81,7 @@ namespace LanLordlAPIs.Models.Input_Models
         public string FormulaToUse { get; set; }
 
         public GetProfileDataInput DeviceInfo { get; set; }
-        
+
     }
 
     public class UpdatePasswordInput

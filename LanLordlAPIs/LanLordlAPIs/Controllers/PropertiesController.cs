@@ -335,7 +335,8 @@ namespace LanLordlAPIs.Controllers
 
                         if (unitObj != null)
                         {
-                            if (String.IsNullOrEmpty(unitInput.Unit.UnitNum) && String.IsNullOrEmpty(unitInput.Unit.UnitNickName))
+                            if (String.IsNullOrEmpty(unitInput.Unit.UnitNum) &&
+                                String.IsNullOrEmpty(unitInput.Unit.UnitNickName))
                             {
                                 result.ErrorMessage = "Either unit number or nickname required.";
                             }
@@ -363,20 +364,38 @@ namespace LanLordlAPIs.Controllers
                                                                    c.IsDeleted != true
                                                              select c).ToList();
 
-                                if (existingTenantsInUnit.Count > 0) // CLIFF (10/25/15): Should only ever be 1 tenant per unit (unless we add roommate features later)
+                                if (existingTenantsInUnit.Count > 0)
                                 {
                                     // Tenant found... checking if same tenant or different
                                     foreach (UnitsOccupiedByTenant n in existingTenantsInUnit)
                                     {
                                         if (n.TenantId != tenantId)
                                         {
-                                            Logger.Info("PropertiesController -> EditPropertyUnit - Deleting existing tenant - [TenantID: " + n.TenantId + "], [UnitId: " + unitObj.UnitId + "]");
+                                            Logger.Info("PropertiesController -> EditPropertyUnit - Deleting existing tenant - Old TenantID: " + n.TenantId +
+                                                        "], New TenantID: [" + tenantId + "], UnitId: [" + unitObj.UnitId + "]");
 
                                             // Cliff (10/15/15): Let's keep them un-deleted for now... just do nothing to them (Maybe notify them by email... but not right now)
                                             // UPDATE (10/25/15): This is actually unlikely to ever happen for a while.  Landlords will usually be adding NEW users... they wouldn't be selecting an existing
                                             //                    user that has a Tenant ID yet (until it gets created ealier inside this method).  We might add more functionality where Landlords
                                             //                    can select existing Nooch users, but all the early Landlords will be inviting New users every time.
+
+                                            try
+                                            {
+                                                Member memberObj = (from c in obj.Members
+                                                                    where c.MemberId == n.TenantId &&
+                                                                          c.IsDeleted != true
+                                                                    select c).FirstOrDefault();
+
+                                                memberObj.Status = "Unlinked";
+                                                memberObj.DateModified = DateTime.Now;
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                Logger.Error("PropertiesController -> EditPropertyUnit - Deleting Existing tenant - FAILED to update Member record " +
+                                                             "of Existing Tenant - Existing Tenant ID: [" + n.TenantId + "], Exception: [" + ex.Message + "]");
+                                            }
                                             n.IsDeleted = true;
+                                            n.ModifiedOn = DateTime.Now;
                                             obj.SaveChanges();
                                         }
                                     }
@@ -915,8 +934,10 @@ namespace LanLordlAPIs.Controllers
         [ActionName("InviteTenant")]
         public GenericInternalResponse InviteTenant(AddNewTenantInput input)
         {
-            Logger.Info("PropertiesController -> InviteTenant Initiated - [LandlordID: " + input.authData.LandlordId +
-                        "], Tenant: [" + input.tenant + "], Unit #: [" + input.unitId + "]");
+            Logger.Info("PropertiesController -> InviteTenant Initiated - " +
+                        "LandlordID: [" + input.authData.LandlordId +
+                        "], Tenant: [" + input.tenant +
+                        "], Unit #: [" + input.unitId + "]");
 
             GenericInternalResponse result = new GenericInternalResponse();
             result.success = false;
@@ -940,7 +961,6 @@ namespace LanLordlAPIs.Controllers
 
                     // Get Landlord's MemberId
                     Guid landlordMemberId;
-                    //Member landlordDetailsInMembersTable = null;
 
                     using (NOOCHEntities obj = new NOOCHEntities())
                     {
@@ -948,10 +968,10 @@ namespace LanLordlAPIs.Controllers
                                            where c.LandlordId == landlordGuid
                                            select c).FirstOrDefault();
 
-                        landlordMemberId = new Guid(landlordObj.MemberId.ToString());
-
                         if (landlordObj != null)
                         {
+                            landlordMemberId = new Guid(landlordObj.MemberId.ToString());
+
                             // Get Unit Object from DB
                             PropertyUnit unitObj = (from c in obj.PropertyUnits
                                                     where c.UnitId == unitGuid
@@ -980,7 +1000,9 @@ namespace LanLordlAPIs.Controllers
                                 }
                                 else if (ten.ErrorMessage == "No tenant found") // Member with that email already exists
                                 {
-                                    Logger.Info("PropertiesController -> InviteTenant - Member already exists, so just creating a new TENANT Record - [MemberID: " + mem.MemberDetails.MemberId.ToString() + "],  - [TenantID (Just created): " + tenantGuid.ToString() + "]");
+                                    Logger.Info("PropertiesController -> InviteTenant - Member already exists, so just creating a new TENANT Record - " +
+                                                "MemberID: [" + mem.MemberDetails.MemberId.ToString() + "], " +
+                                                "TenantID (Just created): " + tenantGuid.ToString() + "]");
 
                                     firstName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(mem.MemberDetails.FirstName));
                                     lastName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(mem.MemberDetails.LastName));
@@ -1030,7 +1052,7 @@ namespace LanLordlAPIs.Controllers
                                     Logger.Info("PropertiesController -> InviteTenant - About to update Property UNITS table - [UnitID: " + unitGuid + "]");
 
                                     // NOTE: The "PropertyUnits" table and "UnitsOccupiedByTenant" table aren't organized in the best way...
-                                    //       UOBT table should have a status field and a Property ID (aleady has UnitID)
+                                    //       UOBT table should have a Property ID (aleady has UnitID)
                                     unitObj.IsOccupied = true;
                                     unitObj.MemberId = tenantGuid;
                                     unitObj.IsHidden = false;
@@ -1045,8 +1067,8 @@ namespace LanLordlAPIs.Controllers
                                 #endregion Update Unit Record in PropertyUnits Table
 
                                 int saveToDB = 0;
-
                                 saveToDB = obj.SaveChanges();
+                                
                                 if (saveToDB > 0)
                                 {
                                     Logger.Info("PropertiesController -> InviteTenant - All DB Tables SAVED SUCCESSFULLY");
@@ -1301,7 +1323,7 @@ namespace LanLordlAPIs.Controllers
                             currentProperty.PropertyImage = propertyInDb.PropertyImage ?? "";
                             currentProperty.IsSingleUnit = propertyInDb.IsSingleUnit;
                             currentProperty.IsDeleted = propertyInDb.IsDeleted;
-                           
+
 
                             #region Get Bank Details For This Property
 
@@ -1448,7 +1470,7 @@ namespace LanLordlAPIs.Controllers
                                 currentUnit.IsHidden = unitX.IsHidden;
                                 currentUnit.IsOccupied = unitX.IsOccupied;
                                 currentUnit.LeaseDocPath = unitX.LeaseDocumentPath ?? "";
-                                
+
 
                                 if (currentUnit.IsOccupied == true)
                                 {

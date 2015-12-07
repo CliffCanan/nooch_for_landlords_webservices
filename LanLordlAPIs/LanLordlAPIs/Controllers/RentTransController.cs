@@ -135,8 +135,6 @@ namespace LanLordlAPIs.Controllers
                 using (NOOCHEntities obj = new NOOCHEntities())
                 {
                     Transaction tr = new Transaction();
-                    //tr.RecipientId = requester.MemberId;
-                    //tr.SenderId = requestRecipient.MemberId;
                     tr.TransactionId = Guid.NewGuid();
                     tr.SenderId = Tenant_GUID;
                     tr.RecipientId = landlordsMemID;
@@ -153,6 +151,7 @@ namespace LanLordlAPIs.Controllers
 
                     // we can take advantage of having tenants email id here.
                     //tr.InvitationSentTo = !String.IsNullOrEmpty(requestDto.MoneySenderEmailId) ? CommonHelper.GetEncryptedData(requestDto.MoneySenderEmailId) : null,
+                    
                     GeoLocation gl = new GeoLocation();
                     gl.LocationId = Guid.NewGuid();
                     gl.Latitude = null;
@@ -176,8 +175,6 @@ namespace LanLordlAPIs.Controllers
                         obj.Transactions.Add(tr);
                         obj.SaveChanges();
                         requestId = tr.TransactionId.ToString();
-
-
                     }
                     catch (Exception ex)
                     {

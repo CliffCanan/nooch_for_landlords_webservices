@@ -741,79 +741,6 @@ namespace LanLordlAPIs.Controllers
         }
 
 
-        public void SaveLandlordImage(string landlordId, string imageUrl)
-        {
-            try
-            {
-                
-                // updating landlord table
-                using (NOOCHEntities obj = new NOOCHEntities())
-                {
-                    Guid lid = CommonHelper.ConvertToGuid(landlordId);
-                    Landlord lIndb = obj.Landlords.Find(lid);
-                    if (lIndb != null)
-                    {
-                        lIndb.UserPic = imageUrl;
-                        obj.SaveChanges();
-                    }
-                }
-
-
-            }
-            catch (Exception exE)
-            {
-                Logger.Error(
-                    "UserController -> LoginWithGoogle - SaveLandlordImage Error occured while saving landlord image- [LandlordId: " +
-                    landlordId + "] Error -> " + exE);
-                
-                
-            }
-        }
-
-
-        public string SaveImageForGivenUser(byte[] imageData, string memberId)
-        {
-            string imageUrlMade = "";
-
-            try
-            {
-
-                if (imageData != null)
-                {
-                    // Make  image from bytes
-                    string filename = HttpContext.Current.Server.MapPath("UploadedImages/UsersImages/") +
-                                      memberId + ".png";
-                    using (FileStream fs = new FileStream(filename, FileMode.Create, FileAccess.ReadWrite))
-                    {
-                        fs.Write(imageData, 0, (int) imageData.Length);
-                    }
-                    imageUrlMade = CommonHelper.GetValueFromConfig("UserPhotoUrl") + memberId + ".png";
-                }
-                else
-                {
-                    imageUrlMade = CommonHelper.GetValueFromConfig("UserPhotoUrl") + "gv_no_photo.png";
-                }
-
-
-                return imageUrlMade;
-
-            }
-            catch (Exception exE)
-            {
-
-                Logger.Error(
-                    "UserController -> LoginWithGoogle - Error occured while getting user image from Google- [MemberID: " +
-                    memberId + "] Error -> " + exE);
-                return imageUrlMade;
-            }
-        }
-
-
-
-
-
-
-        // to login with google
         [HttpPost]
         [ActionName("LoginWithGoogle")]
         public LoginResult LoginWithGoogle(LoginwithGoogleInput User)
@@ -827,7 +754,8 @@ namespace LanLordlAPIs.Controllers
                 {
                     DateTime requestDatetime = DateTime.Now;
 
-                    // validating login data
+                    #region Initial Checks
+
                     if (String.IsNullOrEmpty(User.eMail) ||
                         String.IsNullOrEmpty(User.Name))
                     {
@@ -859,31 +787,32 @@ namespace LanLordlAPIs.Controllers
                         lastName = lastName.Trim().ToLower();
                     }
 
+                    #endregion Initial Checks
 
-                    // checking if user exists with given email id
+                    // Check if user exists with given email
                     string userNameLowerCaseEncrypted = CommonHelper.GetEncryptedData(User.eMail.ToLower().Trim());
-                    bool is_User_Already_Registerd_With_Nooch = false;
-                    bool is_User_Already_Registerd_With_Nooch_as_landlord = false;
 
-                    var memberTableData = (from c in obj.Members
-                                           where
-                                               c.UserName == userNameLowerCaseEncrypted &&
-                                               c.IsDeleted == false && (c.Status == "Active" || c.Status == "Registered" || c.Status == "NonRegistered")
-                                           select c).FirstOrDefault();
-                    if (memberTableData != null)
+                    var memberObj = (from c in obj.Members
+                                     where
+                                         c.UserName == userNameLowerCaseEncrypted &&
+                                         c.IsDeleted == false &&
+                                        (c.Status == "Active" || c.Status == "Registered" || c.Status == "NonRegistered")
+                                     select c).FirstOrDefault();
+
+                    #region Existing Members Record Found
+
+                    if (memberObj != null)
                     {
-                        is_User_Already_Registerd_With_Nooch = true;
                         // checking user in landlords table
 
                         var landlordTableDetails = (from c in obj.Landlords
-                                                    where c.IsDeleted == false && c.Status == "Active"
-                                                        && c.eMail == userNameLowerCaseEncrypted
+                                                    where c.IsDeleted == false &&
+                                                          c.Status == "Active" &&
+                                                          c.eMail == userNameLowerCaseEncrypted
                                                     select c).FirstOrDefault();
 
                         if (landlordTableDetails != null)
                         {
-                            is_User_Already_Registerd_With_Nooch_as_landlord = true;
-
                             CommonHelper.saveLandlordIp(landlordTableDetails.LandlordId, User.Ip);
                             landlordTableDetails.DateModified = requestDatetime;
                             landlordTableDetails.LastSeenOn = requestDatetime;
@@ -910,7 +839,7 @@ namespace LanLordlAPIs.Controllers
 
                             Landlord l = CommonHelper.AddNewLandlordEntryInDb(firstName,
                                 lastName, User.eMail.ToLower().Trim(), CommonHelper.GetEncryptedData(" "), true, true,
-                                User.Ip, false, memberTableData.MemberId);
+                                User.Ip, false, memberObj.MemberId);
 
                             if (l != null)
                             {
@@ -941,6 +870,11 @@ namespace LanLordlAPIs.Controllers
                             #endregion New Landlord But Existing Member
                         }
                     }
+
+                    #endregion Existing Members Record Found
+
+                    #region No Member Record Found
+
                     else
                     {
                         // new entry in members table and landlords table
@@ -995,13 +929,11 @@ namespace LanLordlAPIs.Controllers
                             GoogleUserId = User.GoogleUserId
                         };
 
-                        #endregion Create Member Object
-
-
-                        if (!String.IsNullOrEmpty(User.PhotoUrl))
+                        try
                         {
-                            try
+                            if (!String.IsNullOrEmpty(User.PhotoUrl))
                             {
+
                                 var webClient = new WebClient();
                                 byte[] imageBytes = webClient.DownloadData(User.PhotoUrl);
 
@@ -1014,25 +946,21 @@ namespace LanLordlAPIs.Controllers
                                     member.Photo = CommonHelper.GetValueFromConfig("UserPhotoUrl") + "gv_no_photo.png";
                                 }
                             }
-                            catch (Exception)
-                            {
-
-                                Logger.Error("UserController -> LoginWithGoogle - Error occurred while getting user image from url - [MemberID: " + member.MemberId + "]");
-                            }
                         }
+                        catch (Exception)
+                        {
+                            Logger.Error("UserController -> LoginWithGoogle - Error occurred while getting user image from url - [MemberID: " + member.MemberId + "]");
+                        }
+
+                        #endregion Create Member Object
 
                         obj.Members.Add(member);
 
                         Logger.Info("UserController -> LoginWithGoogle - ** NEW LANDLORD ** - MEMBER Created, about to save to DB - [MemberID: " + member.MemberId + "]");
+
                         try
                         {
                             obj.SaveChanges();
-
-                            // saving image if passed
-
-                            
-
-
 
                             CommonHelper.setReferralCode(member.MemberId);
                             var tokenId = Guid.NewGuid();
@@ -1051,81 +979,104 @@ namespace LanLordlAPIs.Controllers
                             };
                             // Now save the token details into Authentication tokens DB table  
                             obj.AuthenticationTokens.Add(token);
+
                             int authTokenAddedToDB = obj.SaveChanges();
 
-                            Logger.Info("UserController -> LoginWithFB - ** NEW LANDLORD ** - AUTH TOKEN Created and saved to DB - [MemberID: " + member.MemberId + "]");
+                            Logger.Info("UserController -> LoginWithFB - ** NEW LANDLORD ** - AUTH TOKEN Created and saved to DB - " +
+                                        "Email: [" + User.eMail + "], MemberID: [" + member.MemberId + "]");
 
                             #endregion Create Authentication Token
 
 
                             #region Notification Settings
 
-                            var memberNotification = new MemberNotification
+                            try
                             {
-                                NotificationId = Guid.NewGuid(),
+                                var memberNotification = new MemberNotification
+                                {
+                                    NotificationId = Guid.NewGuid(),
 
-                                MemberId = member.MemberId,
-                                FriendRequest = true,
-                                InviteRequestAccept = true,
-                                TransferSent = true,
-                                TransferReceived = true,
-                                TransferAttemptFailure = true,
-                                NoochToBank = true,
-                                BankToNooch = true,
-                                EmailFriendRequest = true,
-                                EmailInviteRequestAccept = true,
-                                EmailTransferSent = true,
-                                EmailTransferReceived = true,
-                                EmailTransferAttemptFailure = true,
-                                TransferUnclaimed = true,
-                                BankToNoochRequested = true,
-                                BankToNoochCompleted = true,
-                                NoochToBankRequested = true,
-                                NoochToBankCompleted = true,
-                                InviteReminder = true,
-                                LowBalance = true,
-                                ValidationRemainder = true,
-                                ProductUpdates = true,
-                                NewAndUpdate = true,
-                                DateCreated = DateTime.Now
-                            };
-                            obj.MemberNotifications.Add(memberNotification);
+                                    MemberId = member.MemberId,
+                                    FriendRequest = true,
+                                    InviteRequestAccept = true,
+                                    TransferSent = true,
+                                    TransferReceived = true,
+                                    TransferAttemptFailure = true,
+                                    NoochToBank = true,
+                                    BankToNooch = true,
+                                    EmailFriendRequest = true,
+                                    EmailInviteRequestAccept = true,
+                                    EmailTransferSent = true,
+                                    EmailTransferReceived = true,
+                                    EmailTransferAttemptFailure = true,
+                                    TransferUnclaimed = true,
+                                    BankToNoochRequested = true,
+                                    BankToNoochCompleted = true,
+                                    NoochToBankRequested = true,
+                                    NoochToBankCompleted = true,
+                                    InviteReminder = true,
+                                    LowBalance = true,
+                                    ValidationRemainder = true,
+                                    ProductUpdates = true,
+                                    NewAndUpdate = true,
+                                    DateCreated = DateTime.Now
+                                };
+
+                                obj.MemberNotifications.Add(memberNotification);
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error("UserController -> LoginWithGoogle - ** NEW LANDLORD ** - FAILED to save Notification Settings for new Landlord - " +
+                                            "Continuing on... - MemberID: [" + member.MemberId + "], Exception: [" + ex.Message + "]");
+                            }
 
                             #endregion Notification Settings
 
 
                             #region Privacy Settings
 
-                            var memberPrivacySettings = new MemberPrivacySetting
+                            try
                             {
-                                MemberId = member.MemberId,
-                                AllowSharing = true,
-                                ShowInSearch = true,
-                                DateCreated = DateTime.Now
-                            };
-                            obj.MemberPrivacySettings.Add(memberPrivacySettings);
+                                var memberPrivacySettings = new MemberPrivacySetting
+                                {
+                                    MemberId = member.MemberId,
+                                    AllowSharing = true,
+                                    ShowInSearch = true,
+                                    DateCreated = DateTime.Now
+                                };
 
-                            Logger.Info("UserController -> LoginWithFB - ** NEW LANDLORD ** - NOTIFICATIONS & PRIVACY SETTINGS Created and saved to DB - [MemberID: " + member.MemberId + "]");
+                                var savePrivacy = obj.MemberPrivacySettings.Add(memberPrivacySettings);
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error("UserController -> LoginWithGoogle - ** NEW LANDLORD ** - FAILED to save Notification Settings for new Landlord - " +
+                                    "MemberID: [" + member.MemberId + "], Exception: [" + ex.Message + "]");
+                            }
+
+                            Logger.Info("UserController -> LoginWithFB - ** NEW LANDLORD ** - NOTIFICATIONS & PRIVACY SETTINGS Created (not yet saved) to DB - " +
+                                        "About to create new LANDLORD record - MemberID: [" + member.MemberId + "]");
 
                             #endregion Privacy Settings
 
-                            Logger.Info("UserController -> LoginWithFB - ** NEW LANDLORD ** - About to created new LANLDORD record - [MemberID: " + member.MemberId + "]");
 
                             // Finally, make an entry in Landlords Table 
                             Landlord l = CommonHelper.AddNewLandlordEntryInDb(firstName,
                                 lastName, User.eMail.ToLower().Trim(), CommonHelper.GetEncryptedData(" "), false, false,
                                 User.Ip, false, member.MemberId);
 
+
                             if (l != null && authTokenAddedToDB > 0)
                             {
-                                #region Send Verification email
+                                if (User.shouldSendEmails != false)
+                                {
+                                    #region Send Verification email
 
-                                // Send registration email to member with autogenerated token 
-                                var fromAddress = CommonHelper.GetValueFromConfig("welcomeMail");
-                                var link = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
-                                           "Registration/Activation.aspx?tokenId=" + tokenId + "&type=ll&llem=" + userNameLowerCase);
+                                    // Send registration email to member with autogenerated token 
+                                    var fromAddress = CommonHelper.GetValueFromConfig("welcomeMail");
+                                    var link = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
+                                               "Registration/Activation.aspx?tokenId=" + tokenId + "&type=ll&llem=" + userNameLowerCase);
 
-                                var tokens = new Dictionary<string, string>
+                                    var tokens = new Dictionary<string, string>
                                         {
                                             {
                                                 Constants.PLACEHOLDER_FIRST_NAME,
@@ -1138,21 +1089,26 @@ namespace LanLordlAPIs.Controllers
                                             {Constants.PLACEHOLDER_OTHER_LINK, link}
                                         };
 
-                                try
-                                {
-                                    CommonHelper.SendEmail(Constants.TEMPLATE_REGISTRATION, fromAddress, null,
-                                            User.eMail.Trim(), "Confirm your email on Nooch", tokens, null, "NewLandlord@nooch.com");
+                                    try
+                                    {
+                                        CommonHelper.SendEmail(Constants.TEMPLATE_REGISTRATION, fromAddress, null,
+                                                User.eMail.Trim(), "Confirm your email on Nooch", tokens, null, "NewLandlord@nooch.com");
 
-                                    Logger.Info("UserController -> LoginWithFB - Registration email sent to [" + User.eMail.Trim() + "] successfully.");
+                                        Logger.Info("UserController -> LoginWithGoogle - Registration email sent to [" + User.eMail.Trim() + "] successfully.");
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Logger.Error("UserController -> LoginWithGoogle - Registration email NOT sent to [" +
+                                                               User.eMail.Trim() + "], [Exception: " + ex + "]");
+                                    }
+
+                                    #endregion Send Verification email
                                 }
-                                catch (Exception ex)
+                                else
                                 {
-                                    Logger.Error("UserController -> LoginWithFB - Registration email NOT sent to [" +
-                                                           User.eMail.Trim() + "], [Exception: " + ex + "]");
+                                    Logger.Info("User Controller -> LoginWithGoogle - NOT SENDING EMAILS TO NEW USER - Email: [" + User.eMail.Trim() +
+                                                "], shouldSendEmails: [" + User.shouldSendEmails + "]");
                                 }
-
-                                #endregion Send Verification email
-
 
                                 Landlord lIndb = obj.Landlords.Find(l.LandlordId);
 
@@ -1162,47 +1118,113 @@ namespace LanLordlAPIs.Controllers
 
                                 lIndb.WebAccessToken = CommonHelper.GenerateAccessToken();
 
-                                obj.SaveChanges();
+                                int saveDbChanges = obj.SaveChanges();
 
                                 SaveLandlordImage(lIndb.LandlordId.ToString(), member.Photo);
 
-                                result.IsSuccess = true;
-                                result.ErrorMessage = "OK";
-                                result.AccessToken = lIndb.WebAccessToken;
-                                result.MemberId = lIndb.MemberId.ToString();
-                                result.LandlordId = lIndb.LandlordId.ToString();
+                                if (saveDbChanges > 0)
+                                {
+                                    result.IsSuccess = true;
+                                    result.ErrorMessage = "OK";
+                                    result.AccessToken = lIndb.WebAccessToken;
+                                    result.MemberId = lIndb.MemberId.ToString();
+                                    result.LandlordId = lIndb.LandlordId.ToString();
+                                }
+                                else
+                                {
+                                    Logger.Error("UserController -> LoginWithGoogle - ** NEW LANDLORD ** - FAILED to save All Changes to Nooch DB - " +
+                                                 "MemberID: [" + member.MemberId + "]");
 
-                                return result;
+                                    result.ErrorMessage = "Failed to save new landlord info to Nooch DB";
+                                }
                             }
                             else
                             {
-                                // exception while creating account
-                                result.ErrorMessage = "Server error. Retry later! ";
-                                return result;
+                                result.ErrorMessage = "Server Exception 1132 - Error while creating new account.";
                             }
                         }
                         catch (Exception ex)
                         {
-                            Logger.Error("UsersController -> RegisterLandlord FAILED while making account for: [" + User.eMail + "], [Exception: " + ex.Message + "]");
+                            Logger.Error("UsersController -> LoginWithGoogle FAILED while making account for: [" + User.eMail + "], [Exception: " + ex.Message + "]");
 
                             result.ErrorMessage = "Some duplicate values are being generated at server. Retry later! ";
-
-                            return result;
                         }
+
+                        return result;
 
                         #endregion Create User Settings & Save To DB
 
                         #endregion Save New Landlord & Member Details In DB
                     }
+
+                    #endregion No Member Record Found
                 }
             }
             catch (Exception ex)
             {
-                Logger.Error("Users Cntrlr -> Login EXCEPTION - [Username: " + User.eMail + "], [Exception: " + ex + "]");
+                Logger.Error("Users Cntrlr -> LoginWithGoogle OUTER EXCEPTION - [Username: " + User.eMail + "], [Exception: " + ex + "]");
 
-                result.ErrorMessage = "Error while logging on. Retry.";
+                result.ErrorMessage = "Server Exception #1156 - Error while creating new account.";
                 return result;
             }
+        }
+
+
+        public void SaveLandlordImage(string landlordId, string imageUrl)
+        {
+            try
+            {
+                using (NOOCHEntities obj = new NOOCHEntities())
+                {
+                    Guid llGuid = CommonHelper.ConvertToGuid(landlordId);
+                    Landlord lIndb = obj.Landlords.Find(llGuid);
+
+                    if (lIndb != null)
+                    {
+                        lIndb.UserPic = imageUrl;
+                        obj.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("UserController -> SaveLandlordImage (During LoginWithGoogle) FAILED - " +
+                             "LandlordId: [" + landlordId + "], Exception: [" + ex + "]");
+            }
+        }
+
+
+        public string SaveImageForGivenUser(byte[] imageData, string memberId)
+        {
+            string imageUrlMade = "";
+
+            try
+            {
+                if (imageData != null)
+                {
+                    // Make  image from bytes
+                    string filename = HttpContext.Current.Server.MapPath("UploadedImages/UsersImages/") +
+                                      memberId + ".png";
+                    
+                    using (FileStream fs = new FileStream(filename, FileMode.Create, FileAccess.ReadWrite))
+                    {
+                        fs.Write(imageData, 0, (int)imageData.Length);
+                    }
+
+                    imageUrlMade = CommonHelper.GetValueFromConfig("UserPhotoUrl") + memberId + ".png";
+                }
+                else
+                {
+                    imageUrlMade = CommonHelper.GetValueFromConfig("UserPhotoUrl") + "gv_no_photo.png";
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("UserController -> SaveImageForGivenUser -> MemberID: [" + memberId +
+                             "], Exception: [" + ex + "]");
+            }
+
+            return imageUrlMade;
         }
 
 
@@ -1275,13 +1297,12 @@ namespace LanLordlAPIs.Controllers
                 else
                 {
                     // no file selected
-
                     result.ErrorMessage = "No or invalid file passed.";
                 }
             }
             catch (Exception ex)
             {
-                Logger.Error("Landlords API -> UsersController -> UploadProfileImage FAILED. [LandlordID: ], [Exception: " + ex + "]");
+                Logger.Error("Landlords API -> UsersController -> UploadProfileImage FAILED - [Exception: " + ex + "]");
                 result.ErrorMessage = "Error while uploading image. Retry.";
             }
 
@@ -1477,7 +1498,6 @@ namespace LanLordlAPIs.Controllers
             {
                 Guid landlordguidId = new Guid(User.DeviceInfo.LandlorId);
                 result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, User.DeviceInfo.AccessToken);
-                result.IsSuccess = false;
 
                 if (result.AuthTokenValidation.IsTokenOk)
                 {
@@ -1517,6 +1537,7 @@ namespace LanLordlAPIs.Controllers
                                     // Now store info in DB
                                     landlordObj.FirstName = CommonHelper.GetEncryptedData(firstName.Trim());
                                     landlordObj.LastName = CommonHelper.GetEncryptedData(lastName.Trim());
+
                                     if (!String.IsNullOrEmpty(User.UserInfo.DOB))
                                     {
                                         landlordObj.DateOfBirth = Convert.ToDateTime(User.UserInfo.DOB);
@@ -1526,10 +1547,6 @@ namespace LanLordlAPIs.Controllers
                                     {
                                         landlordObj.SSN = CommonHelper.GetEncryptedData(User.UserInfo.SSN);
                                     }
-                                    landlordObj.DateModified = DateTime.Now;
-
-                                    result.IsSuccess = true;
-                                    result.ErrorMessage = "OK";
                                 }
                                 else
                                 {
@@ -1548,15 +1565,10 @@ namespace LanLordlAPIs.Controllers
                                 {
                                     landlordObj.CompanyName = CommonHelper.GetEncryptedData(CommonHelper.UppercaseFirst(User.UserInfo.CompanyName));
                                 }
-
                                 if (!String.IsNullOrEmpty(User.UserInfo.CompanyEID))
                                 {
                                     landlordObj.CompanyEIN = CommonHelper.GetEncryptedData(User.UserInfo.CompanyEID);
                                 }
-                                landlordObj.DateModified = DateTime.Now;
-
-                                result.IsSuccess = true;
-                                result.ErrorMessage = "OK";
 
                                 #endregion Editing Company Info
                             }
@@ -1600,10 +1612,6 @@ namespace LanLordlAPIs.Controllers
                                 }
 
                                 landlordObj.AddressLineOne = CommonHelper.GetEncryptedData(User.UserInfo.AddressLine1);
-                                landlordObj.DateModified = DateTime.Now;
-
-                                result.IsSuccess = true;
-                                result.ErrorMessage = "OK";
 
                                 #endregion Editing Contact Info
                             }
@@ -1611,8 +1619,6 @@ namespace LanLordlAPIs.Controllers
                             else if (User.UserInfo.InfoType == "Social")
                             {
                                 #region Editing Social Info
-                                landlordObj.DateModified = DateTime.Now;
-                                landlordObj.DateModified = DateTime.Now;
 
                                 // Now store all social info in DB
 
@@ -1629,15 +1635,22 @@ namespace LanLordlAPIs.Controllers
                                     landlordObj.InstagramUrl = User.UserInfo.InstaUrl;
                                 }
 
-                                landlordObj.DateModified = DateTime.Now;
-
-                                result.IsSuccess = true;
-                                result.ErrorMessage = "OK";
-
                                 #endregion Editing Social Info
                             }
 
-                            obj.SaveChanges();
+                            landlordObj.DateModified = DateTime.Now;
+                            int saveToDb = obj.SaveChanges();
+
+                            if (saveToDb > 0)
+                            {
+                                result.IsSuccess = true;
+                                result.ErrorMessage = "OK";
+                            }
+                            else
+                            {
+                                Logger.Error("UsersController -> EditUserInfo FAILED - Could not save updates to Landlord DB");
+                                result.ErrorMessage = "Failed to save updates to Landlord DB";
+                            }
                         }
                         else
                         {
@@ -1647,102 +1660,109 @@ namespace LanLordlAPIs.Controllers
 
                         #region Update MEMBERS Table
 
-                        // CLIFF (10/15/15): Since all the Synapse methods take the data from the Members Table,
-                        //                   we have to also save any of that data for Landlords in the Members Table 
-                        //                   ...even though we have most of the same data in the Landlords table.  We shouldn't have duplicated everything :-(
-
-                        Guid memGuidId = new Guid(User.DeviceInfo.MemberId);
-
-                        var memberObj = (from c in obj.Members
-                                         where c.MemberId == memGuidId && c.IsDeleted == false
-                                         select c).FirstOrDefault();
-
-                        if (memberObj != null)
+                        try
                         {
-                            if (!String.IsNullOrEmpty(User.UserInfo.FullName))
+                            // CLIFF (10/15/15): Since all the Synapse methods take the data from the Members Table,
+                            //                   we have to also save any of that data for Landlords in the Members Table 
+                            //                   ...even though we have most of the same data in the Landlords table.  We shouldn't have duplicated everything :-(
+
+                            Guid memGuidId = new Guid(User.DeviceInfo.MemberId);
+
+                            var memberObj = (from c in obj.Members
+                                             where c.MemberId == memGuidId && c.IsDeleted == false
+                                             select c).FirstOrDefault();
+
+                            if (memberObj != null)
                             {
-                                string firstName = "", lastName = "";
-                                string[] nameAftetSplit = User.UserInfo.FullName.Trim().ToLower().Split(' ');
-
-                                if (nameAftetSplit.Length > 1)
+                                if (!String.IsNullOrEmpty(User.UserInfo.FullName))
                                 {
-                                    firstName = CommonHelper.UppercaseFirst(nameAftetSplit[0]);
+                                    string firstName = "", lastName = "";
+                                    string[] nameAftetSplit = User.UserInfo.FullName.Trim().ToLower().Split(' ');
 
-                                    for (int i = 1; i < nameAftetSplit.Length; i++)
+                                    if (nameAftetSplit.Length > 1)
                                     {
-                                        lastName += CommonHelper.UppercaseFirst(nameAftetSplit[i]) + " ";
+                                        firstName = CommonHelper.UppercaseFirst(nameAftetSplit[0]);
+
+                                        for (int i = 1; i < nameAftetSplit.Length; i++)
+                                        {
+                                            lastName += CommonHelper.UppercaseFirst(nameAftetSplit[i]) + " ";
+                                        }
+                                    }
+                                    memberObj.FirstName = CommonHelper.GetEncryptedData(firstName.Trim());
+                                    memberObj.LastName = CommonHelper.GetEncryptedData(lastName.Trim());
+                                }
+
+                                if (!String.IsNullOrEmpty(User.UserInfo.DOB))
+                                {
+                                    memberObj.DateOfBirth = Convert.ToDateTime(User.UserInfo.DOB);
+                                }
+                                if (!String.IsNullOrEmpty(User.UserInfo.SSN) &&
+                                    User.UserInfo.SSN.Length == 4)
+                                {
+                                    memberObj.SSN = CommonHelper.GetEncryptedData(User.UserInfo.SSN);
+                                }
+                                if (!String.IsNullOrEmpty(User.UserInfo.AddressLine1))
+                                {
+                                    memberObj.Address = CommonHelper.GetEncryptedData(User.UserInfo.AddressLine1);
+                                }
+                                if (!String.IsNullOrEmpty(User.UserInfo.Zip))
+                                {
+                                    memberObj.Zipcode = CommonHelper.GetEncryptedData(User.UserInfo.Zip);
+                                }
+
+                                if (!String.IsNullOrEmpty(User.UserInfo.MobileNumber))
+                                {
+                                    string newPhoneClean = CommonHelper.RemovePhoneNumberFormatting(User.UserInfo.MobileNumber);
+
+                                    if (CommonHelper.RemovePhoneNumberFormatting(memberObj.ContactNumber) != newPhoneClean)
+                                    {
+                                        memberObj.ContactNumber = newPhoneClean;
+
+                                        //if (!CommonHelper.IsPhoneNumberAlreadyRegistered(newPhoneClean).isAlreadyRegistered)
+                                        if (memberObj.IsVerifiedPhone != true)
+                                        {
+                                            memberObj.IsVerifiedPhone = false;
+
+                                            #region SendingSMSVerificaion
+
+                                            try
+                                            {
+                                                string MessageBody = "Reply with 'GO' to this message to confirm your phone number on Nooch.";
+                                                string SMSresult = CommonHelper.SendSMS(newPhoneClean, MessageBody, memberObj.MemberId.ToString());
+
+                                                Logger.Info("UsersController -> EditUserInfo -> SMS Verification sent to [" + User.UserInfo.MobileNumber + "] successfully.");
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                Logger.Error("UsersController -> EditUserInfo -> SMS Verification NOT sent to [" +
+                                                    User.UserInfo.MobileNumber + "], [Exception: " + ex + "]");
+                                            }
+
+                                            #endregion SendingSMSVerificaion
+                                        }
+                                        //else
+                                        //{
+                                        //    result.ErrorMessage = "Phone Number already registered with Nooch";
+                                        //}
                                     }
                                 }
-                                memberObj.FirstName = CommonHelper.GetEncryptedData(firstName.Trim());
-                                memberObj.LastName = CommonHelper.GetEncryptedData(lastName.Trim());
-                            }
 
-                            if (!String.IsNullOrEmpty(User.UserInfo.DOB))
+                                memberObj.DateModified = DateTime.Now;
+
+                                obj.SaveChanges();
+
+                                result.IsSuccess = true;
+                                result.ErrorMessage = "OK";
+                            }
+                            else
                             {
-                                memberObj.DateOfBirth = Convert.ToDateTime(User.UserInfo.DOB);
+                                Logger.Error("UsersController -> EditUserInfo FAILED - Member ID Not Found");
                             }
-                            if (!String.IsNullOrEmpty(User.UserInfo.SSN) &&
-                                User.UserInfo.SSN.Length == 4)
-                            {
-                                memberObj.SSN = CommonHelper.GetEncryptedData(User.UserInfo.SSN);
-                            }
-                            if (!String.IsNullOrEmpty(User.UserInfo.AddressLine1))
-                            {
-                                memberObj.Address = CommonHelper.GetEncryptedData(User.UserInfo.AddressLine1);
-                            }
-                            if (!String.IsNullOrEmpty(User.UserInfo.Zip))
-                            {
-                                memberObj.Zipcode = CommonHelper.GetEncryptedData(User.UserInfo.Zip);
-                            }
-
-                            if (!String.IsNullOrEmpty(User.UserInfo.MobileNumber))
-                            {
-                                string newPhoneClean = CommonHelper.RemovePhoneNumberFormatting(User.UserInfo.MobileNumber);
-
-                                if (CommonHelper.RemovePhoneNumberFormatting(memberObj.ContactNumber) != newPhoneClean)
-                                {
-                                    memberObj.ContactNumber = newPhoneClean;
-
-                                    //if (!CommonHelper.IsPhoneNumberAlreadyRegistered(newPhoneClean).isAlreadyRegistered)
-                                    if (memberObj.IsVerifiedPhone != true)
-                                    {
-                                        memberObj.IsVerifiedPhone = false;
-
-                                        #region SendingSMSVerificaion
-
-                                        try
-                                        {
-                                            string MessageBody = "Reply with 'GO' to this message to confirm your phone number on Nooch.";
-                                            string SMSresult = CommonHelper.SendSMS(newPhoneClean, MessageBody, memberObj.MemberId.ToString());
-
-                                            Logger.Info("UsersController -> EditUserInfo -> SMS Verification sent to [" + User.UserInfo.MobileNumber + "] successfully.");
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Logger.Error("UsersController -> EditUserInfo -> SMS Verification NOT sent to [" +
-                                                User.UserInfo.MobileNumber + "], [Exception: " + ex + "]");
-                                        }
-
-                                        #endregion SendingSMSVerificaion
-                                    }
-                                    //else
-                                    //{
-                                    //    result.ErrorMessage = "Phone Number already registered with Nooch";
-                                    //    return result;
-                                    //}
-                                }
-                            }
-
-                            memberObj.DateModified = DateTime.Now;
-
-                            obj.SaveChanges();
-
-                            result.IsSuccess = true;
-                            result.ErrorMessage = "OK";
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            Logger.Error("UsersController -> EditUserInfo FAILED - Member ID Not Found");
+                            Logger.Error("UsersController -> EditUserInfo FAILED - Exception during block updating Members Table - " +
+                                         "MemberID: [" + User.DeviceInfo.MemberId + "]");
                         }
 
                         #endregion Update MEMBERS Table
@@ -1801,7 +1821,7 @@ namespace LanLordlAPIs.Controllers
                             obj.SaveChanges();
                             result.IsSuccess = true;
                             result.ErrorMessage = "OK";
-                       
+
                         }
                         else
                         {
@@ -1825,7 +1845,7 @@ namespace LanLordlAPIs.Controllers
             return result;
         }
 
-        
+
 
         [HttpPost]
         [ActionName("submitLandlordIdVerWiz")]
@@ -1877,11 +1897,6 @@ namespace LanLordlAPIs.Controllers
                             if (!String.IsNullOrEmpty(landlordsInput.phone))
                             {
                                 lanlordObj.MobileNumber = CommonHelper.RemovePhoneNumberFormatting(landlordsInput.phone);
-                            }
-                            else
-                            {
-                                res.msg = "PHONE WAS NULL OR EMPTY";
-                                return res;
                             }
 
                             lanlordObj.IsIdVerified = true;
@@ -1947,10 +1962,12 @@ namespace LanLordlAPIs.Controllers
                                             memberObj.ContactNumber = newPhoneClean;
                                             memberObj.IsVerifiedPhone = false;
 
-                                            #region SendingSMSVerificaion
+                                            #region Send SM SVerificaion
 
                                             try
                                             {
+                                                string MessageBody1 = "Hi " + firstName.Trim() + ", This is Nooch - just need to verify this is your phone number. Please reply 'Go' to confirm this number.";
+
                                                 string MessageBody = "Reply with 'GO' to this message to confirm your phone number on Nooch.";
                                                 string SMSresult = CommonHelper.SendSMS(newPhoneClean, MessageBody, memberObj.MemberId.ToString());
 
@@ -1962,7 +1979,7 @@ namespace LanLordlAPIs.Controllers
                                                     landlordsInput.phone + "], [Exception: " + ex + "]");
                                             }
 
-                                            #endregion
+                                            #endregion Send SMS Verificaion
                                         }
                                         else
                                         {
