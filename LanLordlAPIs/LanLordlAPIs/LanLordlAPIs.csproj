@@ -192,6 +192,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Classes\Crypto\AES.cs" />
     <Compile Include="Classes\Crypto\CryptographyBase.cs" />
+    <Compile Include="Classes\PushNotification\ApplePushNotification.cs" />
     <Compile Include="Classes\Utility\CommonHelper.cs" />
     <Compile Include="Classes\Utility\Logger.cs" />
     <Compile Include="Constants.Designer.cs">
@@ -286,6 +287,7 @@
     </Compile>
     <Compile Include="Models\Input Models\LoginInput.cs" />
     <Compile Include="Models\Input Models\PasswordResetInputClass.cs" />
+    <Compile Include="Models\Input Models\public class GameThriveMsgContent.cs" />
     <Compile Include="Models\Output Models\CheckAndRegisterLandlordByEmailResult.cs" />
     <Compile Include="Models\Output Models\LandlordsPaymentHistoryClass.cs" />
     <Compile Include="Models\Output Models\LoginResult.cs" />
@@ -368,6 +370,7 @@
     <EmbeddedResource Include="Constants.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Constants.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

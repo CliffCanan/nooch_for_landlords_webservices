@@ -7,16 +7,576 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Http;
 using System.Web.UI.WebControls;
+using LanLordlAPIs.Classes.PushNotification;
 using LanLordlAPIs.Classes.Utility;
 using LanLordlAPIs.Models.db_Model;
 using LanLordlAPIs.Models.Input_Models;
 using LanLordlAPIs.Models.Output_Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace LanLordlAPIs.Controllers
 {
     public class RentTransController : ApiController
     {
+
+
+
+        // Method for paying back to tenants
+        [HttpPost]
+        [ActionName("PayToTenants")]
+        public CreatePropertyResultOutput PayToTenants(ChargeTenantInputClass input)
+        {
+            NOOCHEntities noochConn = new NOOCHEntities();
+            DateTime TransDateTime = DateTime.Now;
+            Logger.Info("Landlords API -> RentTrans -> ChargeTenant - Requested by [" + input.User.LandlordId + "]");
+
+            CreatePropertyResultOutput result = new CreatePropertyResultOutput();
+            result.IsSuccess = false;
+
+            try
+            {
+                Guid Landlord_GUID = CommonHelper.ConvertToGuid(input.User.LandlordId);
+                Guid Tenant_GUID = CommonHelper.ConvertToGuid(input.TransRequest.TenantId);
+                Guid landlordsMemID = new Guid(CommonHelper.GetLandlordsMemberIdFromLandlordId(Landlord_GUID));
+                Guid TenantMemID = new Guid(CommonHelper.GetTenantsMemberIdFromTenantId(Tenant_GUID.ToString()));
+
+                string transactionId = "";
+
+                #region All Checks Before Execution
+
+                // Check uniqueness of requesting and sending user
+                if (Landlord_GUID == Tenant_GUID)
+                {
+                    result.ErrorMessage = "Not allowed to send money to yourself.";
+                    return result;
+                }
+
+                // Check if request Amount is over per-transaction limit
+                decimal transactionAmount = Convert.ToDecimal(input.TransRequest.Amount);
+
+                if (CommonHelper.isOverTransactionLimit(transactionAmount, input.User.LandlordId, input.TransRequest.TenantId))
+                {
+                    result.ErrorMessage = "To keep Nooch safe, the maximum amount you can send is $" + Convert.ToDecimal(CommonHelper.GetValueFromConfig("MaximumTransferLimitPerTransaction")).ToString("F2");
+                    return result;
+                }
+
+                // Get sender and recepient Members table info
+                var sender = CommonHelper.GetMemberByMemberId(landlordsMemID);
+                var senderLandlordObj = CommonHelper.GetLandlordByLandlordId(Landlord_GUID); // Only need this for the Photo for the email template... Members table doesn't have it.
+                var moneyRecipient = CommonHelper.GetMemberByMemberId(Tenant_GUID);
+
+
+                if (sender == null)
+                {
+                    Logger.Error("Landlords API -> RentTrans -> PayToTenants FAILED - Sender Member Not Found - [MemberID: " + Landlord_GUID + "]");
+                    result.ErrorMessage = "Sender Member Not Found";
+
+                    return result;
+                }
+                if (moneyRecipient == null)
+                {
+                    Logger.Error("Landlords API -> RentTrans -> PayToTenants FAILED - moneyRecipient (who would receive the money) Member Not Found - [MemberID: " + Tenant_GUID + "]");
+                    result.ErrorMessage = "Money Recipient Member Not Found";
+
+                    return result;
+                }
+
+                #region Get Money Sender's Synapse Account Details
+
+
+                var senderSynInfo = CommonHelper.GetSynapseBankAndUserDetailsforGivenMemberId(landlordsMemID.ToString());
+
+                if (senderSynInfo.wereBankDetailsFound != true)
+                {
+                    Logger.Error("Landlords API -> RentTrans -> PayToTenants FAILED -> Trans ABORTED: Sender's Synapse bank account NOT FOUND - Trans Creator MemberId is: [" + landlordsMemID + "]");
+                    result.ErrorMessage = "Requester does not have any bank added";
+
+                    return result;
+                }
+
+                // Check Requestor's Synapse Bank Account status
+                if (senderSynInfo.BankDetails != null &&
+                    senderSynInfo.BankDetails.Status != "Verified" &&
+                    sender.IsVerifiedWithSynapse != true)
+                {
+                    Logger.Error("Landlords API -> RentTrans -> PayToTenants FAILED -> Trans ABORTED: Sender's Synapse bank account exists but is not Verified and " +
+                        "isVerifiedWithSynapse != true - Trans Creator memberId is: [" + landlordsMemID + "]");
+                    result.ErrorMessage = "Sender does not have any verified bank account.";
+
+                    return result;
+                }
+
+                #endregion Get Sender's Synapse Account Details
+
+
+                #region Get Receiver's Synapse Account Details
+
+                var moneyRecipientSynInfo = CommonHelper.GetSynapseBankAndUserDetailsforGivenMemberId(input.TransRequest.TenantId);
+
+                if (moneyRecipientSynInfo.wereBankDetailsFound != true)
+                {
+                    Logger.Error("Landlords API -> RentTrans -> PayToTenants FAILED -> Trans ABORTED: Money Recipient's Synapse bank account NOT FOUND - Money Recipient MemberID: [" + input.TransRequest.TenantId + "]");
+                    result.ErrorMessage = "Money recipient does not have any bank added";
+
+                    return result;
+                }
+
+                // Check Request recepient's Synapse Bank Account status
+                if (moneyRecipientSynInfo.BankDetails != null &&
+                    moneyRecipientSynInfo.BankDetails.Status != "Verified" &&
+                    moneyRecipient.IsVerifiedWithSynapse != true)
+                {
+                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED -> Trans ABORTED: Money Recipient's Synapse bank account exists but is not Verified and " +
+                        "isVerifiedWithSynapse != true - Money Recipient MemberID is: [" + input.TransRequest.TenantId + "]");
+
+                    result.ErrorMessage = "Money recipient does not have any verified bank account.";
+                    return result;
+                }
+
+                #endregion Get Receiver's Synapse Account Details
+
+                #endregion All Checks Before Execution
+
+
+                Transaction tr = new Transaction();
+                #region Create new transaction in transactions table
+
+                using (NOOCHEntities obj = new NOOCHEntities())
+                {
+
+                    tr.TransactionId = Guid.NewGuid();
+                    tr.SenderId = landlordsMemID;
+                    tr.RecipientId = TenantMemID;
+                    tr.Amount = Convert.ToDecimal(input.TransRequest.Amount);
+                    tr.TransactionDate = DateTime.Now;
+                    tr.Memo = input.TransRequest.Memo;
+                    tr.DisputeStatus = null;
+                    tr.TransactionStatus = "Pending";
+                    tr.TransactionType = CommonHelper.GetEncryptedData("Transfer");
+                    tr.DeviceId = null;
+                    tr.TransactionTrackingId = CommonHelper.GetRandomTransactionTrackingId();
+                    tr.TransactionFee = 0;
+                    tr.IsPhoneInvitation = false;
+
+                    GeoLocation gl = new GeoLocation();
+                    gl.LocationId = Guid.NewGuid();
+                    gl.Latitude = null;
+                    gl.Longitude = null;
+                    gl.Altitude = null;
+                    gl.AddressLine1 = null;
+                    gl.AddressLine2 = null;
+                    gl.City = null;
+                    gl.State = null;
+                    gl.Country = null;
+                    gl.ZipCode = null;
+                    gl.DateCreated = DateTime.Now;
+                    //obj.GeoLocations.Add(gl);
+                    //obj.SaveChanges();
+
+                    tr.GeoLocation = gl;
+                    tr.LocationId = gl.LocationId;
+
+                    try
+                    {
+                        obj.Transactions.Add(tr);
+                        obj.SaveChanges();
+                        transactionId = tr.TransactionId.ToString();
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error("Landlords API -> RentTrans -> PayToTenants FAILED - Unable to save Transaction in DB - [Sender MemberID:" + input.User.LandlordId + "], [Exception: [ " + ex.InnerException + " ]");
+                        result.IsSuccess = false;
+                        result.ErrorMessage = "Transaction failed.";
+                        return result;
+                    }
+                }
+
+                #endregion
+
+
+
+                #region Define Variables From Transaction for Notifications
+
+                var fromAddress = CommonHelper.GetValueFromConfig("transfersMail");
+                string senderUserName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(sender.UserName));
+                string senderFirstName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(sender.FirstName));
+                string senderLastName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(sender.LastName));
+                string recipientFirstName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(moneyRecipient.FirstName));
+                string recipientLastName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(moneyRecipient.LastName));
+                string receiverUserName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(moneyRecipient.UserName));
+
+
+                string wholeAmount = Convert.ToDecimal(input.TransRequest.Amount).ToString("n2");
+                string[] s3 = wholeAmount.Split('.');
+                string ce = "";
+                string dl = "";
+                if (s3.Length <= 1)
+                {
+                    dl = s3[0].ToString();
+                    ce = "00";
+                }
+                else
+                {
+                    ce = s3[1].ToString();
+                    dl = s3[0].ToString();
+                }
+
+                string memo = "";
+                if (!String.IsNullOrEmpty(input.TransRequest.Memo))
+                {
+                    if (input.TransRequest.Memo.Length > 3)
+                    {
+                        string firstThreeChars = input.TransRequest.Memo.Substring(0, 3).ToLower();
+                        bool startsWithFor = firstThreeChars.Equals("for");
+
+                        if (startsWithFor)
+                        {
+                            memo = input.TransRequest.Memo.ToString();
+                        }
+                        else
+                        {
+                            memo = "For: " + input.TransRequest.Memo.ToString();
+                        }
+                    }
+                    else
+                    {
+                        memo = "For: " + input.TransRequest.Memo.ToString();
+                    }
+                }
+
+                string senderPic = "https://www.noochme.com/noochweb/Assets/Images/userpic-default.png";
+                string recipientPic;
+
+                #endregion Define Variables From Transaction for Notifications
+
+
+
+                // Make call to SYNAPSE Order API service
+                try
+                {
+                    short shouldSendFailureNotifications = 0;
+                    // Synapse V3 order API code is here
+                    #region synapse V3 add trans code.
+
+                    //MemberDataAccess mda = new MemberDataAccess();
+                    string sender_oauth = senderSynInfo.UserDetails.access_token;
+                    string sender_fingerPrint = sender.UDID1;
+                    string sender_bank_node_id = senderSynInfo.BankDetails.bankid.ToString();
+                    string amount = input.TransRequest.Amount.ToString();
+                    string fee = "0";
+                    if (transactionAmount > 10)
+                    {
+                        fee = "0.20"; //to offset the Synapse fee so the user doesn't pay it
+                    }
+                    else if (transactionAmount < 10)
+                    {
+                        fee = "0.10"; //to offset the Synapse fee so the user doesn't pay it
+                    }
+                    string receiver_oauth = moneyRecipientSynInfo.UserDetails.access_token;
+                    string receiver_fingerprint = moneyRecipient.UDID1;
+                    string receiver_bank_node_id = moneyRecipientSynInfo.BankDetails.bankid.ToString();
+                    string suppID_or_transID = transactionId.ToString();
+                    //string senderUserName = CommonHelper.GetDecryptedData(sender.UserName).ToLower();
+                    //string receiverUserName = CommonHelper.GetDecryptedData(requester.UserName).ToLower();
+                    string iPForTransaction = CommonHelper.GetRecentOrDefaultIPOfMember(Landlord_GUID);
+                    //string senderLastName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(sender.LastName));
+                    //string recepientLastName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(requester.LastName));
+
+
+
+                    SynapseV3AddTrans_ReusableClass transactionResultFromSynapseAPI = CommonHelper.AddTransSynapseV3Reusable(sender_oauth, sender_fingerPrint, sender_bank_node_id,
+                        amount, fee, receiver_oauth, receiver_fingerprint, receiver_bank_node_id, suppID_or_transID,
+                        senderUserName, receiverUserName, iPForTransaction, senderLastName, recipientLastName);
+
+
+                    if (transactionResultFromSynapseAPI.success == true)
+                    {
+
+                        #region Synapse Response Was Successful
+
+
+
+                        #region Send Email to Sender on transfer success
+
+                        var sendersNotificationSets = CommonHelper.GetMemberNotificationSettings(sender.MemberId.ToString());
+
+                        if (sendersNotificationSets != null && (sendersNotificationSets.EmailTransferSent ?? false))
+                        {
+                            if (!String.IsNullOrEmpty(moneyRecipient.Photo) && moneyRecipient.Photo.Length > 20)
+                            {
+                                recipientPic = moneyRecipient.Photo.ToString();
+                            }
+
+                            var tokens = new Dictionary<string, string>
+                            {
+                                {Constants.PLACEHOLDER_FIRST_NAME, senderFirstName},
+                                {Constants.PLACEHOLDER_FRIEND_FIRST_NAME, recipientFirstName + " " + recipientLastName},
+                                {Constants.PLACEHOLDER_TRANSFER_AMOUNT, dl},
+                                {Constants.PLACEHLODER_CENTS, ce},
+                                {Constants.MEMO, memo}
+                            };
+
+                            var toAddress = CommonHelper.GetDecryptedData(sender.UserName);
+
+                            try
+                            {
+                                CommonHelper.SendEmail("TransferSent", fromAddress, fromAddress, toAddress,
+                                    "Your $" + wholeAmount + " payment to " + recipientFirstName + " on Nooch",
+                                     tokens, null, null);
+
+                                Logger.Info("Landlords API -> RentTrans -> PayToTenant - TransferSent email sent to [" +
+                                                       toAddress + "] successfully");
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error("Landlords API -> RentTrans -> PayToTenant -> EMAIL TO RECIPIENT FAILED: TransferReceived Email NOT sent to [" +
+                                                       toAddress + "], [Exception: " + ex + "]");
+                            }
+                        }
+
+                        #endregion Send Email to Sender on transfer success
+
+                        // Now notify the recipient...
+
+                        #region Send Notifications to Recipient on transfer success
+
+                        var recipNotificationSets = CommonHelper.GetMemberNotificationSettings(moneyRecipient.MemberId.ToString());
+
+                        if (recipNotificationSets != null)
+                        {
+                            // First, send push notification
+                            #region Push notification to Recipient
+
+                            if ((recipNotificationSets.TransferReceived == null)
+                                ? false
+                                : recipNotificationSets.TransferReceived.Value)
+                            {
+                                string recipDeviceId = recipNotificationSets != null ? moneyRecipient.DeviceToken : null;
+
+                                string pushBodyText = "You received $" + wholeAmount + " from " + senderFirstName +
+                                                      " " + senderLastName + "! Spend it wisely :-)";
+                                try
+                                {
+                                    if (recipNotificationSets != null &&
+                                        !String.IsNullOrEmpty(recipDeviceId) &&
+                                        (recipNotificationSets.TransferReceived ?? false))
+                                    {
+                                        ApplePushNotification.SendNotificationMessage(pushBodyText, 1,
+                                            null, recipDeviceId,
+                                            CommonHelper.GetValueFromConfig("AppKey"),
+                                            CommonHelper.GetValueFromConfig("MasterSecret"));
+
+                                        Logger.Info(
+                                            "Landlords API -> RentTrans -> PayToTenant -> SUCCESS - Push notification sent to Recipient [" +
+                                            recipientFirstName + " " + recipientLastName + "] successfully.");
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    Logger.Error(
+                                        "Landlords API -> RentTrans -> PayToTenant -> Success - BUT Push notification FAILURE - Push to Recipient NOT sent [" +
+                                            recipientFirstName + " " + recipientLastName + "], Exception: [" + ex + "]");
+                                }
+                            }
+
+                            #endregion Push notification to Recipient
+
+                            // Now send email notification
+                            #region Email notification to Recipient
+
+                            if (recipNotificationSets != null && (recipNotificationSets.EmailTransferReceived ?? false))
+                            {
+                                if (!String.IsNullOrEmpty(sender.Photo) && sender.Photo.Length > 20)
+                                {
+                                    senderPic = sender.Photo.ToString();
+                                }
+
+                                var tokensR = new Dictionary<string, string>
+	                                        {
+	                                            {Constants.PLACEHOLDER_FIRST_NAME, recipientFirstName},
+	                                            {Constants.PLACEHOLDER_FRIEND_FIRST_NAME, senderFirstName + " " + senderLastName},
+                                                {"$UserPicture$", senderPic},
+	                                            {Constants.PLACEHOLDER_TRANSFER_AMOUNT, wholeAmount},
+	                                            {Constants.PLACEHOLDER_TRANSACTION_DATE, Convert.ToDateTime(TransDateTime).ToString("MMM dd")},
+	                                            {Constants.MEMO, memo}
+	                                        };
+
+                                var toAddress2 = CommonHelper.GetDecryptedData(moneyRecipient.UserName);
+
+                                try
+                                {
+                                    CommonHelper.SendEmail("TransferReceived", fromAddress, fromAddress, toAddress2,
+                                        senderFirstName + " sent you $" + wholeAmount + " with Nooch", tokensR, null, null);
+
+                                    Logger.Info("Landlords API -> RentTrans -> PayToTenant -> TransferReceived Email sent to [" +
+                                        toAddress2 + "] successfully");
+                                }
+                                catch (Exception ex)
+                                {
+                                    Logger.Error(
+                                        "Landlords API -> RentTrans -> PayToTenant -> EMAIL TO RECIPIENT FAILED: TransferReceived Email NOT sent to [" +
+                                        toAddress2 + "], [Exception: " + ex + "]");
+                                }
+                            }
+
+                            #endregion Email notification to Recipient
+                        }
+
+                        #endregion Send Notifications to Recipient on transfer success
+
+                        result.ErrorMessage = "Your cash was sent successfully";
+                        result.IsSuccess = true;
+                        return result;
+
+                        #endregion Synapse Response Was Successful
+                    }
+                    #region Failure Sections
+
+                    else
+                    {
+                        // Synapse Order API returned failure in response
+
+                        Logger.Error("Landlords API -> RentTrans -> PayToTenants - Synapse returned failure. For Transaction ID -> " + transactionId);
+
+                        shouldSendFailureNotifications = 2;
+                    }
+
+                    // Check if there was a failure above and we need to send the failure Email/SMS notifications to the sender.
+                    if (shouldSendFailureNotifications > 0)
+                    {
+                        Logger.Error("Landlords API -> RentTrans -> PayToTenants  - THERE WAS A FAILURE - Sending Failure Notifications to both Users");
+
+                        #region Notify Sender about failure
+
+                        var senderNotificationSettings = CommonHelper.GetMemberNotificationSettings(sender.MemberId.ToString());
+
+                        if (senderNotificationSettings != null)
+                        {
+                            #region Push Notification to Sender about failure
+
+                            if (senderNotificationSettings.TransferAttemptFailure == true)
+                            {
+                                string senderDeviceId = senderNotificationSettings != null ? sender.DeviceToken : null;
+
+                                string mailBodyText = "Your attempt to send $" + tr.Amount.ToString("n2") +
+                                                      " to " + recipientFirstName + " " + recipientLastName + " failed ;-(  Contact Nooch support for more info.";
+
+                                if (!String.IsNullOrEmpty(senderDeviceId))
+                                {
+                                    try
+                                    {
+                                        ApplePushNotification.SendNotificationMessage(mailBodyText, 0, null, senderDeviceId,
+                                                                                   CommonHelper.GetValueFromConfig("AppKey"),
+                                                                                    CommonHelper.GetValueFromConfig("MasterSecret"));
+
+                                        Logger.Info("Landlords API -> RentTrans -> PayToTenants  FAILED - Push notif sent to Sender: [" +
+                                            senderFirstName + " " + senderLastName + "] successfully.");
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Logger.Error("Landlords API -> RentTrans -> PayToTenants  FAILED - Push notif FAILED also, SMS NOT sent to [" +
+                                            senderFirstName + " " + senderLastName + "],  [Exception: " + ex + "]");
+                                    }
+                                }
+                            }
+
+                            #endregion Push Notification to Sender about failure
+
+                            #region Email notification to Sender about failure
+
+                            if (senderNotificationSettings.EmailTransferAttemptFailure ?? false)
+                            {
+                                var tokens = new Dictionary<string, string>
+	                                {
+	                                    {Constants.PLACEHOLDER_FIRST_NAME, senderFirstName + " " + senderLastName},
+	                                    {Constants.PLACEHOLDER_FRIEND_FIRST_NAME, recipientFirstName + " " + recipientLastName},
+	                                    {Constants.PLACEHOLDER_TRANSFER_AMOUNT, dl},
+	                                    {Constants.PLACEHLODER_CENTS, ce},
+	                                };
+
+                                var toAddress = CommonHelper.GetDecryptedData(sender.UserName);
+
+                                try
+                                {
+                                    CommonHelper.SendEmail("transferFailure",
+                                        fromAddress, toAddress, toAddress, "Nooch transfer failure :-(",
+                                        tokens, null, null);
+
+                                    Logger.Info("Landlords API -> RentTrans -> PayToTenants  FAILED - Email sent to Sender: [" +
+                                        toAddress + "] successfully.");
+                                }
+                                catch (Exception ex)
+                                {
+                                    Logger.Error("Landlords API -> RentTrans -> PayToTenants  --> Error: TransferAttemptFailure mail " +
+                                                           "NOT sent to [" + toAddress + "],  [Exception: " + ex + "]");
+                                }
+                            }
+
+                            #endregion Email notification to Sender about failure
+                        }
+
+                        #endregion Notify Sender about failure
+
+                        if (shouldSendFailureNotifications == 1)
+                        {
+
+                            result.ErrorMessage = "There was a problem updating Nooch DB tables.";
+                            return result;
+                        }
+                        else if (shouldSendFailureNotifications == 2)
+                        {
+                            result.ErrorMessage = "There was a problem with Synapse.";
+                            return result;
+                        }
+                        else
+                        {
+                            result.ErrorMessage = "Unknown Failure";
+                            return result;
+                        }
+                    }
+
+                    #endregion Failure Sections
+
+                    #endregion
+
+                }
+                catch (WebException ex)
+                {
+                    var resp = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
+                    JObject jsonFromSynapse = JObject.Parse(resp);
+
+                    Logger.Info("Landlords API -> RentTrans -> PayToTenants  FAILED. [Exception: " + jsonFromSynapse + "]");
+
+                    JToken token = jsonFromSynapse["reason"];
+
+                    if (token != null)
+                    {
+                        result.ErrorMessage = "Sorry There Was A Problem (1): " + token.ToString();
+                        return result;
+                    }
+                    else
+                    {
+                        // bad request or some other error
+                        result.ErrorMessage = "Sorry There Was A Problem (2): " + ex.ToString();
+                        return result;
+                    }
+                }
+
+                result.ErrorMessage = "Uh oh - Unknown Failure"; // This should never be reached b/c code should hit the failure section
+
+                result.IsSuccess = true;
+
+
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED - [LandlordID: " + input.User.LandlordId + "], [Exception: [ " + ex + " ]");
+                result.ErrorMessage = "Error while chargin tenant. Retry later!";
+            }
+            return result;
+        }
+
         [HttpPost]
         [ActionName("ChargeTenant")]
         public CreatePropertyResultOutput chargeTenant(ChargeTenantInputClass input)

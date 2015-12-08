@@ -153,6 +153,9 @@
   <data name="PLACEHOLDER_SENDER_FULL_NAME" xml:space="preserve">
     <value>$SenderFullName$</value>
   </data>
+  <data name="PLACEHOLDER_TRANSACTION_DATE" xml:space="preserve">
+    <value>$TransactionDate$</value>
+  </data>
   <data name="PLACEHOLDER_TRANSFER_AMOUNT" xml:space="preserve">
     <value>$Transfer_Amount$</value>
   </data>

@@ -169,6 +169,15 @@ namespace LanLordlAPIs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to $TransactionDate$.
+        /// </summary>
+        internal static string PLACEHOLDER_TRANSACTION_DATE {
+            get {
+                return ResourceManager.GetString("PLACEHOLDER_TRANSACTION_DATE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to $Transfer_Amount$.
         /// </summary>
         internal static string PLACEHOLDER_TRANSFER_AMOUNT {
