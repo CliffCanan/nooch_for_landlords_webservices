@@ -215,6 +215,15 @@
     <Property Name="FacebookUserId" Type="varchar(max)" />
     <Property Name="GoogleUserId" Type="varchar(max)" />
   </EntityType>
+  <EntityType Name="MembersIPAddresses">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="MemberId" Type="uniqueidentifier" />
+    <Property Name="Ip" Type="varchar" MaxLength="50" />
+    <Property Name="ModifiedOn" Type="datetime" />
+  </EntityType>
   <EntityType Name="PasswordResetRequests">
     <Key>
       <PropertyRef Name="Id" />
@@ -619,6 +628,7 @@
     <EntitySet Name="MemberNotifications" EntityType="Self.MemberNotifications" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="MemberPrivacySettings" EntityType="Self.MemberPrivacySettings" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Members" EntityType="Self.Members" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="MembersIPAddresses" EntityType="Self.MembersIPAddresses" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PasswordResetRequests" EntityType="Self.PasswordResetRequests" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Properties" EntityType="Self.Properties" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PropertyUnits" EntityType="Self.PropertyUnits" Schema="dbo" store:Type="Tables" />

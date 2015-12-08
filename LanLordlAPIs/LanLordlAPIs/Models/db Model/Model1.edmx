@@ -220,6 +220,15 @@
           <Property Name="FacebookUserId" Type="varchar(max)" />
           <Property Name="GoogleUserId" Type="varchar(max)" />
         </EntityType>
+        <EntityType Name="MembersIPAddresses">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MemberId" Type="uniqueidentifier" />
+          <Property Name="Ip" Type="varchar" MaxLength="50" />
+          <Property Name="ModifiedOn" Type="datetime" />
+        </EntityType>
         <EntityType Name="PasswordResetRequests">
           <Key>
             <PropertyRef Name="Id" />
@@ -624,6 +633,7 @@
           <EntitySet Name="MemberNotifications" EntityType="Self.MemberNotifications" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MemberPrivacySettings" EntityType="Self.MemberPrivacySettings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Members" EntityType="Self.Members" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MembersIPAddresses" EntityType="Self.MembersIPAddresses" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PasswordResetRequests" EntityType="Self.PasswordResetRequests" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Properties" EntityType="Self.Properties" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PropertyUnits" EntityType="Self.PropertyUnits" Schema="dbo" store:Type="Tables" />
@@ -930,6 +940,7 @@
             <End Role="UnitsOccupiedByTenant" EntitySet="UnitsOccupiedByTenants" />
             <End Role="AutoPayTransaction" EntitySet="AutoPayTransactions" />
           </AssociationSet>
+          <EntitySet Name="MembersIPAddresses" EntityType="NOOCHModel.MembersIPAddress" />
         </EntityContainer>
         <EntityType Name="TenantsIdDocument">
           <Key>
@@ -1423,6 +1434,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="MembersIPAddress">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MemberId" Type="Guid" />
+          <Property Name="Ip" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ModifiedOn" Type="DateTime" Precision="3" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1904,6 +1924,16 @@
                 <ScalarProperty Name="UnitId" ColumnName="UnitId" />
                 <ScalarProperty Name="RecepientId" ColumnName="RecepientId" />
                 <ScalarProperty Name="SenderId" ColumnName="SenderId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MembersIPAddresses">
+            <EntityTypeMapping TypeName="NOOCHModel.MembersIPAddress">
+              <MappingFragment StoreEntitySet="MembersIPAddresses">
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="Ip" ColumnName="Ip" />
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

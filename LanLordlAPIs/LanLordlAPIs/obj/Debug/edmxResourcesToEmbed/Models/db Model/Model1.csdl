@@ -248,6 +248,7 @@
       <End Role="UnitsOccupiedByTenant" EntitySet="UnitsOccupiedByTenants" />
       <End Role="AutoPayTransaction" EntitySet="AutoPayTransactions" />
     </AssociationSet>
+    <EntitySet Name="MembersIPAddresses" EntityType="NOOCHModel.MembersIPAddress" />
   </EntityContainer>
   <EntityType Name="TenantsIdDocument">
     <Key>
@@ -741,4 +742,13 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <EntityType Name="MembersIPAddress">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="MemberId" Type="Guid" />
+    <Property Name="Ip" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="ModifiedOn" Type="DateTime" Precision="3" />
+  </EntityType>
 </Schema>
