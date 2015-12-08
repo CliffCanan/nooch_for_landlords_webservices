@@ -529,8 +529,6 @@ namespace LanLordlAPIs.Controllers
                                                                       c.RecipientId == landlordObj.MemberId
                                                                 select c).ToList();
 
-                                                Logger.Info("3. - THERE ARE [" + allTrans.Count + "] TRANSACTIONS where SenderId = [" + TenantMemberDetails.MemberId + "], RecipientId = [" + landlordObj.MemberId + "]");
-
                                                 foreach (Transaction t in allTrans)
                                                 {
                                                     PaymentHistoryClass phc = new PaymentHistoryClass();

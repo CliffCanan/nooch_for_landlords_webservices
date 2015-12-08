@@ -795,17 +795,17 @@ namespace LanLordlAPIs.Classes.Utility
 
                 using (NOOCHEntities obj = new NOOCHEntities())
                 {
-                    var lanlordObj = (from c in obj.Landlords
+                    var landlordObj = (from c in obj.Landlords
                                       where c.LandlordId == LandlordId
                                       select c).FirstOrDefault();
 
-                    if (lanlordObj == null) return false;
+                    if (landlordObj == null) return false;
 
-                    if (!String.IsNullOrEmpty(lanlordObj.IpAddresses))
+                    if (!String.IsNullOrEmpty(IP))
                     {
                         string IPsListPrepared = "";
                         //trying to split and see how many old ips we have
-                        string[] existingIps = lanlordObj.IpAddresses.Split(',');
+                        string[] existingIps = landlordObj.IpAddresses.Split(',');
 
                         if (existingIps.Length >= 5)
                         {
@@ -829,26 +829,76 @@ namespace LanLordlAPIs.Classes.Utility
                         }
                         else
                         {
-                            IPsListPrepared = lanlordObj.IpAddresses + ", " + IP;
+                            IPsListPrepared = landlordObj.IpAddresses + ", " + IP;
                         }
 
-                        // Update IP in DB
-                        lanlordObj.IpAddresses = IPsListPrepared;
+                        landlordObj.IpAddresses = IPsListPrepared;
+
+                        landlordObj.DateModified = DateTime.Now;
                         obj.SaveChanges();
+
+                        #region Update MembersIPAddress Table
+
+                        // CLIFF (12/7/15): COMMENTING OUT THIS BLOCK B/C THIS PROJECT DOESN'T INCLUDE THE MembersIPAddresses Table.
+                        //                  We can un-comment once that is added to this project's data model.
+
+                        //try
+                        //{
+                        //    var ipAddressesFound = (from c in obj.MembersIPAddresses
+                        //                            where c.MemberId == landlordObj.MemberId
+                        //                            select c).ToList();
+
+                        //    if (ipAddressesFound.Count > 5)
+                        //    {
+                        //        // If there are already 5 entries, update the one added first (the oldest)
+                        //        var lastIpFound = (from c in ipAddressesFound select c)
+                        //                          .OrderBy(m => m.ModifiedOn)
+                        //                          .Take(1)
+                        //                          .SingleOrDefault();
+
+                        //        lastIpFound.ModifiedOn = DateTime.Now;
+                        //        lastIpFound.Ip = IP;
+                        //    }
+                        //    else
+                        //    {
+                        //        // Otherwise, make a new entry
+                        //        MembersIPAddresses mip = new MembersIPAddresses();
+                        //        mip.MemberId = landlordObj.MemberId;
+                        //        mip.ModifiedOn = DateTime.Now;
+                        //        mip.Ip = IP;
+                        //    }
+
+                        //    obj.MembersIPAddresses.Add(lastIpFound);
+                        //    int saveIpInDB = obj.SaveChanges();
+
+                        //    if (saveIpInDB > 0)
+                        //    {
+                        //        Logger.Info("CommonHelper -> saveLandlordIp - SUCCESS For Saving IP Address - LandlordID: [" + LandlordId + "]");
+                        //    }
+                        //    else
+                        //    {
+                        //        Logger.Info("CommonHelper -> saveLandlordIp - FAILED Trying To Saving IP Address in DB - LandlordID: [" + LandlordId + "]");
+                        //    }
+                        //}
+                        //catch (Exception ex)
+                        //{
+                        //    Logger.Error("CommonHelper -> saveLandlordIp FAILED For Saving IP Address - [Exception: " + ex + "]");
+                        //}
+
+                        #endregion Update MembersIPAddress Table
 
                         return true;
                     }
-                    return false;
                 }
             }
             catch (Exception ex)
             {
-                Logger.Error("Landlords API -> CommonHelper -> saveLandlordIp. Error while updating IP address - [ " + IP + " ] for Landlor Id [ " + LandlordId + " ], [Exception: " + ex + " ]");
-                return false;
+                Logger.Error("CommonHelper -> saveLandlordIp - Error while updating IP address - [" + IP +
+                             "] for LandlordID: [" + LandlordId + "], [Exception: " + ex + " ]");
             }
+
+            return false;
         }
-
-
 
 
         public static string GenerateAccessToken()

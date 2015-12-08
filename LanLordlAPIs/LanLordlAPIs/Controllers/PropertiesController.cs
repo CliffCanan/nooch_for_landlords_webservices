@@ -144,7 +144,7 @@ namespace LanLordlAPIs.Controllers
 
             try
             {
-                Logger.Info("Landlords API -> Properties -> AddNewUnitInProperty - Requested by [" + unitInput.User.LandlordId + "]");
+                Logger.Info("Properties Cntrlr -> AddNewUnitInProperty - Requested by [" + unitInput.User.LandlordId + "]");
 
                 Guid landlordguidId = new Guid(unitInput.User.LandlordId);
                 Guid propertyguidId = new Guid(unitInput.PropertyId);
@@ -180,7 +180,9 @@ namespace LanLordlAPIs.Controllers
                             pu.RentStartDate = !String.IsNullOrEmpty(unitInput.Unit.RentStartDate) ? Convert.ToDateTime(unitInput.Unit.RentStartDate.Trim()) : newDate;
 
 
-                            Logger.Info("***  PROPERTIES CNTRLR -> AddNewUnitInProperty - IsTenantAdded: [" + unitInput.Unit.IsTenantAdded + "],  [Email: " + unitInput.Unit.TenantEmail + "],  [TenantID: " + unitInput.Unit.TenantId + "]");
+                            Logger.Info("Properties Cntrlr -> AddNewUnitInProperty - IsTenantAdded: [" + unitInput.Unit.IsTenantAdded + "], " +
+                                        "Email: [" + unitInput.Unit.TenantEmail + "], " +
+                                        "TenantID: [" + unitInput.Unit.TenantId + "]");
 
                             if (unitInput.Unit.IsTenantAdded == "true")
                             {
@@ -231,7 +233,7 @@ namespace LanLordlAPIs.Controllers
                             {
                                 if (!String.IsNullOrEmpty(unitInput.Unit.TenantEmail) && unitInput.Unit.TenantEmail.Length > 3)
                                 {
-                                    Logger.Info("***  PROPERTIES CNTRLR -> AddNewUnitInProperty - Tenant ID was not provided, so should invite a new tenant - [Email: " + unitInput.Unit.TenantEmail + "]");
+                                    Logger.Info("Properties Cntrlr -> AddNewUnitInProperty - Tenant ID was not provided, so should invite a new tenant - [Email: " + unitInput.Unit.TenantEmail + "]");
 
                                     #region Invite New Tenant For This Unit
 
@@ -947,7 +949,7 @@ namespace LanLordlAPIs.Controllers
         {
             Logger.Info("PropertiesController -> InviteTenant Initiated - " +
                         "LandlordID: [" + input.authData.LandlordId +
-                        "], Tenant: [" + input.tenant +
+                        "], Tenant: [" + input.tenant.email +
                         "], Unit #: [" + input.unitId + "]");
 
             GenericInternalResponse result = new GenericInternalResponse();
@@ -961,6 +963,8 @@ namespace LanLordlAPIs.Controllers
 
                 if (landlordTokenCheck.IsTokenOk)
                 {
+                    Logger.Info("PropertiesController -> InviteTenant - Checkpoing #1 - Access Token is OK!");
+
                     Guid memberId = Guid.NewGuid();
                     Guid tenantGuid = Guid.NewGuid();
                     Guid unitGuid = new Guid(input.unitId);
@@ -972,6 +976,8 @@ namespace LanLordlAPIs.Controllers
 
                     // Get Landlord's MemberId
                     Guid landlordMemberId;
+
+                    Logger.Info("PropertiesController -> InviteTenant - Checkpoing #2!");
 
                     using (NOOCHEntities obj = new NOOCHEntities())
                     {
@@ -990,14 +996,18 @@ namespace LanLordlAPIs.Controllers
 
                             if (unitObj != null)
                             {
+                                Logger.Info("PropertiesController -> InviteTenant - Checkpoing #3 - Found a Unit!");
+
                                 // Check if regular Nooch member (non-Landlord) exists with given email id
                                 CheckAndRegisterMemberByEmailResult mem = CommonHelper.CheckIfMemberExistsWithGivenEmailId(input.tenant.email);
 
                                 CheckIfTenantExistsResult ten = CommonHelper.CheckIfTenantExistsWithGivenEmailId(input.tenant.email);
 
+                                Logger.Info("PropertiesController -> InviteTenant - Checkpoing #4");
+
                                 #region Create New Member & Tenant Records
 
-                                if (mem.IsSuccess &&
+                                if (mem.IsSuccess && // if true, that means the user does NOT exist already
                                     mem.ErrorMessage == "No user found." &&
                                     ten.ErrorMessage == "No tenant found")
                                 {
@@ -1009,7 +1019,8 @@ namespace LanLordlAPIs.Controllers
                                     Logger.Info("PropertiesController -> InviteTenant - About to create a New TENANT Record - [TenantID (just created): " + tenantGuid.ToString() + "]");
                                     CommonHelper.AddNewTenantRecordInDB(tenantGuid, firstName, lastName, email, false, null, null, null, null, null, null, null, false, memberId);
                                 }
-                                else if (ten.ErrorMessage == "No tenant found") // Member with that email already exists
+                                else if (mem.ErrorMessage == "OK" && // Member with that email already exists
+                                         ten.ErrorMessage == "No tenant found")
                                 {
                                     Logger.Info("PropertiesController -> InviteTenant - Member already exists, so just creating a new TENANT Record - " +
                                                 "MemberID: [" + mem.MemberDetails.MemberId.ToString() + "], " +
@@ -1028,6 +1039,8 @@ namespace LanLordlAPIs.Controllers
                                     string phone = mem.MemberDetails.ContactNumber;
                                     bool isPhVer = mem.MemberDetails.IsVerifiedPhone == true ? true : false;
 
+                                    memberId = mem.MemberDetails.MemberId; // Use existing MemberID
+
                                     // Create New Tenant Record
                                     CommonHelper.AddNewTenantRecordInDB(tenantGuid, firstName, lastName, email, isEmVer, dob, ssn, address, city, state, zip, phone, isPhVer, mem.MemberDetails.MemberId);
                                 }
@@ -1036,9 +1049,13 @@ namespace LanLordlAPIs.Controllers
                                 {
                                     // Unlikely to ever get here. Only would if a Landlord tries to invite a Tenant that somehow
                                     // does NOT have a Member record, but does have a Tenant record, which shouldn't be possible.
+                                    memberId = mem.MemberDetails.MemberId; // Use existing MemberID
                                     tenantGuid = ten.TenantDetails.TenantId;
-                                    Logger.Info("PropertiesController -> InviteTenant - Tenant already exists - [Email: " + input.tenant.email +
-                                                "], [TenantID: " + ten.TenantDetails.TenantId.ToString() + "]");
+                                    
+                                    Logger.Info("PropertiesController -> InviteTenant - Tenant already exists - " +
+                                                "Email: [" + input.tenant.email + "], " +
+                                                "MemberID: [" + ten.TenantDetails.MemberId + "], " +
+                                                "TenantID: [" + ten.TenantDetails.TenantId.ToString() + "]");
                                 }
 
                                 #endregion Create New Member & Tenant Records
@@ -1047,7 +1064,7 @@ namespace LanLordlAPIs.Controllers
                                 #region Create New 'UnitsOccupiedByTenant' Record
 
                                 UnitsOccupiedByTenant uobt = new UnitsOccupiedByTenant();
-                                uobt.TenantId = tenantGuid; // NOTE: 'TenantId' = 'MemberId'
+                                uobt.TenantId = tenantGuid;
                                 uobt.UnitId = unitGuid;
                                 uobt.IsDeleted = false;
 
@@ -1223,7 +1240,7 @@ namespace LanLordlAPIs.Controllers
                                             "Rent Payment request from " + LandlordFirstName + " " + LandlordLastName,
                                              tokens2, null, null);
 
-                                        Logger.Info("PropertiesController -> requestReceivedToNewUser email sent to - [ " + email + " ] successfully.");
+                                        Logger.Info("PropertiesController -> requestReceivedToNewUser email sent to - [" + email + "] successfully.");
 
                                     }
                                     catch (Exception ex)
@@ -1294,7 +1311,7 @@ namespace LanLordlAPIs.Controllers
 
             try
             {
-                Logger.Info("PropertiesController -> GetPropertyDetailsPageData Initiated - [LandlordID: " + Property.User.LandlorId + "]");
+                Logger.Info("Properties Cntrlr -> GetPropertyDetailsPageData Initiated - [LandlordID: " + Property.User.LandlorId + "]");
 
                 Guid landlordguidId = new Guid(Property.User.LandlorId);
                 result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, Property.User.AccessToken);
@@ -1338,7 +1355,7 @@ namespace LanLordlAPIs.Controllers
 
                             #region Get Bank Details For This Property
 
-                            //Logger.Info("PropertiesController -> GetPropertyDetailsPageData - About to attempt to get Synapse Bank info - [PropertyID: " + Property.PropertyId + "]");
+                            //Logger.Info("Properties Cntrlr -> GetPropertyDetailsPageData - About to attempt to get Synapse Bank info - [PropertyID: " + Property.PropertyId + "]");
 
                             BankDetailsResult bdetails = new BankDetailsResult();
                             if (propertyInDb.MemberId != null)
@@ -1355,13 +1372,19 @@ namespace LanLordlAPIs.Controllers
                                     result.IsBankAccountAdded = true;
 
                                     bdetails.BankAccountID = bankDetails.Id.ToString();
-                                    bdetails.BankName = bankDetails.bank_name != null ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(bankDetails.bank_name)) : "";
-                                    bdetails.BankAccountNick = bankDetails.nickname != null ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(bankDetails.nickname)) : "";
-                                    bdetails.BankAccountNumString = bankDetails.account_number_string != null ? CommonHelper.GetDecryptedData(bankDetails.account_number_string) : "";
+                                    bdetails.BankName = bankDetails.bank_name != null
+                                                        ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(bankDetails.bank_name))
+                                                        : "";
+                                    bdetails.BankAccountNick = bankDetails.nickname != null
+                                                               ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(bankDetails.nickname))
+                                                               : "";
+                                    bdetails.BankAccountNumString = bankDetails.account_number_string != null
+                                                                    ? CommonHelper.GetDecryptedData(bankDetails.account_number_string)
+                                                                    : "";
 
                                     string bankNameToMatch = bankDetails.bank_name != null
-                                        ? CommonHelper.GetDecryptedData(bankDetails.bank_name).ToUpper()
-                                        : "";
+                                                             ? CommonHelper.GetDecryptedData(bankDetails.bank_name).ToUpper()
+                                                             : "";
                                     if (bankNameToMatch.Length > 0)
                                     {
                                         switch (bankNameToMatch)
@@ -1373,6 +1396,7 @@ namespace LanLordlAPIs.Controllers
                                                 bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/bankofamerica.png";
                                                 break;
                                             case "BB&T BANK":
+                                                bdetails.BankName = "BB&T Bank";
                                                 bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/bbandt.png";
                                                 break;
                                             case "CHASE":
@@ -1394,15 +1418,18 @@ namespace LanLordlAPIs.Controllers
                                                 bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/firsttennessee.png";
                                                 break;
                                             case "US BANK":
+                                                bdetails.BankName = "US Bank";
                                                 bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/usbank.png";
                                                 break;
                                             case "USAA":
+                                                bdetails.BankName = "USAA";
                                                 bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/usaa.png";
                                                 break;
                                             case "WELLS FARGO":
                                                 bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/WellsFargo.png";
                                                 break;
                                             case "PNC":
+                                                bdetails.BankName = "PNC";
                                                 bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/pnc.png";
                                                 break;
                                             case "REGIONS":
@@ -1412,6 +1439,7 @@ namespace LanLordlAPIs.Controllers
                                                 bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/suntrust.png";
                                                 break;
                                             case "TD BANK":
+                                                bdetails.BankName = "TD Bank";
                                                 bdetails.BankIcon = "https://www.noochme.com/noochweb/Assets/Images/bankPictures/td.png";
                                                 break;
                                             default:
@@ -1439,7 +1467,7 @@ namespace LanLordlAPIs.Controllers
                             // Get all units of this property
                             #region Get All Units For This Property
 
-                            Logger.Info("PropertiesController -> GetPropertyDetailsPageData - About to attempt to get All Units - [PropertyID: " + Property.PropertyId + "]");
+                            Logger.Info("Properties Cntrlr -> GetPropertyDetailsPageData - About to attempt to get All Units - [PropertyID: " + Property.PropertyId + "]");
 
                             var allUnits = (from d in obj.PropertyUnits
                                             where d.PropertyId == propertyInDb.PropertyId &&
@@ -1561,7 +1589,7 @@ namespace LanLordlAPIs.Controllers
 
                             List<TenantDetailsResult> TenantsListForThisPropertyPrepared = new List<TenantDetailsResult>();
 
-                            Logger.Info("****   GET PROPERTY DETAILS -> AllTenantsInGivenProperty.Count: [" + AllTenantsInGivenProperty.Count + "]");
+                            //Logger.Info("Properties Cntrlr -> GetPropertyDetailsPageData -> AllTenantsInGivenProperty.Count: [" + AllTenantsInGivenProperty.Count + "]");
 
                             if (AllTenantsInGivenProperty.Count > 0)
                             {
@@ -1625,7 +1653,7 @@ namespace LanLordlAPIs.Controllers
             }
             catch (Exception ex)
             {
-                Logger.Error("PropertiesController -> GetPropertyDetailsPageData FAILED - Outer Exception - [PropertyID: " + Property.User.LandlorId + " ], [Exception: " + ex + "]");
+                Logger.Error("Properties Cntrlr -> GetPropertyDetailsPageData FAILED - Outer Exception - [PropertyID: " + Property.User.LandlorId + " ], [Exception: " + ex + "]");
                 result.ErrorMessage = "Error while getting properties list. Retry later!";
             }
 
@@ -1714,7 +1742,7 @@ namespace LanLordlAPIs.Controllers
                 {
                     string[] propId = HttpContext.Current.Request.Form.GetValues("PropertyId");
 
-                    Logger.Info("Properties Controller -> Upload Property Image -> [PropID: " + propId + "]");
+                    Logger.Info("Properties Cntrlr -> UploadPropertyImage -> [PropID: " + propId + "]");
 
                     if (propId != null && propId.Length > 0)
                     {
@@ -1725,7 +1753,7 @@ namespace LanLordlAPIs.Controllers
                             var fileExtension = Path.GetExtension(file.FileName);
                             var fileName = landlordGuidId.ToString().Replace("-", "_").Replace("'", "").Trim() + fileExtension;
 
-                            Logger.Info("PROPERTIES CONTROLLER -> Upload Property Image -> [fileName: " + fileName.ToString() + "]");
+                            Logger.Info("Properties Cntrlr -> UploadPropertyImage -> fileName: [" + fileName.ToString() + "]");
 
                             var path = Path.Combine(
                                         HttpContext.Current.Server.MapPath(CommonHelper.GetValueFromConfig("PhotoPath")),
@@ -1770,7 +1798,7 @@ namespace LanLordlAPIs.Controllers
             }
             catch (Exception ex)
             {
-                Logger.Error("PropertiesController -> UploadPropertyImage FAILED - [Exception: " + ex.Message + " ]");
+                Logger.Error("Properties Cntrlr -> UploadPropertyImage FAILED - [Exception: " + ex.Message + " ]");
                 result.ErrorMessage = "Error while uploading image. Retry.";
             }
 
@@ -1787,7 +1815,7 @@ namespace LanLordlAPIs.Controllers
         [ActionName("DeletePropertyUnit")]
         public CreatePropertyResultOutput DeletePropertyUnit(SetPropertyStatusClass unitInput)
         {
-            Logger.Info("Properties Controller -> DeletePropertyUnit Initiated - [Landlord ID: " +
+            Logger.Info("Properties Cntrlr -> DeletePropertyUnit Initiated - [Landlord ID: " +
                         unitInput.User.LandlorId + "], [Unit Id: " + unitInput.PropertyId + "]");
 
             CreatePropertyResultOutput result = new CreatePropertyResultOutput();
@@ -1840,8 +1868,8 @@ namespace LanLordlAPIs.Controllers
                                 }
                                 catch (Exception ex)
                                 {
-                                    Logger.Error("Properties Controller -> DeletePropertyUnit EXCEPTION on trying to delete existing UnitsOccupiedByTenant record - " +
-                                                 "[UnitID: " + unitInput.PropertyId + "], [Exception: " + ex + "]");
+                                    Logger.Error("Properties Cntrlr -> DeletePropertyUnit EXCEPTION on trying to delete existing UnitsOccupiedByTenant record - " +
+                                                 "UnitID: [" + unitInput.PropertyId + "], Exception: [" + ex + "]");
                                 }
 
                                 #endregion Delete UnitOccupiedByTenant Record
@@ -1880,7 +1908,7 @@ namespace LanLordlAPIs.Controllers
         [ActionName("UploadPropertyUnitLeasePDF")]
         public LoginResult UploadPropertyUnitLeasePDF()
         {
-            Logger.Info("Properties Controller -> UploadPropertyUnitLeasePDF Inititated");
+            Logger.Info("Properties Cntrlr -> UploadPropertyUnitLeasePDF Inititated");
 
             LoginResult result = new LoginResult();
             result.IsSuccess = false;
@@ -1903,7 +1931,7 @@ namespace LanLordlAPIs.Controllers
                     {
                         if (!String.IsNullOrEmpty(unitId[0]))
                         {
-                            Logger.Info("Properties Controller -> UploadPropertyUnitLeasePDF -> [UnitID: " + unitId[0] + "]");
+                            Logger.Info("Properties Cntrlr -> UploadPropertyUnitLeasePDF -> [UnitID: " + unitId[0] + "]");
 
                             Guid propUnitId = CommonHelper.ConvertToGuid(unitId[0]);
 
@@ -1912,7 +1940,7 @@ namespace LanLordlAPIs.Controllers
                                 var fileExtension = Path.GetExtension(file.FileName);
                                 var fileName = propUnitId.ToString().Replace("-", "_").Replace("'", "").Trim() + fileExtension;
 
-                                Logger.Info("Properties Controller -> UploadPropertyUnitLeasePDF -> [File Name: " + fileName + "]");
+                                Logger.Info("Properties Cntrlr -> UploadPropertyUnitLeasePDF -> [File Name: " + fileName + "]");
 
                                 var path = Path.Combine(
                                             HttpContext.Current.Server.MapPath(CommonHelper.GetValueFromConfig("LeaseDocumentsPath")),
@@ -1958,7 +1986,7 @@ namespace LanLordlAPIs.Controllers
             }
             catch (Exception ex)
             {
-                Logger.Error("PropertiesController -> UploadPropertyUnitLeasePDF FAILED - [Exception: " + ex.Message + " ]");
+                Logger.Error("Properties Cntrlr -> UploadPropertyUnitLeasePDF FAILED - Exception: [" + ex.Message + " ]");
                 result.ErrorMessage = "Error while uploading PDF!";
             }
 

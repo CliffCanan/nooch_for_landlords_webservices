@@ -327,8 +327,7 @@ namespace LanLordlAPIs.Controllers
                                                  d.IsDeleted == false &&
                                                  c.IsDeleted == false
                                            // && (c.Status != "Suspended" || c.Status != "Temporarily_Blocked")
-                                           select
-                                               new
+                                           select new
                                                {
                                                    c.LandlordId,
                                                    c.IpAddresses,
@@ -338,7 +337,7 @@ namespace LanLordlAPIs.Controllers
 
                     if (userCheckResult != null)
                     {
-                        //updating ip in db
+                        // Update IP address in DB
                         var landlordEntity = (from ll in obj.Landlords
                                               where ll.LandlordId == userCheckResult.LandlordId
                                               select ll).FirstOrDefault();
@@ -2735,6 +2734,7 @@ namespace LanLordlAPIs.Controllers
 
             return result;
         }
+
 
         private static Regex digitsOnly = new Regex(@"[^\d]");
     }
