@@ -22,6 +22,30 @@ namespace LanLordlAPIs.Controllers
 
 
 
+        // method for sending payment reminders
+        public CreatePropertyResultOutput SendRentRemindersToTenants(ReminderMailInputClass input)
+        {
+            Logger.Info("Landlords API -> SendRentRemindersToTenants Initiated. TenantId: [" + input.Trans.TenantId + "]. TransactionId: [" + input.Trans.TransactionId + "]. ReminderType: [" + input.Trans.ReminderType + "]");
+            CreatePropertyResultOutput result = new CreatePropertyResultOutput();
+            result.IsSuccess = false;
+            try
+            {
+                NOOCHEntities noochConnection = new NOOCHEntities();
+
+                return result;
+
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Landlords API -> SendRentRemindersToTenants FAILED - Outer Exception - [" + ex + "]");
+                result.ErrorMessage= "Error";
+                return result;
+            }
+        }
+
+
+
+
         // Method for paying back to tenants
         [HttpPost]
         [ActionName("PayToTenants")]

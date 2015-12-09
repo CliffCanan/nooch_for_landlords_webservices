@@ -17,6 +17,22 @@ namespace LanLordlAPIs.Models.Output_Models
         public ChargeTenantInputTransDetailsClass TransRequest { get; set; }
     }
 
+    public class ReminderMailInputClass
+    {
+        public basicLandlordPayload User { get; set; }
+        public SendReminderEmailInputClass Trans { get; set; }
+    }
+
+
+    public class SendReminderEmailInputClass
+    {
+        public string TenantId { get; set; }
+        public string TransactionId { get; set; }
+        public string ReminderType { get; set; }
+        
+    }
+
+
     public class ChargeTenantInputTransDetailsClass
     {
         public string Memo { get; set; }
