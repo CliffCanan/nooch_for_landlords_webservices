@@ -266,3 +266,4 @@ C:\1\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\obj\Debug\LanLordlAPIs.Constan
 C:\1\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\obj\Debug\LanLordlAPIs.csproj.GenerateResource.Cache
 C:\1\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\obj\Debug\LanLordlAPIs.dll
 C:\1\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\obj\Debug\LanLordlAPIs.pdb
+C:\Users\Cliff Canan\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\obj\Debug\LanLordlAPIs.csprojResolveAssemblyReference.cache

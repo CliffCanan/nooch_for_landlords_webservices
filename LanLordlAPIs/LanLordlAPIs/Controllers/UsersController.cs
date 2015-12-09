@@ -301,11 +301,13 @@ namespace LanLordlAPIs.Controllers
 
             try
             {
+                Logger.Info("UserController -> Login Initiated - Username: [" + User.UserName + "], IP: [" + User.Ip + "]");
+
                 using (NOOCHEntities obj = new NOOCHEntities())
                 {
                     DateTime requestDatetime = DateTime.Now;
 
-                    if (String.IsNullOrEmpty(User.Ip) ||
+                    if (//String.IsNullOrEmpty(User.Ip) ||
                         String.IsNullOrEmpty(User.UserName) ||
                         String.IsNullOrEmpty(User.Password))
                     {
