@@ -11,28 +11,12 @@ namespace LanLordlAPIs.Models.Output_Models
     {
     }
 
+    // Charge Tenant
     public class ChargeTenantInputClass
     {
         public basicLandlordPayload User { get; set; }
         public ChargeTenantInputTransDetailsClass TransRequest { get; set; }
     }
-
-    public class ReminderMailInputClass
-    {
-        public basicLandlordPayload User { get; set; }
-        public SendReminderEmailInputClass Trans { get; set; }
-    }
-
-
-    public class SendReminderEmailInputClass
-    {
-        public string TenantId { get; set; }
-        public string TransactionId { get; set; }
-        public string ReminderType { get; set; }
-        
-    }
-
-
     public class ChargeTenantInputTransDetailsClass
     {
         public string Memo { get; set; }
@@ -40,6 +24,27 @@ namespace LanLordlAPIs.Models.Output_Models
         public string TenantId { get; set; }
         public bool IsRecurring { get; set; }
     }
+
+    // Send Reminder Email
+    public class ReminderMailInputClass
+    {
+        public basicLandlordPayload User { get; set; }
+        public SendReminderEmailInputClass Trans { get; set; }
+    }
+    public class SendReminderEmailInputClass
+    {
+        public string TenantId { get; set; }
+        public string TransactionId { get; set; }
+        public string ReminderType { get; set; }
+    }
+
+    // Cancel Transaction
+    public class CancelTransInput
+    {
+        public basicLandlordPayload User { get; set; }
+        public string TransId { get; set; }
+    }
+
 
     public class SynapseDetailsClass
     {
@@ -58,6 +63,5 @@ namespace LanLordlAPIs.Models.Output_Models
         public string kind { get; set; }
         public string id { get; set; }
         public string longUrl { get; set; }
-
     }
 }

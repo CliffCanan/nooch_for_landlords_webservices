@@ -242,7 +242,7 @@ namespace LanLordlAPIs.Models.Output_Models
         public Nullable<bool> IsDeleted { get; set; }
         public string DefaulBank { get; set; }
 
-        
+
         public List<PropertyUnitClass> AllUnits { get; set; }
 
         public string UnitsCount { get; set; }

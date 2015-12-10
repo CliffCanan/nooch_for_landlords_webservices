@@ -941,8 +941,6 @@ namespace LanLordlAPIs.Controllers
 
 
 
-
-
         [HttpPost]
         [ActionName("InviteTenant")]
         public GenericInternalResponse InviteTenant(AddNewTenantInput input)
@@ -1051,7 +1049,7 @@ namespace LanLordlAPIs.Controllers
                                     // does NOT have a Member record, but does have a Tenant record, which shouldn't be possible.
                                     memberId = mem.MemberDetails.MemberId; // Use existing MemberID
                                     tenantGuid = ten.TenantDetails.TenantId;
-                                    
+
                                     Logger.Info("PropertiesController -> InviteTenant - Tenant already exists - " +
                                                 "Email: [" + input.tenant.email + "], " +
                                                 "MemberID: [" + ten.TenantDetails.MemberId + "], " +
@@ -1293,9 +1291,6 @@ namespace LanLordlAPIs.Controllers
 
             return result;
         }
-
-
-
 
 
         /// <summary>
@@ -1937,33 +1932,61 @@ namespace LanLordlAPIs.Controllers
 
                             using (NOOCHEntities obj = new NOOCHEntities())
                             {
-                                var fileExtension = Path.GetExtension(file.FileName);
-                                var fileName = propUnitId.ToString().Replace("-", "_").Replace("'", "").Trim() + fileExtension;
-
-                                Logger.Info("Properties Cntrlr -> UploadPropertyUnitLeasePDF -> [File Name: " + fileName + "]");
-
-                                var path = Path.Combine(
-                                            HttpContext.Current.Server.MapPath(CommonHelper.GetValueFromConfig("LeaseDocumentsPath")),
-                                            fileName);
-
-                                if (File.Exists(path))
-                                {
-                                    File.Delete(path);
-                                }
-
-                                file.SaveAs(path);
-
-                                var propDetails = (from c in obj.PropertyUnits
+                                var propUnitObj = (from c in obj.PropertyUnits
                                                    where c.UnitId == propUnitId
                                                    select c).FirstOrDefault();
 
-                                if (propDetails != null)
+                                if (propUnitObj != null)
                                 {
-                                    propDetails.LeaseDocumentPath = CommonHelper.GetValueFromConfig("LeaseDocumentsUrl") + fileName;
+                                    string propertyName = (from p in obj.Properties
+                                                           where p.PropertyId == propUnitObj.PropertyId
+                                                           select p.PropName).FirstOrDefault();
+
+                                    string fileNameToUse = "";
+
+                                    if (!String.IsNullOrEmpty(propertyName))
+                                    {
+                                        fileNameToUse = propertyName.Replace("-", "_").Replace("'", "").Replace(" ", "_").Trim();
+
+                                        if (!String.IsNullOrEmpty(propUnitObj.UnitNumber))
+                                        {
+                                            fileNameToUse = fileNameToUse + "_unit" + propUnitObj.UnitNumber.Trim();
+                                        }
+                                        else if (!String.IsNullOrEmpty(propUnitObj.UnitNickName))
+                                        {
+                                            fileNameToUse = fileNameToUse + propUnitObj.UnitNickName.Trim();
+                                        }
+
+                                        fileNameToUse = fileNameToUse + DateTime.Now.ToString("MM_dd_yy_HH_mm");
+                                    }
+                                    else
+                                    {
+                                        fileNameToUse = propUnitId.ToString().Replace("-", "_").Replace("'", "").Trim();
+                                    }
+
+                                    var fileExtension = Path.GetExtension(file.FileName);
+
+                                    var fullFileName = fileNameToUse.Trim() + fileExtension;
+
+                                    Logger.Info("Properties Cntrlr -> UploadPropertyUnitLeasePDF -> [File Name: " + fullFileName + "]");
+
+                                    var path = Path.Combine(
+                                                HttpContext.Current.Server.MapPath(CommonHelper.GetValueFromConfig("LeaseDocumentsPath")),
+                                                fullFileName);
+
+                                    if (File.Exists(path))
+                                    {
+                                        File.Delete(path);
+                                    }
+
+                                    file.SaveAs(path);
+
+
+                                    propUnitObj.LeaseDocumentPath = CommonHelper.GetValueFromConfig("LeaseDocumentsUrl") + fullFileName;
                                     obj.SaveChanges();
 
                                     result.IsSuccess = true;
-                                    result.ErrorMessage = propDetails.LeaseDocumentPath;
+                                    result.ErrorMessage = propUnitObj.LeaseDocumentPath;
                                 }
                                 else
                                 {

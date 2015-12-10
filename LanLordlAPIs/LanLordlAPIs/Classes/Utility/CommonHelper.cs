@@ -20,7 +20,6 @@ namespace LanLordlAPIs.Classes.Utility
 {
     public class CommonHelper
     {
-
         public static SynapseDetailsClass GetSynapseBankAndUserDetailsforGivenMemberId(string memberId)
         {
             SynapseDetailsClass res = new SynapseDetailsClass();
@@ -158,6 +157,8 @@ namespace LanLordlAPIs.Classes.Utility
                 return memDetails;
             }
         }
+        
+        
         public static string GetEncryptedData(string sourceData)
         {
             try
@@ -208,6 +209,7 @@ namespace LanLordlAPIs.Classes.Utility
                 return sr.ReadToEnd();
         }
 
+        
         public static string GetRandomNoochId()
         {
             const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -235,6 +237,7 @@ namespace LanLordlAPIs.Classes.Utility
             return null;
         }
 
+        
         public static string GetRandomPinNumber()
         {
             const string chars = "0123456789";
@@ -247,11 +250,13 @@ namespace LanLordlAPIs.Classes.Utility
             return randomId;
         }
 
+        
         public static string GetValueFromConfig(string key)
         {
             return ConfigurationManager.AppSettings[key];
         }
 
+        
         public static Member GetMemberByEmailId(string eMailID)
         {
             Member memberObj = new Member();
@@ -267,12 +272,11 @@ namespace LanLordlAPIs.Classes.Utility
                                  where (c.UserName == email || c.UserNameLowerCase == email) &&
                                         c.IsDeleted == false
                                  select c).SingleOrDefault();
-
                 }
             }
             catch (Exception ex)
             {
-                Logger.Error("CommonHelper -> getMemberByEmailId EXCEPTION - [" + ex + "]");
+                Logger.Error("CommonHelper -> getMemberByEmailId FAILED - Exception: [" + ex + "]");
             }
 
             return memberObj;
@@ -287,22 +291,20 @@ namespace LanLordlAPIs.Classes.Utility
             {
                 using (NOOCHEntities obj = new NOOCHEntities())
                 {
-
-
                     memberObj = (from c in obj.Members
                                  where c.MemberId == memberId &&
                                         c.IsDeleted == false
                                  select c).SingleOrDefault();
-
                 }
             }
             catch (Exception ex)
             {
-                Logger.Error("CommonHelper -> GetMemberByMemberId EXCEPTION - [" + ex + "]");
+                Logger.Error("CommonHelper -> GetMemberByMemberId FAILED - Exception: [" + ex + "]");
             }
 
             return memberObj;
         }
+
 
         public static Member getMemberByNoochId(string NoochId)
         {
@@ -319,12 +321,13 @@ namespace LanLordlAPIs.Classes.Utility
             }
             catch (Exception ex)
             {
-                Logger.Error("CommonHelper -> getMemberByNoochId EXCEPTION - [" + ex + "]");
+                Logger.Error("CommonHelper -> getMemberByNoochId FAILED - Exception: [" + ex + "]");
             }
 
             return memberObj;
         }
 
+        
         public static Landlord GetLandlordByLandlordId(Guid landlordId)
         {
             Landlord landlordObj = new Landlord();
@@ -333,18 +336,15 @@ namespace LanLordlAPIs.Classes.Utility
             {
                 using (NOOCHEntities obj = new NOOCHEntities())
                 {
-
-
                     landlordObj = (from c in obj.Landlords
                                    where c.LandlordId == landlordId &&
                                           c.IsDeleted == false
                                    select c).SingleOrDefault();
-
                 }
             }
             catch (Exception ex)
             {
-                Logger.Error("CommonHelper -> GetLandlordByLandlordId EXCEPTION - [" + ex + "]");
+                Logger.Error("CommonHelper -> GetLandlordByLandlordId FAILED - Exception: [" + ex + "]");
             }
 
             return landlordObj;
@@ -790,7 +790,6 @@ namespace LanLordlAPIs.Classes.Utility
 
 
 
-
         public static bool saveLandlordIp(Guid LandlordId, string IP)
         {
             try
@@ -800,8 +799,8 @@ namespace LanLordlAPIs.Classes.Utility
                 using (NOOCHEntities obj = new NOOCHEntities())
                 {
                     var landlordObj = (from c in obj.Landlords
-                                      where c.LandlordId == LandlordId
-                                      select c).FirstOrDefault();
+                                       where c.LandlordId == LandlordId
+                                       select c).FirstOrDefault();
 
                     if (landlordObj == null) return false;
 
@@ -843,8 +842,6 @@ namespace LanLordlAPIs.Classes.Utility
 
                         #region Update MembersIPAddress Table
 
-                      
-
                         try
                         {
                             var ipAddressesFound = (from c in obj.MembersIPAddresses
@@ -873,16 +870,17 @@ namespace LanLordlAPIs.Classes.Utility
                                 obj.MembersIPAddresses.Add(mip);
                             }
 
-                            
                             int saveIpInDB = obj.SaveChanges();
 
                             if (saveIpInDB > 0)
                             {
-                                Logger.Info("CommonHelper -> saveLandlordIp - SUCCESS For Saving IP Address - LandlordID: [" + LandlordId + "]");
+                                Logger.Info("CommonHelper -> saveLandlordIp - Landlord's IP Address Updated in MembersIPAddress Table - LandlordID: [" + LandlordId +
+                                            "], IP: [" + IP + "]");
                             }
                             else
                             {
-                                Logger.Info("CommonHelper -> saveLandlordIp - FAILED Trying To Saving IP Address in DB - LandlordID: [" + LandlordId + "]");
+                                Logger.Info("CommonHelper -> saveLandlordIp - FAILED Trying To Saving IP Address in MembersIPAddress - LandlordID: [" + LandlordId +
+                                            "], IP: [" + IP + "]");
                             }
                         }
                         catch (Exception ex)
@@ -1057,15 +1055,13 @@ namespace LanLordlAPIs.Classes.Utility
         }
 
 
-
-
-
         public static Image byteArrayToImage(byte[] byteArrayIn)
         {
             MemoryStream ms = new MemoryStream(byteArrayIn);
             Image returnImage = Image.FromStream(ms);
             return returnImage;
         }
+
 
         //to save image in directory and get url
         public static string SaveBase64AsImage(string fileNametobeused, string base64String)
@@ -1100,8 +1096,6 @@ namespace LanLordlAPIs.Classes.Utility
             fullpathtoSaveimage = PhotoUrl + filnameMade;
             return fullpathtoSaveimage;
         }
-
-
 
 
 
@@ -1149,6 +1143,7 @@ namespace LanLordlAPIs.Classes.Utility
             }
         }
 
+        
         public static CheckIfTenantExistsResult CheckIfTenantExistsWithGivenEmailId(string email)
         {
             CheckIfTenantExistsResult result = new CheckIfTenantExistsResult();
@@ -1278,9 +1273,6 @@ namespace LanLordlAPIs.Classes.Utility
         }
 
 
-
-
-
         public static bool SendEmail(string templateName, string fromAddress, string fromName, string toAddress, string subject, IEnumerable<KeyValuePair<string, string>> replacements, string bodyText, string bccEmail)
         {
             try
@@ -1406,15 +1398,15 @@ namespace LanLordlAPIs.Classes.Utility
                     to = phoneto.Trim();
 
                 var client = new Twilio.TwilioRestClient(AccountSid, AuthToken);
-                //var sms = client.SendSmsMessage(from, to, msg);
                 var sms2 = client.SendMessage(from, to, msg);
 
                 return sms2.Status;
             }
             catch (Exception ex)
             {
-                Logger.Error("CommonHelper -> SEND SMS FAILED - [To #: " + phoneto + "], [MemberID: " +
-                                       memberId + "], [Exception: " + ex.InnerException + "]");
+                Logger.Error("CommonHelper -> SEND SMS FAILED - [To #: " + phoneto +
+                             "], MemberID: [" + memberId +
+                             "], [Exception: " + ex.InnerException + "]");
             }
             return "Failure";
         }
@@ -1686,6 +1678,7 @@ namespace LanLordlAPIs.Classes.Utility
 
             return res;
         }
+
 
         public static SynapseV3AddTrans_ReusableClass AddTransSynapseV3Reusable(string sender_oauth, string sender_fingerPrint,
            string sender_bank_node_id, string amount, string fee, string receiver_oauth, string receiver_fingerprint,

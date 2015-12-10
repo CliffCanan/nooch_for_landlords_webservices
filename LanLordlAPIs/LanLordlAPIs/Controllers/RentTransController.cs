@@ -20,9 +20,7 @@ namespace LanLordlAPIs.Controllers
     public class RentTransController : ApiController
     {
 
-
-
-        // method for sending payment reminders
+        // Method for sending payment reminders
         public CreatePropertyResultOutput SendRentRemindersToTenants(ReminderMailInputClass input)
         {
             Logger.Info("Landlords API -> SendRentRemindersToTenants Initiated. TenantId: [" + input.Trans.TenantId + "]. TransactionId: [" + input.Trans.TransactionId + "]. ReminderType: [" + input.Trans.ReminderType + "]");
@@ -38,12 +36,10 @@ namespace LanLordlAPIs.Controllers
             catch (Exception ex)
             {
                 Logger.Error("Landlords API -> SendRentRemindersToTenants FAILED - Outer Exception - [" + ex + "]");
-                result.ErrorMessage= "Error";
+                result.ErrorMessage = "Error";
                 return result;
             }
         }
-
-
 
 
         // Method for paying back to tenants
@@ -601,6 +597,7 @@ namespace LanLordlAPIs.Controllers
             return result;
         }
 
+
         [HttpPost]
         [ActionName("ChargeTenant")]
         public CreatePropertyResultOutput chargeTenant(ChargeTenantInputClass input)
@@ -735,7 +732,7 @@ namespace LanLordlAPIs.Controllers
 
                     // we can take advantage of having tenants email id here.
                     //tr.InvitationSentTo = !String.IsNullOrEmpty(requestDto.MoneySenderEmailId) ? CommonHelper.GetEncryptedData(requestDto.MoneySenderEmailId) : null,
-                    
+
                     GeoLocation gl = new GeoLocation();
                     gl.LocationId = Guid.NewGuid();
                     gl.Latitude = null;
@@ -854,8 +851,8 @@ namespace LanLordlAPIs.Controllers
 													{Constants.MEMO, memo}
 												 };
 
-                    Logger.Info("memo: [" + memo + "], wholeAmount: [" + wholeAmount + "], cancelLink: [" + cancelLink +
-                            "], toAddress: [" + RequesterEmail + "], fromAddress: [" + fromAddress + "]");
+                    Logger.Info("RentTrans Ctrlr -> ChargeTenant - Memo: [" + memo + "], wholeAmount: [" + wholeAmount + "], cancelLink: [" + cancelLink +
+                                "], toAddress: [" + RequesterEmail + "], fromAddress: [" + fromAddress + "]");
 
                     CommonHelper.SendEmail("requestSent", fromAddress, null, RequesterEmail,
                         "Your payment request to " + RequestReceiverFullName +
@@ -1026,26 +1023,212 @@ namespace LanLordlAPIs.Controllers
                 Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED - [LandlordID: " + input.User.LandlordId + "], [Exception: [ " + ex + " ]");
                 result.ErrorMessage = "Error while chargin tenant. Retry later!";
             }
+
             return result;
         }
 
 
+        /// <summary>
+        /// For cancelling a REQUEST sent to a TENANT.
+        /// Called from the Landlord Web App - History Page.
+        /// </summary>
+        /// <param name="TransactionId"></param>
+        /// <param name="MemberId"></param>
+        [HttpPost]
+        [ActionName("CancelTrans")]
+        public GenericInternalResponse CancelTransaction(CancelTransInput input)
+        {
+            GenericInternalResponse result = new GenericInternalResponse();
+            result.success = false;
+            result.msg = "Initial";
+
+            try
+            {
+                Logger.Info("RentTrans Cntrlr -> CancelTransaction Initiated - " +
+                            "TransactionID: [" + input.TransId + "], LandlordID: [" + input.User.LandlordId + "]");
+
+                Guid transGuid = CommonHelper.ConvertToGuid(input.TransId);
+
+                Guid LandlordGuid = CommonHelper.ConvertToGuid(input.User.LandlordId);
+                Landlord landlordObj = CommonHelper.GetLandlordByLandlordId(LandlordGuid);
+
+                result.AuthTokenValidation = CommonHelper.AuthTokenValidation(LandlordGuid, input.User.AccessToken);
+
+                if (result.AuthTokenValidation.IsTokenOk)
+                {
+                    using (NOOCHEntities obj = new NOOCHEntities())
+                    {
+                        // Reading Landlord's details from Landlords Table in  DB
+                        var transObj = (from c in obj.Transactions
+                                        where c.TransactionId == transGuid &&
+                                              c.TransactionStatus == "Pending" &&
+                                             (c.SenderId == landlordObj.MemberId ||
+                                              c.RecipientId == landlordObj.MemberId)
+                                        select c).FirstOrDefault();
+
+                        if (transObj != null)
+                        {
+                            transObj.TransactionStatus = "Cancelled";
+
+                            int i = obj.SaveChanges();
+
+                            if (i > 0)
+                            {
+                                Logger.Info("RentTrans Cntrlr -> CancelTransaction - Transaction Cancelled SUCCESSFULLY - " +
+                                            "TransactionID: [" + input.TransId + "], LandlordID: [" + input.User.LandlordId + "]");
+
+                                #region Send Notifications
+
+                                try
+                                {
+                                    #region Setup Email Variables
+
+                                    string memo = "";
+                                    if (transObj.Memo != null && transObj.Memo != "")
+                                    {
+                                        memo = "For " + transObj.Memo.ToString();
+                                    }
+
+                                    string transDate = Convert.ToDateTime(transObj.TransactionDate).ToString("MMM dd yyyy");
+                                    string requesterFirstName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.FirstName));
+                                    string requesterLastName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.LastName));
+
+                                    string amount = transObj.Amount.ToString("n2");
+
+                                    var fromAddress = CommonHelper.GetValueFromConfig("transfersMail");
+
+                                    string recipientUserPhoneOrEmail = "";
+                                    string phoneNumStripped = "";
+
+                                    if (transObj.IsPhoneInvitation == true &&
+                                        transObj.PhoneNumberInvited != null)
+                                    {
+                                        phoneNumStripped = CommonHelper.GetDecryptedData(transObj.PhoneNumberInvited);
+                                        recipientUserPhoneOrEmail = CommonHelper.FormatPhoneNumber(phoneNumStripped);
+                                    }
+                                    else
+                                    {
+                                        recipientUserPhoneOrEmail = CommonHelper.GetDecryptedData(transObj.InvitationSentTo);
+                                    }
+
+                                    #endregion Setup Email Variables
+
+                                    var toAddress = CommonHelper.GetDecryptedData(landlordObj.eMail);
+
+                                    try
+                                    {
+                                        var tokens = new Dictionary<string, string>
+                                    {
+                                        {Constants.PLACEHOLDER_FIRST_NAME, requesterFirstName},
+                                        {"$Recipient$", recipientUserPhoneOrEmail},
+                                        {Constants.PLACEHOLDER_TRANSFER_AMOUNT, amount},
+                                        {"$Date$", transDate},
+                                        {Constants.MEMO, memo}
+                                    };
+
+                                        CommonHelper.SendEmail("requestCancelledToSender", fromAddress, null, toAddress,
+                                                               "Your payment request was cancelled", tokens, null, null);
+
+                                        Logger.Info("RentTrans Cntrlr -> CancelTransaction - requestCancelledToSender email sent " +
+                                                    "to Requester: [" + toAddress + "] successfully.");
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Logger.Error("RentTrans Cntrlr -> CancelTransaction - requestCancelledToSender email NOT sent " +
+                                                     "to Requester: [" + toAddress + "], Exception: [" + ex + "]");
+                                    }
+
+
+                                    var toAddress2 = recipientUserPhoneOrEmail;
+
+                                    try
+                                    {
+                                        var tokens2 = new Dictionary<string, string>
+                                    {
+                                        {Constants.PLACEHOLDER_FIRST_NAME, recipientUserPhoneOrEmail},
+                                        {Constants.PLACEHOLDER_LAST_NAME, requesterFirstName + " " + requesterLastName},
+                                        {Constants.PLACEHOLDER_TRANSFER_AMOUNT, amount},
+                                        {Constants.MEMO, memo}
+                                    };
+
+                                        string subject = requesterFirstName + " " + requesterLastName + " cancelled a payment request to you";
+
+                                        CommonHelper.SendEmail("requestCancelledToRecipient", fromAddress, null, toAddress, subject, tokens2, null, null);
+
+                                        Logger.Info("RentTrans Cntrlr -> CancelTransaction - requestCancelledToRecipient email sent to [" +
+                                                    toAddress + "] successfully.");
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Logger.Error("RentTrans Cntrlr -> CancelTransaction - requestCancelledToRecipient email NOT sent to [" +
+                                                     toAddress + "], Exception: [" + ex + "]");
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    Logger.Error("RentTrans Cntrlr -> CancelTransaction EXCEPTION - Failure while sending notifications - [" +
+                                                           "TransactionID: [" + input.TransId + "], Exception: [" + ex + "]");
+                                }
+
+                                #endregion Send Notifications
+
+                                result.success = true;
+                                result.msg = "Transaction Cancelled Successfully";
+                            }
+                            else
+                            {
+                                Logger.Error("RentTrans Cntrlr -> CancelTransaction FAILED - Failed to save updates to DB - " +
+                                                       "TransactionID: [" + input.TransId + "]");
+
+                                result.msg = "Unable to save changes to DB.";
+                            }
+                        }
+                        else
+                        {
+                            Logger.Error("RentTrans Cntrlr -> CancelTransaction FAILED - Transaction Not Found - " +
+                                         "TransactionID: [" + input.TransId + "]");
+
+                            result.msg = "Could not find that transaction.";
+                        }
+                    }
+                }
+                else
+                {
+                    Logger.Error("RentTrans Cntrlr -> Cancel Transaction FAILURE - Invalid Authentication Token - " +
+                                 "LandlordID: [" + input.User.LandlordId + "], AccessToken: [" + input.User.LandlordId + "]" +
+                                 "TransactionID: [" + input.TransId + "]");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("RentTrans Cntrlr -> CancelTransaction FAILED - Outer Exception - TransactionID: [" +
+                             input.TransId + "], Exception: [" + ex + "]");
+
+                result.msg = "Outer Exception -> Message: [" + ex.Message.ToString() + "]";
+            }
+
+            return result;
+        }
+
+
+
+
         [HttpPost]
         [ActionName("GetLandlordsPaymentHistory")]
-        public LandlordsPaymentHistoryClass GetLandlordsPaymentHistory(basicLandlordPayload landlord)
+        public LandlordsPaymentHistoryClass GetLandlordsPaymentHistory(basicLandlordPayload input)
         {
-            Logger.Info("Rent Trans Cntrlr -> GetLandlordsPaymentHistory Initiated - [LandlordID: " + landlord.LandlordId + "], [MemberID: " + landlord.MemberId + "]");
+            Logger.Info("Rent Trans Cntrlr -> GetLandlordsPaymentHistory Initiated - [LandlordID: " + input.LandlordId + "], [MemberID: " + input.MemberId + "]");
 
             LandlordsPaymentHistoryClass res = new LandlordsPaymentHistoryClass();
             res.IsSuccess = false;
 
-            if (!String.IsNullOrEmpty(landlord.LandlordId))
+            if (!String.IsNullOrEmpty(input.LandlordId))
             {
                 try
                 {
-                    Guid landlordGuidId = new Guid(landlord.LandlordId);
+                    Guid landlordGuidId = new Guid(input.LandlordId);
 
-                    res.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordGuidId, landlord.AccessToken);
+                    res.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordGuidId, input.AccessToken);
 
                     if (res.AuthTokenValidation.IsTokenOk)
                     {
@@ -1053,7 +1236,8 @@ namespace LanLordlAPIs.Controllers
                         {
                             // Get Landlord's details from Landlords Table in DB
                             var landlordObj = (from c in obj.Landlords
-                                               where c.LandlordId == landlordGuidId && c.IsDeleted == false
+                                               where c.LandlordId == landlordGuidId &&
+                                                     c.IsDeleted == false
                                                select c).FirstOrDefault();
 
                             if (landlordObj != null)
@@ -1065,8 +1249,11 @@ namespace LanLordlAPIs.Controllers
                                                 where prop.LandlordId == landlordGuidId
                                                 select prop).ToList();
 
+                                Logger.Info("GET HISTORY 1.) -> Properties Count in DB: [" + allProps.Count + "]");
+
                                 foreach (Property p in allProps)
                                 {
+                                    Logger.Info("BEGIN PROPERTY...");
                                     // Get all property UNITS in each property
                                     var allUnitsInProp = (from c in obj.PropertyUnits
                                                           where c.PropertyId == p.PropertyId &&
@@ -1074,22 +1261,34 @@ namespace LanLordlAPIs.Controllers
                                                                 c.IsOccupied == true
                                                           select c).ToList();
 
-                                    //Logger.Info("1. - THERE ARE [" + allUnitsInProp.Count + "] UNITS in this Property: [" + p.PropName + "]");
+                                    Logger.Info("GET HISTORY 2a.) - UNITS Count [" + allUnitsInProp.Count + "] in this Property: [" + p.PropertyId + "]");
 
                                     // Iterating through each occupied unit
+                                    short n = 1;
+                                    short x = 1;
                                     foreach (PropertyUnit pu in allUnitsInProp)
                                     {
+                                        Logger.Info("BEGIN UNIT...");
+                                        Logger.Info("GET HISTORY 2b.) - UNIT [" + n + "] -> [" + pu.UnitId + "] in Property: [" + p.PropName + "]");
+                                        n += 1;
+
                                         var allOccupiedUnits = (from c in obj.UnitsOccupiedByTenants
-                                                                where c.UnitId == pu.UnitId && c.IsDeleted == false
+                                                                where c.UnitId == pu.UnitId &&
+                                                                      c.IsDeleted == false
                                                                 select c).ToList();
 
-                                        //Logger.Info("2. - THERE ARE [" + allOccupiedUnits.Count + "] UOBT for Unit Num: [" + pu.UnitNumber + "]");
+                                        Logger.Info("GET HISTORY 3a.) - UOBT Count [" + allOccupiedUnits.Count + "] for Unit: [" + pu.UnitId + "]");
 
                                         #region Loop Through UnitsOccupiedByTenants
 
+                                        x = 1;
                                         // Iterating through each occupied unit and checking if any rent for this unit
                                         foreach (UnitsOccupiedByTenant uobt in allOccupiedUnits)
                                         {
+                                            Logger.Info("BEGIN UOBT...");
+                                            Logger.Info("GET HISTORY 3b.) - UOBT # [" + x + "], UOBT ID -> [" + uobt.Id + "] for Unit: [" + pu.UnitId + "]");
+                                            x += 1;
+
                                             try
                                             {
                                                 // Get transctions from Transactions table where tenant was sender and lanlord was receiver and transaction type "Rent"
@@ -1098,7 +1297,7 @@ namespace LanLordlAPIs.Controllers
                                                                      where c.TenantId == uobt.TenantId
                                                                      select c).FirstOrDefault();*/
 
-                                                //Logger.Info("3. - UOBT.TenantId is: [" + uobt.TenantId + "]");
+                                                Logger.Info("GET HISTORY 4.) - UOBT.TenantId is: [" + uobt.TenantId + "]");
 
                                                 Guid tenantMemberGuid = new Guid(CommonHelper.GetTenantsMemberIdFromTenantId(uobt.TenantId.ToString()));
 
@@ -1115,6 +1314,9 @@ namespace LanLordlAPIs.Controllers
 
                                                 foreach (Transaction t in allTrans)
                                                 {
+                                                    Logger.Info("BEGIN TRANSACTION...");
+                                                    Logger.Info("TransactionID: [" + t.TransactionId + "]");
+
                                                     PaymentHistoryClass phc = new PaymentHistoryClass();
                                                     // Data from Transactions Table
                                                     phc.TransactionDate = Convert.ToDateTime(t.TransactionDate).ToShortDateString();
@@ -1138,9 +1340,9 @@ namespace LanLordlAPIs.Controllers
                                                     phc.TenantId = TenantMemberDetails.MemberId.ToString();
                                                     phc.TenantStatus = TenantMemberDetails.Status;
                                                     phc.TenantName = !String.IsNullOrEmpty(TenantMemberDetails.FirstName)
-                                                                 ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(TenantMemberDetails.FirstName)) + " " +
-                                                                   CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(TenantMemberDetails.LastName))
-                                                                 : "";
+                                                                     ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(TenantMemberDetails.FirstName)) + " " +
+                                                                       CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(TenantMemberDetails.LastName))
+                                                                     : "";
                                                     phc.TenantEmail = !String.IsNullOrEmpty(TenantMemberDetails.UserName) ? CommonHelper.GetDecryptedData(TenantMemberDetails.UserName) : null;
 
                                                     TransactionsListToRet.Add(phc);
@@ -1148,7 +1350,7 @@ namespace LanLordlAPIs.Controllers
                                             }
                                             catch (Exception ex)
                                             {
-                                                Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: " + landlord.LandlordId + "], [Exception: " + ex.Message + " ]");
+                                                Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: " + input.LandlordId + "], [Exception: " + ex.Message + " ]");
                                             }
                                         }
                                         #endregion Loop Through UnitsOccupiedByTenants
@@ -1161,20 +1363,20 @@ namespace LanLordlAPIs.Controllers
                             }
                             else
                             {
-                                Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory LANDLORD NOT FOUND - [LandlordID: " + landlord.LandlordId + "]");
+                                Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory LANDLORD NOT FOUND - [LandlordID: " + input.LandlordId + "]");
                                 res.ErrorMessage = "Invalid Landlord ID.";
                             }
                         }
                     }
                     else
                     {
-                        Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory AUTH TOKEN FAILURE - [LandlordID: " + landlord.LandlordId + "]");
+                        Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory AUTH TOKEN FAILURE - [LandlordID: " + input.LandlordId + "]");
                         res.ErrorMessage = "Auth token failure";
                     }
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Outer) - [LandlordID: " + landlord.LandlordId + "], [Exception: " + ex.InnerException + " ]");
+                    Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Outer) - [LandlordID: " + input.LandlordId + "], [Exception: " + ex.InnerException + " ]");
                     res.ErrorMessage = "Server exception.";
                 }
             }
@@ -1182,6 +1384,207 @@ namespace LanLordlAPIs.Controllers
             return res;
         }
 
+
+
+
+
+
+        // CLIFF (12/8/15): I was playing around with this method because we need a different procedure for
+        //                  getting a Landlords transaction history. The above original method works MOST of the
+        //                  time, but not for many situations (see Asana).  So this method below does NOT work and is
+        //                  unfinished :-).
+        [HttpPost]
+        [ActionName("GetLandlordsPaymentHistoryTEST")]
+        public LandlordsPaymentHistoryClass GetLandlordsPaymentHistoryTEST(basicLandlordPayload input)
+        {
+            Logger.Info("Rent Trans Cntrlr -> GetLandlordsPaymentHistory Initiated - [LandlordID: " + input.LandlordId + "], [MemberID: " + input.MemberId + "]");
+
+            LandlordsPaymentHistoryClass res = new LandlordsPaymentHistoryClass();
+            res.IsSuccess = false;
+
+            if (!String.IsNullOrEmpty(input.LandlordId))
+            {
+                try
+                {
+                    Guid landlordGuidId = new Guid(input.LandlordId);
+
+                    res.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordGuidId, input.AccessToken);
+
+                    if (res.AuthTokenValidation.IsTokenOk)
+                    {
+                        using (NOOCHEntities obj = new NOOCHEntities())
+                        {
+                            // Get Landlord's details from Landlords Table in DB
+                            var landlordObj = (from c in obj.Landlords
+                                               where c.LandlordId == landlordGuidId &&
+                                                     c.IsDeleted == false
+                                               select c).FirstOrDefault();
+
+                            if (landlordObj != null)
+                            {
+                                List<PaymentHistoryClass> TransactionsListToRet = new List<PaymentHistoryClass>();
+
+                                // First, find all Transactions with this Landlord's MemberID
+                                var allTrans1 = (from c in obj.Transactions
+                                                 where c.SenderId == landlordObj.MemberId ||
+                                                       c.RecipientId == landlordObj.MemberId
+                                                 select c).ToList();
+
+                                foreach (Transaction t in allTrans1)
+                                {
+
+                                }
+
+
+
+
+
+
+
+
+
+
+
+
+                                // Get all PROPERTIES for given Landlord
+                                var allProps = (from prop in obj.Properties
+                                                where prop.LandlordId == landlordGuidId
+                                                select prop).ToList();
+
+                                Logger.Info("GET HISTORY 1.) -> Properties Count in DB: [" + allProps.Count + "]");
+
+                                foreach (Property p in allProps)
+                                {
+                                    Logger.Info("BEGIN PROPERTY...");
+                                    // Get all property UNITS in each property
+                                    var allUnitsInProp = (from c in obj.PropertyUnits
+                                                          where c.PropertyId == p.PropertyId &&
+                                                                c.IsDeleted == false &&
+                                                                c.IsOccupied == true
+                                                          select c).ToList();
+
+                                    Logger.Info("GET HISTORY 2a.) - UNITS Count [" + allUnitsInProp.Count + "] in this Property: [" + p.PropertyId + "]");
+
+                                    // Iterating through each occupied unit
+                                    short n = 1;
+                                    short x = 1;
+                                    foreach (PropertyUnit pu in allUnitsInProp)
+                                    {
+                                        Logger.Info("BEGIN UNIT...");
+                                        Logger.Info("GET HISTORY 2b.) - UNIT [" + n + "] -> [" + pu.UnitId + "] in Property: [" + p.PropName + "]");
+                                        n += 1;
+
+                                        var allOccupiedUnits = (from c in obj.UnitsOccupiedByTenants
+                                                                where c.UnitId == pu.UnitId &&
+                                                                      c.IsDeleted == false
+                                                                select c).ToList();
+
+                                        Logger.Info("GET HISTORY 3a.) - UOBT Count [" + allOccupiedUnits.Count + "] for Unit: [" + pu.UnitId + "]");
+
+                                        #region Loop Through UnitsOccupiedByTenants
+
+                                        x = 1;
+                                        // Iterating through each occupied unit and checking if any rent for this unit
+                                        foreach (UnitsOccupiedByTenant uobt in allOccupiedUnits)
+                                        {
+                                            Logger.Info("BEGIN UOBT...");
+                                            Logger.Info("GET HISTORY 3b.) - UOBT # [" + x + "], UOBT ID -> [" + uobt.Id + "] for Unit: [" + pu.UnitId + "]");
+                                            x += 1;
+
+                                            try
+                                            {
+                                                // Get transctions from Transactions table where tenant was sender and lanlord was receiver and transaction type "Rent"
+
+                                                /*var TenantDetails = (from c in obj.Tenants
+                                                                     where c.TenantId == uobt.TenantId
+                                                                     select c).FirstOrDefault();*/
+
+                                                Logger.Info("GET HISTORY 4.) - UOBT.TenantId is: [" + uobt.TenantId + "]");
+
+                                                Guid tenantMemberGuid = new Guid(CommonHelper.GetTenantsMemberIdFromTenantId(uobt.TenantId.ToString()));
+
+                                                var TenantMemberDetails = (from c in obj.Members
+                                                                           where c.MemberId == tenantMemberGuid &&
+                                                                                 c.IsDeleted == false
+                                                                           select c).FirstOrDefault();
+
+
+                                                var allTrans = (from c in obj.Transactions
+                                                                where c.SenderId == TenantMemberDetails.MemberId &&
+                                                                      c.RecipientId == landlordObj.MemberId
+                                                                select c).ToList();
+
+                                                foreach (Transaction t in allTrans)
+                                                {
+                                                    Logger.Info("BEGIN TRANSACTION...");
+                                                    Logger.Info("TransactionID: [" + t.TransactionId + "]");
+
+                                                    PaymentHistoryClass phc = new PaymentHistoryClass();
+                                                    // Data from Transactions Table
+                                                    phc.TransactionDate = Convert.ToDateTime(t.TransactionDate).ToShortDateString();
+                                                    phc.TransactionId = t.TransactionId.ToString();
+                                                    phc.Amount = t.Amount.ToString("n2");
+                                                    phc.TransactionStatus = t.TransactionStatus;
+                                                    phc.Memo = t.Memo;
+
+                                                    // Data from PropertyUnits Table
+                                                    phc.UnitName = pu.UnitNickName;
+                                                    phc.UnitNum = pu.UnitNumber;
+                                                    phc.UnitId = pu.UnitId.ToString();
+                                                    phc.DueDate = pu.DueDate;
+
+                                                    // Data from Property Table
+                                                    phc.PropertyId = p.PropertyId.ToString();
+                                                    phc.PropertyName = p.PropName;
+                                                    phc.PropertyAddress = p.AddressLineOne;
+
+                                                    // Data from Members Table
+                                                    phc.TenantId = TenantMemberDetails.MemberId.ToString();
+                                                    phc.TenantStatus = TenantMemberDetails.Status;
+                                                    phc.TenantName = !String.IsNullOrEmpty(TenantMemberDetails.FirstName)
+                                                                     ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(TenantMemberDetails.FirstName)) + " " +
+                                                                       CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(TenantMemberDetails.LastName))
+                                                                     : "";
+                                                    phc.TenantEmail = !String.IsNullOrEmpty(TenantMemberDetails.UserName) ? CommonHelper.GetDecryptedData(TenantMemberDetails.UserName) : null;
+
+                                                    TransactionsListToRet.Add(phc);
+                                                }
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: " + input.LandlordId + "], [Exception: " + ex.Message + " ]");
+                                            }
+                                        }
+                                        #endregion Loop Through UnitsOccupiedByTenants
+                                    }
+                                }
+
+                                res.IsSuccess = true;
+                                res.Transactions = TransactionsListToRet;
+                                res.ErrorMessage = "Success";
+                            }
+                            else
+                            {
+                                Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory LANDLORD NOT FOUND - [LandlordID: " + input.LandlordId + "]");
+                                res.ErrorMessage = "Invalid Landlord ID.";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory AUTH TOKEN FAILURE - [LandlordID: " + input.LandlordId + "]");
+                        res.ErrorMessage = "Auth token failure";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Outer) - [LandlordID: " + input.LandlordId + "], [Exception: " + ex.InnerException + " ]");
+                    res.ErrorMessage = "Server exception.";
+                }
+            }
+
+            return res;
+        }
 
 
         /*

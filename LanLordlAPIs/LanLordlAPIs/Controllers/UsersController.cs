@@ -301,7 +301,7 @@ namespace LanLordlAPIs.Controllers
 
             try
             {
-                Logger.Info("UserController -> Login Initiated - Username: [" + User.UserName + "], IP: [" + User.Ip + "]");
+                Logger.Info("Users Cntrlr -> Login Initiated - Username: [" + User.UserName + "], IP: [" + User.Ip + "]");
 
                 using (NOOCHEntities obj = new NOOCHEntities())
                 {
@@ -311,12 +311,12 @@ namespace LanLordlAPIs.Controllers
                         String.IsNullOrEmpty(User.UserName) ||
                         String.IsNullOrEmpty(User.Password))
                     {
-                        result.IsSuccess = false;
-                        result.ErrorMessage = "Invalid login information provided.";
+                        Logger.Error("Users Cntrlr -> Login FAILED - Missing required values (either username or pw) ABORTING Login - Username: [" + User.UserName + "]");
+                        result.ErrorMessage = "Missing required values (username/password).";
                         return result;
                     }
 
-                    #region All authentication code in this block
+                    #region All Authentication Code
 
                     string passEncrypted = CommonHelper.GetEncryptedData(User.Password);
                     string userNameLowerCaseEncrypted = CommonHelper.GetEncryptedData(User.UserName.ToLower());
@@ -325,26 +325,38 @@ namespace LanLordlAPIs.Controllers
                     var userCheckResult = (from c in obj.Landlords
                                            join d in obj.Members on c.MemberId equals d.MemberId
                                            where d.UserNameLowerCase == userNameLowerCaseEncrypted &&
-                                                 d.Password == passEncrypted &&
-                                                 d.IsDeleted == false &&
-                                                 c.IsDeleted == false
+                                                 d.Password == passEncrypted
+                                           // &&  d.IsDeleted == false &&
+                                           //     c.IsDeleted == false
                                            // && (c.Status != "Suspended" || c.Status != "Temporarily_Blocked")
                                            select new
                                                {
                                                    c.LandlordId,
                                                    c.IpAddresses,
-                                                   c.MemberId
+                                                   c.MemberId,
+                                                   d.Status
                                                }
                         ).FirstOrDefault();
 
                     if (userCheckResult != null)
                     {
+                        if (userCheckResult.Status == "Suspended" ||
+                            userCheckResult.Status == "Temporarily_Blocked")
+                        {
+                            Logger.Error("Users Cntrlr -> Login FAILED - User's Member.Status is SUSPENDED - ABORTING Login - Username: [" + User.UserName + "]");
+                            result.ErrorMessage = "User is suspended!";
+                            return result;
+                        }
+
                         // Update IP address in DB
                         var landlordEntity = (from ll in obj.Landlords
                                               where ll.LandlordId == userCheckResult.LandlordId
                                               select ll).FirstOrDefault();
-
-                        CommonHelper.saveLandlordIp(userCheckResult.LandlordId, User.Ip);
+                        
+                        if (!String.IsNullOrEmpty(User.Ip))
+                        {
+                            CommonHelper.saveLandlordIp(userCheckResult.LandlordId, User.Ip);
+                        }
                         landlordEntity.DateModified = requestDatetime;
                         landlordEntity.LastSeenOn = requestDatetime;
 
@@ -358,19 +370,16 @@ namespace LanLordlAPIs.Controllers
                         result.MemberId = landlordEntity.MemberId.ToString();
                         result.LandlordId = landlordEntity.LandlordId.ToString();
 
-                        Logger.Info("Users Cntrlr -> Login requested by [" + User.UserName + "]");
+                        Logger.Info("Users Cntrlr -> Login Successful - Username: [" + User.UserName + "]");
                     }
                     else
                     {
-                        Logger.Error("Users Cntrlr -> Login FAILED - [Username: " + User.UserName + "]");
+                        Logger.Error("Users Cntrlr -> Login FAILED - Could not find Landlord in DB - [Username: " + User.UserName + "]");
 
                         result.ErrorMessage = "Invalid Username password or Member not active.";
-                        return result;
                     }
 
-                    #endregion
-
-                    return result;
+                    #endregion All Authentication Code
                 }
             }
             catch (Exception ex)
@@ -378,8 +387,9 @@ namespace LanLordlAPIs.Controllers
                 Logger.Error("Users Cntrlr -> Login EXCEPTION - [Username: " + User.UserName + "], [Exception: " + ex + "]");
 
                 result.ErrorMessage = "Error while logging on. Retry.";
-                return result;
             }
+
+            return result;
         }
 
 
@@ -751,6 +761,8 @@ namespace LanLordlAPIs.Controllers
 
             try
             {
+                Logger.Info("Users Cntrlr -> LoginWithGoogle Initiated - Username: [" + User.eMail + "], IP: [" + User.Ip + "]");
+
                 using (NOOCHEntities obj = new NOOCHEntities())
                 {
                     DateTime requestDatetime = DateTime.Now;
@@ -814,11 +826,14 @@ namespace LanLordlAPIs.Controllers
 
                         if (landlordTableDetails != null)
                         {
-                            CommonHelper.saveLandlordIp(landlordTableDetails.LandlordId, User.Ip);
-                            landlordTableDetails.DateModified = requestDatetime;
-                            landlordTableDetails.LastSeenOn = requestDatetime;
+                            if (!String.IsNullOrEmpty(User.Ip))
+                            {
+                                CommonHelper.saveLandlordIp(landlordTableDetails.LandlordId, User.Ip);
+                            }
 
                             landlordTableDetails.WebAccessToken = CommonHelper.GenerateAccessToken();
+                            landlordTableDetails.DateModified = requestDatetime;
+                            landlordTableDetails.LastSeenOn = requestDatetime;
 
                             obj.SaveChanges();
 
@@ -1206,7 +1221,7 @@ namespace LanLordlAPIs.Controllers
                     // Make  image from bytes
                     string filename = HttpContext.Current.Server.MapPath("UploadedImages/UsersImages/") +
                                       memberId + ".png";
-                    
+
                     using (FileStream fs = new FileStream(filename, FileMode.Create, FileAccess.ReadWrite))
                     {
                         fs.Write(imageData, 0, (int)imageData.Length);
@@ -1782,6 +1797,7 @@ namespace LanLordlAPIs.Controllers
 
             return result;
         }
+
 
         [HttpPost]
         [ActionName("SaveMemoFormula")]
