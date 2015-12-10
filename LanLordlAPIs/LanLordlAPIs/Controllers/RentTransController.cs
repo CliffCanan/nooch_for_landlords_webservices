@@ -1587,6 +1587,78 @@ namespace LanLordlAPIs.Controllers
         }
 
 
+        [HttpPost]
+        [ActionName("SaveMemoFormula")]
+        public GenericInternalResponse SaveMemoFormula(SaveMemoFormulaInputClass input)
+        {
+            Logger.Info("RentTrans Cntrlr -> EditUserInfo Initiated - LandlordID: [" + input.User.LandlordId +
+                        "], FormulaToUse: [" + input.formulaToUse + "]");
+
+            GenericInternalResponse result = new GenericInternalResponse();
+            result.success = false;
+            result.msg = "Initial";
+
+            try
+            {
+                Guid landlordguidId = new Guid(input.User.LandlordId);
+                result.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordguidId, input.User.AccessToken);
+
+                if (result.AuthTokenValidation.IsTokenOk)
+                {
+                    using (NOOCHEntities obj = new NOOCHEntities())
+                    {
+                        // Get details from DB
+                        var landlordObj = (from c in obj.Landlords
+                                           where c.LandlordId == landlordguidId
+                                           select c).FirstOrDefault();
+
+                        if (landlordObj != null)
+                        {
+                            // Key for "FormulaToUse" values -- NOTE for future reference
+                            // 1: Property name + Unit number
+                            // 2: Property name + Unit number + Month
+                            // 3: Property name + Unit number + Tenant Last Name (space permitting)
+
+                            landlordObj.MemoFormula = Convert.ToInt16(input.formulaToUse);
+                            landlordObj.DateModified = DateTime.Now;
+
+                            if (obj.SaveChanges() > 0)
+                            {
+                                result.success = true;
+                                result.msg = "OK";
+                            }
+                            else
+                            {
+                                Logger.Error("RentTrans Cntrlr -> SaveMemoFormula FAILED - Error while saving updates to DB - " +
+                                             "LandlordID: " + input.User.LandlordId + "]");
+                                result.msg = "Error while saving updates to DB";
+                            }
+                        }
+                        else
+                        {
+                            Logger.Error("RentTrans Cntrlr -> SaveMemoFormula FAILED - Landlord ID Not Found - LandlordID: [" +
+                                         input.User.LandlordId + "]");
+                            result.msg = "Given landlord ID not found.";
+                        }
+                    }
+                }
+                else
+                {
+                    result.msg = result.AuthTokenValidation.ErrorMessage;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("RentTrans Cntrlr  -> SaveMemoFormula FAILED - LandlordID: [" + input.User.LandlordId +
+                             "], [Outer Exception: " + ex.ToString() + "]");
+                result.msg = "Server error: outer exception.";
+            }
+
+            return result;
+        }
+
+
+
         /*
         public string RequestMoneyToNonNoochUserUsingSynapse(RequestDto requestDto, out string requestId)
         {

@@ -78,10 +78,8 @@ namespace LanLordlAPIs.Models.Input_Models
 
     public class SaveMemoFormulaInputClass
     {
-        public string FormulaToUse { get; set; }
-
-        public GetProfileDataInput DeviceInfo { get; set; }
-
+        public basicLandlordPayload User { get; set; }
+        public string formulaToUse { get; set; }
     }
 
     public class UpdatePasswordInput
