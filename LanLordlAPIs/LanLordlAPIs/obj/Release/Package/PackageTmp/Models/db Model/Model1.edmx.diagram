@@ -27,6 +27,17 @@
         <EntityTypeShape EntityType="NOOCHModel.PropertyUnit" Width="1.5" PointX="5.75" PointY="14.75" />
         <EntityTypeShape EntityType="NOOCHModel.UnitsOccupiedByTenant" Width="1.5" PointX="0.75" PointY="0.75" />
         <EntityTypeShape EntityType="NOOCHModel.SynapseCreateUserResult" Width="1.5" PointX="14.375" PointY="14.75" />
+        <EntityTypeShape EntityType="NOOCHModel.AutoPayTransaction" Width="1.5" PointX="16.625" PointY="14" />
+        <AssociationConnector Association="NOOCHModel.FK_AutoPayTransactions_Members" />
+        <AssociationConnector Association="NOOCHModel.FK_AutoPayTransactions_Members1" />
+        <AssociationConnector Association="NOOCHModel.FK_AutoPayTransactions_Properties" />
+        <AssociationConnector Association="NOOCHModel.FK_AutoPayTransactions_PropertyUnits" />
+        <AssociationConnector Association="NOOCHModel.FK_AutoPayTransactions_UnitsOccupiedByTenants" />
+        <EntityTypeShape EntityType="NOOCHModel.MembersIPAddress" Width="1.5" PointX="14.375" PointY="0.75" />
+        <EntityTypeShape EntityType="NOOCHModel.RentTransaction" Width="1.5" PointX="17" PointY="0.75" />
+        <AssociationConnector Association="NOOCHModel.FK_RentTransactions_Landlords" />
+        <AssociationConnector Association="NOOCHModel.FK_RentTransactions_Tenants" />
+        <AssociationConnector Association="NOOCHModel.FK_RentTransactions_UnitsOccupiedByTenants" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -267,6 +267,9 @@
     <Compile Include="Models\db Model\PropertyUnit.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\db Model\RentTransaction.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\db Model\SynapseBanksOfMember.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

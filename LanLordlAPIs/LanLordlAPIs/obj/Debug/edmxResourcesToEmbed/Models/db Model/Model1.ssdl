@@ -246,9 +246,9 @@
     <Property Name="State" Type="varchar(max)" />
     <Property Name="Zip" Type="varchar(max)" />
     <Property Name="ContactNumber" Type="varchar(max)" />
-    <Property Name="DefaultDueDate" Type="varchar(max)" />
+    <Property Name="DefaultDueDate" Type="varchar" MaxLength="50" />
     <Property Name="DateAdded" Type="datetime" />
-    <Property Name="DateModified" Type="datetime" />
+    <Property Name="DateModified" Type="varchar(max)" />
     <Property Name="LandlordId" Type="uniqueidentifier" />
     <Property Name="MemberId" Type="uniqueidentifier" />
     <Property Name="PropertyImage" Type="varchar(max)" />
@@ -279,6 +279,33 @@
     <Property Name="RentStartDate" Type="datetime" />
     <Property Name="LeaseLength" Type="varchar(max)" />
     <Property Name="LeaseDocumentPath" Type="varchar(max)" />
+  </EntityType>
+  <EntityType Name="RentTransactions">
+    <Key>
+      <PropertyRef Name="RentTransactionId" />
+    </Key>
+    <Property Name="RentTransactionId" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="LandlordId" Type="uniqueidentifier" />
+    <Property Name="TenantId" Type="uniqueidentifier" />
+    <Property Name="TransactionStatus" Type="varchar" MaxLength="50" />
+    <Property Name="TransCreatedOn" Type="datetime" />
+    <Property Name="TransRespondedOn" Type="datetime" />
+    <Property Name="IsDeleted" Type="bit" />
+    <Property Name="UOBTId" Type="int" />
+    <Property Name="IsDisputed" Type="bit" />
+    <Property Name="DisputeStatus" Type="varchar(max)" />
+    <Property Name="RaisedBy" Type="varchar(max)" />
+    <Property Name="RaisedById" Type="varchar(max)" />
+    <Property Name="AdminNotes" Type="varchar(max)" />
+    <Property Name="Memo" Type="varchar(max)" />
+    <Property Name="IsRecurring" Type="bit" />
+    <Property Name="NextRecurrTransDueDate" Type="datetime" />
+    <Property Name="RecentRecurrTransId" Type="uniqueidentifier" />
+    <Property Name="Attachment" Type="varchar(max)" />
+    <Property Name="TransactionType" Type="varchar(max)" />
+    <Property Name="Amount" Type="varchar(max)" />
+    <Property Name="NoOfTimesToRecurr" Type="int" />
+    <Property Name="UserPreferredDayOfMonthForAutoPay" Type="varchar(max)" />
   </EntityType>
   <EntityType Name="SynapseBanksOfMembers">
     <Key>
@@ -414,11 +441,7 @@
     <Property Name="RaisedById" Type="uniqueidentifier" />
     <Property Name="Memo" Type="nvarchar" MaxLength="100" />
     <Property Name="Picture" Type="varbinary(max)" />
-    <Property Name="BankAccountId" Type="uniqueidentifier" />
     <Property Name="InvitationSentTo" Type="varchar" MaxLength="500" />
-    <Property Name="SenderUpdatedBalanceAfterTransaction" Type="varchar" MaxLength="500" />
-    <Property Name="ReceiverUpdatedBalanceAfterTransaction" Type="varchar" MaxLength="500" />
-    <Property Name="BankId" Type="uniqueidentifier" />
     <Property Name="IsPhoneInvitation" Type="bit" />
     <Property Name="PhoneNumberInvited" Type="varchar" MaxLength="50" />
   </EntityType>
@@ -532,6 +555,42 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_RentTransactions_Landlords">
+    <End Role="Landlords" Type="Self.Landlords" Multiplicity="0..1" />
+    <End Role="RentTransactions" Type="Self.RentTransactions" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Landlords">
+        <PropertyRef Name="LandlordId" />
+      </Principal>
+      <Dependent Role="RentTransactions">
+        <PropertyRef Name="LandlordId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_RentTransactions_Tenants">
+    <End Role="Tenants" Type="Self.Tenants" Multiplicity="0..1" />
+    <End Role="RentTransactions" Type="Self.RentTransactions" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Tenants">
+        <PropertyRef Name="TenantId" />
+      </Principal>
+      <Dependent Role="RentTransactions">
+        <PropertyRef Name="TenantId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_RentTransactions_UnitsOccupiedByTenants">
+    <End Role="UnitsOccupiedByTenants" Type="Self.UnitsOccupiedByTenants" Multiplicity="0..1" />
+    <End Role="RentTransactions" Type="Self.RentTransactions" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="UnitsOccupiedByTenants">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="RentTransactions">
+        <PropertyRef Name="UOBTId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_Transactions_GeoLocations">
     <End Role="GeoLocations" Type="Self.GeoLocations" Multiplicity="0..1" />
     <End Role="Transactions" Type="Self.Transactions" Multiplicity="*" />
@@ -632,6 +691,7 @@
     <EntitySet Name="PasswordResetRequests" EntityType="Self.PasswordResetRequests" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Properties" EntityType="Self.Properties" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PropertyUnits" EntityType="Self.PropertyUnits" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="RentTransactions" EntityType="Self.RentTransactions" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SynapseBanksOfMembers" EntityType="Self.SynapseBanksOfMembers" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SynapseCreateUserResults" EntityType="Self.SynapseCreateUserResults" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Tenants" EntityType="Self.Tenants" Schema="dbo" store:Type="Tables" />
@@ -669,6 +729,18 @@
     <AssociationSet Name="FK_PasswordResetRequests_Members" Association="Self.FK_PasswordResetRequests_Members">
       <End Role="Members" EntitySet="Members" />
       <End Role="PasswordResetRequests" EntitySet="PasswordResetRequests" />
+    </AssociationSet>
+    <AssociationSet Name="FK_RentTransactions_Landlords" Association="Self.FK_RentTransactions_Landlords">
+      <End Role="Landlords" EntitySet="Landlords" />
+      <End Role="RentTransactions" EntitySet="RentTransactions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_RentTransactions_Tenants" Association="Self.FK_RentTransactions_Tenants">
+      <End Role="Tenants" EntitySet="Tenants" />
+      <End Role="RentTransactions" EntitySet="RentTransactions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_RentTransactions_UnitsOccupiedByTenants" Association="Self.FK_RentTransactions_UnitsOccupiedByTenants">
+      <End Role="UnitsOccupiedByTenants" EntitySet="UnitsOccupiedByTenants" />
+      <End Role="RentTransactions" EntitySet="RentTransactions" />
     </AssociationSet>
     <AssociationSet Name="FK_Transactions_GeoLocations" Association="Self.FK_Transactions_GeoLocations">
       <End Role="GeoLocations" EntitySet="GeoLocations" />

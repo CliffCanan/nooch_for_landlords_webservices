@@ -14,6 +14,11 @@ namespace LanLordlAPIs.Models.db_Model
     
     public partial class Tenant
     {
+        public Tenant()
+        {
+            this.RentTransactions = new HashSet<RentTransaction>();
+        }
+    
         public System.Guid TenantId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -37,5 +42,7 @@ namespace LanLordlAPIs.Models.db_Model
         public Nullable<bool> IsIdDocumentVerified { get; set; }
         public Nullable<bool> IsAnyRentPaid { get; set; }
         public Nullable<bool> IsAutopayOn { get; set; }
+    
+        public virtual ICollection<RentTransaction> RentTransactions { get; set; }
     }
 }

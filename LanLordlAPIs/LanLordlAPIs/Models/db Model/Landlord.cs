@@ -14,6 +14,11 @@ namespace LanLordlAPIs.Models.db_Model
     
     public partial class Landlord
     {
+        public Landlord()
+        {
+            this.RentTransactions = new HashSet<RentTransaction>();
+        }
+    
         public System.Guid LandlordId { get; set; }
         public Nullable<System.Guid> MemberId { get; set; }
         public string Status { get; set; }
@@ -54,5 +59,7 @@ namespace LanLordlAPIs.Models.db_Model
         public Nullable<bool> IsIdVerified { get; set; }
         public string FacebookUserId { get; set; }
         public Nullable<int> MemoFormula { get; set; }
+    
+        public virtual ICollection<RentTransaction> RentTransactions { get; set; }
     }
 }

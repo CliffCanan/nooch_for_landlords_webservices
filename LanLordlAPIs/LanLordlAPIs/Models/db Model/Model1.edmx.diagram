@@ -34,6 +34,10 @@
         <AssociationConnector Association="NOOCHModel.FK_AutoPayTransactions_PropertyUnits" />
         <AssociationConnector Association="NOOCHModel.FK_AutoPayTransactions_UnitsOccupiedByTenants" />
         <EntityTypeShape EntityType="NOOCHModel.MembersIPAddress" Width="1.5" PointX="14.375" PointY="0.75" />
+        <EntityTypeShape EntityType="NOOCHModel.RentTransaction" Width="1.5" PointX="17" PointY="0.75" />
+        <AssociationConnector Association="NOOCHModel.FK_RentTransactions_Landlords" />
+        <AssociationConnector Association="NOOCHModel.FK_RentTransactions_Tenants" />
+        <AssociationConnector Association="NOOCHModel.FK_RentTransactions_UnitsOccupiedByTenants" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

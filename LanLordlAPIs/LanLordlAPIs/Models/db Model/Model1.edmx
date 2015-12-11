@@ -251,9 +251,9 @@
           <Property Name="State" Type="varchar(max)" />
           <Property Name="Zip" Type="varchar(max)" />
           <Property Name="ContactNumber" Type="varchar(max)" />
-          <Property Name="DefaultDueDate" Type="varchar(max)" />
+          <Property Name="DefaultDueDate" Type="varchar" MaxLength="50" />
           <Property Name="DateAdded" Type="datetime" />
-          <Property Name="DateModified" Type="datetime" />
+          <Property Name="DateModified" Type="varchar(max)" />
           <Property Name="LandlordId" Type="uniqueidentifier" />
           <Property Name="MemberId" Type="uniqueidentifier" />
           <Property Name="PropertyImage" Type="varchar(max)" />
@@ -284,6 +284,33 @@
           <Property Name="RentStartDate" Type="datetime" />
           <Property Name="LeaseLength" Type="varchar(max)" />
           <Property Name="LeaseDocumentPath" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="RentTransactions">
+          <Key>
+            <PropertyRef Name="RentTransactionId" />
+          </Key>
+          <Property Name="RentTransactionId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="LandlordId" Type="uniqueidentifier" />
+          <Property Name="TenantId" Type="uniqueidentifier" />
+          <Property Name="TransactionStatus" Type="varchar" MaxLength="50" />
+          <Property Name="TransCreatedOn" Type="datetime" />
+          <Property Name="TransRespondedOn" Type="datetime" />
+          <Property Name="IsDeleted" Type="bit" />
+          <Property Name="UOBTId" Type="int" />
+          <Property Name="IsDisputed" Type="bit" />
+          <Property Name="DisputeStatus" Type="varchar(max)" />
+          <Property Name="RaisedBy" Type="varchar(max)" />
+          <Property Name="RaisedById" Type="varchar(max)" />
+          <Property Name="AdminNotes" Type="varchar(max)" />
+          <Property Name="Memo" Type="varchar(max)" />
+          <Property Name="IsRecurring" Type="bit" />
+          <Property Name="NextRecurrTransDueDate" Type="datetime" />
+          <Property Name="RecentRecurrTransId" Type="uniqueidentifier" />
+          <Property Name="Attachment" Type="varchar(max)" />
+          <Property Name="TransactionType" Type="varchar(max)" />
+          <Property Name="Amount" Type="varchar(max)" />
+          <Property Name="NoOfTimesToRecurr" Type="int" />
+          <Property Name="UserPreferredDayOfMonthForAutoPay" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="SynapseBanksOfMembers">
           <Key>
@@ -419,11 +446,7 @@
           <Property Name="RaisedById" Type="uniqueidentifier" />
           <Property Name="Memo" Type="nvarchar" MaxLength="100" />
           <Property Name="Picture" Type="varbinary(max)" />
-          <Property Name="BankAccountId" Type="uniqueidentifier" />
           <Property Name="InvitationSentTo" Type="varchar" MaxLength="500" />
-          <Property Name="SenderUpdatedBalanceAfterTransaction" Type="varchar" MaxLength="500" />
-          <Property Name="ReceiverUpdatedBalanceAfterTransaction" Type="varchar" MaxLength="500" />
-          <Property Name="BankId" Type="uniqueidentifier" />
           <Property Name="IsPhoneInvitation" Type="bit" />
           <Property Name="PhoneNumberInvited" Type="varchar" MaxLength="50" />
         </EntityType>
@@ -537,6 +560,42 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_RentTransactions_Landlords">
+          <End Role="Landlords" Type="Self.Landlords" Multiplicity="0..1" />
+          <End Role="RentTransactions" Type="Self.RentTransactions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Landlords">
+              <PropertyRef Name="LandlordId" />
+            </Principal>
+            <Dependent Role="RentTransactions">
+              <PropertyRef Name="LandlordId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RentTransactions_Tenants">
+          <End Role="Tenants" Type="Self.Tenants" Multiplicity="0..1" />
+          <End Role="RentTransactions" Type="Self.RentTransactions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tenants">
+              <PropertyRef Name="TenantId" />
+            </Principal>
+            <Dependent Role="RentTransactions">
+              <PropertyRef Name="TenantId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RentTransactions_UnitsOccupiedByTenants">
+          <End Role="UnitsOccupiedByTenants" Type="Self.UnitsOccupiedByTenants" Multiplicity="0..1" />
+          <End Role="RentTransactions" Type="Self.RentTransactions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UnitsOccupiedByTenants">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="RentTransactions">
+              <PropertyRef Name="UOBTId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Transactions_GeoLocations">
           <End Role="GeoLocations" Type="Self.GeoLocations" Multiplicity="0..1" />
           <End Role="Transactions" Type="Self.Transactions" Multiplicity="*" />
@@ -637,6 +696,7 @@
           <EntitySet Name="PasswordResetRequests" EntityType="Self.PasswordResetRequests" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Properties" EntityType="Self.Properties" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PropertyUnits" EntityType="Self.PropertyUnits" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RentTransactions" EntityType="Self.RentTransactions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SynapseBanksOfMembers" EntityType="Self.SynapseBanksOfMembers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SynapseCreateUserResults" EntityType="Self.SynapseCreateUserResults" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tenants" EntityType="Self.Tenants" Schema="dbo" store:Type="Tables" />
@@ -674,6 +734,18 @@
           <AssociationSet Name="FK_PasswordResetRequests_Members" Association="Self.FK_PasswordResetRequests_Members">
             <End Role="Members" EntitySet="Members" />
             <End Role="PasswordResetRequests" EntitySet="PasswordResetRequests" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RentTransactions_Landlords" Association="Self.FK_RentTransactions_Landlords">
+            <End Role="Landlords" EntitySet="Landlords" />
+            <End Role="RentTransactions" EntitySet="RentTransactions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RentTransactions_Tenants" Association="Self.FK_RentTransactions_Tenants">
+            <End Role="Tenants" EntitySet="Tenants" />
+            <End Role="RentTransactions" EntitySet="RentTransactions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RentTransactions_UnitsOccupiedByTenants" Association="Self.FK_RentTransactions_UnitsOccupiedByTenants">
+            <End Role="UnitsOccupiedByTenants" EntitySet="UnitsOccupiedByTenants" />
+            <End Role="RentTransactions" EntitySet="RentTransactions" />
           </AssociationSet>
           <AssociationSet Name="FK_Transactions_GeoLocations" Association="Self.FK_Transactions_GeoLocations">
             <End Role="GeoLocations" EntitySet="GeoLocations" />
@@ -753,6 +825,7 @@
           <Property Name="IsIdVerified" Type="Boolean" />
           <Property Name="FacebookUserId" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="MemoFormula" Type="Int32" />
+          <NavigationProperty Name="RentTransactions" Relationship="NOOCHModel.FK_RentTransactions_Landlords" FromRole="Landlord" ToRole="RentTransaction" />
         </EntityType>
         <EntityType Name="MemberNotification">
           <Key>
@@ -826,6 +899,7 @@
           <Property Name="IsIdDocumentVerified" Type="Boolean" />
           <Property Name="IsAnyRentPaid" Type="Boolean" />
           <Property Name="IsAutopayOn" Type="Boolean" />
+          <NavigationProperty Name="RentTransactions" Relationship="NOOCHModel.FK_RentTransactions_Tenants" FromRole="Tenant" ToRole="RentTransaction" />
         </EntityType>
         <EntityContainer Name="NOOCHEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="GeoLocations" EntityType="Self.GeoLocation" />
@@ -941,6 +1015,19 @@
             <End Role="AutoPayTransaction" EntitySet="AutoPayTransactions" />
           </AssociationSet>
           <EntitySet Name="MembersIPAddresses" EntityType="NOOCHModel.MembersIPAddress" />
+          <EntitySet Name="RentTransactions" EntityType="NOOCHModel.RentTransaction" />
+          <AssociationSet Name="FK_RentTransactions_Landlords" Association="NOOCHModel.FK_RentTransactions_Landlords">
+            <End Role="Landlord" EntitySet="Landlords" />
+            <End Role="RentTransaction" EntitySet="RentTransactions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RentTransactions_Tenants" Association="NOOCHModel.FK_RentTransactions_Tenants">
+            <End Role="Tenant" EntitySet="Tenants" />
+            <End Role="RentTransaction" EntitySet="RentTransactions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RentTransactions_UnitsOccupiedByTenants" Association="NOOCHModel.FK_RentTransactions_UnitsOccupiedByTenants">
+            <End Role="UnitsOccupiedByTenant" EntitySet="UnitsOccupiedByTenants" />
+            <End Role="RentTransaction" EntitySet="RentTransactions" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="TenantsIdDocument">
           <Key>
@@ -1035,9 +1122,9 @@
           <Property Name="State" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Zip" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="ContactNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="DefaultDueDate" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="DefaultDueDate" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="DateAdded" Type="DateTime" Precision="3" />
-          <Property Name="DateModified" Type="DateTime" Precision="3" />
+          <Property Name="DateModified" Type="DateTime" />
           <Property Name="LandlordId" Type="Guid" />
           <Property Name="MemberId" Type="Guid" />
           <Property Name="PropertyImage" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
@@ -1309,6 +1396,7 @@
           <Property Name="LastPaymentAmount" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="IsPaymentDueForThisMonth" Type="Boolean" />
           <NavigationProperty Name="AutoPayTransactions" Relationship="NOOCHModel.FK_AutoPayTransactions_UnitsOccupiedByTenants" FromRole="UnitsOccupiedByTenant" ToRole="AutoPayTransaction" />
+          <NavigationProperty Name="RentTransactions" Relationship="NOOCHModel.FK_RentTransactions_UnitsOccupiedByTenants" FromRole="UnitsOccupiedByTenant" ToRole="RentTransaction" />
         </EntityType>
         <ComplexType Name="GetTenantsInGivenPropertyId_Result2">
           <Property Type="Guid" Name="TenantId" Nullable="false" />
@@ -1443,6 +1531,72 @@
           <Property Name="Ip" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ModifiedOn" Type="DateTime" Precision="3" />
         </EntityType>
+        <EntityType Name="RentTransaction">
+          <Key>
+            <PropertyRef Name="RentTransactionId" />
+          </Key>
+          <Property Name="RentTransactionId" Type="Guid" Nullable="false" />
+          <Property Name="LandlordId" Type="Guid" />
+          <Property Name="TenantId" Type="Guid" />
+          <Property Name="TransactionStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TransCreatedOn" Type="DateTime" Precision="3" />
+          <Property Name="TransRespondedOn" Type="DateTime" Precision="3" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="UOBTId" Type="Int32" />
+          <Property Name="IsDisputed" Type="Boolean" />
+          <Property Name="DisputeStatus" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="RaisedBy" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="RaisedById" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="AdminNotes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Memo" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="IsRecurring" Type="Boolean" />
+          <Property Name="NextRecurrTransDueDate" Type="DateTime" Precision="3" />
+          <Property Name="RecentRecurrTransId" Type="Guid" />
+          <Property Name="Attachment" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="TransactionType" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Amount" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="NoOfTimesToRecurr" Type="Int32" />
+          <Property Name="UserPreferredDayOfMonthForAutoPay" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Landlord" Relationship="NOOCHModel.FK_RentTransactions_Landlords" FromRole="RentTransaction" ToRole="Landlord" />
+          <NavigationProperty Name="Tenant" Relationship="NOOCHModel.FK_RentTransactions_Tenants" FromRole="RentTransaction" ToRole="Tenant" />
+          <NavigationProperty Name="UnitsOccupiedByTenant" Relationship="NOOCHModel.FK_RentTransactions_UnitsOccupiedByTenants" FromRole="RentTransaction" ToRole="UnitsOccupiedByTenant" />
+        </EntityType>
+        <Association Name="FK_RentTransactions_Landlords">
+          <End Type="NOOCHModel.Landlord" Role="Landlord" Multiplicity="0..1" />
+          <End Type="NOOCHModel.RentTransaction" Role="RentTransaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Landlord">
+              <PropertyRef Name="LandlordId" />
+            </Principal>
+            <Dependent Role="RentTransaction">
+              <PropertyRef Name="LandlordId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RentTransactions_Tenants">
+          <End Type="NOOCHModel.Tenant" Role="Tenant" Multiplicity="0..1" />
+          <End Type="NOOCHModel.RentTransaction" Role="RentTransaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tenant">
+              <PropertyRef Name="TenantId" />
+            </Principal>
+            <Dependent Role="RentTransaction">
+              <PropertyRef Name="TenantId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RentTransactions_UnitsOccupiedByTenants">
+          <End Type="NOOCHModel.UnitsOccupiedByTenant" Role="UnitsOccupiedByTenant" Multiplicity="0..1" />
+          <End Type="NOOCHModel.RentTransaction" Role="RentTransaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UnitsOccupiedByTenant">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="RentTransaction">
+              <PropertyRef Name="UOBTId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1791,11 +1945,7 @@
               <MappingFragment StoreEntitySet="Transactions">
                 <ScalarProperty Name="PhoneNumberInvited" ColumnName="PhoneNumberInvited" />
                 <ScalarProperty Name="IsPhoneInvitation" ColumnName="IsPhoneInvitation" />
-                <ScalarProperty Name="BankId" ColumnName="BankId" />
-                <ScalarProperty Name="ReceiverUpdatedBalanceAfterTransaction" ColumnName="ReceiverUpdatedBalanceAfterTransaction" />
-                <ScalarProperty Name="SenderUpdatedBalanceAfterTransaction" ColumnName="SenderUpdatedBalanceAfterTransaction" />
                 <ScalarProperty Name="InvitationSentTo" ColumnName="InvitationSentTo" />
-                <ScalarProperty Name="BankAccountId" ColumnName="BankAccountId" />
                 <ScalarProperty Name="Picture" ColumnName="Picture" />
                 <ScalarProperty Name="Memo" ColumnName="Memo" />
                 <ScalarProperty Name="RaisedById" ColumnName="RaisedById" />
@@ -1935,6 +2085,34 @@
                 <ScalarProperty Name="Ip" ColumnName="Ip" />
                 <ScalarProperty Name="MemberId" ColumnName="MemberId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RentTransactions">
+            <EntityTypeMapping TypeName="NOOCHModel.RentTransaction">
+              <MappingFragment StoreEntitySet="RentTransactions">
+                <ScalarProperty Name="UserPreferredDayOfMonthForAutoPay" ColumnName="UserPreferredDayOfMonthForAutoPay" />
+                <ScalarProperty Name="NoOfTimesToRecurr" ColumnName="NoOfTimesToRecurr" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="TransactionType" ColumnName="TransactionType" />
+                <ScalarProperty Name="Attachment" ColumnName="Attachment" />
+                <ScalarProperty Name="RecentRecurrTransId" ColumnName="RecentRecurrTransId" />
+                <ScalarProperty Name="NextRecurrTransDueDate" ColumnName="NextRecurrTransDueDate" />
+                <ScalarProperty Name="IsRecurring" ColumnName="IsRecurring" />
+                <ScalarProperty Name="Memo" ColumnName="Memo" />
+                <ScalarProperty Name="AdminNotes" ColumnName="AdminNotes" />
+                <ScalarProperty Name="RaisedById" ColumnName="RaisedById" />
+                <ScalarProperty Name="RaisedBy" ColumnName="RaisedBy" />
+                <ScalarProperty Name="DisputeStatus" ColumnName="DisputeStatus" />
+                <ScalarProperty Name="IsDisputed" ColumnName="IsDisputed" />
+                <ScalarProperty Name="UOBTId" ColumnName="UOBTId" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="TransRespondedOn" ColumnName="TransRespondedOn" />
+                <ScalarProperty Name="TransCreatedOn" ColumnName="TransCreatedOn" />
+                <ScalarProperty Name="TransactionStatus" ColumnName="TransactionStatus" />
+                <ScalarProperty Name="TenantId" ColumnName="TenantId" />
+                <ScalarProperty Name="LandlordId" ColumnName="LandlordId" />
+                <ScalarProperty Name="RentTransactionId" ColumnName="RentTransactionId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

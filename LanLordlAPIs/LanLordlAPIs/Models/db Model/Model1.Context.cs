@@ -46,6 +46,7 @@ namespace LanLordlAPIs.Models.db_Model
         public DbSet<SynapseCreateUserResult> SynapseCreateUserResults { get; set; }
         public DbSet<AutoPayTransaction> AutoPayTransactions { get; set; }
         public DbSet<MembersIPAddress> MembersIPAddresses { get; set; }
+        public DbSet<RentTransaction> RentTransactions { get; set; }
     
         public virtual ObjectResult<Nullable<int>> GetTenantsCountInGivenPropertyId(string vPropertyId)
         {
