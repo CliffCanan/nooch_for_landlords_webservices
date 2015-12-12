@@ -16,7 +16,6 @@ namespace LanLordlAPIs.Models.db_Model
     {
         public UnitsOccupiedByTenant()
         {
-            this.AutoPayTransactions = new HashSet<AutoPayTransaction>();
             this.RentTransactions = new HashSet<RentTransaction>();
         }
     
@@ -30,7 +29,6 @@ namespace LanLordlAPIs.Models.db_Model
         public string LastPaymentAmount { get; set; }
         public Nullable<bool> IsPaymentDueForThisMonth { get; set; }
     
-        public virtual ICollection<AutoPayTransaction> AutoPayTransactions { get; set; }
         public virtual ICollection<RentTransaction> RentTransactions { get; set; }
     }
 }

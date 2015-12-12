@@ -12,22 +12,6 @@
     <Property Name="FriendRequestId" Type="uniqueidentifier" />
     <Property Name="VerifiedOn" Type="datetime" />
   </EntityType>
-  <EntityType Name="AutoPayTransactions">
-    <Key>
-      <PropertyRef Name="Id" />
-    </Key>
-    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="SenderId" Type="uniqueidentifier" />
-    <Property Name="RecepientId" Type="uniqueidentifier" />
-    <Property Name="UnitId" Type="uniqueidentifier" />
-    <Property Name="PropertyId" Type="uniqueidentifier" />
-    <Property Name="UOBTId" Type="int" />
-    <Property Name="Memo" Type="varchar(max)" />
-    <Property Name="StartDate" Type="datetime" />
-    <Property Name="EndDate" Type="datetime" />
-    <Property Name="Frequency" Type="varchar(max)" />
-    <Property Name="IsAllCancelledByLandlord" Type="bit" />
-  </EntityType>
   <EntityType Name="GeoLocations">
     <Key>
       <PropertyRef Name="LocationId" />
@@ -248,7 +232,7 @@
     <Property Name="ContactNumber" Type="varchar(max)" />
     <Property Name="DefaultDueDate" Type="varchar" MaxLength="50" />
     <Property Name="DateAdded" Type="datetime" />
-    <Property Name="DateModified" Type="varchar(max)" />
+    <Property Name="DateModified" Type="datetime" />
     <Property Name="LandlordId" Type="uniqueidentifier" />
     <Property Name="MemberId" Type="uniqueidentifier" />
     <Property Name="PropertyImage" Type="varchar(max)" />
@@ -459,66 +443,6 @@
     <Property Name="LastPaymentAmount" Type="varchar" MaxLength="50" />
     <Property Name="IsPaymentDueForThisMonth" Type="bit" />
   </EntityType>
-  <Association Name="FK_AutoPayTransactions_Members">
-    <End Role="Members" Type="Self.Members" Multiplicity="0..1" />
-    <End Role="AutoPayTransactions" Type="Self.AutoPayTransactions" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Members">
-        <PropertyRef Name="MemberId" />
-      </Principal>
-      <Dependent Role="AutoPayTransactions">
-        <PropertyRef Name="SenderId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_AutoPayTransactions_Members1">
-    <End Role="Members" Type="Self.Members" Multiplicity="0..1" />
-    <End Role="AutoPayTransactions" Type="Self.AutoPayTransactions" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Members">
-        <PropertyRef Name="MemberId" />
-      </Principal>
-      <Dependent Role="AutoPayTransactions">
-        <PropertyRef Name="RecepientId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_AutoPayTransactions_Properties">
-    <End Role="Properties" Type="Self.Properties" Multiplicity="0..1" />
-    <End Role="AutoPayTransactions" Type="Self.AutoPayTransactions" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Properties">
-        <PropertyRef Name="PropertyId" />
-      </Principal>
-      <Dependent Role="AutoPayTransactions">
-        <PropertyRef Name="PropertyId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_AutoPayTransactions_PropertyUnits">
-    <End Role="PropertyUnits" Type="Self.PropertyUnits" Multiplicity="0..1" />
-    <End Role="AutoPayTransactions" Type="Self.AutoPayTransactions" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="PropertyUnits">
-        <PropertyRef Name="UnitId" />
-      </Principal>
-      <Dependent Role="AutoPayTransactions">
-        <PropertyRef Name="UnitId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_AutoPayTransactions_UnitsOccupiedByTenants">
-    <End Role="UnitsOccupiedByTenants" Type="Self.UnitsOccupiedByTenants" Multiplicity="0..1" />
-    <End Role="AutoPayTransactions" Type="Self.AutoPayTransactions" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="UnitsOccupiedByTenants">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="AutoPayTransactions">
-        <PropertyRef Name="UOBTId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <Association Name="FK_MemberNotifications_Members">
     <End Role="Members" Type="Self.Members" Multiplicity="1" />
     <End Role="MemberNotifications" Type="Self.MemberNotifications" Multiplicity="*" />
@@ -680,7 +604,6 @@
   </Function>
   <EntityContainer Name="NOOCHModelStoreContainer">
     <EntitySet Name="AuthenticationTokens" EntityType="Self.AuthenticationTokens" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="AutoPayTransactions" EntityType="Self.AutoPayTransactions" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="GeoLocations" EntityType="Self.GeoLocations" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="InviteCodes" EntityType="Self.InviteCodes" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Landlords" EntityType="Self.Landlords" Schema="dbo" store:Type="Tables" />
@@ -698,26 +621,6 @@
     <EntitySet Name="TenantsIdDocuments" EntityType="Self.TenantsIdDocuments" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Transactions" EntityType="Self.Transactions" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="UnitsOccupiedByTenants" EntityType="Self.UnitsOccupiedByTenants" Schema="dbo" store:Type="Tables" />
-    <AssociationSet Name="FK_AutoPayTransactions_Members" Association="Self.FK_AutoPayTransactions_Members">
-      <End Role="Members" EntitySet="Members" />
-      <End Role="AutoPayTransactions" EntitySet="AutoPayTransactions" />
-    </AssociationSet>
-    <AssociationSet Name="FK_AutoPayTransactions_Members1" Association="Self.FK_AutoPayTransactions_Members1">
-      <End Role="Members" EntitySet="Members" />
-      <End Role="AutoPayTransactions" EntitySet="AutoPayTransactions" />
-    </AssociationSet>
-    <AssociationSet Name="FK_AutoPayTransactions_Properties" Association="Self.FK_AutoPayTransactions_Properties">
-      <End Role="Properties" EntitySet="Properties" />
-      <End Role="AutoPayTransactions" EntitySet="AutoPayTransactions" />
-    </AssociationSet>
-    <AssociationSet Name="FK_AutoPayTransactions_PropertyUnits" Association="Self.FK_AutoPayTransactions_PropertyUnits">
-      <End Role="PropertyUnits" EntitySet="PropertyUnits" />
-      <End Role="AutoPayTransactions" EntitySet="AutoPayTransactions" />
-    </AssociationSet>
-    <AssociationSet Name="FK_AutoPayTransactions_UnitsOccupiedByTenants" Association="Self.FK_AutoPayTransactions_UnitsOccupiedByTenants">
-      <End Role="UnitsOccupiedByTenants" EntitySet="UnitsOccupiedByTenants" />
-      <End Role="AutoPayTransactions" EntitySet="AutoPayTransactions" />
-    </AssociationSet>
     <AssociationSet Name="FK_MemberNotifications_Members" Association="Self.FK_MemberNotifications_Members">
       <End Role="Members" EntitySet="Members" />
       <End Role="MemberNotifications" EntitySet="MemberNotifications" />

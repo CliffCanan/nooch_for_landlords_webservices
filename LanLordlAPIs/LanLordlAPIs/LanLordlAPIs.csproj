@@ -210,9 +210,6 @@
     <Compile Include="Models\db Model\AuthenticationToken.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\db Model\AutoPayTransaction.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\db Model\GeoLocation.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
