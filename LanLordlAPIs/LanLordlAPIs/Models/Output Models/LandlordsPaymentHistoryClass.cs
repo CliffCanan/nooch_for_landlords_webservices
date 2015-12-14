@@ -32,5 +32,14 @@ namespace LanLordlAPIs.Models.Output_Models
         public string UnitNum { get; set; }
         public string DueDate { get; set; } // Cliff added (11/1/15)
         public string Memo { get; set; } // Cliff added (11/1/15)
+
+        public bool IsRecurringTrans { get; set; }
+        public string NextRecurrTransDueDate { get; set; }
+        public string UOBTId { get; set; }
+        public string TransactionCreateDate { get; set; }
+        public string TransactionProcessDate { get; set; }
+        public bool IsDisputed { get; set; }
+        public string DisputeStatus { get; set; }
+
     }
 }

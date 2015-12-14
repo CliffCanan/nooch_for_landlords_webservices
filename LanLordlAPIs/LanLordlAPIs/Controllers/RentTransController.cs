@@ -1657,7 +1657,102 @@ namespace LanLordlAPIs.Controllers
             return result;
         }
 
+        // New Transaction History Method which uses new table for information.... RentTransactions
+        [HttpPost]
+        [ActionName("GetLandlordsPaymentHistoryFromRentTrans")]
+        public LandlordsPaymentHistoryClass GetLandlordsPaymentHistoryFromRentTrans(basicLandlordPayload input)
+        {
+            Logger.Info("Rent Trans Cntrlr -> GetLandlordsPaymentHistoryFromRentTrans Initiated - [LandlordID: " + input.LandlordId + "], [MemberID: " + input.MemberId + "]");
 
+            LandlordsPaymentHistoryClass res = new LandlordsPaymentHistoryClass();
+            res.IsSuccess = false;
+
+            if (!String.IsNullOrEmpty(input.LandlordId))
+            {
+                try
+                {
+                    Guid landlordGuidId = new Guid(input.LandlordId);
+
+                    res.AuthTokenValidation = CommonHelper.AuthTokenValidation(landlordGuidId, input.AccessToken);
+
+                    if (res.AuthTokenValidation.IsTokenOk)
+                    {
+                        using (NOOCHEntities obj = new NOOCHEntities())
+                        {
+                            // Get Landlord's details from Landlords Table in DB
+                            var landlordObj = (from c in obj.Landlords
+                                               where c.LandlordId == landlordGuidId &&
+                                                     c.IsDeleted == false
+                                               select c).FirstOrDefault();
+
+                            if (landlordObj != null)
+                            {
+                                List<PaymentHistoryClass> TransactionsListToRet = new List<PaymentHistoryClass>();
+
+                                // getting data from rent trans table
+                                var allLandlordTrans =
+                                    (from c in obj.RentTransactions
+                                        where c.LandlordId == landlordGuidId && c.IsDeleted == false
+                                        select c).OrderByDescending(m => m.TransCreatedOn).ToList();
+
+                                foreach (RentTransaction rentTrans in allLandlordTrans)
+                                {
+                                    PaymentHistoryClass phc = new PaymentHistoryClass();
+                                    phc.TenantId = rentTrans.TenantId.ToString();
+                                    phc.TenantStatus = rentTrans.TransactionStatus;
+                                    phc.TransactionCreateDate = rentTrans.TransCreatedOn.ToString();
+                                    phc.TransactionProcessDate= (rentTrans.TransRespondedOn==null)?"":rentTrans.TransRespondedOn.ToString();
+                                    phc.UOBTId = rentTrans.UOBTId.ToString();
+
+                                    phc.IsDisputed = rentTrans.IsDisputed != null && Convert.ToBoolean(rentTrans.IsDisputed);
+                                    phc.DisputeStatus = rentTrans.DisputeStatus;
+
+                                    phc.Memo = rentTrans.Memo;
+                                    phc.Amount = rentTrans.Amount;
+
+
+                                    phc.IsRecurringTrans = rentTrans.IsRecurring != null &&
+                                                           Convert.ToBoolean(rentTrans.IsRecurring);
+
+                                    if (phc.IsRecurringTrans)
+                                    {
+                                        phc.NextRecurrTransDueDate = (rentTrans.NextRecurrTransDueDate == null) ? "" : rentTrans.NextRecurrTransDueDate.ToString();
+                                    }
+
+                                    TransactionsListToRet.Add(phc);
+
+
+                                }
+
+
+                               
+
+                                res.IsSuccess = true;
+                                res.Transactions = TransactionsListToRet;
+                                res.ErrorMessage = "Success";
+                            }
+                            else
+                            {
+                                Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory LANDLORD NOT FOUND - [LandlordID: " + input.LandlordId + "]");
+                                res.ErrorMessage = "Invalid Landlord ID.";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory AUTH TOKEN FAILURE - [LandlordID: " + input.LandlordId + "]");
+                        res.ErrorMessage = "Auth token failure";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Outer) - [LandlordID: " + input.LandlordId + "], [Exception: " + ex.InnerException + " ]");
+                    res.ErrorMessage = "Server exception.";
+                }
+            }
+
+            return res;
+        }
 
         /*
         public string RequestMoneyToNonNoochUserUsingSynapse(RequestDto requestDto, out string requestId)
