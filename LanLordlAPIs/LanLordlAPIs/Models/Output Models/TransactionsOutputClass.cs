@@ -23,6 +23,8 @@ namespace LanLordlAPIs.Models.Output_Models
         public string Amount { get; set; }
         public string TenantId { get; set; }
         public bool IsRecurring { get; set; }
+        public int UOBTId { get; set; }
+
     }
 
     // Send Reminder Email
