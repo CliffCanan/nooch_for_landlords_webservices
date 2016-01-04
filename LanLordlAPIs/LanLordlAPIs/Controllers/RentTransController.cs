@@ -282,7 +282,8 @@ namespace LanLordlAPIs.Controllers
                     //MemberDataAccess mda = new MemberDataAccess();
                     string sender_oauth = senderSynInfo.UserDetails.access_token;
                     string sender_fingerPrint = sender.UDID1;
-                    string sender_bank_node_id = senderSynInfo.BankDetails.bankid.ToString();
+                    string sender_bank_node_id = senderSynInfo.BankDetails.oid.ToString();
+                    //string sender_bank_node_id = senderSynInfo.BankDetails.bankid.ToString();
                     string amount = input.TransRequest.Amount.ToString();
                     string fee = "0";
                     if (transactionAmount > 10)
@@ -295,7 +296,8 @@ namespace LanLordlAPIs.Controllers
                     }
                     string receiver_oauth = moneyRecipientSynInfo.UserDetails.access_token;
                     string receiver_fingerprint = moneyRecipient.UDID1;
-                    string receiver_bank_node_id = moneyRecipientSynInfo.BankDetails.bankid.ToString();
+                    string receiver_bank_node_id = moneyRecipientSynInfo.BankDetails.oid.ToString();
+                    //string receiver_bank_node_id = moneyRecipientSynInfo.BankDetails.bankid.ToString();
                     string suppID_or_transID = transactionId.ToString();
                     //string senderUserName = CommonHelper.GetDecryptedData(sender.UserName).ToLower();
                     //string receiverUserName = CommonHelper.GetDecryptedData(requester.UserName).ToLower();
