@@ -84,7 +84,8 @@ namespace LanLordlAPIs.Controllers
                 // Get sender and recepient Members table info
                 var sender = CommonHelper.GetMemberByMemberId(landlordsMemID);
                 var senderLandlordObj = CommonHelper.GetLandlordByLandlordId(Landlord_GUID); // Only need this for the Photo for the email template... Members table doesn't have it.
-                var moneyRecipient = CommonHelper.GetMemberByMemberId(Tenant_GUID);
+                //var moneyRecipient = CommonHelper.GetMemberByMemberId(Tenant_GUID);
+                var moneyRecipient = CommonHelper.GetMemberByMemberId(TenantMemID);
 
 
                 if (sender == null)
