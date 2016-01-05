@@ -105,7 +105,7 @@ namespace LanLordlAPIs.Controllers
                 #region Get Money Sender's Synapse Account Details
 
 
-                var senderSynInfo = CommonHelper.GetSynapseBankAndUserDetailsforGivenMemberId(landlordsMemID.ToString());
+                var senderSynInfo = CommonHelper.GetSynapseBankAndUserDetailsforGivenMemberId(sender.MemberId.ToString());
 
                 if (senderSynInfo.wereBankDetailsFound != true)
                 {
@@ -132,7 +132,7 @@ namespace LanLordlAPIs.Controllers
 
                 #region Get Receiver's Synapse Account Details
 
-                var moneyRecipientSynInfo = CommonHelper.GetSynapseBankAndUserDetailsforGivenMemberId(input.TransRequest.TenantId);
+                var moneyRecipientSynInfo = CommonHelper.GetSynapseBankAndUserDetailsforGivenMemberId(moneyRecipient.MemberId.ToString());
 
                 if (moneyRecipientSynInfo.wereBankDetailsFound != true)
                 {
@@ -219,12 +219,12 @@ namespace LanLordlAPIs.Controllers
                 #region Define Variables From Transaction for Notifications
 
                 var fromAddress = CommonHelper.GetValueFromConfig("transfersMail");
-                string senderUserName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(sender.UserName));
+                string senderUserName =CommonHelper.GetDecryptedData(sender.UserName);
                 string senderFirstName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(sender.FirstName));
                 string senderLastName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(sender.LastName));
                 string recipientFirstName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(moneyRecipient.FirstName));
                 string recipientLastName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(moneyRecipient.LastName));
-                string receiverUserName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(moneyRecipient.UserName));
+                string receiverUserName =CommonHelper.GetDecryptedData(moneyRecipient.UserName);
 
 
                 string wholeAmount = Convert.ToDecimal(input.TransRequest.Amount).ToString("n2");
@@ -280,7 +280,7 @@ namespace LanLordlAPIs.Controllers
                     #region synapse V3 add trans code.
 
                     //MemberDataAccess mda = new MemberDataAccess();
-                    string sender_oauth = senderSynInfo.UserDetails.access_token;
+                    string sender_oauth = CommonHelper.GetDecryptedData( senderSynInfo.UserDetails.access_token);
                     string sender_fingerPrint = sender.UDID1;
                     string sender_bank_node_id = senderSynInfo.BankDetails.oid.ToString();
                     //string sender_bank_node_id = senderSynInfo.BankDetails.bankid.ToString();
@@ -294,7 +294,7 @@ namespace LanLordlAPIs.Controllers
                     {
                         fee = "0.10"; //to offset the Synapse fee so the user doesn't pay it
                     }
-                    string receiver_oauth = moneyRecipientSynInfo.UserDetails.access_token;
+                    string receiver_oauth =  CommonHelper.GetDecryptedData( moneyRecipientSynInfo.UserDetails.access_token);
                     string receiver_fingerprint = moneyRecipient.UDID1;
                     string receiver_bank_node_id = moneyRecipientSynInfo.BankDetails.oid.ToString();
                     //string receiver_bank_node_id = moneyRecipientSynInfo.BankDetails.bankid.ToString();
