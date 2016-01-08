@@ -11,6 +11,20 @@ namespace LanLordlAPIs.Models.Output_Models
     {
     }
 
+
+
+    // to send reminder emails to tenansts
+    public class SendTransactionReminderEmailInputClass
+    {
+        public basicLandlordPayload User { get; set; }
+
+        public string  ReminderType{ get; set; }
+        public string  TransactionId{ get; set; }
+
+        
+    }
+
+
     // Charge Tenant
     public class ChargeTenantInputClass
     {

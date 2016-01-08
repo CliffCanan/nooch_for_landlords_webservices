@@ -23,7 +23,9 @@ namespace LanLordlAPIs.Controllers
         // Method for sending payment reminders
         public CreatePropertyResultOutput SendRentRemindersToTenants(ReminderMailInputClass input)
         {
-            Logger.Info("Landlords API -> SendRentRemindersToTenants Initiated. TenantId: [" + input.Trans.TenantId + "]. TransactionId: [" + input.Trans.TransactionId + "]. ReminderType: [" + input.Trans.ReminderType + "]");
+            Logger.Info("Landlords API -> SendRentRemindersToTenants Initiated. TenantId: [" + input.Trans.TenantId +
+                        "]. TransactionId: [" + input.Trans.TransactionId + "]. ReminderType: [" +
+                        input.Trans.ReminderType + "]");
             CreatePropertyResultOutput result = new CreatePropertyResultOutput();
             result.IsSuccess = false;
             try
@@ -75,29 +77,38 @@ namespace LanLordlAPIs.Controllers
                 // Check if request Amount is over per-transaction limit
                 decimal transactionAmount = Convert.ToDecimal(input.TransRequest.Amount);
 
-                if (CommonHelper.isOverTransactionLimit(transactionAmount, input.User.LandlordId, input.TransRequest.TenantId))
+                if (CommonHelper.isOverTransactionLimit(transactionAmount, input.User.LandlordId,
+                    input.TransRequest.TenantId))
                 {
-                    result.ErrorMessage = "To keep Nooch safe, the maximum amount you can send is $" + Convert.ToDecimal(CommonHelper.GetValueFromConfig("MaximumTransferLimitPerTransaction")).ToString("F2");
+                    result.ErrorMessage = "To keep Nooch safe, the maximum amount you can send is $" +
+                                          Convert.ToDecimal(
+                                              CommonHelper.GetValueFromConfig("MaximumTransferLimitPerTransaction"))
+                                              .ToString("F2");
                     return result;
                 }
 
                 // Get sender and recepient Members table info
                 var sender = CommonHelper.GetMemberByMemberId(landlordsMemID);
-                var senderLandlordObj = CommonHelper.GetLandlordByLandlordId(Landlord_GUID); // Only need this for the Photo for the email template... Members table doesn't have it.
+                var senderLandlordObj = CommonHelper.GetLandlordByLandlordId(Landlord_GUID);
+                // Only need this for the Photo for the email template... Members table doesn't have it.
                 //var moneyRecipient = CommonHelper.GetMemberByMemberId(Tenant_GUID);
                 var moneyRecipient = CommonHelper.GetMemberByMemberId(TenantMemID);
 
 
                 if (sender == null)
                 {
-                    Logger.Error("Landlords API -> RentTrans -> PayToTenants FAILED - Sender Member Not Found - [MemberID: " + Landlord_GUID + "]");
+                    Logger.Error(
+                        "Landlords API -> RentTrans -> PayToTenants FAILED - Sender Member Not Found - [MemberID: " +
+                        Landlord_GUID + "]");
                     result.ErrorMessage = "Sender Member Not Found";
 
                     return result;
                 }
                 if (moneyRecipient == null)
                 {
-                    Logger.Error("Landlords API -> RentTrans -> PayToTenants FAILED - moneyRecipient (who would receive the money) Member Not Found - [MemberID: " + Tenant_GUID + "]");
+                    Logger.Error(
+                        "Landlords API -> RentTrans -> PayToTenants FAILED - moneyRecipient (who would receive the money) Member Not Found - [MemberID: " +
+                        Tenant_GUID + "]");
                     result.ErrorMessage = "Money Recipient Member Not Found";
 
                     return result;
@@ -110,7 +121,9 @@ namespace LanLordlAPIs.Controllers
 
                 if (senderSynInfo.wereBankDetailsFound != true)
                 {
-                    Logger.Error("Landlords API -> RentTrans -> PayToTenants FAILED -> Trans ABORTED: Sender's Synapse bank account NOT FOUND - Trans Creator MemberId is: [" + landlordsMemID + "]");
+                    Logger.Error(
+                        "Landlords API -> RentTrans -> PayToTenants FAILED -> Trans ABORTED: Sender's Synapse bank account NOT FOUND - Trans Creator MemberId is: [" +
+                        landlordsMemID + "]");
                     result.ErrorMessage = "Requester does not have any bank added";
 
                     return result;
@@ -121,7 +134,8 @@ namespace LanLordlAPIs.Controllers
                     senderSynInfo.BankDetails.Status != "Verified" &&
                     sender.IsVerifiedWithSynapse != true)
                 {
-                    Logger.Error("Landlords API -> RentTrans -> PayToTenants FAILED -> Trans ABORTED: Sender's Synapse bank account exists but is not Verified and " +
+                    Logger.Error(
+                        "Landlords API -> RentTrans -> PayToTenants FAILED -> Trans ABORTED: Sender's Synapse bank account exists but is not Verified and " +
                         "isVerifiedWithSynapse != true - Trans Creator memberId is: [" + landlordsMemID + "]");
                     result.ErrorMessage = "Sender does not have any verified bank account.";
 
@@ -133,11 +147,14 @@ namespace LanLordlAPIs.Controllers
 
                 #region Get Receiver's Synapse Account Details
 
-                var moneyRecipientSynInfo = CommonHelper.GetSynapseBankAndUserDetailsforGivenMemberId(moneyRecipient.MemberId.ToString());
+                var moneyRecipientSynInfo =
+                    CommonHelper.GetSynapseBankAndUserDetailsforGivenMemberId(moneyRecipient.MemberId.ToString());
 
                 if (moneyRecipientSynInfo.wereBankDetailsFound != true)
                 {
-                    Logger.Error("Landlords API -> RentTrans -> PayToTenants FAILED -> Trans ABORTED: Money Recipient's Synapse bank account NOT FOUND - Money Recipient MemberID: [" + input.TransRequest.TenantId + "]");
+                    Logger.Error(
+                        "Landlords API -> RentTrans -> PayToTenants FAILED -> Trans ABORTED: Money Recipient's Synapse bank account NOT FOUND - Money Recipient MemberID: [" +
+                        input.TransRequest.TenantId + "]");
                     result.ErrorMessage = "Money recipient does not have any bank added";
 
                     return result;
@@ -148,8 +165,10 @@ namespace LanLordlAPIs.Controllers
                     moneyRecipientSynInfo.BankDetails.Status != "Verified" &&
                     moneyRecipient.IsVerifiedWithSynapse != true)
                 {
-                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED -> Trans ABORTED: Money Recipient's Synapse bank account exists but is not Verified and " +
-                        "isVerifiedWithSynapse != true - Money Recipient MemberID is: [" + input.TransRequest.TenantId + "]");
+                    Logger.Error(
+                        "Landlords API -> RentTrans -> ChargeTenant FAILED -> Trans ABORTED: Money Recipient's Synapse bank account exists but is not Verified and " +
+                        "isVerifiedWithSynapse != true - Money Recipient MemberID is: [" + input.TransRequest.TenantId +
+                        "]");
 
                     result.ErrorMessage = "Money recipient does not have any verified bank account.";
                     return result;
@@ -161,6 +180,7 @@ namespace LanLordlAPIs.Controllers
 
 
                 Transaction tr = new Transaction();
+
                 #region Create new transaction in transactions table
 
                 using (NOOCHEntities obj = new NOOCHEntities())
@@ -206,7 +226,9 @@ namespace LanLordlAPIs.Controllers
                     }
                     catch (Exception ex)
                     {
-                        Logger.Error("Landlords API -> RentTrans -> PayToTenants FAILED - Unable to save Transaction in DB - [Sender MemberID:" + input.User.LandlordId + "], [Exception: [ " + ex.InnerException + " ]");
+                        Logger.Error(
+                            "Landlords API -> RentTrans -> PayToTenants FAILED - Unable to save Transaction in DB - [Sender MemberID:" +
+                            input.User.LandlordId + "], [Exception: [ " + ex.InnerException + " ]");
                         result.IsSuccess = false;
                         result.ErrorMessage = "Transaction failed.";
                         return result;
@@ -220,12 +242,14 @@ namespace LanLordlAPIs.Controllers
                 #region Define Variables From Transaction for Notifications
 
                 var fromAddress = CommonHelper.GetValueFromConfig("transfersMail");
-                string senderUserName =CommonHelper.GetDecryptedData(sender.UserName);
+                string senderUserName = CommonHelper.GetDecryptedData(sender.UserName);
                 string senderFirstName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(sender.FirstName));
                 string senderLastName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(sender.LastName));
-                string recipientFirstName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(moneyRecipient.FirstName));
-                string recipientLastName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(moneyRecipient.LastName));
-                string receiverUserName =CommonHelper.GetDecryptedData(moneyRecipient.UserName);
+                string recipientFirstName =
+                    CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(moneyRecipient.FirstName));
+                string recipientLastName =
+                    CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(moneyRecipient.LastName));
+                string receiverUserName = CommonHelper.GetDecryptedData(moneyRecipient.UserName);
 
 
                 string wholeAmount = Convert.ToDecimal(input.TransRequest.Amount).ToString("n2");
@@ -278,10 +302,11 @@ namespace LanLordlAPIs.Controllers
                 {
                     short shouldSendFailureNotifications = 0;
                     // Synapse V3 order API code is here
+
                     #region synapse V3 add trans code.
 
                     //MemberDataAccess mda = new MemberDataAccess();
-                    string sender_oauth = CommonHelper.GetDecryptedData( senderSynInfo.UserDetails.access_token);
+                    string sender_oauth = CommonHelper.GetDecryptedData(senderSynInfo.UserDetails.access_token);
                     string sender_fingerPrint = sender.UDID1;
                     string sender_bank_node_id = senderSynInfo.BankDetails.oid.ToString();
                     //string sender_bank_node_id = senderSynInfo.BankDetails.bankid.ToString();
@@ -295,7 +320,7 @@ namespace LanLordlAPIs.Controllers
                     {
                         fee = "0.10"; //to offset the Synapse fee so the user doesn't pay it
                     }
-                    string receiver_oauth =  CommonHelper.GetDecryptedData( moneyRecipientSynInfo.UserDetails.access_token);
+                    string receiver_oauth = CommonHelper.GetDecryptedData(moneyRecipientSynInfo.UserDetails.access_token);
                     string receiver_fingerprint = moneyRecipient.UDID1;
                     string receiver_bank_node_id = moneyRecipientSynInfo.BankDetails.oid.ToString();
                     //string receiver_bank_node_id = moneyRecipientSynInfo.BankDetails.bankid.ToString();
@@ -308,9 +333,10 @@ namespace LanLordlAPIs.Controllers
 
 
 
-                    SynapseV3AddTrans_ReusableClass transactionResultFromSynapseAPI = CommonHelper.AddTransSynapseV3Reusable(sender_oauth, sender_fingerPrint, sender_bank_node_id,
-                        amount, fee, receiver_oauth, receiver_fingerprint, receiver_bank_node_id, suppID_or_transID,
-                        senderUserName, receiverUserName, iPForTransaction, senderLastName, recipientLastName);
+                    SynapseV3AddTrans_ReusableClass transactionResultFromSynapseAPI =
+                        CommonHelper.AddTransSynapseV3Reusable(sender_oauth, sender_fingerPrint, sender_bank_node_id,
+                            amount, fee, receiver_oauth, receiver_fingerprint, receiver_bank_node_id, suppID_or_transID,
+                            senderUserName, receiverUserName, iPForTransaction, senderLastName, recipientLastName);
 
 
                     if (transactionResultFromSynapseAPI.success == true)
@@ -322,7 +348,8 @@ namespace LanLordlAPIs.Controllers
 
                         #region Send Email to Sender on transfer success
 
-                        var sendersNotificationSets = CommonHelper.GetMemberNotificationSettings(sender.MemberId.ToString());
+                        var sendersNotificationSets =
+                            CommonHelper.GetMemberNotificationSettings(sender.MemberId.ToString());
 
                         if (sendersNotificationSets != null && (sendersNotificationSets.EmailTransferSent ?? false))
                         {
@@ -346,15 +373,16 @@ namespace LanLordlAPIs.Controllers
                             {
                                 CommonHelper.SendEmail("TransferSent", fromAddress, fromAddress, toAddress,
                                     "Your $" + wholeAmount + " payment to " + recipientFirstName + " on Nooch",
-                                     tokens, null, null);
+                                    tokens, null, null);
 
                                 Logger.Info("Landlords API -> RentTrans -> PayToTenant - TransferSent email sent to [" +
-                                                       toAddress + "] successfully");
+                                            toAddress + "] successfully");
                             }
                             catch (Exception ex)
                             {
-                                Logger.Error("Landlords API -> RentTrans -> PayToTenant -> EMAIL TO RECIPIENT FAILED: TransferReceived Email NOT sent to [" +
-                                                       toAddress + "], [Exception: " + ex + "]");
+                                Logger.Error(
+                                    "Landlords API -> RentTrans -> PayToTenant -> EMAIL TO RECIPIENT FAILED: TransferReceived Email NOT sent to [" +
+                                    toAddress + "], [Exception: " + ex + "]");
                             }
                         }
 
@@ -364,11 +392,13 @@ namespace LanLordlAPIs.Controllers
 
                         #region Send Notifications to Recipient on transfer success
 
-                        var recipNotificationSets = CommonHelper.GetMemberNotificationSettings(moneyRecipient.MemberId.ToString());
+                        var recipNotificationSets =
+                            CommonHelper.GetMemberNotificationSettings(moneyRecipient.MemberId.ToString());
 
                         if (recipNotificationSets != null)
                         {
                             // First, send push notification
+
                             #region Push notification to Recipient
 
                             if ((recipNotificationSets.TransferReceived == null)
@@ -399,13 +429,14 @@ namespace LanLordlAPIs.Controllers
                                 {
                                     Logger.Error(
                                         "Landlords API -> RentTrans -> PayToTenant -> Success - BUT Push notification FAILURE - Push to Recipient NOT sent [" +
-                                            recipientFirstName + " " + recipientLastName + "], Exception: [" + ex + "]");
+                                        recipientFirstName + " " + recipientLastName + "], Exception: [" + ex + "]");
                                 }
                             }
 
                             #endregion Push notification to Recipient
 
                             // Now send email notification
+
                             #region Email notification to Recipient
 
                             if (recipNotificationSets != null && (recipNotificationSets.EmailTransferReceived ?? false))
@@ -416,23 +447,28 @@ namespace LanLordlAPIs.Controllers
                                 }
 
                                 var tokensR = new Dictionary<string, string>
-	                                        {
-	                                            {Constants.PLACEHOLDER_FIRST_NAME, recipientFirstName},
-	                                            {Constants.PLACEHOLDER_FRIEND_FIRST_NAME, senderFirstName + " " + senderLastName},
-                                                {"$UserPicture$", senderPic},
-	                                            {Constants.PLACEHOLDER_TRANSFER_AMOUNT, wholeAmount},
-	                                            {Constants.PLACEHOLDER_TRANSACTION_DATE, Convert.ToDateTime(TransDateTime).ToString("MMM dd")},
-	                                            {Constants.MEMO, memo}
-	                                        };
+                                {
+                                    {Constants.PLACEHOLDER_FIRST_NAME, recipientFirstName},
+                                    {Constants.PLACEHOLDER_FRIEND_FIRST_NAME, senderFirstName + " " + senderLastName},
+                                    {"$UserPicture$", senderPic},
+                                    {Constants.PLACEHOLDER_TRANSFER_AMOUNT, wholeAmount},
+                                    {
+                                        Constants.PLACEHOLDER_TRANSACTION_DATE,
+                                        Convert.ToDateTime(TransDateTime).ToString("MMM dd")
+                                    },
+                                    {Constants.MEMO, memo}
+                                };
 
                                 var toAddress2 = CommonHelper.GetDecryptedData(moneyRecipient.UserName);
 
                                 try
                                 {
                                     CommonHelper.SendEmail("TransferReceived", fromAddress, fromAddress, toAddress2,
-                                        senderFirstName + " sent you $" + wholeAmount + " with Nooch", tokensR, null, null);
+                                        senderFirstName + " sent you $" + wholeAmount + " with Nooch", tokensR, null,
+                                        null);
 
-                                    Logger.Info("Landlords API -> RentTrans -> PayToTenant -> TransferReceived Email sent to [" +
+                                    Logger.Info(
+                                        "Landlords API -> RentTrans -> PayToTenant -> TransferReceived Email sent to [" +
                                         toAddress2 + "] successfully");
                                 }
                                 catch (Exception ex)
@@ -460,7 +496,9 @@ namespace LanLordlAPIs.Controllers
                     {
                         // Synapse Order API returned failure in response
 
-                        Logger.Error("Landlords API -> RentTrans -> PayToTenants - Synapse returned failure. For Transaction ID -> " + transactionId);
+                        Logger.Error(
+                            "Landlords API -> RentTrans -> PayToTenants - Synapse returned failure. For Transaction ID -> " +
+                            transactionId);
 
                         shouldSendFailureNotifications = 2;
                     }
@@ -468,11 +506,13 @@ namespace LanLordlAPIs.Controllers
                     // Check if there was a failure above and we need to send the failure Email/SMS notifications to the sender.
                     if (shouldSendFailureNotifications > 0)
                     {
-                        Logger.Error("Landlords API -> RentTrans -> PayToTenants  - THERE WAS A FAILURE - Sending Failure Notifications to both Users");
+                        Logger.Error(
+                            "Landlords API -> RentTrans -> PayToTenants  - THERE WAS A FAILURE - Sending Failure Notifications to both Users");
 
                         #region Notify Sender about failure
 
-                        var senderNotificationSettings = CommonHelper.GetMemberNotificationSettings(sender.MemberId.ToString());
+                        var senderNotificationSettings =
+                            CommonHelper.GetMemberNotificationSettings(sender.MemberId.ToString());
 
                         if (senderNotificationSettings != null)
                         {
@@ -483,22 +523,26 @@ namespace LanLordlAPIs.Controllers
                                 string senderDeviceId = senderNotificationSettings != null ? sender.DeviceToken : null;
 
                                 string mailBodyText = "Your attempt to send $" + tr.Amount.ToString("n2") +
-                                                      " to " + recipientFirstName + " " + recipientLastName + " failed ;-(  Contact Nooch support for more info.";
+                                                      " to " + recipientFirstName + " " + recipientLastName +
+                                                      " failed ;-(  Contact Nooch support for more info.";
 
                                 if (!String.IsNullOrEmpty(senderDeviceId))
                                 {
                                     try
                                     {
-                                        ApplePushNotification.SendNotificationMessage(mailBodyText, 0, null, senderDeviceId,
-                                                                                   CommonHelper.GetValueFromConfig("AppKey"),
-                                                                                    CommonHelper.GetValueFromConfig("MasterSecret"));
+                                        ApplePushNotification.SendNotificationMessage(mailBodyText, 0, null,
+                                            senderDeviceId,
+                                            CommonHelper.GetValueFromConfig("AppKey"),
+                                            CommonHelper.GetValueFromConfig("MasterSecret"));
 
-                                        Logger.Info("Landlords API -> RentTrans -> PayToTenants  FAILED - Push notif sent to Sender: [" +
+                                        Logger.Info(
+                                            "Landlords API -> RentTrans -> PayToTenants  FAILED - Push notif sent to Sender: [" +
                                             senderFirstName + " " + senderLastName + "] successfully.");
                                     }
                                     catch (Exception ex)
                                     {
-                                        Logger.Error("Landlords API -> RentTrans -> PayToTenants  FAILED - Push notif FAILED also, SMS NOT sent to [" +
+                                        Logger.Error(
+                                            "Landlords API -> RentTrans -> PayToTenants  FAILED - Push notif FAILED also, SMS NOT sent to [" +
                                             senderFirstName + " " + senderLastName + "],  [Exception: " + ex + "]");
                                     }
                                 }
@@ -511,12 +555,15 @@ namespace LanLordlAPIs.Controllers
                             if (senderNotificationSettings.EmailTransferAttemptFailure ?? false)
                             {
                                 var tokens = new Dictionary<string, string>
-	                                {
-	                                    {Constants.PLACEHOLDER_FIRST_NAME, senderFirstName + " " + senderLastName},
-	                                    {Constants.PLACEHOLDER_FRIEND_FIRST_NAME, recipientFirstName + " " + recipientLastName},
-	                                    {Constants.PLACEHOLDER_TRANSFER_AMOUNT, dl},
-	                                    {Constants.PLACEHLODER_CENTS, ce},
-	                                };
+                                {
+                                    {Constants.PLACEHOLDER_FIRST_NAME, senderFirstName + " " + senderLastName},
+                                    {
+                                        Constants.PLACEHOLDER_FRIEND_FIRST_NAME,
+                                        recipientFirstName + " " + recipientLastName
+                                    },
+                                    {Constants.PLACEHOLDER_TRANSFER_AMOUNT, dl},
+                                    {Constants.PLACEHLODER_CENTS, ce},
+                                };
 
                                 var toAddress = CommonHelper.GetDecryptedData(sender.UserName);
 
@@ -526,13 +573,15 @@ namespace LanLordlAPIs.Controllers
                                         fromAddress, toAddress, toAddress, "Nooch transfer failure :-(",
                                         tokens, null, null);
 
-                                    Logger.Info("Landlords API -> RentTrans -> PayToTenants  FAILED - Email sent to Sender: [" +
+                                    Logger.Info(
+                                        "Landlords API -> RentTrans -> PayToTenants  FAILED - Email sent to Sender: [" +
                                         toAddress + "] successfully.");
                                 }
                                 catch (Exception ex)
                                 {
-                                    Logger.Error("Landlords API -> RentTrans -> PayToTenants  --> Error: TransferAttemptFailure mail " +
-                                                           "NOT sent to [" + toAddress + "],  [Exception: " + ex + "]");
+                                    Logger.Error(
+                                        "Landlords API -> RentTrans -> PayToTenants  --> Error: TransferAttemptFailure mail " +
+                                        "NOT sent to [" + toAddress + "],  [Exception: " + ex + "]");
                                 }
                             }
 
@@ -569,7 +618,8 @@ namespace LanLordlAPIs.Controllers
                     var resp = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
                     JObject jsonFromSynapse = JObject.Parse(resp);
 
-                    Logger.Info("Landlords API -> RentTrans -> PayToTenants  FAILED. [Exception: " + jsonFromSynapse + "]");
+                    Logger.Info("Landlords API -> RentTrans -> PayToTenants  FAILED. [Exception: " + jsonFromSynapse +
+                                "]");
 
                     JToken token = jsonFromSynapse["reason"];
 
@@ -586,7 +636,8 @@ namespace LanLordlAPIs.Controllers
                     }
                 }
 
-                result.ErrorMessage = "Uh oh - Unknown Failure"; // This should never be reached b/c code should hit the failure section
+                result.ErrorMessage = "Uh oh - Unknown Failure";
+                // This should never be reached b/c code should hit the failure section
 
                 result.IsSuccess = true;
 
@@ -594,7 +645,8 @@ namespace LanLordlAPIs.Controllers
             }
             catch (Exception ex)
             {
-                Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED - [LandlordID: " + input.User.LandlordId + "], [Exception: [ " + ex + " ]");
+                Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED - [LandlordID: " + input.User.LandlordId +
+                             "], [Exception: [ " + ex + " ]");
                 result.ErrorMessage = "Error while chargin tenant. Retry later!";
             }
             return result;
@@ -630,28 +682,37 @@ namespace LanLordlAPIs.Controllers
                 // Check if request Amount is over per-transaction limit
                 decimal transactionAmount = Convert.ToDecimal(input.TransRequest.Amount);
 
-                if (CommonHelper.isOverTransactionLimit(transactionAmount, input.TransRequest.TenantId, input.User.LandlordId))
+                if (CommonHelper.isOverTransactionLimit(transactionAmount, input.TransRequest.TenantId,
+                    input.User.LandlordId))
                 {
-                    result.ErrorMessage = "To keep Nooch safe, the maximum amount you can request is $" + Convert.ToDecimal(CommonHelper.GetValueFromConfig("MaximumTransferLimitPerTransaction")).ToString("F2");
+                    result.ErrorMessage = "To keep Nooch safe, the maximum amount you can request is $" +
+                                          Convert.ToDecimal(
+                                              CommonHelper.GetValueFromConfig("MaximumTransferLimitPerTransaction"))
+                                              .ToString("F2");
                     return result;
                 }
 
                 // Get requester and request recepient Members table info
                 var requester = CommonHelper.GetMemberByMemberId(landlordsMemID);
-                var requesterLandlordObj = CommonHelper.GetLandlordByLandlordId(Landlord_GUID); // Only need this for the Photo for the email template... Members table doesn't have it.
+                var requesterLandlordObj = CommonHelper.GetLandlordByLandlordId(Landlord_GUID);
+                // Only need this for the Photo for the email template... Members table doesn't have it.
                 var requestRecipient = CommonHelper.GetMemberByMemberId(Tenant_GUID);
 
 
                 if (requester == null)
                 {
-                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED - Requester Member Not Found - [MemberID: " + Landlord_GUID + "]");
+                    Logger.Error(
+                        "Landlords API -> RentTrans -> ChargeTenant FAILED - Requester Member Not Found - [MemberID: " +
+                        Landlord_GUID + "]");
                     result.ErrorMessage = "Requester Member Not Found";
 
                     return result;
                 }
                 if (requestRecipient == null)
                 {
-                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED - requestRecipient (who would pay the request) Member Not Found - [MemberID: " + Landlord_GUID + "]");
+                    Logger.Error(
+                        "Landlords API -> RentTrans -> ChargeTenant FAILED - requestRecipient (who would pay the request) Member Not Found - [MemberID: " +
+                        Landlord_GUID + "]");
                     result.ErrorMessage = "Request Recipient Member Not Found";
 
                     return result;
@@ -660,11 +721,14 @@ namespace LanLordlAPIs.Controllers
                 #region Get Request Sender's Synapse Account Details
 
 
-                var requestorSynInfo = CommonHelper.GetSynapseBankAndUserDetailsforGivenMemberId(landlordsMemID.ToString());
+                var requestorSynInfo =
+                    CommonHelper.GetSynapseBankAndUserDetailsforGivenMemberId(landlordsMemID.ToString());
 
                 if (requestorSynInfo.wereBankDetailsFound != true)
                 {
-                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED -> Request ABORTED: Requester's Synapse bank account NOT FOUND - Request Creator MemberId is: [" + requester.MemberId + "]");
+                    Logger.Error(
+                        "Landlords API -> RentTrans -> ChargeTenant FAILED -> Request ABORTED: Requester's Synapse bank account NOT FOUND - Request Creator MemberId is: [" +
+                        requester.MemberId + "]");
                     result.ErrorMessage = "Requester does not have any bank added";
 
                     return result;
@@ -675,7 +739,8 @@ namespace LanLordlAPIs.Controllers
                     requestorSynInfo.BankDetails.Status != "Verified" &&
                     requester.IsVerifiedWithSynapse != true)
                 {
-                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED -> Request ABORTED: Requester's Synapse bank account exists but is not Verified and " +
+                    Logger.Error(
+                        "Landlords API -> RentTrans -> ChargeTenant FAILED -> Request ABORTED: Requester's Synapse bank account exists but is not Verified and " +
                         "isVerifiedWithSynapse != true - Request Creator memberId is: [" + requester.MemberId + "]");
                     result.ErrorMessage = "Requester does not have any verified bank account.";
 
@@ -685,6 +750,7 @@ namespace LanLordlAPIs.Controllers
                 #endregion Get Sender's Synapse Account Details
 
                 // @Cliff.. feel free to comment this section if you don't want to check Tenant synapse details
+
                 #region Get Request Sender's Synapse Account Details
 
                 /*var requestRecipientSynInfo = CommonHelper.GetSynapseBankAndUserDetailsforGivenMemberId(input.TransRequest.TenantId);
@@ -762,7 +828,9 @@ namespace LanLordlAPIs.Controllers
                     }
                     catch (Exception ex)
                     {
-                        Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED - Unable to save Transaction in DB - [Requester MemberID:" + input.User.LandlordId + "], [Exception: [ " + ex.InnerException + " ]");
+                        Logger.Error(
+                            "Landlords API -> RentTrans -> ChargeTenant FAILED - Unable to save Transaction in DB - [Requester MemberID:" +
+                            input.User.LandlordId + "], [Exception: [ " + ex.InnerException + " ]");
                         result.IsSuccess = false;
                         result.ErrorMessage = "Request failed.";
                         return result;
@@ -778,25 +846,28 @@ namespace LanLordlAPIs.Controllers
                 string fromAddress = CommonHelper.GetValueFromConfig("transfersMail");
 
                 string RequesterFirstName = !String.IsNullOrEmpty(requester.FirstName)
-                                            ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requester.FirstName)))
-                                            : "";
+                    ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requester.FirstName)))
+                    : "";
                 string RequesterLastName = !String.IsNullOrEmpty(requester.LastName)
-                                           ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requester.LastName)))
-                                           : "";
+                    ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requester.LastName)))
+                    : "";
                 string RequesterEmail = CommonHelper.GetDecryptedData(requester.UserName);
 
                 string RequestReceiverFirstName = !String.IsNullOrEmpty(requestRecipient.FirstName)
-                                                  ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requestRecipient.FirstName)))
-                                                  : "";
+                    ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requestRecipient.FirstName)))
+                    : "";
                 string RequestReceiverLastName = !String.IsNullOrEmpty(requestRecipient.LastName)
-                                                 ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requestRecipient.LastName)))
-                                                 : "";
-                string RequestReceiverFullName = (RequestReceiverFirstName.Length > 2 && RequestReceiverLastName.Length > 2)
-                                                 ? RequestReceiverFirstName + " " + RequestReceiverLastName
-                                                 : CommonHelper.GetDecryptedData(requestRecipient.UserName);
+                    ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requestRecipient.LastName)))
+                    : "";
+                string RequestReceiverFullName = (RequestReceiverFirstName.Length > 2 &&
+                                                  RequestReceiverLastName.Length > 2)
+                    ? RequestReceiverFirstName + " " + RequestReceiverLastName
+                    : CommonHelper.GetDecryptedData(requestRecipient.UserName);
 
-                Logger.Info("RequesterFirstName: [" + RequesterFirstName + "], RequesterLastName: [" + RequesterLastName + "], RequestReceiverFirstName: [" + RequestReceiverFirstName +
-                            "], RequestReceiverLastName: [" + RequestReceiverLastName + "], RequestReceiverFullName: [" + RequestReceiverFullName + "]");
+                Logger.Info("RequesterFirstName: [" + RequesterFirstName + "], RequesterLastName: [" + RequesterLastName +
+                            "], RequestReceiverFirstName: [" + RequestReceiverFirstName +
+                            "], RequestReceiverLastName: [" + RequestReceiverLastName + "], RequestReceiverFullName: [" +
+                            RequestReceiverFullName + "]");
 
                 string requesterPic = "https://www.noochme.com/noochweb/Assets/Images/userpic-default.png";
                 if (!String.IsNullOrEmpty(requesterLandlordObj.UserPic) && requesterLandlordObj.UserPic.Length > 20)
@@ -808,7 +879,9 @@ namespace LanLordlAPIs.Controllers
                     requesterPic = requester.Photo;
                 }
 
-                string cancelLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/CancelRequest.aspx?TransactionId=" + requestId + "&MemberId=" + input.User.LandlordId + "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
+                string cancelLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
+                    "trans/CancelRequest.aspx?TransactionId=" + requestId + "&MemberId=" + input.User.LandlordId +
+                    "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
 
                 string wholeAmount = Convert.ToDecimal(input.TransRequest.Amount).ToString("n2");
                 string[] amountArray = wholeAmount.Split('.');
@@ -840,33 +913,37 @@ namespace LanLordlAPIs.Controllers
 
 
                 // Send email to REQUESTER (person who sent this request)
+
                 #region Email To Requester
 
                 try
                 {
                     var tokens = new Dictionary<string, string>
-												 {
-													{Constants.PLACEHOLDER_FIRST_NAME, RequesterFirstName},
-													{Constants.PLACEHOLDER_NEWUSER, RequestReceiverFullName},
-													{Constants.PLACEHOLDER_TRANSFER_AMOUNT, amountArray[0]},
-													{Constants.PLACEHLODER_CENTS, amountArray[1]},
-													{Constants.PLACEHOLDER_OTHER_LINK, cancelLink},
-													{Constants.MEMO, memo}
-												 };
+                    {
+                        {Constants.PLACEHOLDER_FIRST_NAME, RequesterFirstName},
+                        {Constants.PLACEHOLDER_NEWUSER, RequestReceiverFullName},
+                        {Constants.PLACEHOLDER_TRANSFER_AMOUNT, amountArray[0]},
+                        {Constants.PLACEHLODER_CENTS, amountArray[1]},
+                        {Constants.PLACEHOLDER_OTHER_LINK, cancelLink},
+                        {Constants.MEMO, memo}
+                    };
 
-                    Logger.Info("RentTrans Ctrlr -> ChargeTenant - Memo: [" + memo + "], wholeAmount: [" + wholeAmount + "], cancelLink: [" + cancelLink +
+                    Logger.Info("RentTrans Ctrlr -> ChargeTenant - Memo: [" + memo + "], wholeAmount: [" + wholeAmount +
+                                "], cancelLink: [" + cancelLink +
                                 "], toAddress: [" + RequesterEmail + "], fromAddress: [" + fromAddress + "]");
 
                     CommonHelper.SendEmail("requestSent", fromAddress, null, RequesterEmail,
                         "Your payment request to " + RequestReceiverFullName +
                         " is pending", tokens, null, null);
 
-                    Logger.Info("Landlords API -> RentTrans -> ChargeTenant -> RequestSent email sent to [" + RequesterEmail + "] successfully.");
+                    Logger.Info("Landlords API -> RentTrans -> ChargeTenant -> RequestSent email sent to [" +
+                                RequesterEmail + "] successfully.");
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant -> RequestSent email NOT sent to [" + RequesterEmail +
-                                           "], [Exception: " + ex + "]");
+                    Logger.Error("Landlords API -> RentTrans -> ChargeTenant -> RequestSent email NOT sent to [" +
+                                 RequesterEmail +
+                                 "], [Exception: " + ex + "]");
                 }
 
                 #endregion Email To Requester
@@ -879,8 +956,11 @@ namespace LanLordlAPIs.Controllers
                 // In this case UserType would = 'Nonregistered'  ->  6KX3VJv3YvoyK+cemdsvMA==
                 //              TransType would = 'Request'
                 //              LinkSource would = 'Email'
-                string rejectLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/rejectMoney.aspx?TransactionId=" + requestId + "&UserType=6KX3VJv3YvoyK+cemdsvMA==&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==&TransType=T3EMY1WWZ9IscHIj3dbcNw==");
-                string paylink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/payRequest.aspx?TransactionId=" + requestId + "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
+                string rejectLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
+                    "trans/rejectMoney.aspx?TransactionId=" + requestId +
+                    "&UserType=6KX3VJv3YvoyK+cemdsvMA==&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==&TransType=T3EMY1WWZ9IscHIj3dbcNw==");
+                string paylink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
+                    "trans/payRequest.aspx?TransactionId=" + requestId + "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
 
                 var tokens2 = new Dictionary<string, string>
                 {
@@ -899,16 +979,20 @@ namespace LanLordlAPIs.Controllers
 
                 try
                 {
-                    CommonHelper.SendEmail("requestReceivedToExistingNonRegUser", fromAddress, RequesterFirstName + " " + RequesterLastName, toAddress,
-                    RequesterFirstName + " " + RequesterLastName + " requested " + "$" + wholeAmount.ToString() + " with Nooch", tokens2, null, null);
+                    CommonHelper.SendEmail("requestReceivedToExistingNonRegUser", fromAddress,
+                        RequesterFirstName + " " + RequesterLastName, toAddress,
+                        RequesterFirstName + " " + RequesterLastName + " requested " + "$" + wholeAmount.ToString() +
+                        " with Nooch", tokens2, null, null);
 
-                    Logger.Info("RentTrans -> ChargeTenant ->  requestReceivedToNewUser email sent to [" + toAddress + "] successfully");
+                    Logger.Info("RentTrans -> ChargeTenant ->  requestReceivedToNewUser email sent to [" + toAddress +
+                                "] successfully");
 
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error("RentTrans -> ChargeTenant -> requestReceivedToNewUser email NOT sent to  [" + toAddress +
-                                           "], [Exception: " + ex + "]");
+                    Logger.Error("RentTrans -> ChargeTenant -> requestReceivedToNewUser email NOT sent to  [" +
+                                 toAddress +
+                                 "], [Exception: " + ex + "]");
                 }
 
                 #endregion Email To Request Recipient
@@ -918,6 +1002,7 @@ namespace LanLordlAPIs.Controllers
                 // CLIFF (10/20/15) This block works (tested successfully) but commenting out b/c the Deposit-Money landing page
                 //                  needs to be improved for Mobile screen sizes... not a great experience as it currently is.
                 // Malkit Block code fixed to work with landlords api
+
                 #region Send SMS To Non-Nooch Transfer Recipient
 
                 /*  string googleUrlAPIKey = CommonHelper.GetValueFromConfig("GoogleURLAPI");
@@ -1023,7 +1108,8 @@ namespace LanLordlAPIs.Controllers
             }
             catch (Exception ex)
             {
-                Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED - [LandlordID: " + input.User.LandlordId + "], [Exception: [ " + ex + " ]");
+                Logger.Error("Landlords API -> RentTrans -> ChargeTenant FAILED - [LandlordID: " + input.User.LandlordId +
+                             "], [Exception: [ " + ex + " ]");
                 result.ErrorMessage = "Error while chargin tenant. Retry later!";
             }
 
@@ -1065,8 +1151,8 @@ namespace LanLordlAPIs.Controllers
                         var transObj = (from c in obj.Transactions
                                         where c.TransactionId == transGuid &&
                                               c.TransactionStatus == "Pending" &&
-                                             (c.SenderId == landlordObj.MemberId ||
-                                              c.RecipientId == landlordObj.MemberId)
+                                              (c.SenderId == landlordObj.MemberId ||
+                                               c.RecipientId == landlordObj.MemberId)
                                         select c).FirstOrDefault();
 
                         if (transObj != null)
@@ -1077,8 +1163,10 @@ namespace LanLordlAPIs.Controllers
 
                             if (i > 0)
                             {
-                                Logger.Info("RentTrans Cntrlr -> CancelTransaction - Transaction Cancelled SUCCESSFULLY - " +
-                                            "TransactionID: [" + input.TransId + "], LandlordID: [" + input.User.LandlordId + "]");
+                                Logger.Info(
+                                    "RentTrans Cntrlr -> CancelTransaction - Transaction Cancelled SUCCESSFULLY - " +
+                                    "TransactionID: [" + input.TransId + "], LandlordID: [" + input.User.LandlordId +
+                                    "]");
 
                                 #region Send Notifications
 
@@ -1092,9 +1180,12 @@ namespace LanLordlAPIs.Controllers
                                         memo = "For " + transObj.Memo.ToString();
                                     }
 
-                                    string transDate = Convert.ToDateTime(transObj.TransactionDate).ToString("MMM dd yyyy");
-                                    string requesterFirstName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.FirstName));
-                                    string requesterLastName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.LastName));
+                                    string transDate =
+                                        Convert.ToDateTime(transObj.TransactionDate).ToString("MMM dd yyyy");
+                                    string requesterFirstName =
+                                        CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.FirstName));
+                                    string requesterLastName =
+                                        CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.LastName));
 
                                     string amount = transObj.Amount.ToString("n2");
 
@@ -1111,7 +1202,8 @@ namespace LanLordlAPIs.Controllers
                                     }
                                     else
                                     {
-                                        recipientUserPhoneOrEmail = CommonHelper.GetDecryptedData(transObj.InvitationSentTo);
+                                        recipientUserPhoneOrEmail =
+                                            CommonHelper.GetDecryptedData(transObj.InvitationSentTo);
                                     }
 
                                     #endregion Setup Email Variables
@@ -1121,24 +1213,26 @@ namespace LanLordlAPIs.Controllers
                                     try
                                     {
                                         var tokens = new Dictionary<string, string>
-                                    {
-                                        {Constants.PLACEHOLDER_FIRST_NAME, requesterFirstName},
-                                        {"$Recipient$", recipientUserPhoneOrEmail},
-                                        {Constants.PLACEHOLDER_TRANSFER_AMOUNT, amount},
-                                        {"$Date$", transDate},
-                                        {Constants.MEMO, memo}
-                                    };
+                                        {
+                                            {Constants.PLACEHOLDER_FIRST_NAME, requesterFirstName},
+                                            {"$Recipient$", recipientUserPhoneOrEmail},
+                                            {Constants.PLACEHOLDER_TRANSFER_AMOUNT, amount},
+                                            {"$Date$", transDate},
+                                            {Constants.MEMO, memo}
+                                        };
 
                                         CommonHelper.SendEmail("requestCancelledToSender", fromAddress, null, toAddress,
-                                                               "Your payment request was cancelled", tokens, null, null);
+                                            "Your payment request was cancelled", tokens, null, null);
 
-                                        Logger.Info("RentTrans Cntrlr -> CancelTransaction - requestCancelledToSender email sent " +
-                                                    "to Requester: [" + toAddress + "] successfully.");
+                                        Logger.Info(
+                                            "RentTrans Cntrlr -> CancelTransaction - requestCancelledToSender email sent " +
+                                            "to Requester: [" + toAddress + "] successfully.");
                                     }
                                     catch (Exception ex)
                                     {
-                                        Logger.Error("RentTrans Cntrlr -> CancelTransaction - requestCancelledToSender email NOT sent " +
-                                                     "to Requester: [" + toAddress + "], Exception: [" + ex + "]");
+                                        Logger.Error(
+                                            "RentTrans Cntrlr -> CancelTransaction - requestCancelledToSender email NOT sent " +
+                                            "to Requester: [" + toAddress + "], Exception: [" + ex + "]");
                                     }
 
 
@@ -1147,30 +1241,38 @@ namespace LanLordlAPIs.Controllers
                                     try
                                     {
                                         var tokens2 = new Dictionary<string, string>
-                                    {
-                                        {Constants.PLACEHOLDER_FIRST_NAME, recipientUserPhoneOrEmail},
-                                        {Constants.PLACEHOLDER_LAST_NAME, requesterFirstName + " " + requesterLastName},
-                                        {Constants.PLACEHOLDER_TRANSFER_AMOUNT, amount},
-                                        {Constants.MEMO, memo}
-                                    };
+                                        {
+                                            {Constants.PLACEHOLDER_FIRST_NAME, recipientUserPhoneOrEmail},
+                                            {
+                                                Constants.PLACEHOLDER_LAST_NAME,
+                                                requesterFirstName + " " + requesterLastName
+                                            },
+                                            {Constants.PLACEHOLDER_TRANSFER_AMOUNT, amount},
+                                            {Constants.MEMO, memo}
+                                        };
 
-                                        string subject = requesterFirstName + " " + requesterLastName + " cancelled a payment request to you";
+                                        string subject = requesterFirstName + " " + requesterLastName +
+                                                         " cancelled a payment request to you";
 
-                                        CommonHelper.SendEmail("requestCancelledToRecipient", fromAddress, null, toAddress, subject, tokens2, null, null);
+                                        CommonHelper.SendEmail("requestCancelledToRecipient", fromAddress, null,
+                                            toAddress, subject, tokens2, null, null);
 
-                                        Logger.Info("RentTrans Cntrlr -> CancelTransaction - requestCancelledToRecipient email sent to [" +
-                                                    toAddress + "] successfully.");
+                                        Logger.Info(
+                                            "RentTrans Cntrlr -> CancelTransaction - requestCancelledToRecipient email sent to [" +
+                                            toAddress + "] successfully.");
                                     }
                                     catch (Exception ex)
                                     {
-                                        Logger.Error("RentTrans Cntrlr -> CancelTransaction - requestCancelledToRecipient email NOT sent to [" +
-                                                     toAddress + "], Exception: [" + ex + "]");
+                                        Logger.Error(
+                                            "RentTrans Cntrlr -> CancelTransaction - requestCancelledToRecipient email NOT sent to [" +
+                                            toAddress + "], Exception: [" + ex + "]");
                                     }
                                 }
                                 catch (Exception ex)
                                 {
-                                    Logger.Error("RentTrans Cntrlr -> CancelTransaction EXCEPTION - Failure while sending notifications - [" +
-                                                           "TransactionID: [" + input.TransId + "], Exception: [" + ex + "]");
+                                    Logger.Error(
+                                        "RentTrans Cntrlr -> CancelTransaction EXCEPTION - Failure while sending notifications - [" +
+                                        "TransactionID: [" + input.TransId + "], Exception: [" + ex + "]");
                                 }
 
                                 #endregion Send Notifications
@@ -1180,8 +1282,9 @@ namespace LanLordlAPIs.Controllers
                             }
                             else
                             {
-                                Logger.Error("RentTrans Cntrlr -> CancelTransaction FAILED - Failed to save updates to DB - " +
-                                                       "TransactionID: [" + input.TransId + "]");
+                                Logger.Error(
+                                    "RentTrans Cntrlr -> CancelTransaction FAILED - Failed to save updates to DB - " +
+                                    "TransactionID: [" + input.TransId + "]");
 
                                 result.msg = "Unable to save changes to DB.";
                             }
@@ -1198,7 +1301,8 @@ namespace LanLordlAPIs.Controllers
                 else
                 {
                     Logger.Error("RentTrans Cntrlr -> Cancel Transaction FAILURE - Invalid Authentication Token - " +
-                                 "LandlordID: [" + input.User.LandlordId + "], AccessToken: [" + input.User.LandlordId + "]" +
+                                 "LandlordID: [" + input.User.LandlordId + "], AccessToken: [" + input.User.LandlordId +
+                                 "]" +
                                  "TransactionID: [" + input.TransId + "]");
                 }
             }
@@ -1220,7 +1324,8 @@ namespace LanLordlAPIs.Controllers
         [ActionName("GetLandlordsPaymentHistory")]
         public LandlordsPaymentHistoryClass GetLandlordsPaymentHistory(basicLandlordPayload input)
         {
-            Logger.Info("Rent Trans Cntrlr -> GetLandlordsPaymentHistory Initiated - [LandlordID: " + input.LandlordId + "], [MemberID: " + input.MemberId + "]");
+            Logger.Info("Rent Trans Cntrlr -> GetLandlordsPaymentHistory Initiated - [LandlordID: " + input.LandlordId +
+                        "], [MemberID: " + input.MemberId + "]");
 
             LandlordsPaymentHistoryClass res = new LandlordsPaymentHistoryClass();
             res.IsSuccess = false;
@@ -1264,7 +1369,8 @@ namespace LanLordlAPIs.Controllers
                                                                 c.IsOccupied == true
                                                           select c).ToList();
 
-                                    Logger.Info("GET HISTORY 2a.) - UNITS Count [" + allUnitsInProp.Count + "] in this Property: [" + p.PropertyId + "]");
+                                    Logger.Info("GET HISTORY 2a.) - UNITS Count [" + allUnitsInProp.Count +
+                                                "] in this Property: [" + p.PropertyId + "]");
 
                                     // Iterating through each occupied unit
                                     short n = 1;
@@ -1272,7 +1378,8 @@ namespace LanLordlAPIs.Controllers
                                     foreach (PropertyUnit pu in allUnitsInProp)
                                     {
                                         Logger.Info("BEGIN UNIT...");
-                                        Logger.Info("GET HISTORY 2b.) - UNIT [" + n + "] -> [" + pu.UnitId + "] in Property: [" + p.PropName + "]");
+                                        Logger.Info("GET HISTORY 2b.) - UNIT [" + n + "] -> [" + pu.UnitId +
+                                                    "] in Property: [" + p.PropName + "]");
                                         n += 1;
 
                                         var allOccupiedUnits = (from c in obj.UnitsOccupiedByTenants
@@ -1280,7 +1387,8 @@ namespace LanLordlAPIs.Controllers
                                                                       c.IsDeleted == false
                                                                 select c).ToList();
 
-                                        Logger.Info("GET HISTORY 3a.) - UOBT Count [" + allOccupiedUnits.Count + "] for Unit: [" + pu.UnitId + "]");
+                                        Logger.Info("GET HISTORY 3a.) - UOBT Count [" + allOccupiedUnits.Count +
+                                                    "] for Unit: [" + pu.UnitId + "]");
 
                                         #region Loop Through UnitsOccupiedByTenants
 
@@ -1289,7 +1397,8 @@ namespace LanLordlAPIs.Controllers
                                         foreach (UnitsOccupiedByTenant uobt in allOccupiedUnits)
                                         {
                                             Logger.Info("BEGIN UOBT...");
-                                            Logger.Info("GET HISTORY 3b.) - UOBT # [" + x + "], UOBT ID -> [" + uobt.Id + "] for Unit: [" + pu.UnitId + "]");
+                                            Logger.Info("GET HISTORY 3b.) - UOBT # [" + x + "], UOBT ID -> [" + uobt.Id +
+                                                        "] for Unit: [" + pu.UnitId + "]");
                                             x += 1;
 
                                             try
@@ -1300,9 +1409,13 @@ namespace LanLordlAPIs.Controllers
                                                                      where c.TenantId == uobt.TenantId
                                                                      select c).FirstOrDefault();*/
 
-                                                Logger.Info("GET HISTORY 4.) - UOBT.TenantId is: [" + uobt.TenantId + "]");
+                                                Logger.Info("GET HISTORY 4.) - UOBT.TenantId is: [" + uobt.TenantId +
+                                                            "]");
 
-                                                Guid tenantMemberGuid = new Guid(CommonHelper.GetTenantsMemberIdFromTenantId(uobt.TenantId.ToString()));
+                                                Guid tenantMemberGuid =
+                                                    new Guid(
+                                                        CommonHelper.GetTenantsMemberIdFromTenantId(
+                                                            uobt.TenantId.ToString()));
 
                                                 var TenantMemberDetails = (from c in obj.Members
                                                                            where c.MemberId == tenantMemberGuid &&
@@ -1322,7 +1435,8 @@ namespace LanLordlAPIs.Controllers
 
                                                     PaymentHistoryClass phc = new PaymentHistoryClass();
                                                     // Data from Transactions Table
-                                                    phc.TransactionDate = Convert.ToDateTime(t.TransactionDate).ToShortDateString();
+                                                    phc.TransactionDate =
+                                                        Convert.ToDateTime(t.TransactionDate).ToShortDateString();
                                                     phc.TransactionId = t.TransactionId.ToString();
                                                     phc.Amount = t.Amount.ToString("n2");
                                                     phc.TransactionStatus = t.TransactionStatus;
@@ -1342,20 +1456,31 @@ namespace LanLordlAPIs.Controllers
                                                     // Data from Members Table
                                                     phc.TenantId = TenantMemberDetails.MemberId.ToString();
                                                     phc.TenantStatus = TenantMemberDetails.Status;
-                                                    phc.TenantName = !String.IsNullOrEmpty(TenantMemberDetails.FirstName)
-                                                                     ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(TenantMemberDetails.FirstName)) + " " +
-                                                                       CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(TenantMemberDetails.LastName))
-                                                                     : "";
-                                                    phc.TenantEmail = !String.IsNullOrEmpty(TenantMemberDetails.UserName) ? CommonHelper.GetDecryptedData(TenantMemberDetails.UserName) : null;
+                                                    phc.TenantName =
+                                                        !String.IsNullOrEmpty(TenantMemberDetails.FirstName)
+                                                            ? CommonHelper.UppercaseFirst(
+                                                                CommonHelper.GetDecryptedData(
+                                                                    TenantMemberDetails.FirstName)) + " " +
+                                                              CommonHelper.UppercaseFirst(
+                                                                  CommonHelper.GetDecryptedData(
+                                                                      TenantMemberDetails.LastName))
+                                                            : "";
+                                                    phc.TenantEmail =
+                                                        !String.IsNullOrEmpty(TenantMemberDetails.UserName)
+                                                            ? CommonHelper.GetDecryptedData(TenantMemberDetails.UserName)
+                                                            : null;
 
                                                     TransactionsListToRet.Add(phc);
                                                 }
                                             }
                                             catch (Exception ex)
                                             {
-                                                Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: " + input.LandlordId + "], [Exception: " + ex.Message + " ]");
+                                                Logger.Error(
+                                                    "Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: " +
+                                                    input.LandlordId + "], [Exception: " + ex.Message + " ]");
                                             }
                                         }
+
                                         #endregion Loop Through UnitsOccupiedByTenants
                                     }
                                 }
@@ -1366,20 +1491,25 @@ namespace LanLordlAPIs.Controllers
                             }
                             else
                             {
-                                Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory LANDLORD NOT FOUND - [LandlordID: " + input.LandlordId + "]");
+                                Logger.Error(
+                                    "Rent Trans Cntrlr -> GetLandlordsPaymentHistory LANDLORD NOT FOUND - [LandlordID: " +
+                                    input.LandlordId + "]");
                                 res.ErrorMessage = "Invalid Landlord ID.";
                             }
                         }
                     }
                     else
                     {
-                        Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory AUTH TOKEN FAILURE - [LandlordID: " + input.LandlordId + "]");
+                        Logger.Error(
+                            "Rent Trans Cntrlr -> GetLandlordsPaymentHistory AUTH TOKEN FAILURE - [LandlordID: " +
+                            input.LandlordId + "]");
                         res.ErrorMessage = "Auth token failure";
                     }
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Outer) - [LandlordID: " + input.LandlordId + "], [Exception: " + ex.InnerException + " ]");
+                    Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Outer) - [LandlordID: " +
+                                 input.LandlordId + "], [Exception: " + ex.InnerException + " ]");
                     res.ErrorMessage = "Server exception.";
                 }
             }
@@ -1400,7 +1530,8 @@ namespace LanLordlAPIs.Controllers
         [ActionName("GetLandlordsPaymentHistoryTEST")]
         public LandlordsPaymentHistoryClass GetLandlordsPaymentHistoryTEST(basicLandlordPayload input)
         {
-            Logger.Info("Rent Trans Cntrlr -> GetLandlordsPaymentHistory Initiated - [LandlordID: " + input.LandlordId + "], [MemberID: " + input.MemberId + "]");
+            Logger.Info("Rent Trans Cntrlr -> GetLandlordsPaymentHistory Initiated - [LandlordID: " + input.LandlordId +
+                        "], [MemberID: " + input.MemberId + "]");
 
             LandlordsPaymentHistoryClass res = new LandlordsPaymentHistoryClass();
             res.IsSuccess = false;
@@ -1466,7 +1597,8 @@ namespace LanLordlAPIs.Controllers
                                                                 c.IsOccupied == true
                                                           select c).ToList();
 
-                                    Logger.Info("GET HISTORY 2a.) - UNITS Count [" + allUnitsInProp.Count + "] in this Property: [" + p.PropertyId + "]");
+                                    Logger.Info("GET HISTORY 2a.) - UNITS Count [" + allUnitsInProp.Count +
+                                                "] in this Property: [" + p.PropertyId + "]");
 
                                     // Iterating through each occupied unit
                                     short n = 1;
@@ -1474,7 +1606,8 @@ namespace LanLordlAPIs.Controllers
                                     foreach (PropertyUnit pu in allUnitsInProp)
                                     {
                                         Logger.Info("BEGIN UNIT...");
-                                        Logger.Info("GET HISTORY 2b.) - UNIT [" + n + "] -> [" + pu.UnitId + "] in Property: [" + p.PropName + "]");
+                                        Logger.Info("GET HISTORY 2b.) - UNIT [" + n + "] -> [" + pu.UnitId +
+                                                    "] in Property: [" + p.PropName + "]");
                                         n += 1;
 
                                         var allOccupiedUnits = (from c in obj.UnitsOccupiedByTenants
@@ -1482,7 +1615,8 @@ namespace LanLordlAPIs.Controllers
                                                                       c.IsDeleted == false
                                                                 select c).ToList();
 
-                                        Logger.Info("GET HISTORY 3a.) - UOBT Count [" + allOccupiedUnits.Count + "] for Unit: [" + pu.UnitId + "]");
+                                        Logger.Info("GET HISTORY 3a.) - UOBT Count [" + allOccupiedUnits.Count +
+                                                    "] for Unit: [" + pu.UnitId + "]");
 
                                         #region Loop Through UnitsOccupiedByTenants
 
@@ -1491,7 +1625,8 @@ namespace LanLordlAPIs.Controllers
                                         foreach (UnitsOccupiedByTenant uobt in allOccupiedUnits)
                                         {
                                             Logger.Info("BEGIN UOBT...");
-                                            Logger.Info("GET HISTORY 3b.) - UOBT # [" + x + "], UOBT ID -> [" + uobt.Id + "] for Unit: [" + pu.UnitId + "]");
+                                            Logger.Info("GET HISTORY 3b.) - UOBT # [" + x + "], UOBT ID -> [" + uobt.Id +
+                                                        "] for Unit: [" + pu.UnitId + "]");
                                             x += 1;
 
                                             try
@@ -1502,9 +1637,13 @@ namespace LanLordlAPIs.Controllers
                                                                      where c.TenantId == uobt.TenantId
                                                                      select c).FirstOrDefault();*/
 
-                                                Logger.Info("GET HISTORY 4.) - UOBT.TenantId is: [" + uobt.TenantId + "]");
+                                                Logger.Info("GET HISTORY 4.) - UOBT.TenantId is: [" + uobt.TenantId +
+                                                            "]");
 
-                                                Guid tenantMemberGuid = new Guid(CommonHelper.GetTenantsMemberIdFromTenantId(uobt.TenantId.ToString()));
+                                                Guid tenantMemberGuid =
+                                                    new Guid(
+                                                        CommonHelper.GetTenantsMemberIdFromTenantId(
+                                                            uobt.TenantId.ToString()));
 
                                                 var TenantMemberDetails = (from c in obj.Members
                                                                            where c.MemberId == tenantMemberGuid &&
@@ -1524,7 +1663,8 @@ namespace LanLordlAPIs.Controllers
 
                                                     PaymentHistoryClass phc = new PaymentHistoryClass();
                                                     // Data from Transactions Table
-                                                    phc.TransactionDate = Convert.ToDateTime(t.TransactionDate).ToShortDateString();
+                                                    phc.TransactionDate =
+                                                        Convert.ToDateTime(t.TransactionDate).ToShortDateString();
                                                     phc.TransactionId = t.TransactionId.ToString();
                                                     phc.Amount = t.Amount.ToString("n2");
                                                     phc.TransactionStatus = t.TransactionStatus;
@@ -1544,20 +1684,31 @@ namespace LanLordlAPIs.Controllers
                                                     // Data from Members Table
                                                     phc.TenantId = TenantMemberDetails.MemberId.ToString();
                                                     phc.TenantStatus = TenantMemberDetails.Status;
-                                                    phc.TenantName = !String.IsNullOrEmpty(TenantMemberDetails.FirstName)
-                                                                     ? CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(TenantMemberDetails.FirstName)) + " " +
-                                                                       CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(TenantMemberDetails.LastName))
-                                                                     : "";
-                                                    phc.TenantEmail = !String.IsNullOrEmpty(TenantMemberDetails.UserName) ? CommonHelper.GetDecryptedData(TenantMemberDetails.UserName) : null;
+                                                    phc.TenantName =
+                                                        !String.IsNullOrEmpty(TenantMemberDetails.FirstName)
+                                                            ? CommonHelper.UppercaseFirst(
+                                                                CommonHelper.GetDecryptedData(
+                                                                    TenantMemberDetails.FirstName)) + " " +
+                                                              CommonHelper.UppercaseFirst(
+                                                                  CommonHelper.GetDecryptedData(
+                                                                      TenantMemberDetails.LastName))
+                                                            : "";
+                                                    phc.TenantEmail =
+                                                        !String.IsNullOrEmpty(TenantMemberDetails.UserName)
+                                                            ? CommonHelper.GetDecryptedData(TenantMemberDetails.UserName)
+                                                            : null;
 
                                                     TransactionsListToRet.Add(phc);
                                                 }
                                             }
                                             catch (Exception ex)
                                             {
-                                                Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: " + input.LandlordId + "], [Exception: " + ex.Message + " ]");
+                                                Logger.Error(
+                                                    "Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: " +
+                                                    input.LandlordId + "], [Exception: " + ex.Message + " ]");
                                             }
                                         }
+
                                         #endregion Loop Through UnitsOccupiedByTenants
                                     }
                                 }
@@ -1568,20 +1719,25 @@ namespace LanLordlAPIs.Controllers
                             }
                             else
                             {
-                                Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory LANDLORD NOT FOUND - [LandlordID: " + input.LandlordId + "]");
+                                Logger.Error(
+                                    "Rent Trans Cntrlr -> GetLandlordsPaymentHistory LANDLORD NOT FOUND - [LandlordID: " +
+                                    input.LandlordId + "]");
                                 res.ErrorMessage = "Invalid Landlord ID.";
                             }
                         }
                     }
                     else
                     {
-                        Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory AUTH TOKEN FAILURE - [LandlordID: " + input.LandlordId + "]");
+                        Logger.Error(
+                            "Rent Trans Cntrlr -> GetLandlordsPaymentHistory AUTH TOKEN FAILURE - [LandlordID: " +
+                            input.LandlordId + "]");
                         res.ErrorMessage = "Auth token failure";
                     }
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Outer) - [LandlordID: " + input.LandlordId + "], [Exception: " + ex.InnerException + " ]");
+                    Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Outer) - [LandlordID: " +
+                                 input.LandlordId + "], [Exception: " + ex.InnerException + " ]");
                     res.ErrorMessage = "Server exception.";
                 }
             }
@@ -1632,15 +1788,17 @@ namespace LanLordlAPIs.Controllers
                             }
                             else
                             {
-                                Logger.Error("RentTrans Cntrlr -> SaveMemoFormula FAILED - Error while saving updates to DB - " +
-                                             "LandlordID: " + input.User.LandlordId + "]");
+                                Logger.Error(
+                                    "RentTrans Cntrlr -> SaveMemoFormula FAILED - Error while saving updates to DB - " +
+                                    "LandlordID: " + input.User.LandlordId + "]");
                                 result.msg = "Error while saving updates to DB";
                             }
                         }
                         else
                         {
-                            Logger.Error("RentTrans Cntrlr -> SaveMemoFormula FAILED - Landlord ID Not Found - LandlordID: [" +
-                                         input.User.LandlordId + "]");
+                            Logger.Error(
+                                "RentTrans Cntrlr -> SaveMemoFormula FAILED - Landlord ID Not Found - LandlordID: [" +
+                                input.User.LandlordId + "]");
                             result.msg = "Given landlord ID not found.";
                         }
                     }
@@ -1665,7 +1823,8 @@ namespace LanLordlAPIs.Controllers
         [ActionName("GetLandlordsPaymentHistoryFromRentTrans")]
         public LandlordsPaymentHistoryClass GetLandlordsPaymentHistoryFromRentTrans(basicLandlordPayload input)
         {
-            Logger.Info("Rent Trans Cntrlr -> GetLandlordsPaymentHistoryFromRentTrans Initiated - [LandlordID: " + input.LandlordId + "], [MemberID: " + input.MemberId + "]");
+            Logger.Info("Rent Trans Cntrlr -> GetLandlordsPaymentHistoryFromRentTrans Initiated - [LandlordID: " +
+                        input.LandlordId + "], [MemberID: " + input.MemberId + "]");
 
             LandlordsPaymentHistoryClass res = new LandlordsPaymentHistoryClass();
             res.IsSuccess = false;
@@ -1695,8 +1854,8 @@ namespace LanLordlAPIs.Controllers
                                 // getting data from rent trans table
                                 var allLandlordTrans =
                                     (from c in obj.RentTransactions
-                                        where c.LandlordId == landlordGuidId && c.IsDeleted == false
-                                        select c).OrderByDescending(m => m.TransCreatedOn).ToList();
+                                     where c.LandlordId == landlordGuidId && c.IsDeleted == false
+                                     select c).OrderByDescending(m => m.TransCreatedOn).ToList();
 
                                 foreach (RentTransaction rentTrans in allLandlordTrans)
                                 {
@@ -1704,10 +1863,13 @@ namespace LanLordlAPIs.Controllers
                                     phc.TenantId = rentTrans.TenantId.ToString();
                                     phc.TenantStatus = rentTrans.TransactionStatus;
                                     phc.TransactionCreateDate = rentTrans.TransCreatedOn.ToString();
-                                    phc.TransactionProcessDate= (rentTrans.TransRespondedOn==null)?"":rentTrans.TransRespondedOn.ToString();
+                                    phc.TransactionProcessDate = (rentTrans.TransRespondedOn == null)
+                                        ? ""
+                                        : rentTrans.TransRespondedOn.ToString();
                                     phc.UOBTId = rentTrans.UOBTId.ToString();
 
-                                    phc.IsDisputed = rentTrans.IsDisputed != null && Convert.ToBoolean(rentTrans.IsDisputed);
+                                    phc.IsDisputed = rentTrans.IsDisputed != null &&
+                                                     Convert.ToBoolean(rentTrans.IsDisputed);
                                     phc.DisputeStatus = rentTrans.DisputeStatus;
 
                                     phc.Memo = rentTrans.Memo;
@@ -1719,7 +1881,9 @@ namespace LanLordlAPIs.Controllers
 
                                     if (phc.IsRecurringTrans)
                                     {
-                                        phc.NextRecurrTransDueDate = (rentTrans.NextRecurrTransDueDate == null) ? "" : rentTrans.NextRecurrTransDueDate.ToString();
+                                        phc.NextRecurrTransDueDate = (rentTrans.NextRecurrTransDueDate == null)
+                                            ? ""
+                                            : rentTrans.NextRecurrTransDueDate.ToString();
                                     }
 
                                     TransactionsListToRet.Add(phc);
@@ -1728,7 +1892,7 @@ namespace LanLordlAPIs.Controllers
                                 }
 
 
-                               
+
 
                                 res.IsSuccess = true;
                                 res.Transactions = TransactionsListToRet;
@@ -1736,20 +1900,26 @@ namespace LanLordlAPIs.Controllers
                             }
                             else
                             {
-                                Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistoryFromRentTrans LANDLORD NOT FOUND - [LandlordID: " + input.LandlordId + "]");
+                                Logger.Error(
+                                    "Rent Trans Cntrlr -> GetLandlordsPaymentHistoryFromRentTrans LANDLORD NOT FOUND - [LandlordID: " +
+                                    input.LandlordId + "]");
                                 res.ErrorMessage = "Invalid Landlord ID.";
                             }
                         }
                     }
                     else
                     {
-                        Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistoryFromRentTrans AUTH TOKEN FAILURE - [LandlordID: " + input.LandlordId + "]");
+                        Logger.Error(
+                            "Rent Trans Cntrlr -> GetLandlordsPaymentHistoryFromRentTrans AUTH TOKEN FAILURE - [LandlordID: " +
+                            input.LandlordId + "]");
                         res.ErrorMessage = "Auth token failure";
                     }
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error("Rent Trans Cntrlr -> GetLandlordsPaymentHistoryFromRentTrans EXCEPTION (Outer) - [LandlordID: " + input.LandlordId + "], [Exception: " + ex.InnerException + " ]");
+                    Logger.Error(
+                        "Rent Trans Cntrlr -> GetLandlordsPaymentHistoryFromRentTrans EXCEPTION (Outer) - [LandlordID: " +
+                        input.LandlordId + "], [Exception: " + ex.InnerException + " ]");
                     res.ErrorMessage = "Server exception.";
                 }
             }
@@ -1763,7 +1933,8 @@ namespace LanLordlAPIs.Controllers
         [ActionName("ChargeTenantRentTrans")]
         public CreatePropertyResultOutput ChargeTenantRentTrans(ChargeTenantInputClass input)
         {
-            Logger.Info("Landlords API -> RentTrans -> ChargeTenantRentTrans - Requested by [" + input.User.LandlordId + "]");
+            Logger.Info("Landlords API -> RentTrans -> ChargeTenantRentTrans - Requested by [" + input.User.LandlordId +
+                        "]");
 
             CreatePropertyResultOutput result = new CreatePropertyResultOutput();
             result.IsSuccess = false;
@@ -1788,28 +1959,37 @@ namespace LanLordlAPIs.Controllers
                 // Check if request Amount is over per-transaction limit
                 decimal transactionAmount = Convert.ToDecimal(input.TransRequest.Amount);
 
-                if (CommonHelper.isOverTransactionLimit(transactionAmount, input.TransRequest.TenantId, input.User.LandlordId))
+                if (CommonHelper.isOverTransactionLimit(transactionAmount, input.TransRequest.TenantId,
+                    input.User.LandlordId))
                 {
-                    result.ErrorMessage = "To keep Nooch safe, the maximum amount you can request is $" + Convert.ToDecimal(CommonHelper.GetValueFromConfig("MaximumTransferLimitPerTransaction")).ToString("F2");
+                    result.ErrorMessage = "To keep Nooch safe, the maximum amount you can request is $" +
+                                          Convert.ToDecimal(
+                                              CommonHelper.GetValueFromConfig("MaximumTransferLimitPerTransaction"))
+                                              .ToString("F2");
                     return result;
                 }
 
                 // Get requester and request recepient Members table info
                 var requester = CommonHelper.GetMemberByMemberId(landlordsMemID);
-                var requesterLandlordObj = CommonHelper.GetLandlordByLandlordId(Landlord_GUID); // Only need this for the Photo for the email template... Members table doesn't have it.
+                var requesterLandlordObj = CommonHelper.GetLandlordByLandlordId(Landlord_GUID);
+                // Only need this for the Photo for the email template... Members table doesn't have it.
                 var requestRecipient = CommonHelper.GetMemberByMemberId(Tenant_GUID);
 
 
                 if (requester == null)
                 {
-                    Logger.Error("Landlords API -> RentTrans -> ChargeTenantRentTrans FAILED - Requester Member Not Found - [MemberID: " + Landlord_GUID + "]");
+                    Logger.Error(
+                        "Landlords API -> RentTrans -> ChargeTenantRentTrans FAILED - Requester Member Not Found - [MemberID: " +
+                        Landlord_GUID + "]");
                     result.ErrorMessage = "Requester Member Not Found";
 
                     return result;
                 }
                 if (requestRecipient == null)
                 {
-                    Logger.Error("Landlords API -> RentTrans -> ChargeTenantRentTrans FAILED - requestRecipient (who would pay the request) Member Not Found - [MemberID: " + Landlord_GUID + "]");
+                    Logger.Error(
+                        "Landlords API -> RentTrans -> ChargeTenantRentTrans FAILED - requestRecipient (who would pay the request) Member Not Found - [MemberID: " +
+                        Landlord_GUID + "]");
                     result.ErrorMessage = "Request Recipient Member Not Found";
 
                     return result;
@@ -1818,11 +1998,14 @@ namespace LanLordlAPIs.Controllers
                 #region Get Request Sender's Synapse Account Details
 
 
-                var requestorSynInfo = CommonHelper.GetSynapseBankAndUserDetailsforGivenMemberId(landlordsMemID.ToString());
+                var requestorSynInfo =
+                    CommonHelper.GetSynapseBankAndUserDetailsforGivenMemberId(landlordsMemID.ToString());
 
                 if (requestorSynInfo.wereBankDetailsFound != true)
                 {
-                    Logger.Error("Landlords API -> RentTrans -> ChargeTenantRentTrans FAILED -> Request ABORTED: Requester's Synapse bank account NOT FOUND - Request Creator MemberId is: [" + requester.MemberId + "]");
+                    Logger.Error(
+                        "Landlords API -> RentTrans -> ChargeTenantRentTrans FAILED -> Request ABORTED: Requester's Synapse bank account NOT FOUND - Request Creator MemberId is: [" +
+                        requester.MemberId + "]");
                     result.ErrorMessage = "Requester does not have any bank added";
 
                     return result;
@@ -1833,7 +2016,8 @@ namespace LanLordlAPIs.Controllers
                     requestorSynInfo.BankDetails.Status != "Verified" &&
                     requester.IsVerifiedWithSynapse != true)
                 {
-                    Logger.Error("Landlords API -> RentTrans -> ChargeTenantRentTrans FAILED -> Request ABORTED: Requester's Synapse bank account exists but is not Verified and " +
+                    Logger.Error(
+                        "Landlords API -> RentTrans -> ChargeTenantRentTrans FAILED -> Request ABORTED: Requester's Synapse bank account exists but is not Verified and " +
                         "isVerifiedWithSynapse != true - Request Creator memberId is: [" + requester.MemberId + "]");
                     result.ErrorMessage = "Requester does not have any verified bank account.";
 
@@ -1843,6 +2027,7 @@ namespace LanLordlAPIs.Controllers
                 #endregion Get Sender's Synapse Account Details
 
                 // @Cliff.. feel free to comment this section if you don't want to check Tenant synapse details
+
                 #region Get Request Sender's Synapse Account Details
 
                 /*var requestRecipientSynInfo = CommonHelper.GetSynapseBankAndUserDetailsforGivenMemberId(input.TransRequest.TenantId);
@@ -1877,11 +2062,11 @@ namespace LanLordlAPIs.Controllers
                 using (NOOCHEntities obj = new NOOCHEntities())
                 {
                     RentTransaction tr = new RentTransaction();
-                    tr.RentTransactionId= Guid.NewGuid();
+                    tr.RentTransactionId = Guid.NewGuid();
                     tr.TenantId = Tenant_GUID;
                     tr.LandlordId = landlordsMemID;
                     tr.Amount = input.TransRequest.Amount;
-                    tr.TransCreatedOn= DateTime.Now;
+                    tr.TransCreatedOn = DateTime.Now;
                     tr.Memo = input.TransRequest.Memo; // this would be the reason why we are charging tenant 
                     tr.DisputeStatus = null;
                     tr.TransactionStatus = "Pending";
@@ -1891,7 +2076,7 @@ namespace LanLordlAPIs.Controllers
                     tr.IsDeleted = false;
                     tr.IsDisputed = false;
 
-                    tr.IsRecurring = false;   // TBD with cliff.. if admin can send recurring type trans request.
+                    tr.IsRecurring = false; // TBD with cliff.. if admin can send recurring type trans request.
 
                     try
                     {
@@ -1901,7 +2086,9 @@ namespace LanLordlAPIs.Controllers
                     }
                     catch (Exception ex)
                     {
-                        Logger.Error("Landlords API -> RentTrans -> ChargeTenantRentTrans FAILED - Unable to save RentTransaction in DB - [Requester MemberID:" + input.User.LandlordId + "], [Exception: [ " + ex.InnerException + " ]");
+                        Logger.Error(
+                            "Landlords API -> RentTrans -> ChargeTenantRentTrans FAILED - Unable to save RentTransaction in DB - [Requester MemberID:" +
+                            input.User.LandlordId + "], [Exception: [ " + ex.InnerException + " ]");
                         result.IsSuccess = false;
                         result.ErrorMessage = "Request failed.";
                         return result;
@@ -1917,25 +2104,28 @@ namespace LanLordlAPIs.Controllers
                 string fromAddress = CommonHelper.GetValueFromConfig("transfersMail");
 
                 string RequesterFirstName = !String.IsNullOrEmpty(requester.FirstName)
-                                            ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requester.FirstName)))
-                                            : "";
+                    ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requester.FirstName)))
+                    : "";
                 string RequesterLastName = !String.IsNullOrEmpty(requester.LastName)
-                                           ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requester.LastName)))
-                                           : "";
+                    ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requester.LastName)))
+                    : "";
                 string RequesterEmail = CommonHelper.GetDecryptedData(requester.UserName);
 
                 string RequestReceiverFirstName = !String.IsNullOrEmpty(requestRecipient.FirstName)
-                                                  ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requestRecipient.FirstName)))
-                                                  : "";
+                    ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requestRecipient.FirstName)))
+                    : "";
                 string RequestReceiverLastName = !String.IsNullOrEmpty(requestRecipient.LastName)
-                                                 ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requestRecipient.LastName)))
-                                                 : "";
-                string RequestReceiverFullName = (RequestReceiverFirstName.Length > 2 && RequestReceiverLastName.Length > 2)
-                                                 ? RequestReceiverFirstName + " " + RequestReceiverLastName
-                                                 : CommonHelper.GetDecryptedData(requestRecipient.UserName);
+                    ? CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(requestRecipient.LastName)))
+                    : "";
+                string RequestReceiverFullName = (RequestReceiverFirstName.Length > 2 &&
+                                                  RequestReceiverLastName.Length > 2)
+                    ? RequestReceiverFirstName + " " + RequestReceiverLastName
+                    : CommonHelper.GetDecryptedData(requestRecipient.UserName);
 
-                Logger.Info("RequesterFirstName: [" + RequesterFirstName + "], RequesterLastName: [" + RequesterLastName + "], RequestReceiverFirstName: [" + RequestReceiverFirstName +
-                            "], RequestReceiverLastName: [" + RequestReceiverLastName + "], RequestReceiverFullName: [" + RequestReceiverFullName + "]");
+                Logger.Info("RequesterFirstName: [" + RequesterFirstName + "], RequesterLastName: [" + RequesterLastName +
+                            "], RequestReceiverFirstName: [" + RequestReceiverFirstName +
+                            "], RequestReceiverLastName: [" + RequestReceiverLastName + "], RequestReceiverFullName: [" +
+                            RequestReceiverFullName + "]");
 
                 string requesterPic = "https://www.noochme.com/noochweb/Assets/Images/userpic-default.png";
                 if (!String.IsNullOrEmpty(requesterLandlordObj.UserPic) && requesterLandlordObj.UserPic.Length > 20)
@@ -1947,7 +2137,9 @@ namespace LanLordlAPIs.Controllers
                     requesterPic = requester.Photo;
                 }
 
-                string cancelLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/CancelRequest.aspx?TransactionId=" + requestId + "&MemberId=" + input.User.LandlordId + "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
+                string cancelLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
+                    "trans/CancelRequest.aspx?TransactionId=" + requestId + "&MemberId=" + input.User.LandlordId +
+                    "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
 
                 string wholeAmount = Convert.ToDecimal(input.TransRequest.Amount).ToString("n2");
                 string[] amountArray = wholeAmount.Split('.');
@@ -1979,33 +2171,38 @@ namespace LanLordlAPIs.Controllers
 
 
                 // Send email to REQUESTER (person who sent this request)
+
                 #region Email To Requester
 
                 try
                 {
                     var tokens = new Dictionary<string, string>
-												 {
-													{Constants.PLACEHOLDER_FIRST_NAME, RequesterFirstName},
-													{Constants.PLACEHOLDER_NEWUSER, RequestReceiverFullName},
-													{Constants.PLACEHOLDER_TRANSFER_AMOUNT, amountArray[0]},
-													{Constants.PLACEHLODER_CENTS, amountArray[1]},
-													{Constants.PLACEHOLDER_OTHER_LINK, cancelLink},
-													{Constants.MEMO, memo}
-												 };
+                    {
+                        {Constants.PLACEHOLDER_FIRST_NAME, RequesterFirstName},
+                        {Constants.PLACEHOLDER_NEWUSER, RequestReceiverFullName},
+                        {Constants.PLACEHOLDER_TRANSFER_AMOUNT, amountArray[0]},
+                        {Constants.PLACEHLODER_CENTS, amountArray[1]},
+                        {Constants.PLACEHOLDER_OTHER_LINK, cancelLink},
+                        {Constants.MEMO, memo}
+                    };
 
-                    Logger.Info("RentTrans Ctrlr -> ChargeTenantRentTrans - Memo: [" + memo + "], wholeAmount: [" + wholeAmount + "], cancelLink: [" + cancelLink +
+                    Logger.Info("RentTrans Ctrlr -> ChargeTenantRentTrans - Memo: [" + memo + "], wholeAmount: [" +
+                                wholeAmount + "], cancelLink: [" + cancelLink +
                                 "], toAddress: [" + RequesterEmail + "], fromAddress: [" + fromAddress + "]");
 
                     CommonHelper.SendEmail("requestSent", fromAddress, null, RequesterEmail,
                         "Your payment request to " + RequestReceiverFullName +
                         " is pending", tokens, null, null);
 
-                    Logger.Info("Landlords API -> RentTrans -> ChargeTenantRentTrans -> RequestSent email sent to [" + RequesterEmail + "] successfully.");
+                    Logger.Info("Landlords API -> RentTrans -> ChargeTenantRentTrans -> RequestSent email sent to [" +
+                                RequesterEmail + "] successfully.");
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error("Landlords API -> RentTrans -> ChargeTenantRentTrans -> RequestSent email NOT sent to [" + RequesterEmail +
-                                           "], [Exception: " + ex + "]");
+                    Logger.Error(
+                        "Landlords API -> RentTrans -> ChargeTenantRentTrans -> RequestSent email NOT sent to [" +
+                        RequesterEmail +
+                        "], [Exception: " + ex + "]");
                 }
 
                 #endregion Email To Requester
@@ -2027,9 +2224,12 @@ namespace LanLordlAPIs.Controllers
                 // I recomment separate landing page for handing these types if requests... what you think @Cliff ?
 
                 // this link wouble take user to some new page or modified code if existing page.
-                string rejectLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/rejectMoney.aspx?TransactionId=" + requestId + "&UserType=6KX3VJv3YvoyK+cemdsvMA==&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==&TransType=T3EMY1WWZ9IscHIj3dbcNw==");
+                string rejectLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
+                    "trans/rejectMoney.aspx?TransactionId=" + requestId +
+                    "&UserType=6KX3VJv3YvoyK+cemdsvMA==&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==&TransType=T3EMY1WWZ9IscHIj3dbcNw==");
                 // this link wouble take user to some new page or modified code if existing page.
-                string paylink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/payRequest.aspx?TransactionId=" + requestId + "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
+                string paylink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
+                    "trans/payRequest.aspx?TransactionId=" + requestId + "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
 
                 var tokens2 = new Dictionary<string, string>
                 {
@@ -2048,16 +2248,19 @@ namespace LanLordlAPIs.Controllers
 
                 try
                 {
-                    CommonHelper.SendEmail("requestReceivedToExistingNonRegUser", fromAddress, RequesterFirstName + " " + RequesterLastName, toAddress,
-                    RequesterFirstName + " " + RequesterLastName + " requested " + "$" + wholeAmount.ToString() + " with Nooch", tokens2, null, null);
+                    CommonHelper.SendEmail("requestReceivedToExistingNonRegUser", fromAddress,
+                        RequesterFirstName + " " + RequesterLastName, toAddress,
+                        RequesterFirstName + " " + RequesterLastName + " requested " + "$" + wholeAmount.ToString() +
+                        " with Nooch", tokens2, null, null);
 
-                    Logger.Info("RentTrans -> ChargeTenant ->  ChargeTenantRentTrans email sent to [" + toAddress + "] successfully");
+                    Logger.Info("RentTrans -> ChargeTenant ->  ChargeTenantRentTrans email sent to [" + toAddress +
+                                "] successfully");
 
                 }
                 catch (Exception ex)
                 {
                     Logger.Error("RentTrans -> ChargeTenant -> ChargeTenantRentTrans email NOT sent to  [" + toAddress +
-                                           "], [Exception: " + ex + "]");
+                                 "], [Exception: " + ex + "]");
                 }
 
                 #endregion Email To Request Recipient
@@ -2067,6 +2270,7 @@ namespace LanLordlAPIs.Controllers
                 // CLIFF (10/20/15) This block works (tested successfully) but commenting out b/c the Deposit-Money landing page
                 //                  needs to be improved for Mobile screen sizes... not a great experience as it currently is.
                 // Malkit Block code fixed to work with landlords api
+
                 #region Send SMS To Non-Nooch Transfer Recipient
 
                 /*  string googleUrlAPIKey = CommonHelper.GetValueFromConfig("GoogleURLAPI");
@@ -2172,7 +2376,8 @@ namespace LanLordlAPIs.Controllers
             }
             catch (Exception ex)
             {
-                Logger.Error("Landlords API -> RentTrans -> ChargeTenantRentTrans FAILED - [LandlordID: " + input.User.LandlordId + "], [Exception: [ " + ex + " ]");
+                Logger.Error("Landlords API -> RentTrans -> ChargeTenantRentTrans FAILED - [LandlordID: " +
+                             input.User.LandlordId + "], [Exception: [ " + ex + " ]");
                 result.ErrorMessage = "Error while chargin tenant. Retry later!";
             }
 
@@ -2363,5 +2568,264 @@ namespace LanLordlAPIs.Controllers
             }
         }
     */
+
+
+        //To send Trnsaction reminder email to tenants
+        [HttpPost]
+        [ActionName("SendTransReminderEmail")]
+        public GenericInternalResponse SendTransReminderEmail(SendTransactionReminderEmailInputClass input)
+        {
+
+            GenericInternalResponse result = new GenericInternalResponse();
+            result.success = false;
+            result.msg = "Initial";
+
+            Logger.Info("Landlords API -> RentTrans -> SendTransReminderEmail Initiated. MemberID: [" +
+                        input.User.LandlordId + "], " +
+                        "TransactionId: [" + input.TransactionId + "], " +
+                        "ReminderType: [" + input.ReminderType + "]");
+
+            try
+            {
+
+                Guid transGuid = CommonHelper.ConvertToGuid(input.TransactionId);
+
+                Guid LandlordGuid = CommonHelper.ConvertToGuid(input.User.LandlordId);
+                Guid LandlordMemberIdGuid = CommonHelper.ConvertToGuid(input.User.MemberId);
+
+                Landlord landlordObj = CommonHelper.GetLandlordByLandlordId(LandlordGuid);
+
+                Member landlordMemberObject = CommonHelper.GetMemberByMemberId(LandlordMemberIdGuid);
+
+                result.AuthTokenValidation = CommonHelper.AuthTokenValidation(LandlordGuid, input.User.AccessToken);
+
+                if (result.AuthTokenValidation.IsTokenOk)
+                {
+                    using (NOOCHEntities obj = new NOOCHEntities())
+                    {
+                        // Reading Landlord's details from Landlords Table in  DB
+                        var transObj = (from c in obj.RentTransactions
+                                        where c.RentTransactionId == transGuid &&
+                                              c.TransactionStatus == "Pending"
+                                        select c).FirstOrDefault();
+
+                        if (transObj != null)
+                        {
+                            Tenant tenantObject =
+                                CommonHelper.GetTenantByTenantId(CommonHelper.ConvertToGuid(transObj.TenantId.ToString()));
+
+                            Member tenantMemberObject =
+                                CommonHelper.GetMemberByMemberId(
+                                    CommonHelper.ConvertToGuid(tenantObject.MemberId.ToString()));
+
+
+                            #region Preparing and sending reminder email
+
+                            if (input.ReminderType == "RequestMoneyReminderToNewUser" ||
+                                input.ReminderType == "RequestMoneyReminderToExistingUser")
+                            {
+                                #region Requests - Both Types
+
+
+                                #region Setup Common Variables
+
+                                string fromAddress = CommonHelper.GetValueFromConfig("transfersMail");
+
+                                string senderFirstName =
+                                    CommonHelper.UppercaseFirst(
+                                        CommonHelper.GetDecryptedData(landlordMemberObject.FirstName));
+                                string senderLastName =
+                                    CommonHelper.UppercaseFirst(
+                                        CommonHelper.GetDecryptedData(landlordMemberObject.LastName));
+
+
+                                // TBD with Cliff about new landing page for handling play rent transactions of modify existing because rent transactions are now stored in separate table and existing landling page check given transaction
+                                // id in Transactions table..... that code will fail in this case... page will never get any transaction with this transaction id.
+                                string payLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
+                                    "trans/payRequest.aspx?TransactionId=" + transObj.RentTransactionId);
+
+                                // or link to some new landing page here
+                                //string payLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),"trans/payRent.aspx?TransactionId=" + transObj.RentTransactionId);
+
+
+                                string s22 = Convert.ToDecimal(transObj.Amount.ToString()).ToString("n2");
+                                string[] s32 = s22.Split('.');
+
+                                string memo = "";
+                                if (!string.IsNullOrEmpty(transObj.Memo))
+                                {
+                                    if (transObj.Memo.Length > 3)
+                                    {
+                                        string firstThreeChars = transObj.Memo.Substring(0, 3).ToLower();
+                                        bool startWithFor = firstThreeChars.Equals("for");
+
+                                        if (startWithFor)
+                                        {
+                                            memo = transObj.Memo.ToString();
+                                        }
+                                        else
+                                        {
+                                            memo = "For " + transObj.Memo.ToString();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        memo = "For " + transObj.Memo.ToString();
+                                    }
+                                }
+
+
+                                // this solved landling page problem I thought above
+                                bool isForRentScene = true;
+                                var logoToDisplay = "noochlogo";
+                                senderFirstName = "Rent Scene";
+                                senderLastName = "";
+                                logoToDisplay = "rentscenelogo";
+                                payLink = payLink + "&rs=1";
+
+                                #endregion Setup Common Variables
+
+
+                                #region RequestMoneyReminderToExistingUser
+
+                                string rejectLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
+                                    "trans/rejectMoney.aspx?TransactionId=" + transObj.RentTransactionId +
+                                    "&UserType=mx5bTcAYyiOf9I5Py9TiLw==&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==&TransType=T3EMY1WWZ9IscHIj3dbcNw==");
+                                string paylink = "nooch://";
+
+                                string tenantFirstName =
+                                    CommonHelper.UppercaseFirst(
+                                        CommonHelper.GetDecryptedData(tenantMemberObject.FirstName));
+                                string tenantLastName =
+                                    CommonHelper.UppercaseFirst(
+                                        CommonHelper.GetDecryptedData(tenantMemberObject.LastName));
+
+                                #region Reminder EMAIL
+
+                                string toAddress = CommonHelper.GetDecryptedData(tenantMemberObject.UserName);
+
+                                var tokens2 = new Dictionary<string, string>
+                                {
+                                    {"$Logo$", logoToDisplay},
+                                    {Constants.PLACEHOLDER_FIRST_NAME, senderFirstName},
+                                    {
+                                        Constants.PLACEHOLDER_NEWUSER,
+                                        CommonHelper.UppercaseFirst(
+                                            CommonHelper.GetDecryptedData(tenantMemberObject.FirstName))
+                                    },
+                                    {Constants.PLACEHOLDER_TRANSFER_AMOUNT, s32[0].ToString()},
+                                    {Constants.PLACEHLODER_CENTS, s32[1].ToString()},
+                                    {Constants.PLACEHOLDER_REJECT_LINK, rejectLink},
+                                    {
+                                        Constants.PLACEHOLDER_TRANSACTION_DATE,
+                                        Convert.ToDateTime(transObj.TransCreatedOn).ToString("MMM dd yyyy")
+                                    },
+                                    {Constants.MEMO, memo},
+                                    {Constants.PLACEHOLDER_PAY_LINK, paylink}
+                                };
+                                try
+                                {
+                                    CommonHelper.SendEmail("requestReminderToExistingUser", fromAddress,
+                                        senderFirstName + " " + senderLastName,
+                                        toAddress,
+                                        senderFirstName + " " + senderLastName + " requested " + "$" + s22.ToString() +
+                                        " with Nooch - Reminder",
+                                        tokens2, null, null);
+
+                                    Logger.Info(
+                                        "Landlords API -> RentTrans -> SendTransReminderEmail - Reminder email (Request, existing user) sent to [" +
+                                        toAddress + "] successfully.");
+                                }
+                                catch (Exception)
+                                {
+                                    Logger.Error(
+                                        "Landlords API -> RentTrans -> SendTransReminderEmail - Reminder email (Request, existing user) NOT sent to [" +
+                                        toAddress + "]. Problem occured in sending mail.");
+                                }
+
+                                #endregion Reminder EMAIL
+
+                                #region Reminder PUSH NOTIFICATION
+
+                                if (!String.IsNullOrEmpty(tenantMemberObject.DeviceToken) &&
+                                    tenantMemberObject.DeviceToken != "(null)")
+                                {
+                                    try
+                                    {
+                                        string firstName = (!String.IsNullOrEmpty(tenantMemberObject.FirstName))
+                                            ? " " +
+                                              CommonHelper.UppercaseFirst(
+                                                  CommonHelper.GetDecryptedData(tenantMemberObject.FirstName))
+                                            : "";
+
+                                        string msg = "Hey" + firstName + "! Just a reminder that " + senderFirstName +
+                                                     " " + senderLastName +
+                                                     " sent you a Nooch request for $" +
+                                                     Convert.ToDecimal(transObj.Amount.ToString()).ToString("n2") +
+                                                     ". Might want to pay up!";
+
+                                        ApplePushNotification.SendNotificationMessage(msg, 1, null,
+                                            tenantMemberObject.DeviceToken,
+                                            CommonHelper.GetValueFromConfig("AppKey"),
+                                            CommonHelper.GetValueFromConfig("MasterSecret"));
+
+                                        Logger.Info(
+                                            "Landlords API -> RentTrans -> SendTransReminderEmail - (B/t 2 Existing Nooch Users) - Push notification sent successfully - [Username: " +
+                                            toAddress + "], [Device Token: " + tenantMemberObject.DeviceToken + "]");
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Logger.Error(
+                                            "Landlords API -> RentTrans -> SendTransReminderEmail - (B/t 2 Existing Nooch Users) - Push notification NOT sent - [Username: " +
+                                            toAddress + "], [Device Token: " + tenantMemberObject.DeviceToken +
+                                            "], [Exception: " + ex.Message + "]");
+                                    }
+                                }
+
+                                #endregion  Reminder PUSH NOTIFICATION
+
+                                result.msg = "Reminder mail sent successfully.";
+                                result.success = true;
+                                return result;
+
+
+                                #endregion RequestMoneyReminderToExistingUser
+
+
+                                #endregion Requests - Both Types
+                            }
+
+                            #endregion
+
+
+
+                        }
+                        else
+                        {
+                            result.success = false;
+                            result.msg = "Invalid Transaction Id or Transaction no more pending.";
+                            return result;
+                        }
+                    }
+                }
+                else
+                {
+                    result.success = false;
+                    result.msg = "Invalid access token.";
+                    return result;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                result.success = false;
+                result.msg = "Invalid access token.";
+                Logger.Error("Landlords API -> RentTrans -> Error details -" +
+                             ex.ToString());
+                return result;
+            }
+            return null;
+        }
     }
 }

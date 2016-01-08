@@ -350,6 +350,30 @@ namespace LanLordlAPIs.Classes.Utility
             return landlordObj;
         }
 
+
+        public static Tenant GetTenantByTenantId(Guid tenantId)
+        {
+            Tenant landlordObj = new Tenant();
+
+            try
+            {
+                using (NOOCHEntities obj = new NOOCHEntities())
+                {
+                    landlordObj = (from c in obj.Tenants
+                                   where c.TenantId == tenantId &&
+                                          c.IsDeleted == false
+                                   select c).SingleOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("CommonHelper -> GetLandlordByLandlordId FAILED - Exception: [" + ex + "]");
+            }
+
+            return landlordObj;
+        }
+
+
         public static string GetLandlordsMemberIdFromLandlordId(Guid landlorID)
         {
             string result = string.Empty;
