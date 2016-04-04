@@ -3019,7 +3019,7 @@ namespace LanLordlAPIs.Controllers
 
                             string paylink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
                                                            "trans/payRequest.aspx?TransactionId=" + rentTrans.TransactionId +
-                                                           "&UserType=" + userType);
+                                                           "&UserType=" + userType + "&TransType="+CommonHelper.GetEncryptedData("RENT"));
 
                             var tokens2 = new Dictionary<string, string>
                     {
