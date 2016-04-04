@@ -2985,7 +2985,7 @@ namespace LanLordlAPIs.Controllers
                             try
                             {
                                 CommonHelper.SendEmail(templateToUse_Sender, fromAddress, CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordMemberObject.FirstName)) + " " + CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordMemberObject.LastName)), toAddress,
-                                                            "Your payment (Rent) request to " + RequestReceiverFirstName + " " + RequestReceiverLastName + " is pending"
+                                                            "Your payment request to " + RequestReceiverFirstName + " " + RequestReceiverLastName + " is pending"
                                                             , tokens, null, null);
 
                                 Logger.Info("RentTrans -> RequestRentToExistingTenant  -> [" + templateToUse_Sender + "] email sent to [" + toAddress + "] successfully.");
