@@ -2953,7 +2953,7 @@ namespace LanLordlAPIs.Controllers
                                 }
                             }
 
-                            bool isForRentScene = true;
+                            bool isForRentScene = Convert.ToBoolean( CommonHelper.GetValueFromConfig("isForRentScene"));
                             fromAddress = "payments@rentscene.com";
                             var templateToUse_Recip = isForRentScene ? "requestReceivedToExistingNonRegUser_RentScene" : "requestReceivedToExistingNonRegUser";
 
