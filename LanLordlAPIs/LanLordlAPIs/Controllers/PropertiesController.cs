@@ -1555,10 +1555,54 @@ namespace LanLordlAPIs.Controllers
 
                                     currentUnit.TenantEmail = !String.IsNullOrEmpty(tEmail) ? CommonHelper.GetDecryptedData(tEmail) : "";
                                     currentUnit.ImageUrl = timgurl ?? "https://www.noochme.com/noochweb/Assets/Images/userpic-default.png";
+
+
+                                    // Get Tenant Member Info From Members Table (CLIFF: Added 4/3/16 because of all the problems with the above section)
+                                    #region Get Tenant Member Info From Members Table
+
+                                    if (unitX.MemberId != null)
+                                    {
+                                        Logger.Info("Properties Cntrlr -> GetPropertyDetailsPageData - About to attempt to get Member Info for this Unit - [PropertyID: " + currentUnit.UnitId + "]");
+
+                                        Guid memberGuid = new Guid(currentUnit.MemberId);
+
+                                        var memberObj = (from d in obj.Members
+                                                         where d.MemberId == unitX.MemberId &&
+                                                              (d.IsDeleted == false || d.IsDeleted == null)
+                                                         select d).FirstOrDefault();
+
+                                        if (memberObj != null)
+                                        {
+
+                                            currentUnit.IsEmailVerified = memberObj.Status == "Active" || memberObj.Status == "Accepted" ? true : false;
+
+                                            currentUnit.IsPhoneVerified = memberObj.IsVerifiedPhone == true ? true : false;
+
+
+                                            // Now check if this Tenant has a Synapse Bank Account
+                                            var bankObj = (from bank in obj.SynapseBanksOfMembers
+                                                           where bank.MemberId == memberObj.MemberId &&
+                                                                 bank.IsDefault == true
+                                                           select bank).FirstOrDefault();
+
+                                            Logger.Info("Checkpoint #4");
+
+                                            if (bankObj != null)
+                                            {
+                                                currentUnit.IsBankAccountAdded = true;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Logger.Info("No Member record found for this unit's tenant!");
+                                        }
+                                    }
+
+                                    #endregion Get Tenant Member Info From Members Table
                                 }
                                 else
                                 {
-                                    // Set other tenants-related data to blank
+                                    // Unit is un-occuppied, so set other tenants-related data to blank
                                     currentUnit.TenantName = "";
                                     currentUnit.TenantEmail = "";
                                     currentUnit.ImageUrl = "";

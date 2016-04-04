@@ -1318,8 +1318,6 @@ namespace LanLordlAPIs.Controllers
         }
 
 
-
-
         [HttpPost]
         [ActionName("GetLandlordsPaymentHistory")]
         public LandlordsPaymentHistoryClass GetLandlordsPaymentHistory(basicLandlordPayload input)
@@ -1516,10 +1514,6 @@ namespace LanLordlAPIs.Controllers
 
             return res;
         }
-
-
-
-
 
 
         // CLIFF (12/8/15): I was playing around with this method because we need a different procedure for
