@@ -2029,3 +2029,73 @@ INFO  2015-11-28 16:42:41,888 69449ms Logger                 Info               
 INFO  2015-11-28 16:42:46,222 73783ms Logger                 Info               - UserController -> LoginWithFB - Registration email sent to [malkitsingh01@gmail.com] successfully.
 INFO  2015-11-28 16:46:33,152 300712ms Logger                 Info               - Users Cntrlr -> Login requested by [malkitsingh01@gmail.com] with Facebook
 INFO  2015-12-01 15:31:01,765 1769270ms Logger                 Info               - Users Cntrlr -> LoginWithGoogle requested by [malkitsingh01@gmail.com] with Google
+INFO  2015-12-15 16:37:07,667 59221ms Logger                 Info               - Users Cntrlr -> Login Initiated - Username: [cliff@nooch.com], IP: [54.201.43.89]
+INFO  2015-12-15 16:37:09,213 60768ms Logger                 Info               - CommonHelper -> saveLandlordIp - Landlord's IP Address Updated in MembersIPAddress Table - LandlordID: [b3a6cf7b-561f-4105-99e4-406a215ccf60], IP: [54.201.43.89]
+INFO  2015-12-15 16:37:09,238 60793ms Logger                 Info               - Users Cntrlr -> Login Successful - Username: [cliff@nooch.com]
+INFO  2015-12-15 16:37:35,340 86895ms Logger                 Info               - Rent Trans Cntrlr -> GetLandlordsPaymentHistory Initiated - [LandlordID: b3a6cf7b-561f-4105-99e4-406a215ccf60], [MemberID: b3a6cf7b-561f-4105-99e4-406a215ccf60]
+INFO  2015-12-15 16:37:35,564 87119ms Logger                 Info               - GET HISTORY 1.) -> Properties Count in DB: [2]
+INFO  2015-12-15 16:37:35,564 87119ms Logger                 Info               - BEGIN PROPERTY...
+INFO  2015-12-15 16:37:35,609 87164ms Logger                 Info               - GET HISTORY 2a.) - UNITS Count [2] in this Property: [9f9ea8f3-8ae4-4906-afa8-abfff59b6a52]
+INFO  2015-12-15 16:37:35,610 87165ms Logger                 Info               - BEGIN UNIT...
+INFO  2015-12-15 16:37:35,611 87166ms Logger                 Info               - GET HISTORY 2b.) - UNIT [1] -> [2438cf29-714f-4964-ab3f-852f3d7cc678] in Property: [1900 Arch]
+INFO  2015-12-15 16:37:35,645 87200ms Logger                 Info               - GET HISTORY 3a.) - UOBT Count [1] for Unit: [2438cf29-714f-4964-ab3f-852f3d7cc678]
+INFO  2015-12-15 16:37:35,646 87201ms Logger                 Info               - BEGIN UOBT...
+INFO  2015-12-15 16:37:35,646 87201ms Logger                 Info               - GET HISTORY 3b.) - UOBT # [1], UOBT ID -> [63] for Unit: [2438cf29-714f-4964-ab3f-852f3d7cc678]
+INFO  2015-12-15 16:37:35,646 87201ms Logger                 Info               - GET HISTORY 4.) - UOBT.TenantId is: [e8331194-328d-4d4f-ac56-63e9af4174db]
+INFO  2015-12-15 16:37:35,776 87331ms Logger                 Info               - BEGIN TRANSACTION...
+INFO  2015-12-15 16:37:35,777 87332ms Logger                 Info               - TransactionID: [d3a60869-c91f-4ac1-bb0c-ec5fd7cd9759]
+INFO  2015-12-15 16:37:35,778 87333ms Logger                 Info               - BEGIN UNIT...
+INFO  2015-12-15 16:37:35,778 87333ms Logger                 Info               - GET HISTORY 2b.) - UNIT [2] -> [cf2e2ddd-d6d9-46aa-8a77-c800aa6957f5] in Property: [1900 Arch]
+INFO  2015-12-15 16:37:35,795 87350ms Logger                 Info               - GET HISTORY 3a.) - UOBT Count [1] for Unit: [cf2e2ddd-d6d9-46aa-8a77-c800aa6957f5]
+INFO  2015-12-15 16:37:35,796 87351ms Logger                 Info               - BEGIN UOBT...
+INFO  2015-12-15 16:37:35,797 87352ms Logger                 Info               - GET HISTORY 3b.) - UOBT # [1], UOBT ID -> [53] for Unit: [cf2e2ddd-d6d9-46aa-8a77-c800aa6957f5]
+INFO  2015-12-15 16:37:35,797 87352ms Logger                 Info               - GET HISTORY 4.) - UOBT.TenantId is: [c74a3904-db2d-4447-b9ba-b62ed7c8533f]
+INFO  2015-12-15 16:37:35,842 87397ms Logger                 Info               - BEGIN TRANSACTION...
+INFO  2015-12-15 16:37:35,843 87398ms Logger                 Info               - TransactionID: [06fc3dd5-0cbd-496a-bbb8-1ad1dcae830d]
+INFO  2015-12-15 16:37:35,843 87398ms Logger                 Info               - BEGIN PROPERTY...
+INFO  2015-12-15 16:37:35,861 87416ms Logger                 Info               - GET HISTORY 2a.) - UNITS Count [0] in this Property: [e2579c71-2833-4044-8eb9-b65ec95a2b10]
+INFO  2016-01-04 11:47:52,258 117988ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenant - Requested by [B3A6CF7B-561F-4105-99E4-406A215CCF60]
+INFO  2016-01-04 11:48:20,465 146195ms Logger                 Info               - *****  Landlords WEB API -> isOverTransactionLimit - Transaction is for APPJAXX, so allowing transaction - [Amount: $2]  ****
+INFO  2016-01-04 11:52:39,710 405440ms Logger                 Info               - Common Helper-> SynapseV3AddTrans_ReusableClass Initiated - [Sender Username: cliff@nooch.com], [Recipient Username: malkit.singh@venturepact.com], [Amount: 2]
+ERROR 2016-01-04 11:52:54,583 420313ms Logger                 Error              - Landlords API -> RentTrans -> PayToTenants - Synapse returned failure. For Transaction ID -> f4ce765b-8585-4d00-a336-42b142c7fccb
+ERROR 2016-01-04 11:52:58,272 424002ms Logger                 Error              - Landlords API -> RentTrans -> PayToTenants  - THERE WAS A FAILURE - Sending Failure Notifications to both Users
+INFO  2016-01-04 11:52:59,750 425480ms Logger                 Info               - Landlords' API -> CommonHelper -> GetMemberNotificationSettings - [MemberId: b3a6cf7b-561f-4105-99e4-406a215ccf60]
+INFO  2016-01-04 12:03:14,243 1039973ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenant - Requested by [B3A6CF7B-561F-4105-99E4-406A215CCF60]
+INFO  2016-01-04 12:03:14,291 1040021ms Logger                 Info               - *****  Landlords WEB API -> isOverTransactionLimit - Transaction is for APPJAXX, so allowing transaction - [Amount: $2]  ****
+INFO  2016-01-04 12:04:36,657 1122387ms Logger                 Info               - Common Helper-> SynapseV3AddTrans_ReusableClass Initiated - [Sender Username: cliff@nooch.com], [Recipient Username: malkit.singh@venturepact.com], [Amount: 2]
+ERROR 2016-01-04 12:06:47,263 1252993ms Logger                 Error              - Landlords API -> RentTrans -> PayToTenants - Synapse returned failure. For Transaction ID -> d1241dcb-b855-46b8-bdc3-4bfb30bb97a8
+ERROR 2016-01-04 12:06:47,264 1252994ms Logger                 Error              - Landlords API -> RentTrans -> PayToTenants  - THERE WAS A FAILURE - Sending Failure Notifications to both Users
+INFO  2016-01-04 12:06:47,264 1252994ms Logger                 Info               - Landlords' API -> CommonHelper -> GetMemberNotificationSettings - [MemberId: b3a6cf7b-561f-4105-99e4-406a215ccf60]
+INFO  2016-01-04 12:08:48,023 1373752ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenant - Requested by [B3A6CF7B-561F-4105-99E4-406A215CCF60]
+INFO  2016-01-04 12:08:48,063 1373792ms Logger                 Info               - *****  Landlords WEB API -> isOverTransactionLimit - Transaction is for APPJAXX, so allowing transaction - [Amount: $2]  ****
+INFO  2016-01-04 12:10:50,856 1496586ms Logger                 Info               - Common Helper-> SynapseV3AddTrans_ReusableClass Initiated - [Sender Username: team@nooch.com], [Recipient Username: cliff@nooch.com], [Amount: 2]
+INFO  2016-01-04 12:18:18,891  6585ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenant - Requested by [B3A6CF7B-561F-4105-99E4-406A215CCF60]
+INFO  2016-01-04 12:18:19,433  7127ms Logger                 Info               - *****  Landlords WEB API -> isOverTransactionLimit - Transaction is for APPJAXX, so allowing transaction - [Amount: $2]  ****
+INFO  2016-01-05 16:09:57,913 14886850ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenant - Requested by [B3A6CF7B-561F-4105-99E4-406A215CCF60]
+INFO  2016-01-05 16:14:13,151 17321ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenant - Requested by [B3A6CF7B-561F-4105-99E4-406A215CCF60]
+INFO  2016-01-05 16:32:01,177 1085347ms Logger                 Info               - Common Helper-> SynapseV3AddTrans_ReusableClass Initiated - [Sender Username: Cliff@nooch.com], [Recipient Username: Malkit.singh@venturepact.com], [Amount: 2]
+INFO  2016-01-05 16:32:39,155 1123325ms Logger                 Info               - Common Helper-> SynapseV3AddTrans_ReusableClass Initiated - [Sender Username: Cliff@nooch.com], [Recipient Username: Malkit.singh@venturepact.com], [Amount: 2]
+INFO  2016-01-05 16:33:06,168 1150338ms Logger                 Info               - Common Helper-> SynapseV3AddTrans_ReusableClass Initiated - [Sender Username: Cliff@nooch.com], [Recipient Username: Malkit.singh@venturepact.com], [Amount: 2]
+ERROR 2016-01-05 16:44:36,367 1840537ms Logger                 Error              - Landlords API -> Common Helper -> AddTransSynapseV3Reusable FAILED - Inner Exception: [Exception: System.NullReferenceException: Object reference not set to an instance of an object.
+   at LanLordlAPIs.Classes.Utility.CommonHelper.AddTransSynapseV3Reusable(String sender_oauth, String sender_fingerPrint, String sender_bank_node_id, String amount, String fee, String receiver_oauth, String receiver_fingerprint, String receiver_bank_node_id, String suppID_or_transID, String senderUserName, String receiverUserName, String iPForTransaction, String senderLastName, String recepientLastName) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 1924]
+INFO  2016-01-05 16:47:52,599 93645ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenant - Requested by [B3A6CF7B-561F-4105-99E4-406A215CCF60]
+INFO  2016-01-05 16:56:03,231 401111ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenant - Requested by [B3A6CF7B-561F-4105-99E4-406A215CCF60]
+INFO  2016-01-05 17:03:15,631 833511ms Logger                 Info               - Common Helper-> SynapseV3AddTrans_ReusableClass Initiated - [Sender Username: cliff@nooch.com], [Recipient Username: team@nooch.com], [Amount: 2]
+INFO  2016-01-05 17:03:55,151 873031ms Logger                 Info               - Landlords' API -> CommonHelper -> GetMemberNotificationSettings - [MemberId: b3a6cf7b-561f-4105-99e4-406a215ccf60]
+INFO  2016-01-05 17:04:01,899 879779ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: recipts@nooch.com], [Address: recipts@nooch.com]
+INFO  2016-01-05 17:04:03,731 881611ms Logger                 Info               - Landlords API -> RentTrans -> PayToTenant - TransferSent email sent to [cliff@nooch.com] successfully
+INFO  2016-01-05 17:04:05,328 883208ms Logger                 Info               - Landlords' API -> CommonHelper -> GetMemberNotificationSettings - [MemberId: 7d0adeab-1c32-42af-8234-079eecb94f91]
+ERROR 2016-01-05 17:04:14,054 891934ms Logger                 Error              - Landlords API -> RentTrans -> PayToTenant -> Success - BUT Push notification FAILURE - Push to Recipient NOT sent [Mbnnnhh Miguel], Exception: [System.Net.WebException: The remote server returned an error: (400) Bad Request.
+   at System.Net.WebClient.UploadDataInternal(Uri address, String method, Byte[] data, WebRequest& request)
+   at System.Net.WebClient.UploadString(Uri address, String method, String data)
+   at System.Net.WebClient.UploadString(String address, String data)
+   at LanLordlAPIs.Classes.PushNotification.ApplePushNotification.SendNotificationMessage(String alertText, Int32 badge, String sound, String devicetokens, String username, String password) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\PushNotification\ApplePushNotification.cs:line 29
+   at LanLordlAPIs.Controllers.RentTransController.PayToTenants(ChargeTenantInputClass input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 387]
+INFO  2016-01-05 17:04:41,224 919104ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: recipts@nooch.com], [Address: recipts@nooch.com]
+INFO  2016-01-05 17:04:52,651 930530ms Logger                 Info               - Landlords API -> RentTrans -> PayToTenant -> TransferReceived Email sent to [malkit.singh@venturepact.com] successfully
+INFO  2016-04-04 12:29:34,689 481074ms Logger                 Info               - Landlords API -> RentTrans -> RequestRentToExistingTenant Initiated. LandlordsID: [E9C3278B-9B96-47F4-B9A3-E2A052CC6FAD], Tenants Member ID: [B3A6CF7B-561F-4105-99E4-406A215CCF60], Property Id: []
+INFO  2016-04-04 12:29:49,921 496306ms Logger                 Info               - RentTrans -> RequestRentToExistingTenant - Checkpoing #1 - Access Token is OK!
+INFO  2016-04-04 12:32:00,538 626923ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: Lori Emr], [Address: payments@rentscene.com]
+INFO  2016-04-04 12:32:05,204 631589ms Logger                 Info               - RentTrans -> RequestRentToExistingTenant  -> [requestSent] email sent to [testing_request-sender@nooch.com] successfully.
+INFO  2016-04-04 12:32:48,528 674913ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: Cliff Canan], [Address: payments@rentscene.com]
+INFO  2016-04-04 12:32:50,169 676554ms Logger                 Info               - RentTrans -> RequestRentToExistingTenant  - [requestReceivedToExistingNonRegUser] email sent to [testing_request-recip@nooch.com] successfully.

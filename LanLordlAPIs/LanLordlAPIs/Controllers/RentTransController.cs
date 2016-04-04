@@ -3061,7 +3061,7 @@ namespace LanLordlAPIs.Controllers
                           
 
                             #endregion
-                            result.success = false;
+                            result.success = true;
                             result.msg = "Request made successfully.";
                             return result;
                         }

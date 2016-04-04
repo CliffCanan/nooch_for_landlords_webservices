@@ -2093,3 +2093,9 @@ ERROR 2016-01-05 17:04:14,054 891934ms Logger                 Error             
    at LanLordlAPIs.Controllers.RentTransController.PayToTenants(ChargeTenantInputClass input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 387]
 INFO  2016-01-05 17:04:41,224 919104ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: recipts@nooch.com], [Address: recipts@nooch.com]
 INFO  2016-01-05 17:04:52,651 930530ms Logger                 Info               - Landlords API -> RentTrans -> PayToTenant -> TransferReceived Email sent to [malkit.singh@venturepact.com] successfully
+INFO  2016-04-04 12:29:34,689 481074ms Logger                 Info               - Landlords API -> RentTrans -> RequestRentToExistingTenant Initiated. LandlordsID: [E9C3278B-9B96-47F4-B9A3-E2A052CC6FAD], Tenants Member ID: [B3A6CF7B-561F-4105-99E4-406A215CCF60], Property Id: []
+INFO  2016-04-04 12:29:49,921 496306ms Logger                 Info               - RentTrans -> RequestRentToExistingTenant - Checkpoing #1 - Access Token is OK!
+INFO  2016-04-04 12:32:00,538 626923ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: Lori Emr], [Address: payments@rentscene.com]
+INFO  2016-04-04 12:32:05,204 631589ms Logger                 Info               - RentTrans -> RequestRentToExistingTenant  -> [requestSent] email sent to [testing_request-sender@nooch.com] successfully.
+INFO  2016-04-04 12:32:48,528 674913ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: Cliff Canan], [Address: payments@rentscene.com]
+INFO  2016-04-04 12:32:50,169 676554ms Logger                 Info               - RentTrans -> RequestRentToExistingTenant  - [requestReceivedToExistingNonRegUser] email sent to [testing_request-recip@nooch.com] successfully.
