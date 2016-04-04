@@ -2821,5 +2821,279 @@ namespace LanLordlAPIs.Controllers
             }
             return null;
         }
+
+
+        // to requet money to existing Tenant
+        [HttpPost]
+        [ActionName("RequestRentToExistingTenant")]
+        public GenericInternalResponse RequestRentToExistingTenant(SendRentRequestToTenantInputClass input)
+        {
+
+            GenericInternalResponse result = new GenericInternalResponse();
+            result.success = false;
+            result.msg = "Initial";
+
+            Logger.Info("Landlords API -> RentTrans -> RequestRentToExistingTenant Initiated. LandlordsID: [" +
+                        input.User.LandlordId + "], " +
+                        "Tenants Member ID: [" + input.TenetsMemberId + "], " +
+                        "Property Id: [" + input.PropertyId + "]");
+
+            try
+            {
+
+
+                Guid LandlordGuid = CommonHelper.ConvertToGuid(input.User.LandlordId);
+                Guid LandlordMemberIdGuid = CommonHelper.ConvertToGuid(input.User.MemberId);
+                Guid TenantsMemberGUID = CommonHelper.ConvertToGuid(input.TenetsMemberId);
+
+
+                Landlord landlordObj = CommonHelper.GetLandlordByLandlordId(LandlordGuid);
+
+                Member landlordMemberObject = CommonHelper.GetMemberByMemberId(LandlordMemberIdGuid);
+
+                Member tenantsMemberObject = CommonHelper.GetMemberByMemberId(TenantsMemberGUID);
+
+                result.AuthTokenValidation = CommonHelper.AuthTokenValidation(LandlordGuid, input.User.AccessToken);
+
+
+                if (result.AuthTokenValidation.IsTokenOk)
+                {
+                    using (NOOCHEntities obj = new NOOCHEntities())
+                    {
+
+                        Logger.Info("RentTrans -> RequestRentToExistingTenant - Checkpoing #1 - Access Token is OK!");
+
+                        // preparing new Transactions table object
+
+                        #region New Entry in Transactions Table
+                        Transaction rentTrans = new Transaction();
+                        rentTrans.TransactionId = Guid.NewGuid();
+                        rentTrans.SenderId = tenantsMemberObject.MemberId;
+                        rentTrans.RecipientId = landlordMemberObject.MemberId;
+                        rentTrans.Amount = Convert.ToDecimal(input.Amount);
+                        rentTrans.TransactionDate = DateTime.Now;
+                        rentTrans.Picture = null;
+                        rentTrans.Memo = input.Memo;
+                        rentTrans.DisputeStatus = null;
+                        rentTrans.TransactionStatus = "Pending";
+                        rentTrans.TransactionType = CommonHelper.GetEncryptedData("Rent");
+                        rentTrans.DeviceId = null;
+                        rentTrans.TransactionTrackingId = CommonHelper.GetRandomTransactionTrackingId();
+                        rentTrans.TransactionFee = 0;
+                        rentTrans.IsPhoneInvitation = false;
+                        rentTrans.InvitationSentTo = null;
+                        rentTrans.GeoLocation = new GeoLocation
+                        {
+                            LocationId = Guid.NewGuid(),
+                            Latitude = null,
+                            Longitude = null,
+                            Altitude = null,
+                            AddressLine1 = null,
+                            AddressLine2 = null,
+                            City = null,
+                            State = null,
+                            Country = null,
+                            ZipCode = null,
+                            DateCreated = DateTime.Now
+                        };
+
+                        #endregion
+
+                        obj.Transactions.Add(rentTrans);
+                        int saveResult = obj.SaveChanges();
+                        if (saveResult > 0)
+                        {
+                            // success
+
+
+                            #region Send Notifications
+
+                            #region Set Up Variables
+
+                            var fromAddress = CommonHelper.GetValueFromConfig("transfersMail");
+
+                            string RequesterFirstName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(landlordObj.FirstName)));
+                            string RequesterLastName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(landlordObj.LastName)).ToString());
+                            string RequestReceiverFirstName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(tenantsMemberObject.FirstName)).ToString());
+                            string RequestReceiverLastName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(tenantsMemberObject.LastName)).ToString());
+
+                            string requesterPic = "https://www.noochme.com/noochweb/Assets/Images/userpic-default.png";
+                            if (!String.IsNullOrEmpty(tenantsMemberObject.Photo) && tenantsMemberObject.Photo.Length > 20)
+                            {
+                                requesterPic = tenantsMemberObject.Photo.ToString();
+                            }
+
+                            string cancelLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/CancelRequest.aspx?TransactionId=" + rentTrans.TransactionId +
+                                                                                                            "&MemberId=" + rentTrans.RecipientId + // or Landlord's MemberId
+                                                                                                            "&UserType=mx5bTcAYyiOf9I5Py9TiLw==");  // mx5bTcAYyiOf9I5Py9TiLw== --->> Existing
+
+                            string wholeAmount = rentTrans.Amount.ToString("n2");
+                            string[] amountArray = wholeAmount.Split('.');
+
+                            string memo = "";
+                            if (!string.IsNullOrEmpty(input.Memo))
+                            {
+                                if (input.Memo.Length > 3)
+                                {
+                                    string firstThreeChars = input.Memo.Substring(0, 3).ToLower();
+                                    bool startWithFor = firstThreeChars.Equals("for");
+
+                                    if (startWithFor)
+                                    {
+                                        memo = input.Memo.ToString();
+                                    }
+                                    else
+                                    {
+                                        memo = "for " + input.Memo.ToString();
+                                    }
+                                }
+                                else
+                                {
+                                    memo = "for " + input.Memo.ToString();
+                                }
+                            }
+
+                            bool isForRentScene = true;
+                            fromAddress = "payments@rentscene.com";
+                            var templateToUse_Recip = isForRentScene ? "requestReceivedToExistingNonRegUser_RentScene" : "requestReceivedToExistingNonRegUser";
+
+                            var templateToUse_Sender = isForRentScene ? "requestSent_RentScene" : "requestSent";
+
+
+
+                            #endregion Set Up Variables
+
+                            bool isTesting = Convert.ToBoolean(CommonHelper.GetValueFromConfig("IsRunningOnSandBox"));
+
+
+                            // Send email to REQUESTER / Landlord (person who sent this request)
+                            #region Email To Requester
+
+                            var tokens = new Dictionary<string, string>
+                    {
+					    {Constants.PLACEHOLDER_FIRST_NAME, RequesterFirstName},
+					    {Constants.PLACEHOLDER_NEWUSER, RequestReceiverFirstName + " " + RequestReceiverLastName},
+					    {Constants.PLACEHOLDER_TRANSFER_AMOUNT, amountArray[0].ToString()},
+					    {Constants.PLACEHLODER_CENTS, amountArray[1].ToString()},
+					    {Constants.PLACEHOLDER_OTHER_LINK, cancelLink},
+					    {Constants.MEMO, memo}
+				    };
+
+                            var toAddress = isTesting ? "testing_request-sender@nooch.com"
+                                                      : CommonHelper.GetDecryptedData(landlordMemberObject.UserName);
+
+                            try
+                            {
+                                CommonHelper.SendEmail(templateToUse_Sender, fromAddress, CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordMemberObject.FirstName)) + " " + CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordMemberObject.LastName)), toAddress,
+                                                            "Your payment (Rent) request to " + RequestReceiverFirstName + " " + RequestReceiverLastName + " is pending"
+                                                            , tokens, null, null);
+
+                                Logger.Info("RentTrans -> RequestRentToExistingTenant  -> [" + templateToUse_Sender + "] email sent to [" + toAddress + "] successfully.");
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error("RentTrans -> RequestRentToExistingTenant -> [" + templateToUse_Sender + "] email NOT sent to [" + toAddress +
+                                                       "], [Exception: " + ex + "]");
+                            }
+
+                            #endregion Email To Requester
+
+
+                            #region Email To Request Recipient
+
+                            // Send email to REQUEST RECIPIENT (person who will pay/reject this request)
+                            // Include 'UserType', 'LinkSource', and 'TransType' as encrypted along with request
+                            // In this case UserType would = 'Existing'  ->  mx5bTcAYyiOf9I5Py9TiLw==
+                            //              TransType would = 'Rent'
+                            //              LinkSource would = 'Email'
+
+                            // Check if both user's are actually "Active" and not NonRegistered...
+                            string userType = "mx5bTcAYyiOf9I5Py9TiLw=="; // "Existing"
+
+
+                            string rejectLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
+                                                              "trans/rejectMoney.aspx?TransactionId=" + rentTrans.TransactionId +
+                                                              "&UserType=" + userType +
+                                                              "&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==" +
+                                                              "&TransType=EnOIzpmFFTEaAP16hm9Wsw==");
+
+                            string paylink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
+                                                           "trans/payRequest.aspx?TransactionId=" + rentTrans.TransactionId +
+                                                           "&UserType=" + userType);
+
+                            var tokens2 = new Dictionary<string, string>
+                    {
+                        {Constants.PLACEHOLDER_FIRST_NAME, RequestReceiverFirstName},
+                        {"$UserPicture$", requesterPic},
+                        {Constants.PLACEHOLDER_SENDER_FULL_NAME, RequesterFirstName + " " + RequesterLastName},
+                        {Constants.PLACEHOLDER_TRANSFER_AMOUNT, amountArray[0].ToString()},
+                        {Constants.PLACEHLODER_CENTS, amountArray[1].ToString()},
+                        {Constants.MEMO, memo},
+                        {Constants.PLACEHOLDER_REJECT_LINK, rejectLink},
+                        {Constants.PLACEHOLDER_PAY_LINK, paylink},
+                        {Constants.PLACEHOLDER_FRIEND_FIRST_NAME, RequesterFirstName}
+                    };
+
+                            toAddress = (isTesting) ? "testing_request-recip@nooch.com" : CommonHelper.GetDecryptedData(tenantsMemberObject.UserName);
+
+                            try
+                            {
+                                // Still to do: ADD CURRENT MONTH IN BEGINNING OF THE SUBJECT, "December Rent Request from Landlord"
+                                string subject = isForRentScene
+                                                 ? "$" + wholeAmount + " Payment Request from Rent Scene"
+                                                 : "Payment Request from " + RequesterFirstName + " " + RequesterLastName + " - " + "$" + wholeAmount;
+
+                                CommonHelper.SendEmail(templateToUse_Recip, fromAddress, CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(tenantsMemberObject.FirstName)) + " " + CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(tenantsMemberObject.LastName)), toAddress,
+                                                            subject, tokens2, null, null);
+
+                                Logger.Info("RentTrans -> RequestRentToExistingTenant  - [" + templateToUse_Recip + "] email sent to [" + toAddress + "] successfully.");
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error("RentTrans -> RequestRentToExistingTenant - [" + templateToUse_Recip + "] email NOT sent to [" + toAddress +
+                                                       "], [Exception: " + ex + "]");
+                            }
+
+                            #endregion Email To Request Recipient
+
+
+
+                          
+
+                            #endregion
+                            result.success = false;
+                            result.msg = "Request made successfully.";
+                            return result;
+                        }
+                        else
+                        {
+                            // failure while saving
+                            result.success = false;
+                            result.msg = "Error while saving Transaction. Retyr!";
+                            return result;
+                        }
+
+                    }
+
+                }
+                else
+                {
+                    result.success = false;
+                    result.msg = "Invalid access token.";
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.success = false;
+                result.msg = "Invalid access token.";
+                Logger.Error("Landlords API -> RentTrans -> Error details -" +
+                             ex.ToString());
+                return result;
+            }
+            return null;
+        }
+
+
     }
 }

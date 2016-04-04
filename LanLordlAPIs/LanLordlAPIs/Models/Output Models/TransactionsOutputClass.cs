@@ -80,4 +80,20 @@ namespace LanLordlAPIs.Models.Output_Models
         public string id { get; set; }
         public string longUrl { get; set; }
     }
+
+
+    public class SendRentRequestToTenantInputClass
+    {
+        public basicLandlordPayload User { get; set; }
+
+
+        public string Amount { get; set; }
+        public string Memo { get; set; }
+        public string PropertyId { get; set; }
+        public string UnitId { get; set; }
+        public string UOBTId { get; set; }
+        public string TenetsMemberId { get; set; }
+
+
+    }
 }
