@@ -2487,7 +2487,10 @@ namespace LanLordlAPIs.Controllers
 
                         if (landlordObj != null)
                         {
-                            string fromAddress = CommonHelper.GetDecryptedData(landlordObj.eMail);
+                            // CLIFF (4/26/16): We have to use a "@nooch.com" email address as the fromAddress b/c the upgrade to MailChimp now requires using only "verified domains"
+                            //string fromAddress = CommonHelper.GetDecryptedData(landlordObj.eMail);
+                            string fromAddress = CommonHelper.GetValueFromConfig("transfersMail");
+                            
                             string landlordFullName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.FirstName)) + " " +
                                                       CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.LastName));
 
@@ -2591,15 +2594,14 @@ namespace LanLordlAPIs.Controllers
                 {
                     result.ErrorMessage = result.AuthTokenValidation.ErrorMessage;
                 }
-
-                return result;
             }
             catch (Exception ex)
             {
                 Logger.Error("UsersControllers -> SendEmailsToTenants FAILED - [Outer Exception: " + ex.Message + "]");
                 result.ErrorMessage = "Server error";
-                return result;
             }
+
+            return result;
         }
 
 

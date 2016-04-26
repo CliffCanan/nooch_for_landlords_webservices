@@ -238,19 +238,15 @@ namespace LanLordlAPIs.Controllers
                 #endregion
 
 
-
                 #region Define Variables From Transaction for Notifications
 
                 var fromAddress = CommonHelper.GetValueFromConfig("transfersMail");
                 string senderUserName = CommonHelper.GetDecryptedData(sender.UserName);
                 string senderFirstName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(sender.FirstName));
                 string senderLastName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(sender.LastName));
-                string recipientFirstName =
-                    CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(moneyRecipient.FirstName));
-                string recipientLastName =
-                    CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(moneyRecipient.LastName));
+                string recipientFirstName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(moneyRecipient.FirstName));
+                string recipientLastName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(moneyRecipient.LastName));
                 string receiverUserName = CommonHelper.GetDecryptedData(moneyRecipient.UserName);
-
 
                 string wholeAmount = Convert.ToDecimal(input.TransRequest.Amount).ToString("n2");
                 string[] s3 = wholeAmount.Split('.');
@@ -332,7 +328,6 @@ namespace LanLordlAPIs.Controllers
                     //string recepientLastName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(requester.LastName));
 
 
-
                     SynapseV3AddTrans_ReusableClass transactionResultFromSynapseAPI =
                         CommonHelper.AddTransSynapseV3Reusable(sender_oauth, sender_fingerPrint, sender_bank_node_id,
                             amount, fee, receiver_oauth, receiver_fingerprint, receiver_bank_node_id, suppID_or_transID,
@@ -341,10 +336,7 @@ namespace LanLordlAPIs.Controllers
 
                     if (transactionResultFromSynapseAPI.success == true)
                     {
-
                         #region Synapse Response Was Successful
-
-
 
                         #region Send Email to Sender on transfer success
 
@@ -618,20 +610,19 @@ namespace LanLordlAPIs.Controllers
                     var resp = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
                     JObject jsonFromSynapse = JObject.Parse(resp);
 
-                    Logger.Info("Landlords API -> RentTrans -> PayToTenants  FAILED. [Exception: " + jsonFromSynapse +
-                                "]");
+                    Logger.Info("Landlords API -> RentTrans -> PayToTenants  FAILED. [Exception: " + jsonFromSynapse + "]");
 
                     JToken token = jsonFromSynapse["reason"];
 
                     if (token != null)
                     {
-                        result.ErrorMessage = "Sorry There Was A Problem (1): " + token.ToString();
+                        result.ErrorMessage = "Sorry There Was A Problem - PayToTenants(1): " + token.ToString();
                         return result;
                     }
                     else
                     {
                         // bad request or some other error
-                        result.ErrorMessage = "Sorry There Was A Problem (2): " + ex.ToString();
+                        result.ErrorMessage = "Sorry There Was A Problem PayToTenants(2): " + ex.ToString();
                         return result;
                     }
                 }
@@ -640,8 +631,6 @@ namespace LanLordlAPIs.Controllers
                 // This should never be reached b/c code should hit the failure section
 
                 result.IsSuccess = true;
-
-
             }
             catch (Exception ex)
             {
@@ -986,13 +975,11 @@ namespace LanLordlAPIs.Controllers
 
                     Logger.Info("RentTrans -> ChargeTenant ->  requestReceivedToNewUser email sent to [" + toAddress +
                                 "] successfully");
-
                 }
                 catch (Exception ex)
                 {
                     Logger.Error("RentTrans -> ChargeTenant -> requestReceivedToNewUser email NOT sent to  [" +
-                                 toAddress +
-                                 "], [Exception: " + ex + "]");
+                                 toAddress + "], [Exception: " + ex + "]");
                 }
 
                 #endregion Email To Request Recipient
@@ -1101,10 +1088,8 @@ namespace LanLordlAPIs.Controllers
 
                 #endregion Send Notifications
 
-
                 result.IsSuccess = true;
                 result.ErrorMessage = "Ok";
-
             }
             catch (Exception ex)
             {
@@ -1927,8 +1912,7 @@ namespace LanLordlAPIs.Controllers
         [ActionName("ChargeTenantRentTrans")]
         public CreatePropertyResultOutput ChargeTenantRentTrans(ChargeTenantInputClass input)
         {
-            Logger.Info("Landlords API -> RentTrans -> ChargeTenantRentTrans - Requested by [" + input.User.LandlordId +
-                        "]");
+            Logger.Info("Landlords API -> RentTrans -> ChargeTenantRentTrans - Requested by [" + input.User.LandlordId + "]");
 
             CreatePropertyResultOutput result = new CreatePropertyResultOutput();
             result.IsSuccess = false;
@@ -2249,7 +2233,6 @@ namespace LanLordlAPIs.Controllers
 
                     Logger.Info("RentTrans -> ChargeTenant ->  ChargeTenantRentTrans email sent to [" + toAddress +
                                 "] successfully");
-
                 }
                 catch (Exception ex)
                 {
@@ -2363,10 +2346,8 @@ namespace LanLordlAPIs.Controllers
 
                 #endregion Send Notifications
 
-
                 result.IsSuccess = true;
                 result.ErrorMessage = "Ok";
-
             }
             catch (Exception ex)
             {
@@ -2574,14 +2555,13 @@ namespace LanLordlAPIs.Controllers
             result.success = false;
             result.msg = "Initial";
 
-            Logger.Info("Landlords API -> RentTrans -> SendTransReminderEmail Initiated. MemberID: [" +
-                        input.User.LandlordId + "], " +
+            Logger.Info("Landlords API -> RentTrans -> SendTransReminderEmail Initiated. " +
+                        "MemberID: [" + input.User.LandlordId + "], " +
                         "TransactionId: [" + input.TransactionId + "], " +
                         "ReminderType: [" + input.ReminderType + "]");
 
             try
             {
-
                 Guid transGuid = CommonHelper.ConvertToGuid(input.TransactionId);
 
                 Guid LandlordGuid = CommonHelper.ConvertToGuid(input.User.LandlordId);
@@ -2605,22 +2585,15 @@ namespace LanLordlAPIs.Controllers
 
                         if (transObj != null)
                         {
-                            Tenant tenantObject =
-                                CommonHelper.GetTenantByTenantId(CommonHelper.ConvertToGuid(transObj.TenantId.ToString()));
+                            Tenant tenantObject = CommonHelper.GetTenantByTenantId(CommonHelper.ConvertToGuid(transObj.TenantId.ToString()));
 
-                            Member tenantMemberObject =
-                                CommonHelper.GetMemberByMemberId(
-                                    CommonHelper.ConvertToGuid(tenantObject.MemberId.ToString()));
-
+                            Member tenantMemberObject = CommonHelper.GetMemberByMemberId(CommonHelper.ConvertToGuid(tenantObject.MemberId.ToString()));
 
                             #region Preparing and sending reminder email
 
                             if (input.ReminderType == "RequestMoneyReminderToNewUser" ||
                                 input.ReminderType == "RequestMoneyReminderToExistingUser")
                             {
-                                #region Requests - Both Types
-
-
                                 #region Setup Common Variables
 
                                 string fromAddress = CommonHelper.GetValueFromConfig("transfersMail");
@@ -2640,7 +2613,6 @@ namespace LanLordlAPIs.Controllers
 
                                 // or link to some new landing page here
                                 //string payLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),"trans/payRent.aspx?TransactionId=" + transObj.RentTransactionId);
-
 
                                 string s22 = Convert.ToDecimal(transObj.Amount.ToString()).ToString("n2");
                                 string[] s32 = s22.Split('.');
@@ -2667,7 +2639,6 @@ namespace LanLordlAPIs.Controllers
                                         memo = "For " + transObj.Memo.ToString();
                                     }
                                 }
-
 
                                 // this solved landling page problem I thought above
                                 bool isForRentScene = true;
@@ -2763,9 +2734,8 @@ namespace LanLordlAPIs.Controllers
                                             CommonHelper.GetValueFromConfig("AppKey"),
                                             CommonHelper.GetValueFromConfig("MasterSecret"));
 
-                                        Logger.Info(
-                                            "Landlords API -> RentTrans -> SendTransReminderEmail - (B/t 2 Existing Nooch Users) - Push notification sent successfully - [Username: " +
-                                            toAddress + "], [Device Token: " + tenantMemberObject.DeviceToken + "]");
+                                        Logger.Info("Landlords API -> RentTrans -> SendTransReminderEmail - (B/t 2 Existing Nooch Users) - Push notification sent successfully - [Username: " +
+                                                    toAddress + "], [Device Token: " + tenantMemberObject.DeviceToken + "]");
                                     }
                                     catch (Exception ex)
                                     {
@@ -2780,55 +2750,42 @@ namespace LanLordlAPIs.Controllers
 
                                 result.msg = "Reminder mail sent successfully.";
                                 result.success = true;
-                                return result;
-
 
                                 #endregion RequestMoneyReminderToExistingUser
-
-
-                                #endregion Requests - Both Types
                             }
 
-                            #endregion
-
-
-
+                            #endregion Preparing and sending reminder email
                         }
                         else
                         {
-                            result.success = false;
                             result.msg = "Invalid Transaction Id or Transaction no more pending.";
-                            return result;
                         }
                     }
                 }
                 else
                 {
-                    result.success = false;
                     result.msg = "Invalid access token.";
-                    return result;
                 }
-
-
             }
             catch (Exception ex)
             {
-                result.success = false;
+                Logger.Error("Landlords API -> RentTrans -> Error details -" + ex.ToString());
                 result.msg = "Invalid access token.";
-                Logger.Error("Landlords API -> RentTrans -> Error details -" +
-                             ex.ToString());
-                return result;
             }
-            return null;
+
+            return result;
         }
 
 
-        // to requet money to existing Tenant
+        /// <summary>
+        /// To request money to existing Tenant
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns>GenericInternalResponse()</returns>
         [HttpPost]
         [ActionName("RequestRentToExistingTenant")]
         public GenericInternalResponse RequestRentToExistingTenant(SendRentRequestToTenantInputClass input)
         {
-
             GenericInternalResponse result = new GenericInternalResponse();
             result.success = false;
             result.msg = "Initial";
@@ -2840,12 +2797,9 @@ namespace LanLordlAPIs.Controllers
 
             try
             {
-
-
                 Guid LandlordGuid = CommonHelper.ConvertToGuid(input.User.LandlordId);
                 Guid LandlordMemberIdGuid = CommonHelper.ConvertToGuid(input.User.MemberId);
                 Guid TenantsMemberGUID = CommonHelper.ConvertToGuid(input.TenetsMemberId);
-
 
                 Landlord landlordObj = CommonHelper.GetLandlordByLandlordId(LandlordGuid);
 
@@ -2860,7 +2814,6 @@ namespace LanLordlAPIs.Controllers
                 {
                     using (NOOCHEntities obj = new NOOCHEntities())
                     {
-
                         Logger.Info("RentTrans -> RequestRentToExistingTenant - Checkpoing #1 - Access Token is OK!");
 
                         // preparing new Transactions table object
@@ -2901,11 +2854,10 @@ namespace LanLordlAPIs.Controllers
 
                         obj.Transactions.Add(rentTrans);
                         int saveResult = obj.SaveChanges();
+
                         if (saveResult > 0)
                         {
                             // success
-
-
                             #region Send Notifications
 
                             #region Set Up Variables
@@ -2965,7 +2917,6 @@ namespace LanLordlAPIs.Controllers
 
                             bool isTesting = Convert.ToBoolean(CommonHelper.GetValueFromConfig("IsRunningOnSandBox"));
 
-
                             // Send email to REQUESTER / Landlord (person who sent this request)
                             #region Email To Requester
 
@@ -2997,7 +2948,6 @@ namespace LanLordlAPIs.Controllers
                             }
 
                             #endregion Email To Requester
-
 
                             #region Email To Request Recipient
 
@@ -3056,44 +3006,31 @@ namespace LanLordlAPIs.Controllers
 
                             #endregion Email To Request Recipient
 
+                            #endregion Send Notifications
 
-
-                          
-
-                            #endregion
                             result.success = true;
                             result.msg = "Request made successfully.";
-                            return result;
                         }
                         else
                         {
                             // failure while saving
-                            result.success = false;
                             result.msg = "Error while saving Transaction. Retyr!";
-                            return result;
                         }
-
                     }
-
                 }
                 else
                 {
-                    result.success = false;
                     result.msg = "Invalid access token.";
-                    return result;
                 }
             }
             catch (Exception ex)
             {
-                result.success = false;
                 result.msg = "Invalid access token.";
                 Logger.Error("Landlords API -> RentTrans -> Error details -" +
                              ex.ToString());
-                return result;
             }
-            return null;
+
+            return result;
         }
-
-
     }
 }

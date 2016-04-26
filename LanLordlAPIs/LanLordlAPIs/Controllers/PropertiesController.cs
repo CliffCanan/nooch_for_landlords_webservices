@@ -1200,6 +1200,7 @@ namespace LanLordlAPIs.Controllers
                                     string LandlordLastName = CommonHelper.UppercaseFirst((CommonHelper.GetDecryptedData(landlordObj.LastName)));
                                     string LandlordFullName = LandlordFirstName + " " + LandlordLastName;
                                     string landlordEmail = CommonHelper.GetDecryptedData(landlordObj.eMail);
+                                    string fromAddress = CommonHelper.GetValueFromConfig("transfersMail");
 
                                     //string CancelRequestLinkForLandlord = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/CancelRequest.aspx?TransactionId=" + trans.TransactionId + "&MemberId=" + landlordDetailsInMembersTable.MemberId + "&UserType=U6De3haw2r4mSgweNpdgXQ==");
 
@@ -1234,12 +1235,11 @@ namespace LanLordlAPIs.Controllers
 
                                     try
                                     {
-                                        CommonHelper.SendEmail("requestReceivedToNewUser", landlordEmail, LandlordFullName, email,
+                                        CommonHelper.SendEmail("requestReceivedToNewUser", fromAddress, LandlordFullName, email,
                                             "Rent Payment request from " + LandlordFirstName + " " + LandlordLastName,
                                              tokens2, null, null);
 
                                         Logger.Info("PropertiesController -> requestReceivedToNewUser email sent to - [" + email + "] successfully.");
-
                                     }
                                     catch (Exception ex)
                                     {
@@ -1248,15 +1248,6 @@ namespace LanLordlAPIs.Controllers
                                     }
 
                                     #endregion Send Email to New TENANT
-
-
-                                    //string rentAmount = input.rent;
-                                    //string landlordName = "";
-                                    //string propertyName = "";
-                                    //string unitNum = "";
-
-                                    //CommonHelper.SendEmail(Constants.TEMPLATE_REGISTRATION, CommonHelper.GetValueFromConfig("welcomeMail"),
-                                    //                            email, "NEW Tenant Created :-) $" + input.rent, null, null);
 
                                     result.success = true;
                                     result.msg = "Request made successfully.";
