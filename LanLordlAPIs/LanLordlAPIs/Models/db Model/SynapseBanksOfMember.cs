@@ -45,5 +45,6 @@ namespace LanLordlAPIs.Models.db_Model
         public string type_bank { get; set; }
         public string type_synapse { get; set; }
         public Nullable<bool> is_active { get; set; }
+        public Nullable<bool> IsAddedUsingRoutingNumber { get; set; }
     }
 }

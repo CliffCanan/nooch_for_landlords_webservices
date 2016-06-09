@@ -198,6 +198,8 @@
     <Property Name="TransferLimit" Type="varchar(max)" />
     <Property Name="FacebookUserId" Type="varchar(max)" />
     <Property Name="GoogleUserId" Type="varchar(max)" />
+    <Property Name="cipTag" Type="varchar(max)" />
+    <Property Name="isRentScene" Type="bit" />
   </EntityType>
   <EntityType Name="MembersIPAddresses">
     <Key>
@@ -326,6 +328,7 @@
     <Property Name="type_bank" Type="varchar(max)" />
     <Property Name="type_synapse" Type="varchar(max)" />
     <Property Name="is_active" Type="bit" />
+    <Property Name="IsAddedUsingRoutingNumber" Type="bit" />
   </EntityType>
   <EntityType Name="SynapseCreateUserResults">
     <Key>
@@ -340,7 +343,7 @@
     <Property Name="refresh_token" Type="varchar(max)" />
     <Property Name="success" Type="bit" />
     <Property Name="username" Type="varchar(max)" />
-    <Property Name="user_id" Type="int" />
+    <Property Name="user_id" Type="varchar(max)" />
     <Property Name="IsDeleted" Type="bit" />
     <Property Name="ModifiedOn" Type="datetime" />
     <Property Name="IsForNonNoochUser" Type="bit" />
@@ -353,6 +356,10 @@
     <Property Name="permission" Type="varchar(max)" />
     <Property Name="Phone_number" Type="varchar(max)" />
     <Property Name="photos" Type="varchar(max)" />
+    <Property Name="expires_at" Type="varchar" MaxLength="50" />
+    <Property Name="physical_doc" Type="varchar(max)" />
+    <Property Name="virtual_doc" Type="varchar(max)" />
+    <Property Name="extra_security" Type="varchar(max)" />
   </EntityType>
   <EntityType Name="Tenants">
     <Key>
@@ -428,6 +435,8 @@
     <Property Name="InvitationSentTo" Type="varchar" MaxLength="500" />
     <Property Name="IsPhoneInvitation" Type="bit" />
     <Property Name="PhoneNumberInvited" Type="varchar" MaxLength="50" />
+    <Property Name="SynapseStatus" Type="varchar" MaxLength="50" />
+    <Property Name="DateAccepted" Type="datetime" />
   </EntityType>
   <EntityType Name="UnitsOccupiedByTenants">
     <Key>

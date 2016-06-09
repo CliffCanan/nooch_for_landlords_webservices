@@ -203,6 +203,8 @@
           <Property Name="TransferLimit" Type="varchar(max)" />
           <Property Name="FacebookUserId" Type="varchar(max)" />
           <Property Name="GoogleUserId" Type="varchar(max)" />
+          <Property Name="cipTag" Type="varchar(max)" />
+          <Property Name="isRentScene" Type="bit" />
         </EntityType>
         <EntityType Name="MembersIPAddresses">
           <Key>
@@ -331,6 +333,7 @@
           <Property Name="type_bank" Type="varchar(max)" />
           <Property Name="type_synapse" Type="varchar(max)" />
           <Property Name="is_active" Type="bit" />
+          <Property Name="IsAddedUsingRoutingNumber" Type="bit" />
         </EntityType>
         <EntityType Name="SynapseCreateUserResults">
           <Key>
@@ -345,7 +348,7 @@
           <Property Name="refresh_token" Type="varchar(max)" />
           <Property Name="success" Type="bit" />
           <Property Name="username" Type="varchar(max)" />
-          <Property Name="user_id" Type="int" />
+          <Property Name="user_id" Type="varchar(max)" />
           <Property Name="IsDeleted" Type="bit" />
           <Property Name="ModifiedOn" Type="datetime" />
           <Property Name="IsForNonNoochUser" Type="bit" />
@@ -358,6 +361,10 @@
           <Property Name="permission" Type="varchar(max)" />
           <Property Name="Phone_number" Type="varchar(max)" />
           <Property Name="photos" Type="varchar(max)" />
+          <Property Name="expires_at" Type="varchar" MaxLength="50" />
+          <Property Name="physical_doc" Type="varchar(max)" />
+          <Property Name="virtual_doc" Type="varchar(max)" />
+          <Property Name="extra_security" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="Tenants">
           <Key>
@@ -433,6 +440,8 @@
           <Property Name="InvitationSentTo" Type="varchar" MaxLength="500" />
           <Property Name="IsPhoneInvitation" Type="bit" />
           <Property Name="PhoneNumberInvited" Type="varchar" MaxLength="50" />
+          <Property Name="SynapseStatus" Type="varchar" MaxLength="50" />
+          <Property Name="DateAccepted" Type="datetime" />
         </EntityType>
         <EntityType Name="UnitsOccupiedByTenants">
           <Key>
@@ -950,6 +959,7 @@
           <Property Name="type_bank" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="type_synapse" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="is_active" Type="Boolean" />
+          <Property Name="IsAddedUsingRoutingNumber" Type="Boolean" />
         </EntityType>
         <ComplexType Name="GetTenantsInGivenPropertyId_Result2">
           <Property Type="Guid" Name="TenantId" Nullable="false" />
@@ -993,6 +1003,10 @@
           <Property Name="permission" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Phone_number" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="photos" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="expires_at" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="physical_doc" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="virtual_doc" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="extra_security" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="MembersIPAddress">
           <Key>
@@ -1123,6 +1137,8 @@
           <NavigationProperty Name="PasswordResetRequests" Relationship="NOOCHModel.FK_PasswordResetRequests_Members" FromRole="Member" ToRole="PasswordResetRequest" />
           <NavigationProperty Name="Transactions" Relationship="NOOCHModel.FK_Transactions_Members2" FromRole="Member" ToRole="Transaction" />
           <NavigationProperty Name="Transactions1" Relationship="NOOCHModel.FK_Transactions_Members3" FromRole="Member" ToRole="Transaction" />
+          <Property Name="cipTag" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="isRentScene" Type="Boolean" />
         </EntityType>
         <EntityType Name="Property">
           <Key>
@@ -1265,6 +1281,8 @@
           <NavigationProperty Name="GeoLocation" Relationship="NOOCHModel.FK_Transactions_GeoLocations" FromRole="Transaction" ToRole="GeoLocation" />
           <NavigationProperty Name="Member" Relationship="NOOCHModel.FK_Transactions_Members2" FromRole="Transaction" ToRole="Member" />
           <NavigationProperty Name="Member1" Relationship="NOOCHModel.FK_Transactions_Members3" FromRole="Transaction" ToRole="Member" />
+          <Property Name="SynapseStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateAccepted" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="UnitsOccupiedByTenant">
           <Key>
@@ -1527,6 +1545,7 @@
           <EntitySetMapping Name="SynapseBanksOfMembers">
             <EntityTypeMapping TypeName="NOOCHModel.SynapseBanksOfMember">
               <MappingFragment StoreEntitySet="SynapseBanksOfMembers">
+                <ScalarProperty Name="IsAddedUsingRoutingNumber" ColumnName="IsAddedUsingRoutingNumber" />
                 <ScalarProperty Name="is_active" ColumnName="is_active" />
                 <ScalarProperty Name="type_synapse" ColumnName="type_synapse" />
                 <ScalarProperty Name="type_bank" ColumnName="type_bank" />
@@ -1584,6 +1603,10 @@
           <EntitySetMapping Name="SynapseCreateUserResults">
             <EntityTypeMapping TypeName="NOOCHModel.SynapseCreateUserResult">
               <MappingFragment StoreEntitySet="SynapseCreateUserResults">
+                <ScalarProperty Name="extra_security" ColumnName="extra_security" />
+                <ScalarProperty Name="virtual_doc" ColumnName="virtual_doc" />
+                <ScalarProperty Name="physical_doc" ColumnName="physical_doc" />
+                <ScalarProperty Name="expires_at" ColumnName="expires_at" />
                 <ScalarProperty Name="photos" ColumnName="photos" />
                 <ScalarProperty Name="Phone_number" ColumnName="Phone_number" />
                 <ScalarProperty Name="permission" ColumnName="permission" />
@@ -1668,6 +1691,8 @@
           <EntitySetMapping Name="Members">
             <EntityTypeMapping TypeName="NOOCHModel.Member">
               <MappingFragment StoreEntitySet="Members">
+                <ScalarProperty Name="isRentScene" ColumnName="isRentScene" />
+                <ScalarProperty Name="cipTag" ColumnName="cipTag" />
                 <ScalarProperty Name="GoogleUserId" ColumnName="GoogleUserId" />
                 <ScalarProperty Name="FacebookUserId" ColumnName="FacebookUserId" />
                 <ScalarProperty Name="TransferLimit" ColumnName="TransferLimit" />
@@ -1846,6 +1871,8 @@
           <EntitySetMapping Name="Transactions">
             <EntityTypeMapping TypeName="NOOCHModel.Transaction">
               <MappingFragment StoreEntitySet="Transactions">
+                <ScalarProperty Name="DateAccepted" ColumnName="DateAccepted" />
+                <ScalarProperty Name="SynapseStatus" ColumnName="SynapseStatus" />
                 <ScalarProperty Name="PhoneNumberInvited" ColumnName="PhoneNumberInvited" />
                 <ScalarProperty Name="IsPhoneInvitation" ColumnName="IsPhoneInvitation" />
                 <ScalarProperty Name="InvitationSentTo" ColumnName="InvitationSentTo" />

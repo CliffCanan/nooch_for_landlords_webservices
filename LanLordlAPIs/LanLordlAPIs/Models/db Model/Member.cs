@@ -88,6 +88,8 @@ namespace LanLordlAPIs.Models.db_Model
         public string TransferLimit { get; set; }
         public string FacebookUserId { get; set; }
         public string GoogleUserId { get; set; }
+        public string cipTag { get; set; }
+        public Nullable<bool> isRentScene { get; set; }
     
         public virtual ICollection<MemberNotification> MemberNotifications { get; set; }
         public virtual ICollection<MemberPrivacySetting> MemberPrivacySettings { get; set; }

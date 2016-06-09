@@ -283,6 +283,7 @@
     <Property Name="type_bank" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
     <Property Name="type_synapse" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
     <Property Name="is_active" Type="Boolean" />
+    <Property Name="IsAddedUsingRoutingNumber" Type="Boolean" />
   </EntityType>
   <ComplexType Name="GetTenantsInGivenPropertyId_Result2">
     <Property Type="Guid" Name="TenantId" Nullable="false" />
@@ -326,6 +327,10 @@
     <Property Name="permission" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
     <Property Name="Phone_number" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
     <Property Name="photos" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="expires_at" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="physical_doc" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="virtual_doc" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="extra_security" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
   </EntityType>
   <EntityType Name="MembersIPAddress">
     <Key>
@@ -456,6 +461,8 @@
     <NavigationProperty Name="PasswordResetRequests" Relationship="NOOCHModel.FK_PasswordResetRequests_Members" FromRole="Member" ToRole="PasswordResetRequest" />
     <NavigationProperty Name="Transactions" Relationship="NOOCHModel.FK_Transactions_Members2" FromRole="Member" ToRole="Transaction" />
     <NavigationProperty Name="Transactions1" Relationship="NOOCHModel.FK_Transactions_Members3" FromRole="Member" ToRole="Transaction" />
+    <Property Name="cipTag" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="isRentScene" Type="Boolean" />
   </EntityType>
   <EntityType Name="Property">
     <Key>
@@ -598,6 +605,8 @@
     <NavigationProperty Name="GeoLocation" Relationship="NOOCHModel.FK_Transactions_GeoLocations" FromRole="Transaction" ToRole="GeoLocation" />
     <NavigationProperty Name="Member" Relationship="NOOCHModel.FK_Transactions_Members2" FromRole="Transaction" ToRole="Member" />
     <NavigationProperty Name="Member1" Relationship="NOOCHModel.FK_Transactions_Members3" FromRole="Transaction" ToRole="Member" />
+    <Property Name="SynapseStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="DateAccepted" Type="DateTime" Precision="3" />
   </EntityType>
   <EntityType Name="UnitsOccupiedByTenant">
     <Key>

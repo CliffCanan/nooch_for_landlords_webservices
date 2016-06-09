@@ -133,6 +133,7 @@
     <EntitySetMapping Name="SynapseBanksOfMembers">
       <EntityTypeMapping TypeName="NOOCHModel.SynapseBanksOfMember">
         <MappingFragment StoreEntitySet="SynapseBanksOfMembers">
+          <ScalarProperty Name="IsAddedUsingRoutingNumber" ColumnName="IsAddedUsingRoutingNumber" />
           <ScalarProperty Name="is_active" ColumnName="is_active" />
           <ScalarProperty Name="type_synapse" ColumnName="type_synapse" />
           <ScalarProperty Name="type_bank" ColumnName="type_bank" />
@@ -190,6 +191,10 @@
     <EntitySetMapping Name="SynapseCreateUserResults">
       <EntityTypeMapping TypeName="NOOCHModel.SynapseCreateUserResult">
         <MappingFragment StoreEntitySet="SynapseCreateUserResults">
+          <ScalarProperty Name="extra_security" ColumnName="extra_security" />
+          <ScalarProperty Name="virtual_doc" ColumnName="virtual_doc" />
+          <ScalarProperty Name="physical_doc" ColumnName="physical_doc" />
+          <ScalarProperty Name="expires_at" ColumnName="expires_at" />
           <ScalarProperty Name="photos" ColumnName="photos" />
           <ScalarProperty Name="Phone_number" ColumnName="Phone_number" />
           <ScalarProperty Name="permission" ColumnName="permission" />
@@ -274,6 +279,8 @@
     <EntitySetMapping Name="Members">
       <EntityTypeMapping TypeName="NOOCHModel.Member">
         <MappingFragment StoreEntitySet="Members">
+          <ScalarProperty Name="isRentScene" ColumnName="isRentScene" />
+          <ScalarProperty Name="cipTag" ColumnName="cipTag" />
           <ScalarProperty Name="GoogleUserId" ColumnName="GoogleUserId" />
           <ScalarProperty Name="FacebookUserId" ColumnName="FacebookUserId" />
           <ScalarProperty Name="TransferLimit" ColumnName="TransferLimit" />
@@ -452,6 +459,8 @@
     <EntitySetMapping Name="Transactions">
       <EntityTypeMapping TypeName="NOOCHModel.Transaction">
         <MappingFragment StoreEntitySet="Transactions">
+          <ScalarProperty Name="DateAccepted" ColumnName="DateAccepted" />
+          <ScalarProperty Name="SynapseStatus" ColumnName="SynapseStatus" />
           <ScalarProperty Name="PhoneNumberInvited" ColumnName="PhoneNumberInvited" />
           <ScalarProperty Name="IsPhoneInvitation" ColumnName="IsPhoneInvitation" />
           <ScalarProperty Name="InvitationSentTo" ColumnName="InvitationSentTo" />
