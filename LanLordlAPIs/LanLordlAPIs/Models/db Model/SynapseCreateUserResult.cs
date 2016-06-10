@@ -23,7 +23,7 @@ namespace LanLordlAPIs.Models.db_Model
         public string refresh_token { get; set; }
         public Nullable<bool> success { get; set; }
         public string username { get; set; }
-        public Nullable<int> user_id { get; set; }
+        public string user_id { get; set; }
         public Nullable<bool> IsDeleted { get; set; }
         public Nullable<System.DateTime> ModifiedOn { get; set; }
         public Nullable<bool> IsForNonNoochUser { get; set; }

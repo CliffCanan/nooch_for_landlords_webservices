@@ -288,9 +288,13 @@
     <Compile Include="Models\Input Models\LoginInput.cs" />
     <Compile Include="Models\Input Models\PasswordResetInputClass.cs" />
     <Compile Include="Models\Input Models\public class GameThriveMsgContent.cs" />
+    <Compile Include="Models\Input Models\SynapseV3RefreshOauthKeyAndSign_Input.cs" />
+    <Compile Include="Models\Input Models\SynapseV3Signin_InputNoPin.cs" />
     <Compile Include="Models\Output Models\CheckAndRegisterLandlordByEmailResult.cs" />
     <Compile Include="Models\Output Models\LandlordsPaymentHistoryClass.cs" />
     <Compile Include="Models\Output Models\LoginResult.cs" />
+    <Compile Include="Models\Output Models\synapseCreateUserV3Result_int.cs" />
+    <Compile Include="Models\Output Models\synapseV3checkUsersOauthKey.cs" />
     <Compile Include="Models\Output Models\TransactionsOutputClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -232,6 +232,7 @@ namespace LanLordlAPIs.Controllers
 
                                     result.IsSuccess = true;
                                     result.ErrorMessage = "OK";
+                                   
                                 }
                                 else
                                 {
@@ -259,6 +260,7 @@ namespace LanLordlAPIs.Controllers
                         Landlord l = CommonHelper.AddNewLandlordEntryInDb(llDetails.FirstName,
                             llDetails.LastName, llDetails.eMail, llDetails.Password, true, true,
                             llDetails.ip, llDetails.isBusiness, mem.MemberDetails.MemberId);
+                        
 
                         if (l != null)
                         {
@@ -291,6 +293,7 @@ namespace LanLordlAPIs.Controllers
             return result;
         }
 
+    
 
         [HttpPost]
         [ActionName("Login")]
@@ -1812,7 +1815,7 @@ namespace LanLordlAPIs.Controllers
             {
                 Guid landlordguidId = new Guid(landlordsInput.DeviceInfo.LandlorId);
                 var checkToken = CommonHelper.AuthTokenValidation(landlordguidId, landlordsInput.DeviceInfo.AccessToken);
-
+                res.AuthTokenValidation = checkToken;
                 if (checkToken.IsTokenOk)
                 {
                     // valid access token continue with edit
@@ -2137,6 +2140,10 @@ namespace LanLordlAPIs.Controllers
 
                             if (landlordDetails != null)
                             {
+                                
+                                result.LandlordId = landlordDetails.LandlordId.ToString();
+                                result.MemberId = landlordDetails.MemberId.ToString();
+                                result.AccessToken = CommonHelper.GetDecryptedData(landlordDetails.WebAccessToken);
                                 switch (input.RequestFor)
                                 {
                                     case "Email":

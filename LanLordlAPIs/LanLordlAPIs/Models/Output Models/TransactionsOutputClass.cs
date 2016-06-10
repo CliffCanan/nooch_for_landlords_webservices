@@ -65,7 +65,7 @@ namespace LanLordlAPIs.Models.Output_Models
     public class SynapseDetailsClass
     {
         public SynapseBanksOfMember BankDetails { get; set; }
-        public SynapseCreateUserResult UserDetails { get; set; }
+        public SynapseDetailsClass_UserDetails UserDetails { get; set; }
 
         public bool wereBankDetailsFound { get; set; }
         public bool wereUserDetailsFound { get; set; }
@@ -73,6 +73,8 @@ namespace LanLordlAPIs.Models.Output_Models
         public string UserDetailsErrMessage { get; set; }
         public string AccountDetailsErrMessage { get; set; }
     }
+
+   
 
     public class googleURLShortnerResponseClass
     {
@@ -96,4 +98,6 @@ namespace LanLordlAPIs.Models.Output_Models
 
 
     }
+
+    
 }
