@@ -3076,3 +3076,166 @@ INFO  2016-06-10 15:45:06,758 3692193ms Logger                 Info             
 INFO  2016-06-10 15:45:14,612 3700047ms Logger                 Info               - UsersController -> deleteSynapseBank Initiated - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077]
 INFO  2016-06-10 15:45:20,923 3706358ms Logger                 Info               - UsersController -> SendEmailsToTenants Initiated - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [TenantID To Send To: 4F8DD855-6CCF-4289-8238-0650D01DABAB]
 
+INFO  2016-06-11 15:52:37,273 211513ms Logger                 Info               - PropertiesController -> EditProperty Initiated - [LandlordID: f3c0309e-b994-442f-bb02-b144563fcf35], PropertyID: [08e028e4-d26b-4a2c-a250-00f945048a5b]
+ERROR 2016-06-11 15:52:37,932 212173ms Logger                 Error              - Landlords API -> Properties -> AddNewProperty FAILED - [LandlordID: f3c0309e-b994-442f-bb02-b144563fcf35], [Exception: System.Data.MetadataException: Unable to load the specified metadata resource.
+   at System.Data.Metadata.Edm.MetadataArtifactLoaderCompositeResource.LoadResources(String assemblyName, String resourceName, ICollection`1 uriRegistry, MetadataArtifactAssemblyResolver resolver)
+   at System.Data.Metadata.Edm.MetadataArtifactLoaderCompositeResource.CreateResourceLoader(String path, ExtensionCheck extensionCheck, String validExtension, ICollection`1 uriRegistry, MetadataArtifactAssemblyResolver resolver)
+   at System.Data.Metadata.Edm.MetadataArtifactLoader.Create(String path, ExtensionCheck extensionCheck, String validExtension, ICollection`1 uriRegistry, MetadataArtifactAssemblyResolver resolver)
+   at System.Data.Metadata.Edm.MetadataCache.SplitPaths(String paths)
+   at System.Data.Common.Utils.Memoizer`2.<>c__DisplayClass4_0.<Evaluate>b__0()
+   at System.Data.Common.Utils.Memoizer`2.Result.GetValue()
+   at System.Data.Common.Utils.Memoizer`2.Evaluate(TArg arg)
+   at System.Data.EntityClient.EntityConnection.GetMetadataWorkspace(Boolean initializeAllCollections)
+   at System.Data.Objects.ObjectContext.RetrieveMetadataWorkspaceFromConnection()
+   at System.Data.Objects.ObjectContext..ctor(EntityConnection connection, Boolean isConnectionConstructor)
+   at System.Data.Objects.ObjectContext..ctor(EntityConnection connection)
+   at System.Data.Entity.Internal.InternalConnection.CreateObjectContextFromConnectionModel()
+   at System.Data.Entity.Internal.LazyInternalConnection.CreateObjectContextFromConnectionModel()
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeContext()
+   at System.Data.Entity.Internal.InternalContext.Initialize()
+   at System.Data.Entity.Internal.InternalContext.GetEntitySetAndBaseTypeForType(Type entityType)
+   at System.Data.Entity.Internal.Linq.InternalSet`1.Initialize()
+   at System.Data.Entity.Internal.Linq.InternalSet`1.get_InternalContext()
+   at System.Data.Entity.Infrastructure.DbQuery`1.System.Linq.IQueryable.get_Provider()
+   at System.Linq.Queryable.Where[TSource](IQueryable`1 source, Expression`1 predicate)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.AuthTokenValidation(Guid LandlorId, String accesstoken) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 1604
+   at LanLordlAPIs.Controllers.PropertiesController.EditProperty(AddNewPropertyClass Property) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\PropertiesController.cs:line 526]
+INFO  2016-06-11 15:57:07,137 481378ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenantRentTrans - Requested by [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-11 15:57:07,253 481494ms Logger                 Error              - CommonHelper -> GetLandlordsMemberIdFromLandlordId EXCEPTION - [System.Data.MetadataException: Unable to load the specified metadata resource.
+   at System.Data.Metadata.Edm.MetadataArtifactLoaderCompositeResource.LoadResources(String assemblyName, String resourceName, ICollection`1 uriRegistry, MetadataArtifactAssemblyResolver resolver)
+   at System.Data.Metadata.Edm.MetadataArtifactLoaderCompositeResource.CreateResourceLoader(String path, ExtensionCheck extensionCheck, String validExtension, ICollection`1 uriRegistry, MetadataArtifactAssemblyResolver resolver)
+   at System.Data.Metadata.Edm.MetadataArtifactLoader.Create(String path, ExtensionCheck extensionCheck, String validExtension, ICollection`1 uriRegistry, MetadataArtifactAssemblyResolver resolver)
+   at System.Data.Metadata.Edm.MetadataCache.SplitPaths(String paths)
+   at System.Data.Common.Utils.Memoizer`2.<>c__DisplayClass4_0.<Evaluate>b__0()
+   at System.Data.Common.Utils.Memoizer`2.Result.GetValue()
+   at System.Data.Common.Utils.Memoizer`2.Evaluate(TArg arg)
+   at System.Data.EntityClient.EntityConnection.GetMetadataWorkspace(Boolean initializeAllCollections)
+   at System.Data.Objects.ObjectContext.RetrieveMetadataWorkspaceFromConnection()
+   at System.Data.Objects.ObjectContext..ctor(EntityConnection connection, Boolean isConnectionConstructor)
+   at System.Data.Objects.ObjectContext..ctor(EntityConnection connection)
+   at System.Data.Entity.Internal.InternalConnection.CreateObjectContextFromConnectionModel()
+   at System.Data.Entity.Internal.LazyInternalConnection.CreateObjectContextFromConnectionModel()
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeContext()
+   at System.Data.Entity.Internal.InternalContext.Initialize()
+   at System.Data.Entity.Internal.InternalContext.GetEntitySetAndBaseTypeForType(Type entityType)
+   at System.Data.Entity.Internal.Linq.InternalSet`1.Initialize()
+   at System.Data.Entity.Internal.Linq.InternalSet`1.get_InternalContext()
+   at System.Data.Entity.Infrastructure.DbQuery`1.System.Linq.IQueryable.get_Provider()
+   at System.Linq.Queryable.Where[TSource](IQueryable`1 source, Expression`1 predicate)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.GetLandlordsMemberIdFromLandlordId(Guid landlorID) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 1044]
+ERROR 2016-06-11 15:57:07,315 481556ms Logger                 Error              - Landlords API -> RentTrans -> ChargeTenantRentTrans FAILED - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: [ System.FormatException: Unrecognized Guid format.
+   at System.Guid.GuidResult.SetFailure(ParseFailureKind failure, String failureMessageID, Object failureMessageFormatArgument, String failureArgumentName, Exception innerException)
+   at System.Guid.TryParseGuid(String g, GuidStyles flags, GuidResult& result)
+   at System.Guid..ctor(String g)
+   at LanLordlAPIs.Controllers.RentTransController.ChargeTenantRentTrans(ChargeTenantInputClass input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 1928 ]
+INFO  2016-06-11 15:57:43,303 517543ms Logger                 Info               - RentTrans Cntrlr -> EditUserInfo Initiated - LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077], FormulaToUse: [1]
+ERROR 2016-06-11 15:57:43,348 517589ms Logger                 Error              - RentTrans Cntrlr  -> SaveMemoFormula FAILED - LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077], [Outer Exception: System.Data.MetadataException: Unable to load the specified metadata resource.
+   at System.Data.Metadata.Edm.MetadataArtifactLoaderCompositeResource.LoadResources(String assemblyName, String resourceName, ICollection`1 uriRegistry, MetadataArtifactAssemblyResolver resolver)
+   at System.Data.Metadata.Edm.MetadataArtifactLoaderCompositeResource.CreateResourceLoader(String path, ExtensionCheck extensionCheck, String validExtension, ICollection`1 uriRegistry, MetadataArtifactAssemblyResolver resolver)
+   at System.Data.Metadata.Edm.MetadataArtifactLoader.Create(String path, ExtensionCheck extensionCheck, String validExtension, ICollection`1 uriRegistry, MetadataArtifactAssemblyResolver resolver)
+   at System.Data.Metadata.Edm.MetadataCache.SplitPaths(String paths)
+   at System.Data.Common.Utils.Memoizer`2.<>c__DisplayClass4_0.<Evaluate>b__0()
+   at System.Data.Common.Utils.Memoizer`2.Result.GetValue()
+   at System.Data.Common.Utils.Memoizer`2.Evaluate(TArg arg)
+   at System.Data.EntityClient.EntityConnection.GetMetadataWorkspace(Boolean initializeAllCollections)
+   at System.Data.Objects.ObjectContext.RetrieveMetadataWorkspaceFromConnection()
+   at System.Data.Objects.ObjectContext..ctor(EntityConnection connection, Boolean isConnectionConstructor)
+   at System.Data.Objects.ObjectContext..ctor(EntityConnection connection)
+   at System.Data.Entity.Internal.InternalConnection.CreateObjectContextFromConnectionModel()
+   at System.Data.Entity.Internal.LazyInternalConnection.CreateObjectContextFromConnectionModel()
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeContext()
+   at System.Data.Entity.Internal.InternalContext.Initialize()
+   at System.Data.Entity.Internal.InternalContext.GetEntitySetAndBaseTypeForType(Type entityType)
+   at System.Data.Entity.Internal.Linq.InternalSet`1.Initialize()
+   at System.Data.Entity.Internal.Linq.InternalSet`1.get_InternalContext()
+   at System.Data.Entity.Infrastructure.DbQuery`1.System.Linq.IQueryable.get_Provider()
+   at System.Linq.Queryable.Where[TSource](IQueryable`1 source, Expression`1 predicate)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.AuthTokenValidation(Guid LandlorId, String accesstoken) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 1604
+   at LanLordlAPIs.Controllers.RentTransController.SaveMemoFormula(SaveMemoFormulaInputClass input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 1753]
+INFO  2016-06-11 15:58:12,741 546982ms Logger                 Info               - RentTrans Cntrlr -> EditUserInfo Initiated - LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077], FormulaToUse: [1]
+ERROR 2016-06-11 15:58:12,790 547031ms Logger                 Error              - RentTrans Cntrlr  -> SaveMemoFormula FAILED - LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077], [Outer Exception: System.Data.MetadataException: Unable to load the specified metadata resource.
+   at System.Data.Metadata.Edm.MetadataArtifactLoaderCompositeResource.LoadResources(String assemblyName, String resourceName, ICollection`1 uriRegistry, MetadataArtifactAssemblyResolver resolver)
+   at System.Data.Metadata.Edm.MetadataArtifactLoaderCompositeResource.CreateResourceLoader(String path, ExtensionCheck extensionCheck, String validExtension, ICollection`1 uriRegistry, MetadataArtifactAssemblyResolver resolver)
+   at System.Data.Metadata.Edm.MetadataArtifactLoader.Create(String path, ExtensionCheck extensionCheck, String validExtension, ICollection`1 uriRegistry, MetadataArtifactAssemblyResolver resolver)
+   at System.Data.Metadata.Edm.MetadataCache.SplitPaths(String paths)
+   at System.Data.Common.Utils.Memoizer`2.<>c__DisplayClass4_0.<Evaluate>b__0()
+   at System.Data.Common.Utils.Memoizer`2.Result.GetValue()
+   at System.Data.Common.Utils.Memoizer`2.Evaluate(TArg arg)
+   at System.Data.EntityClient.EntityConnection.GetMetadataWorkspace(Boolean initializeAllCollections)
+   at System.Data.Objects.ObjectContext.RetrieveMetadataWorkspaceFromConnection()
+   at System.Data.Objects.ObjectContext..ctor(EntityConnection connection, Boolean isConnectionConstructor)
+   at System.Data.Objects.ObjectContext..ctor(EntityConnection connection)
+   at System.Data.Entity.Internal.InternalConnection.CreateObjectContextFromConnectionModel()
+   at System.Data.Entity.Internal.LazyInternalConnection.CreateObjectContextFromConnectionModel()
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeContext()
+   at System.Data.Entity.Internal.InternalContext.Initialize()
+   at System.Data.Entity.Internal.InternalContext.GetEntitySetAndBaseTypeForType(Type entityType)
+   at System.Data.Entity.Internal.Linq.InternalSet`1.Initialize()
+   at System.Data.Entity.Internal.Linq.InternalSet`1.get_InternalContext()
+   at System.Data.Entity.Infrastructure.DbQuery`1.System.Linq.IQueryable.get_Provider()
+   at System.Linq.Queryable.Where[TSource](IQueryable`1 source, Expression`1 predicate)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.AuthTokenValidation(Guid LandlorId, String accesstoken) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 1604
+   at LanLordlAPIs.Controllers.RentTransController.SaveMemoFormula(SaveMemoFormulaInputClass input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 1753]
+INFO  2016-06-11 15:58:54,118 588359ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty - Requested by [f3c0309e-b994-442f-bb02-b144563fcf35]
+ERROR 2016-06-11 15:58:54,162 588403ms Logger                 Error              - Landlords API -> Properties -> AddNewProperty FAILED - [LandlordID: f3c0309e-b994-442f-bb02-b144563fcf35], [Exception: [ System.Data.MetadataException: Unable to load the specified metadata resource.
+   at System.Data.Metadata.Edm.MetadataArtifactLoaderCompositeResource.LoadResources(String assemblyName, String resourceName, ICollection`1 uriRegistry, MetadataArtifactAssemblyResolver resolver)
+   at System.Data.Metadata.Edm.MetadataArtifactLoaderCompositeResource.CreateResourceLoader(String path, ExtensionCheck extensionCheck, String validExtension, ICollection`1 uriRegistry, MetadataArtifactAssemblyResolver resolver)
+   at System.Data.Metadata.Edm.MetadataArtifactLoader.Create(String path, ExtensionCheck extensionCheck, String validExtension, ICollection`1 uriRegistry, MetadataArtifactAssemblyResolver resolver)
+   at System.Data.Metadata.Edm.MetadataCache.SplitPaths(String paths)
+   at System.Data.Common.Utils.Memoizer`2.<>c__DisplayClass4_0.<Evaluate>b__0()
+   at System.Data.Common.Utils.Memoizer`2.Result.GetValue()
+   at System.Data.Common.Utils.Memoizer`2.Evaluate(TArg arg)
+   at System.Data.EntityClient.EntityConnection.GetMetadataWorkspace(Boolean initializeAllCollections)
+   at System.Data.Objects.ObjectContext.RetrieveMetadataWorkspaceFromConnection()
+   at System.Data.Objects.ObjectContext..ctor(EntityConnection connection, Boolean isConnectionConstructor)
+   at System.Data.Objects.ObjectContext..ctor(EntityConnection connection)
+   at System.Data.Entity.Internal.InternalConnection.CreateObjectContextFromConnectionModel()
+   at System.Data.Entity.Internal.LazyInternalConnection.CreateObjectContextFromConnectionModel()
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeContext()
+   at System.Data.Entity.Internal.InternalContext.Initialize()
+   at System.Data.Entity.Internal.InternalContext.GetEntitySetAndBaseTypeForType(Type entityType)
+   at System.Data.Entity.Internal.Linq.InternalSet`1.Initialize()
+   at System.Data.Entity.Internal.Linq.InternalSet`1.get_InternalContext()
+   at System.Data.Entity.Infrastructure.DbQuery`1.System.Linq.IQueryable.get_Provider()
+   at System.Linq.Queryable.Where[TSource](IQueryable`1 source, Expression`1 predicate)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.AuthTokenValidation(Guid LandlorId, String accesstoken) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 1604
+   at LanLordlAPIs.Controllers.PropertiesController.AddNewProperty(AddNewPropertyClass Property) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\PropertiesController.cs:line 32 ]
+INFO  2016-06-11 16:01:59,099 773340ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty - Requested by [f3c0309e-b994-442f-bb02-b144563fcf35]
+ERROR 2016-06-11 16:02:08,509 782750ms Logger                 Error              - Landlords API -> Properties -> AddNewProperty FAILED - [LandlordID: f3c0309e-b994-442f-bb02-b144563fcf35], [Exception: [ System.Data.MetadataException: Unable to load the specified metadata resource.
+   at System.Data.Metadata.Edm.MetadataArtifactLoaderCompositeResource.LoadResources(String assemblyName, String resourceName, ICollection`1 uriRegistry, MetadataArtifactAssemblyResolver resolver)
+   at System.Data.Metadata.Edm.MetadataArtifactLoaderCompositeResource.CreateResourceLoader(String path, ExtensionCheck extensionCheck, String validExtension, ICollection`1 uriRegistry, MetadataArtifactAssemblyResolver resolver)
+   at System.Data.Metadata.Edm.MetadataArtifactLoader.Create(String path, ExtensionCheck extensionCheck, String validExtension, ICollection`1 uriRegistry, MetadataArtifactAssemblyResolver resolver)
+   at System.Data.Metadata.Edm.MetadataCache.SplitPaths(String paths)
+   at System.Data.Common.Utils.Memoizer`2.<>c__DisplayClass4_0.<Evaluate>b__0()
+   at System.Data.Common.Utils.Memoizer`2.Result.GetValue()
+   at System.Data.Common.Utils.Memoizer`2.Evaluate(TArg arg)
+   at System.Data.EntityClient.EntityConnection.GetMetadataWorkspace(Boolean initializeAllCollections)
+   at System.Data.Objects.ObjectContext.RetrieveMetadataWorkspaceFromConnection()
+   at System.Data.Objects.ObjectContext..ctor(EntityConnection connection, Boolean isConnectionConstructor)
+   at System.Data.Objects.ObjectContext..ctor(EntityConnection connection)
+   at System.Data.Entity.Internal.InternalConnection.CreateObjectContextFromConnectionModel()
+   at System.Data.Entity.Internal.LazyInternalConnection.CreateObjectContextFromConnectionModel()
+   at System.Data.Entity.Internal.LazyInternalContext.InitializeContext()
+   at System.Data.Entity.Internal.InternalContext.Initialize()
+   at System.Data.Entity.Internal.InternalContext.GetEntitySetAndBaseTypeForType(Type entityType)
+   at System.Data.Entity.Internal.Linq.InternalSet`1.Initialize()
+   at System.Data.Entity.Internal.Linq.InternalSet`1.get_InternalContext()
+   at System.Data.Entity.Infrastructure.DbQuery`1.System.Linq.IQueryable.get_Provider()
+   at System.Linq.Queryable.Where[TSource](IQueryable`1 source, Expression`1 predicate)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.AuthTokenValidation(Guid LandlorId, String accesstoken) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 1604
+   at LanLordlAPIs.Controllers.PropertiesController.AddNewProperty(AddNewPropertyClass Property) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\PropertiesController.cs:line 32 ]
+INFO  2016-06-11 16:10:55,265 12620ms Logger                 Info               - Landlords API -> Properties -> AddNewProperty - Requested by [f3c0309e-b994-442f-bb02-b144563fcf35]
+INFO  2016-06-11 16:12:10,141 87496ms Logger                 Info               - Properties Cntrlr -> AddNewUnitInProperty - Requested by [f3c0309e-b994-442f-bb02-b144563fcf35]
+INFO  2016-06-11 16:12:14,739 92094ms Logger                 Info               - Landlords API -> Properties - SetPropertyStatus - [LandlordID: F3C0309E-B994-442F-BB02-B144563FCF35], [Property ID: 08e028e4-d26b-4a2c-a250-00f945048a5b]
+INFO  2016-06-11 16:12:54,859 132214ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenantRentTrans - Requested by [E003C765-CF86-4A09-A927-92E48A2B5077]
+INFO  2016-06-11 16:12:57,536 134891ms Logger                 Info               - Common Helper -> GetSynapseBankAndUserDetailsforGivenMemberId - Checkpoint #1 - SynapseCreateUserResults Record Found! - Now about to check if Synapse OAuth Key is expired or still valid.
+INFO  2016-06-11 16:12:57,543 134898ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey Initiated - User's Original OAuth Key (enc): [D6SSo+XDqTA1WJv6RToi162INRn9wrIAjiHCrQxc9t0/fp4GfGGKrViwg5UHMgsm]
+INFO  2016-06-11 16:12:59,993 137348ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Payload to send to Synapse /v3/user/signin: [{"client":{"client_id":"Au4XMZuR83ZHYDC6DgrI","client_secret":"4DuoRwvfqyt2nz4FwuX64ow7Aew4YiQnYVibrkkP"},"login":{"email":"v3.test4@nooch.com","refresh_token":"refresh-cc604dcf-f0b0-4553-8a80-3371b273d2c7"},"user":{"_id":{"$oid":"57345a4386c27376b47c13cb"},"fingerprint":"qwertyuiop","ip":"54.201.43.89"}}]
+INFO  2016-06-11 16:13:02,002 139357ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Access_Token from Synapse MATCHES what we already had in DB.
+INFO  2016-06-11 16:13:03,228 140583ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - SUCCESS From Synapse and Successfully saved updates to Nooch DB.
+INFO  2016-06-11 16:13:04,546 141901ms Logger                 Info               - RequesterFirstName: [Land], RequesterLastName: [Lord], RequestReceiverFirstName: [], RequestReceiverLastName: [Prakash], RequestReceiverFullName: [nEw.tEnant@nooch.com]
+INFO  2016-06-11 16:13:04,624 141979ms Logger                 Info               - RentTrans Ctrlr -> ChargeTenantRentTrans - Memo: [for None], wholeAmount: [20.00], cancelLink: [https://www.noochme.com/noochweb/Nooch/CancelRequest?TransactionId=217fed43-bf65-45e3-8504-fc9d364f844f&MemberId=E003C765-CF86-4A09-A927-92E48A2B5077&UserType=6KX3VJv3YvoyK+cemdsvMA==], toAddress: [v3.test4@nooch.com], fromAddress: [receipts@nooch.com]
+INFO  2016-06-11 16:13:04,700 142055ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: Nooch Receipts], [Address: receipts@nooch.com]
+INFO  2016-06-11 16:13:05,917 143272ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenantRentTrans -> RequestSent email sent to [v3.test4@nooch.com] successfully.
+INFO  2016-06-11 16:13:05,953 143308ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: Nooch Receipts], [Address: receipts@nooch.com]
+INFO  2016-06-11 16:13:07,002 144357ms Logger                 Info               - RentTrans -> ChargeTenant ->  ChargeTenantRentTrans email sent to [nEw.tEnant@nooch.com] successfully
