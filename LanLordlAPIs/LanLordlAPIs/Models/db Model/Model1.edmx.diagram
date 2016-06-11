@@ -4,6 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
+
       <Diagram DiagramId="cd15dcc551d3402cae47284990068485" Name="Diagram1" ZoomLevel="101">
         <EntityTypeShape EntityType="NOOCHModel.GeoLocation" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="NOOCHModel.MemberNotification" Width="1.5" PointX="3" PointY="8" IsExpanded="true" />
@@ -15,19 +16,20 @@
         <EntityTypeShape EntityType="NOOCHModel.SynapseBanksOfMember" Width="1.5" PointX="12.375" PointY="8.75" />
         <EntityTypeShape EntityType="NOOCHModel.MembersIPAddress" Width="1.5" PointX="14.375" PointY="0.75" />
         <EntityTypeShape EntityType="NOOCHModel.Landlord" Width="1.5" PointX="5.375" PointY="19.375" />
-        <EntityTypeShape EntityType="NOOCHModel.Member" Width="1.5" PointX="0.75" PointY="3.75" />
         <EntityTypeShape EntityType="NOOCHModel.Property" Width="1.5" PointX="9.375" PointY="0.75" />
         <EntityTypeShape EntityType="NOOCHModel.PropertyUnit" Width="1.5" PointX="14.375" PointY="3.75" />
         <EntityTypeShape EntityType="NOOCHModel.Tenant" Width="1.5" PointX="5.375" PointY="29" />
         <EntityTypeShape EntityType="NOOCHModel.Transaction" Width="1.5" PointX="7" PointY="6.125" />
         <EntityTypeShape EntityType="NOOCHModel.UnitsOccupiedByTenant" Width="1.5" PointX="5.375" PointY="15.5" />
         <AssociationConnector Association="NOOCHModel.FK_Transactions_GeoLocations" />
+
         <AssociationConnector Association="NOOCHModel.FK_MemberNotifications_Members" />
         <AssociationConnector Association="NOOCHModel.FK_MemberPrivacySettings_Members" />
         <AssociationConnector Association="NOOCHModel.FK_PasswordResetRequests_Members" />
         <AssociationConnector Association="NOOCHModel.FK_Transactions_Members2" />
         <AssociationConnector Association="NOOCHModel.FK_Transactions_Members3" />
         <EntityTypeShape EntityType="NOOCHModel.SynapseCreateUserResult" Width="1.5" PointX="14.375" PointY="9.75" />
+        
         <EntityTypeShape EntityType="NOOCHModel.RentTransaction" Width="1.5" PointX="7.625" PointY="22.125" />
         <AssociationConnector Association="NOOCHModel.FK_RentTransactions_Landlords" />
         <AssociationConnector Association="NOOCHModel.FK_RentTransactions_Tenants" />
