@@ -868,8 +868,11 @@ namespace LanLordlAPIs.Controllers
                     requesterPic = requester.Photo;
                 }
 
-                string cancelLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
-                    "trans/CancelRequest.aspx?TransactionId=" + requestId + "&MemberId=" + input.User.LandlordId +
+                //"trans/CancelRequest.aspx?TransactionId=" + requestId + "&MemberId=" + input.User.LandlordId +
+                //"&UserType=6KX3VJv3YvoyK+cemdsvMA==");
+
+                string cancelLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),                   
+                     "Nooch/CancelRequest?TransactionId=" + requestId + "&MemberId=" + input.User.LandlordId +
                     "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
 
                 string wholeAmount = Convert.ToDecimal(input.TransRequest.Amount).ToString("n2");
@@ -945,11 +948,19 @@ namespace LanLordlAPIs.Controllers
                 // In this case UserType would = 'Nonregistered'  ->  6KX3VJv3YvoyK+cemdsvMA==
                 //              TransType would = 'Request'
                 //              LinkSource would = 'Email'
+
+
+                //string rejectLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
+                //    "trans/rejectMoney.aspx?TransactionId=" + requestId +
+                //    "&UserType=6KX3VJv3YvoyK+cemdsvMA==&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==&TransType=T3EMY1WWZ9IscHIj3dbcNw==");
+                //string paylink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
+                //    "trans/payRequest.aspx?TransactionId=" + requestId + "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
+
                 string rejectLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
-                    "trans/rejectMoney.aspx?TransactionId=" + requestId +
-                    "&UserType=6KX3VJv3YvoyK+cemdsvMA==&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==&TransType=T3EMY1WWZ9IscHIj3dbcNw==");
+                 "Nooch/RejectMoney?TransactionId=" + requestId +
+                 "&UserType=6KX3VJv3YvoyK+cemdsvMA==&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==&TransType=T3EMY1WWZ9IscHIj3dbcNw==");
                 string paylink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
-                    "trans/payRequest.aspx?TransactionId=" + requestId + "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
+                    "Nooch/PayRequest?TransactionId=" + requestId + "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
 
                 var tokens2 = new Dictionary<string, string>
                 {
@@ -1854,7 +1865,6 @@ namespace LanLordlAPIs.Controllers
                                     phc.Memo = rentTrans.Memo;
                                     phc.Amount = rentTrans.Amount;
 
-
                                     phc.IsRecurringTrans = rentTrans.IsRecurring != null &&
                                                            Convert.ToBoolean(rentTrans.IsRecurring);
 
@@ -1866,13 +1876,7 @@ namespace LanLordlAPIs.Controllers
                                     }
 
                                     TransactionsListToRet.Add(phc);
-
-
                                 }
-
-
-
-
                                 res.IsSuccess = true;
                                 res.Transactions = TransactionsListToRet;
                                 res.ErrorMessage = "Success";
@@ -2042,7 +2046,7 @@ namespace LanLordlAPIs.Controllers
                     RentTransaction tr = new RentTransaction();
                     tr.RentTransactionId = Guid.NewGuid();
                     tr.TenantId = Tenant_GUID;
-                    tr.LandlordId = landlordsMemID;
+                    tr.LandlordId = Landlord_GUID;
                     tr.Amount = input.TransRequest.Amount;
                     tr.TransCreatedOn = DateTime.Now;
                     tr.Memo = input.TransRequest.Memo; // this would be the reason why we are charging tenant 
@@ -2116,8 +2120,10 @@ namespace LanLordlAPIs.Controllers
                 }
 
                 string cancelLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
-                    "trans/CancelRequest.aspx?TransactionId=" + requestId + "&MemberId=" + input.User.LandlordId +
+                    "Nooch/CancelRequest?TransactionId=" + requestId + "&MemberId=" + input.User.LandlordId +
                     "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
+                 //"trans/CancelRequest.aspx?TransactionId=" + requestId + "&MemberId=" + input.User.LandlordId +
+                 //   "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
 
                 string wholeAmount = Convert.ToDecimal(input.TransRequest.Amount).ToString("n2");
                 string[] amountArray = wholeAmount.Split('.');
@@ -2202,12 +2208,19 @@ namespace LanLordlAPIs.Controllers
                 // I recomment separate landing page for handing these types if requests... what you think @Cliff ?
 
                 // this link wouble take user to some new page or modified code if existing page.
-                string rejectLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
-                    "trans/rejectMoney.aspx?TransactionId=" + requestId +
+                string rejectLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),                   
+                      "Nooch/RejectMoney?TransactionId=" + requestId +
                     "&UserType=6KX3VJv3YvoyK+cemdsvMA==&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==&TransType=T3EMY1WWZ9IscHIj3dbcNw==");
+                //"trans/rejectMoney.aspx?TransactionId=" + requestId +
+                //"&UserType=6KX3VJv3YvoyK+cemdsvMA==&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==&TransType=T3EMY1WWZ9IscHIj3dbcNw==");
+
                 // this link wouble take user to some new page or modified code if existing page.
+
                 string paylink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
-                    "trans/payRequest.aspx?TransactionId=" + requestId + "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
+                    "Nooch/PayRequest?TransactionId=" + requestId + "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
+
+                    //"trans/payRequest.aspx?TransactionId=" + requestId + "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
+                      
 
                 var tokens2 = new Dictionary<string, string>
                 {
@@ -2609,8 +2622,8 @@ namespace LanLordlAPIs.Controllers
                                 // TBD with Cliff about new landing page for handling play rent transactions of modify existing because rent transactions are now stored in separate table and existing landling page check given transaction
                                 // id in Transactions table..... that code will fail in this case... page will never get any transaction with this transaction id.
                                 string payLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
-                                    "trans/payRequest.aspx?TransactionId=" + transObj.RentTransactionId);
-
+                                    "Nooch/PayRequest?TransactionId=" + transObj.RentTransactionId);
+                                      //"trans/payRequest.aspx?TransactionId=" + transObj.RentTransactionId);
                                 // or link to some new landing page here
                                 //string payLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),"trans/payRent.aspx?TransactionId=" + transObj.RentTransactionId);
 
@@ -2654,8 +2667,11 @@ namespace LanLordlAPIs.Controllers
                                 #region RequestMoneyReminderToExistingUser
 
                                 string rejectLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
-                                    "trans/rejectMoney.aspx?TransactionId=" + transObj.RentTransactionId +
+                                    "Nooch/RejectMoney?TransactionId=" + transObj.RentTransactionId +
                                     "&UserType=mx5bTcAYyiOf9I5Py9TiLw==&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==&TransType=T3EMY1WWZ9IscHIj3dbcNw==");
+
+                                //trans/rejectMoney.aspx?TransactionId=" + transObj.RentTransactionId +
+                                //    "&UserType=mx5bTcAYyiOf9I5Py9TiLw==&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==&TransType=T3EMY1WWZ9IscHIj3dbcNw==");
                                 string paylink = "nooch://";
 
                                 string tenantFirstName =
@@ -2875,9 +2891,12 @@ namespace LanLordlAPIs.Controllers
                                 requesterPic = tenantsMemberObject.Photo.ToString();
                             }
 
-                            string cancelLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/CancelRequest.aspx?TransactionId=" + rentTrans.TransactionId +
-                                                                                                            "&MemberId=" + rentTrans.RecipientId + // or Landlord's MemberId
-                                                                                                            "&UserType=mx5bTcAYyiOf9I5Py9TiLw==");  // mx5bTcAYyiOf9I5Py9TiLw== --->> Existing
+                            //string cancelLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "trans/CancelRequest.aspx?TransactionId=" + rentTrans.TransactionId +
+                            //                                                                                "&MemberId=" + rentTrans.RecipientId + // or Landlord's MemberId
+                            //                                                                                "&UserType=mx5bTcAYyiOf9I5Py9TiLw==");  // mx5bTcAYyiOf9I5Py9TiLw== --->> Existing
+                            string cancelLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"), "Nooch/CancelRequest?TransactionId=" + rentTrans.TransactionId +
+                                                                                           "&MemberId=" + rentTrans.RecipientId + // or Landlord's MemberId
+                                                                                           "&UserType=mx5bTcAYyiOf9I5Py9TiLw==");  // mx5bTcAYyiOf9I5Py9TiLw== --->> Existing
 
                             string wholeAmount = rentTrans.Amount.ToString("n2");
                             string[] amountArray = wholeAmount.Split('.');
@@ -2961,15 +2980,24 @@ namespace LanLordlAPIs.Controllers
                             string userType = "mx5bTcAYyiOf9I5Py9TiLw=="; // "Existing"
 
 
+                            //string rejectLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
+                            //                                  "trans/rejectMoney.aspx?TransactionId=" + rentTrans.TransactionId +
+                            //                                  "&UserType=" + userType +
+                            //                                  "&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==" +
+                            //                                  "&TransType=EnOIzpmFFTEaAP16hm9Wsw==");
                             string rejectLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
-                                                              "trans/rejectMoney.aspx?TransactionId=" + rentTrans.TransactionId +
+                                                              "Nooch/RejectMoney?TransactionId=" + rentTrans.TransactionId +
                                                               "&UserType=" + userType +
                                                               "&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==" +
                                                               "&TransType=EnOIzpmFFTEaAP16hm9Wsw==");
 
+                            //string paylink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
+                            //                               "trans/payRequest.aspx?TransactionId=" + rentTrans.TransactionId +
+                            //                               "&UserType=" + userType + "&TransType="+CommonHelper.GetEncryptedData("RENT"));
+
                             string paylink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
-                                                           "trans/payRequest.aspx?TransactionId=" + rentTrans.TransactionId +
-                                                           "&UserType=" + userType + "&TransType="+CommonHelper.GetEncryptedData("RENT"));
+                                                          "Nooch/PayRequest?TransactionId=" + rentTrans.TransactionId +
+                                                          "&UserType=" + userType + "&TransType=" + CommonHelper.GetEncryptedData("RENT"));
 
                             var tokens2 = new Dictionary<string, string>
                     {

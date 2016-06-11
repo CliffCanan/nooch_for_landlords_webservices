@@ -2099,3 +2099,150 @@ INFO  2016-04-04 12:32:00,538 626923ms Logger                 Info              
 INFO  2016-04-04 12:32:05,204 631589ms Logger                 Info               - RentTrans -> RequestRentToExistingTenant  -> [requestSent] email sent to [testing_request-sender@nooch.com] successfully.
 INFO  2016-04-04 12:32:48,528 674913ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: Cliff Canan], [Address: payments@rentscene.com]
 INFO  2016-04-04 12:32:50,169 676554ms Logger                 Info               - RentTrans -> RequestRentToExistingTenant  - [requestReceivedToExistingNonRegUser] email sent to [testing_request-recip@nooch.com] successfully.
+INFO  2016-06-10 15:01:00,660 76508ms Logger                 Info               - Rent Trans Cntrlr -> GetLandlordsPaymentHistoryFromRentTrans Initiated - [LandlordID: 3FDB6946-B15A-439C-B447-1F9BAA411CD2], [MemberID: E44C13DA-7705-4953-8431-8AB0B2511A77]
+ERROR 2016-06-10 15:01:11,752 87601ms Logger                 Error              - Rent Trans Cntrlr -> GetLandlordsPaymentHistoryFromRentTrans AUTH TOKEN FAILURE - [LandlordID: 3FDB6946-B15A-439C-B447-1F9BAA411CD2]
+INFO  2016-06-10 15:02:04,239 140087ms Logger                 Info               - Rent Trans Cntrlr -> GetLandlordsPaymentHistoryFromRentTrans Initiated - [LandlordID: 3FDB6946-B15A-439C-B447-1F9BAA411CD2], [MemberID: E44C13DA-7705-4953-8431-8AB0B2511A77]
+INFO  2016-06-10 15:06:51,685 427534ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenantRentTrans - Requested by [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-10 15:08:44,929 540777ms Logger                 Error              - Landlords API -> RentTrans -> ChargeTenantRentTrans FAILED - Unable to save RentTransaction in DB - [Requester MemberID:E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: [ System.Data.UpdateException: An error occurred while updating the entries. See the inner exception for details. ---> System.Data.SqlClient.SqlException: The INSERT statement conflicted with the FOREIGN KEY constraint "FK_RentTransactions_Landlords". The conflict occurred in database "NOOCH", table "dbo.Landlords", column 'LandlordId'.
+The statement has been terminated.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   at System.Data.Mapping.Update.Internal.DynamicUpdateCommand.Execute(UpdateTranslator translator, EntityConnection connection, Dictionary`2 identifierValues, List`1 generatedValues)
+   at System.Data.Mapping.Update.Internal.UpdateTranslator.Update(IEntityStateManager stateManager, IEntityAdapter adapter)
+   --- End of inner exception stack trace ---
+   at System.Data.Mapping.Update.Internal.UpdateTranslator.Update(IEntityStateManager stateManager, IEntityAdapter adapter)
+   at System.Data.EntityClient.EntityAdapter.Update(IEntityStateManager entityCache)
+   at System.Data.Objects.ObjectContext.SaveChanges(SaveOptions options)
+   at System.Data.Entity.Internal.InternalContext.SaveChanges() ]
+INFO  2016-06-10 15:12:35,268 12087ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenantRentTrans - Requested by [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-10 15:13:16,928 53746ms Logger                 Error              - Landlords API -> RentTrans -> ChargeTenantRentTrans FAILED - Unable to save RentTransaction in DB - [Requester MemberID:E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: [ System.Data.UpdateException: An error occurred while updating the entries. See the inner exception for details. ---> System.Data.SqlClient.SqlException: The INSERT statement conflicted with the FOREIGN KEY constraint "FK_RentTransactions_Landlords". The conflict occurred in database "NOOCH", table "dbo.Landlords", column 'LandlordId'.
+The statement has been terminated.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   at System.Data.Mapping.Update.Internal.DynamicUpdateCommand.Execute(UpdateTranslator translator, EntityConnection connection, Dictionary`2 identifierValues, List`1 generatedValues)
+   at System.Data.Mapping.Update.Internal.UpdateTranslator.Update(IEntityStateManager stateManager, IEntityAdapter adapter)
+   --- End of inner exception stack trace ---
+   at System.Data.Mapping.Update.Internal.UpdateTranslator.Update(IEntityStateManager stateManager, IEntityAdapter adapter)
+   at System.Data.EntityClient.EntityAdapter.Update(IEntityStateManager entityCache)
+   at System.Data.Objects.ObjectContext.SaveChanges(SaveOptions options)
+   at System.Data.Entity.Internal.InternalContext.SaveChanges() ]
+INFO  2016-06-10 15:15:58,060 214878ms Logger                 Info               - Landlords API -> RentTrans -> RequestRentToExistingTenant Initiated. LandlordsID: [3FDB6946-B15A-439C-B447-1F9BAA411CD2], Tenants Member ID: [8B4B4983-F022-4289-BA6E-48D5AFFB5484], Property Id: [08E028E4-D26B-4A2C-A250-00F945048A5B]
+INFO  2016-06-10 15:16:07,799 224617ms Logger                 Info               - RentTrans -> RequestRentToExistingTenant - Checkpoing #1 - Access Token is OK!
+INFO  2016-06-10 16:35:26,839 64847ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenantRentTrans - Requested by [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-10 16:47:04,488 762496ms Logger                 Error              - Landlords API -> RentTrans -> ChargeTenantRentTrans FAILED - Unable to save RentTransaction in DB - [Requester MemberID:E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: [ System.Data.UpdateException: An error occurred while updating the entries. See the inner exception for details. ---> System.Data.SqlClient.SqlException: The INSERT statement conflicted with the FOREIGN KEY constraint "FK_RentTransactions_Landlords". The conflict occurred in database "NOOCH", table "dbo.Landlords", column 'LandlordId'.
+The statement has been terminated.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   at System.Data.Mapping.Update.Internal.DynamicUpdateCommand.Execute(UpdateTranslator translator, EntityConnection connection, Dictionary`2 identifierValues, List`1 generatedValues)
+   at System.Data.Mapping.Update.Internal.UpdateTranslator.Update(IEntityStateManager stateManager, IEntityAdapter adapter)
+   --- End of inner exception stack trace ---
+   at System.Data.Mapping.Update.Internal.UpdateTranslator.Update(IEntityStateManager stateManager, IEntityAdapter adapter)
+   at System.Data.EntityClient.EntityAdapter.Update(IEntityStateManager entityCache)
+   at System.Data.Objects.ObjectContext.SaveChanges(SaveOptions options)
+   at System.Data.Entity.Internal.InternalContext.SaveChanges() ]
+INFO  2016-06-10 16:47:10,563 768571ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenantRentTrans - Requested by [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-10 16:47:19,040 777048ms Logger                 Error              - Landlords API -> RentTrans -> ChargeTenantRentTrans FAILED - Unable to save RentTransaction in DB - [Requester MemberID:E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: [ System.Data.UpdateException: An error occurred while updating the entries. See the inner exception for details. ---> System.Data.SqlClient.SqlException: The INSERT statement conflicted with the FOREIGN KEY constraint "FK_RentTransactions_UnitsOccupiedByTenants". The conflict occurred in database "NOOCH", table "dbo.UnitsOccupiedByTenants", column 'Id'.
+The statement has been terminated.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   at System.Data.Mapping.Update.Internal.DynamicUpdateCommand.Execute(UpdateTranslator translator, EntityConnection connection, Dictionary`2 identifierValues, List`1 generatedValues)
+   at System.Data.Mapping.Update.Internal.UpdateTranslator.Update(IEntityStateManager stateManager, IEntityAdapter adapter)
+   --- End of inner exception stack trace ---
+   at System.Data.Mapping.Update.Internal.UpdateTranslator.Update(IEntityStateManager stateManager, IEntityAdapter adapter)
+   at System.Data.EntityClient.EntityAdapter.Update(IEntityStateManager entityCache)
+   at System.Data.Objects.ObjectContext.SaveChanges(SaveOptions options)
+   at System.Data.Entity.Internal.InternalContext.SaveChanges() ]
+INFO  2016-06-10 16:47:26,797 784805ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenantRentTrans - Requested by [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-10 16:50:50,143 988151ms Logger                 Error              - Landlords API -> RentTrans -> ChargeTenantRentTrans FAILED - Unable to save RentTransaction in DB - [Requester MemberID:E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: [ System.Data.UpdateException: An error occurred while updating the entries. See the inner exception for details. ---> System.Data.SqlClient.SqlException: The INSERT statement conflicted with the FOREIGN KEY constraint "FK_RentTransactions_UnitsOccupiedByTenants". The conflict occurred in database "NOOCH", table "dbo.UnitsOccupiedByTenants", column 'Id'.
+The statement has been terminated.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   at System.Data.Mapping.Update.Internal.DynamicUpdateCommand.Execute(UpdateTranslator translator, EntityConnection connection, Dictionary`2 identifierValues, List`1 generatedValues)
+   at System.Data.Mapping.Update.Internal.UpdateTranslator.Update(IEntityStateManager stateManager, IEntityAdapter adapter)
+   --- End of inner exception stack trace ---
+   at System.Data.Mapping.Update.Internal.UpdateTranslator.Update(IEntityStateManager stateManager, IEntityAdapter adapter)
+   at System.Data.EntityClient.EntityAdapter.Update(IEntityStateManager entityCache)
+   at System.Data.Objects.ObjectContext.SaveChanges(SaveOptions options)
+   at System.Data.Entity.Internal.InternalContext.SaveChanges() ]
+INFO  2016-06-10 16:50:53,990 991998ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenantRentTrans - Requested by [E003C765-CF86-4A09-A927-92E48A2B5077]
+INFO  2016-06-10 16:51:16,203 1014211ms Logger                 Info               - RequesterFirstName: [Land], RequesterLastName: [Lord], RequestReceiverFirstName: [], RequestReceiverLastName: [Prakash], RequestReceiverFullName: [nEw.tEnant@nooch.com]
+INFO  2016-06-10 16:52:03,989 1061997ms Logger                 Info               - RentTrans Ctrlr -> ChargeTenantRentTrans - Memo: [for None], wholeAmount: [20.00], cancelLink: [https://www.noochme.com/noochweb/Nooch/CancelRequest?TransactionId=906d95fa-ed18-4ed7-84aa-b21084d4ed48&MemberId=E003C765-CF86-4A09-A927-92E48A2B5077&UserType=6KX3VJv3YvoyK+cemdsvMA==], toAddress: [v3.test4@nooch.com], fromAddress: []
+INFO  2016-06-10 16:52:04,667 1062675ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: Nooch Admin], [Address: team@nooch.com]
+ERROR 2016-06-10 16:52:04,821 1062829ms Logger                 Error              - CommonHelper -> SendEmail ERROR -> [Template: requestSent], [ToAddress: v3.test4@nooch.com],  [Exception: System.ArgumentNullException: Value cannot be null.
+Parameter name: address
+   at System.Net.Mail.MailAddress..ctor(String address, String displayName, Encoding displayNameEncoding)
+   at System.Net.Mail.MailAddress..ctor(String address, String displayName)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.SendEmail(String templateName, String fromAddress, String fromName, String toAddress, String subject, IEnumerable`1 replacements, String bodyText, String bccEmail)]
+INFO  2016-06-10 16:52:04,946 1062954ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenantRentTrans -> RequestSent email sent to [v3.test4@nooch.com] successfully.
+INFO  2016-06-10 16:52:49,919 1107928ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: Nooch Admin], [Address: team@nooch.com]
+ERROR 2016-06-10 16:52:49,975 1107983ms Logger                 Error              - CommonHelper -> SendEmail ERROR -> [Template: requestReceivedToExistingNonRegUser], [ToAddress: nEw.tEnant@nooch.com],  [Exception: System.ArgumentNullException: Value cannot be null.
+Parameter name: address
+   at System.Net.Mail.MailAddress..ctor(String address, String displayName, Encoding displayNameEncoding)
+   at System.Net.Mail.MailAddress..ctor(String address, String displayName)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.SendEmail(String templateName, String fromAddress, String fromName, String toAddress, String subject, IEnumerable`1 replacements, String bodyText, String bccEmail)]
+INFO  2016-06-10 16:53:20,913 1138921ms Logger                 Info               - RentTrans -> ChargeTenant ->  ChargeTenantRentTrans email sent to [surya.prakash@venturepact.com] successfully
+INFO  2016-06-10 16:54:23,863 1201872ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenantRentTrans - Requested by [E003C765-CF86-4A09-A927-92E48A2B5077]
+INFO  2016-06-10 16:54:30,107 1208115ms Logger                 Info               - RequesterFirstName: [Land], RequesterLastName: [Lord], RequestReceiverFirstName: [], RequestReceiverLastName: [Prakash], RequestReceiverFullName: [nEw.tEnant@nooch.com]
+INFO  2016-06-10 16:54:30,108 1208116ms Logger                 Info               - RentTrans Ctrlr -> ChargeTenantRentTrans - Memo: [for None], wholeAmount: [20.00], cancelLink: [https://www.noochme.com/noochweb/Nooch/CancelRequest?TransactionId=3e2ae24c-48d0-4fc6-aa4b-e461915e6ced&MemberId=E003C765-CF86-4A09-A927-92E48A2B5077&UserType=6KX3VJv3YvoyK+cemdsvMA==], toAddress: [v3.test4@nooch.com], fromAddress: []
+INFO  2016-06-10 16:54:30,109 1208117ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: Nooch Admin], [Address: team@nooch.com]
+ERROR 2016-06-10 16:54:30,148 1208156ms Logger                 Error              - CommonHelper -> SendEmail ERROR -> [Template: requestSent], [ToAddress: v3.test4@nooch.com],  [Exception: System.ArgumentNullException: Value cannot be null.
+Parameter name: address
+   at System.Net.Mail.MailAddress..ctor(String address, String displayName, Encoding displayNameEncoding)
+   at System.Net.Mail.MailAddress..ctor(String address, String displayName)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.SendEmail(String templateName, String fromAddress, String fromName, String toAddress, String subject, IEnumerable`1 replacements, String bodyText, String bccEmail)]
+INFO  2016-06-10 16:54:30,148 1208156ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenantRentTrans -> RequestSent email sent to [v3.test4@nooch.com] successfully.
+INFO  2016-06-10 16:54:30,150 1208158ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: Nooch Admin], [Address: team@nooch.com]
+ERROR 2016-06-10 16:54:30,182 1208190ms Logger                 Error              - CommonHelper -> SendEmail ERROR -> [Template: requestReceivedToExistingNonRegUser], [ToAddress: nEw.tEnant@nooch.com],  [Exception: System.ArgumentNullException: Value cannot be null.
+Parameter name: address
+   at System.Net.Mail.MailAddress..ctor(String address, String displayName, Encoding displayNameEncoding)
+   at System.Net.Mail.MailAddress..ctor(String address, String displayName)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.SendEmail(String templateName, String fromAddress, String fromName, String toAddress, String subject, IEnumerable`1 replacements, String bodyText, String bccEmail)]
+INFO  2016-06-10 16:54:30,182 1208190ms Logger                 Info               - RentTrans -> ChargeTenant ->  ChargeTenantRentTrans email sent to [nEw.tEnant@nooch.com] successfully
+INFO  2016-06-10 16:56:57,436 1355445ms Logger                 Info               - Rent Trans Cntrlr -> GetLandlordsPaymentHistoryFromRentTrans Initiated - [LandlordID: 3FDB6946-B15A-439C-B447-1F9BAA411CD2], [MemberID: E44C13DA-7705-4953-8431-8AB0B2511A77]
+ERROR 2016-06-10 16:56:59,695 1357703ms Logger                 Error              - Rent Trans Cntrlr -> GetLandlordsPaymentHistoryFromRentTrans AUTH TOKEN FAILURE - [LandlordID: 3FDB6946-B15A-439C-B447-1F9BAA411CD2]
+INFO  2016-06-10 16:57:37,922 1395930ms Logger                 Info               - Rent Trans Cntrlr -> GetLandlordsPaymentHistoryFromRentTrans Initiated - [LandlordID: 3FDB6946-B15A-439C-B447-1F9BAA411CD2], [MemberID: BCD280C0-0A1A-43A5-BFC5-1782FDF5CDED]
+ERROR 2016-06-10 16:57:45,112 1403120ms Logger                 Error              - Rent Trans Cntrlr -> GetLandlordsPaymentHistoryFromRentTrans AUTH TOKEN FAILURE - [LandlordID: 3FDB6946-B15A-439C-B447-1F9BAA411CD2]
+INFO  2016-06-10 16:59:41,309 1519317ms Logger                 Info               - Rent Trans Cntrlr -> GetLandlordsPaymentHistoryFromRentTrans Initiated - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [MemberID: BCD280C0-0A1A-43A5-BFC5-1782FDF5CDED]
+INFO  2016-06-10 17:01:25,301 1623309ms Logger                 Info               - Landlords API -> RentTrans -> SendTransReminderEmail Initiated. MemberID: [D528F3E2-7531-4383-B4D6-20735A12B4AC], TransactionId: [7F4B5D13-DD17-4B99-8C71-A38155E5594D], ReminderType: [10]
+INFO  2016-06-10 17:02:23,044 1681052ms Logger                 Info               - Landlords API -> RentTrans -> SendTransReminderEmail Initiated. MemberID: [D528F3E2-7531-4383-B4D6-20735A12B4AC], TransactionId: [7F4B5D13-DD17-4B99-8C71-A38155E5594D], ReminderType: [10]
+INFO  2016-06-10 17:03:03,827 1721835ms Logger                 Info               - Landlords API -> RentTrans -> RequestRentToExistingTenant Initiated. LandlordsID: [3FDB6946-B15A-439C-B447-1F9BAA411CD2], Tenants Member ID: [8B4B4983-F022-4289-BA6E-48D5AFFB5484], Property Id: [08E028E4-D26B-4A2C-A250-00F945048A5B]
+INFO  2016-06-10 17:03:13,249 1731257ms Logger                 Info               - RentTrans -> RequestRentToExistingTenant - Checkpoing #1 - Access Token is OK!
+INFO  2016-06-10 17:04:14,773 1792781ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: Rose Prakash], [Address: payments@rentscene.com]
+INFO  2016-06-10 17:04:23,919 1801927ms Logger                 Info               - RentTrans -> RequestRentToExistingTenant  -> [requestSent] email sent to [surya.prakash@venturepact.com] successfully.
+INFO  2016-06-10 17:04:56,987 1834995ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: 3454 Tret], [Address: payments@rentscene.com]
+INFO  2016-06-10 17:04:58,400 1836408ms Logger                 Info               - RentTrans -> RequestRentToExistingTenant  - [requestReceivedToExistingNonRegUser] email sent to [testing_request-recip@nooch.com] successfully.

@@ -122,23 +122,17 @@
     <FunctionImport Name="GetTenantsInGivenPropertyId" ReturnType="Collection(NOOCHModel.GetTenantsInGivenPropertyId_Result2)">
       <Parameter Name="vPropertyId" Mode="In" Type="String" />
     </FunctionImport>
-    <EntitySet Name="SynapseCreateUserResults" EntityType="NOOCHModel.SynapseCreateUserResult" />
     <EntitySet Name="MembersIPAddresses" EntityType="NOOCHModel.MembersIPAddress" />
     <EntitySet Name="Landlords" EntityType="NOOCHModel.Landlord" />
     <EntitySet Name="Members" EntityType="NOOCHModel.Member" />
     <EntitySet Name="Properties" EntityType="NOOCHModel.Property" />
     <EntitySet Name="PropertyUnits" EntityType="NOOCHModel.PropertyUnit" />
-    <EntitySet Name="RentTransactions" EntityType="NOOCHModel.RentTransaction" />
     <EntitySet Name="Tenants" EntityType="NOOCHModel.Tenant" />
     <EntitySet Name="Transactions" EntityType="NOOCHModel.Transaction" />
     <EntitySet Name="UnitsOccupiedByTenants" EntityType="NOOCHModel.UnitsOccupiedByTenant" />
     <AssociationSet Name="FK_Transactions_GeoLocations" Association="NOOCHModel.FK_Transactions_GeoLocations">
       <End Role="GeoLocation" EntitySet="GeoLocations" />
       <End Role="Transaction" EntitySet="Transactions" />
-    </AssociationSet>
-    <AssociationSet Name="FK_RentTransactions_Landlords" Association="NOOCHModel.FK_RentTransactions_Landlords">
-      <End Role="Landlord" EntitySet="Landlords" />
-      <End Role="RentTransaction" EntitySet="RentTransactions" />
     </AssociationSet>
     <AssociationSet Name="FK_MemberNotifications_Members" Association="NOOCHModel.FK_MemberNotifications_Members">
       <End Role="Member" EntitySet="Members" />
@@ -159,6 +153,12 @@
     <AssociationSet Name="FK_Transactions_Members3" Association="NOOCHModel.FK_Transactions_Members3">
       <End Role="Member" EntitySet="Members" />
       <End Role="Transaction" EntitySet="Transactions" />
+    </AssociationSet>
+    <EntitySet Name="SynapseCreateUserResults" EntityType="NOOCHModel.SynapseCreateUserResult" />
+    <EntitySet Name="RentTransactions" EntityType="NOOCHModel.RentTransaction" />
+    <AssociationSet Name="FK_RentTransactions_Landlords" Association="NOOCHModel.FK_RentTransactions_Landlords">
+      <End Role="Landlord" EntitySet="Landlords" />
+      <End Role="RentTransaction" EntitySet="RentTransactions" />
     </AssociationSet>
     <AssociationSet Name="FK_RentTransactions_Tenants" Association="NOOCHModel.FK_RentTransactions_Tenants">
       <End Role="Tenant" EntitySet="Tenants" />
@@ -301,37 +301,6 @@
     <Property Type="String" Name="UnitNumber" Nullable="true" MaxLength="50" />
     <Property Type="String" Name="TenantEmail" Nullable="true" />
   </ComplexType>
-  <EntityType Name="SynapseCreateUserResult">
-    <Key>
-      <PropertyRef Name="Id" />
-    </Key>
-    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="MemberId" Type="Guid" />
-    <Property Name="DateCreated" Type="DateTime" Precision="3" />
-    <Property Name="access_token" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="expires_in" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="reason" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="refresh_token" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="success" Type="Boolean" />
-    <Property Name="username" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="user_id" Type="Int32" />
-    <Property Name="IsDeleted" Type="Boolean" />
-    <Property Name="ModifiedOn" Type="DateTime" Precision="3" />
-    <Property Name="IsForNonNoochUser" Type="Boolean" />
-    <Property Name="NonNoochUserEmail" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="TransactionIdFromWhichInvited" Type="Guid" />
-    <Property Name="HasNonNoochUserSignedUp" Type="Boolean" />
-    <Property Name="MemberIdAfterSignup" Type="Guid" />
-    <Property Name="is_business" Type="Boolean" />
-    <Property Name="legal_name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="permission" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="Phone_number" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="photos" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="expires_at" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="physical_doc" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="virtual_doc" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="extra_security" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-  </EntityType>
   <EntityType Name="MembersIPAddress">
     <Key>
       <PropertyRef Name="Id" />
@@ -512,36 +481,6 @@
     <Property Name="LeaseLength" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
     <Property Name="LeaseDocumentPath" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
   </EntityType>
-  <EntityType Name="RentTransaction">
-    <Key>
-      <PropertyRef Name="RentTransactionId" />
-    </Key>
-    <Property Name="RentTransactionId" Type="Guid" Nullable="false" />
-    <Property Name="LandlordId" Type="Guid" />
-    <Property Name="TenantId" Type="Guid" />
-    <Property Name="TransactionStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="TransCreatedOn" Type="DateTime" Precision="3" />
-    <Property Name="TransRespondedOn" Type="DateTime" Precision="3" />
-    <Property Name="IsDeleted" Type="Boolean" />
-    <Property Name="UOBTId" Type="Int32" />
-    <Property Name="IsDisputed" Type="Boolean" />
-    <Property Name="DisputeStatus" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="RaisedBy" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="RaisedById" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="AdminNotes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="Memo" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="IsRecurring" Type="Boolean" />
-    <Property Name="NextRecurrTransDueDate" Type="DateTime" Precision="3" />
-    <Property Name="RecentRecurrTransId" Type="Guid" />
-    <Property Name="Attachment" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="TransactionType" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="Amount" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="NoOfTimesToRecurr" Type="Int32" />
-    <Property Name="UserPreferredDayOfMonthForAutoPay" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <NavigationProperty Name="Landlord" Relationship="NOOCHModel.FK_RentTransactions_Landlords" FromRole="RentTransaction" ToRole="Landlord" />
-    <NavigationProperty Name="Tenant" Relationship="NOOCHModel.FK_RentTransactions_Tenants" FromRole="RentTransaction" ToRole="Tenant" />
-    <NavigationProperty Name="UnitsOccupiedByTenant" Relationship="NOOCHModel.FK_RentTransactions_UnitsOccupiedByTenants" FromRole="RentTransaction" ToRole="UnitsOccupiedByTenant" />
-  </EntityType>
   <EntityType Name="Tenant">
     <Key>
       <PropertyRef Name="TenantId" />
@@ -635,18 +574,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_RentTransactions_Landlords">
-    <End Type="NOOCHModel.Landlord" Role="Landlord" Multiplicity="0..1" />
-    <End Type="NOOCHModel.RentTransaction" Role="RentTransaction" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Landlord">
-        <PropertyRef Name="LandlordId" />
-      </Principal>
-      <Dependent Role="RentTransaction">
-        <PropertyRef Name="LandlordId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <Association Name="FK_MemberNotifications_Members">
     <End Type="NOOCHModel.Member" Role="Member" Multiplicity="1" />
     <End Type="NOOCHModel.MemberNotification" Role="MemberNotification" Multiplicity="*" />
@@ -704,6 +631,79 @@
       </Principal>
       <Dependent Role="Transaction">
         <PropertyRef Name="RecipientId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="SynapseCreateUserResult">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="MemberId" Type="Guid" />
+    <Property Name="DateCreated" Type="DateTime" Precision="3" />
+    <Property Name="access_token" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="expires_in" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="reason" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="refresh_token" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="success" Type="Boolean" />
+    <Property Name="username" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="user_id" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="IsDeleted" Type="Boolean" />
+    <Property Name="ModifiedOn" Type="DateTime" Precision="3" />
+    <Property Name="IsForNonNoochUser" Type="Boolean" />
+    <Property Name="NonNoochUserEmail" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="TransactionIdFromWhichInvited" Type="Guid" />
+    <Property Name="HasNonNoochUserSignedUp" Type="Boolean" />
+    <Property Name="MemberIdAfterSignup" Type="Guid" />
+    <Property Name="is_business" Type="Boolean" />
+    <Property Name="legal_name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="permission" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="Phone_number" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="photos" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="expires_at" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="physical_doc" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="virtual_doc" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="extra_security" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="RentTransaction">
+    <Key>
+      <PropertyRef Name="RentTransactionId" />
+    </Key>
+    <Property Name="RentTransactionId" Type="Guid" Nullable="false" />
+    <Property Name="LandlordId" Type="Guid" />
+    <Property Name="TenantId" Type="Guid" />
+    <Property Name="TransactionStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="TransCreatedOn" Type="DateTime" Precision="3" />
+    <Property Name="TransRespondedOn" Type="DateTime" Precision="3" />
+    <Property Name="IsDeleted" Type="Boolean" />
+    <Property Name="UOBTId" Type="Int32" />
+    <Property Name="IsDisputed" Type="Boolean" />
+    <Property Name="DisputeStatus" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="RaisedBy" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="RaisedById" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="AdminNotes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="Memo" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="IsRecurring" Type="Boolean" />
+    <Property Name="NextRecurrTransDueDate" Type="DateTime" Precision="3" />
+    <Property Name="RecentRecurrTransId" Type="Guid" />
+    <Property Name="Attachment" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="TransactionType" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="Amount" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="NoOfTimesToRecurr" Type="Int32" />
+    <Property Name="UserPreferredDayOfMonthForAutoPay" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="Landlord" Relationship="NOOCHModel.FK_RentTransactions_Landlords" FromRole="RentTransaction" ToRole="Landlord" />
+    <NavigationProperty Name="Tenant" Relationship="NOOCHModel.FK_RentTransactions_Tenants" FromRole="RentTransaction" ToRole="Tenant" />
+    <NavigationProperty Name="UnitsOccupiedByTenant" Relationship="NOOCHModel.FK_RentTransactions_UnitsOccupiedByTenants" FromRole="RentTransaction" ToRole="UnitsOccupiedByTenant" />
+  </EntityType>
+  <Association Name="FK_RentTransactions_Landlords">
+    <End Type="NOOCHModel.Landlord" Role="Landlord" Multiplicity="0..1" />
+    <End Type="NOOCHModel.RentTransaction" Role="RentTransaction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Landlord">
+        <PropertyRef Name="LandlordId" />
+      </Principal>
+      <Dependent Role="RentTransaction">
+        <PropertyRef Name="LandlordId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
