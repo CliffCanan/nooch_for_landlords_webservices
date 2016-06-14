@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="NOOCHModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="NOOCHModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AuthenticationTokens">
           <Key>
             <PropertyRef Name="TokenId" />
@@ -297,6 +297,18 @@
           <Property Name="Amount" Type="varchar(max)" />
           <Property Name="NoOfTimesToRecurr" Type="int" />
           <Property Name="UserPreferredDayOfMonthForAutoPay" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="SynapseAddTransactionResults">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="TransactionId" Type="uniqueidentifier" />
+          <Property Name="OidFromSynapse" Type="varchar(max)" />
+          <Property Name="Status_DateTimeStamp" Type="varchar(max)" />
+          <Property Name="Status_Id" Type="varchar(max)" />
+          <Property Name="Status_Text" Type="varchar(max)" />
+          <Property Name="Status_Note" Type="varchar(max)" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
         </EntityType>
         <EntityType Name="SynapseBanksOfMembers">
           <Key>
@@ -629,6 +641,7 @@
           <EntitySet Name="Properties" EntityType="Self.Properties" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PropertyUnits" EntityType="Self.PropertyUnits" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RentTransactions" EntityType="Self.RentTransactions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SynapseAddTransactionResults" EntityType="Self.SynapseAddTransactionResults" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SynapseBanksOfMembers" EntityType="Self.SynapseBanksOfMembers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SynapseCreateUserResults" EntityType="Self.SynapseCreateUserResults" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tenants" EntityType="Self.Tenants" Schema="dbo" store:Type="Tables" />
@@ -672,8 +685,7 @@
             <End Role="Transactions" EntitySet="Transactions" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="NOOCHModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -744,60 +756,60 @@
           <EntitySet Name="MemberNotifications" EntityType="Self.MemberNotification" />
           <EntitySet Name="MemberPrivacySettings" EntityType="Self.MemberPrivacySetting" />
           <FunctionImport Name="GetTenantsCountInGivenPropertyId" ReturnType="Collection(Int32)">
-            <Parameter Name="vPropertyId" Mode="In" Type="String" />
+          <Parameter Name="vPropertyId" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="TenantsIdDocuments" EntityType="NOOCHModel.TenantsIdDocument" />
           <EntitySet Name="InviteCodes" EntityType="NOOCHModel.InviteCode" />
           <EntitySet Name="AuthenticationTokens" EntityType="NOOCHModel.AuthenticationToken" />
           <EntitySet Name="PasswordResetRequests" EntityType="NOOCHModel.PasswordResetRequest" />
           <FunctionImport Name="GetPropertiesCountForGivenLandlord" ReturnType="Collection(Int32)">
-            <Parameter Name="vLandlordId" Mode="In" Type="String" />
+          <Parameter Name="vLandlordId" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="GetTenantsCountForGivenLandlord" ReturnType="Collection(Int32)">
-            <Parameter Name="vLandlordId" Mode="In" Type="String" />
+          <Parameter Name="vLandlordId" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="GetUnitsCountForGivenLandlord" ReturnType="Collection(Int32)">
-            <Parameter Name="vLandlordId" Mode="In" Type="String" />
+          <Parameter Name="vLandlordId" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="IsBankAccountAddedforGivenLandlordOrTenant" ReturnType="Collection(Boolean)">
-            <Parameter Name="vUserType" Mode="In" Type="String" />
+          <Parameter Name="vUserType" Mode="In" Type="String" />
             <Parameter Name="vUserId" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="IsEmailVerifiedforGivenLandlordOrTenant" ReturnType="Collection(Boolean)">
-            <Parameter Name="vUserType" Mode="In" Type="String" />
+          <Parameter Name="vUserType" Mode="In" Type="String" />
             <Parameter Name="vUserId" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="IsPhoneVerifiedforGivenLandlordOrTenant" ReturnType="Collection(Boolean)">
-            <Parameter Name="vUserType" Mode="In" Type="String" />
+          <Parameter Name="vUserType" Mode="In" Type="String" />
             <Parameter Name="vUserId" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="GetTenantNameForGivenUnitId" ReturnType="Collection(String)">
-            <Parameter Name="vUnitId" Mode="In" Type="String" />
+          <Parameter Name="vUnitId" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="GetTenantEmailForGivenUnitId" ReturnType="Collection(String)">
-            <Parameter Name="vUnitId" Mode="In" Type="String" />
+          <Parameter Name="vUnitId" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="GetTenantImageForGivenUnitId" ReturnType="Collection(String)">
-            <Parameter Name="vUnitId" Mode="In" Type="String" />
+          <Parameter Name="vUnitId" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="GetLastRentPaymentDateForGivenUnitId" ReturnType="Collection(DateTime)">
-            <Parameter Name="vUnitId" Mode="In" Type="String" />
+          <Parameter Name="vUnitId" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="IsBankAccountAddedOfTenantInGivenUnitId" ReturnType="Collection(Int32)">
-            <Parameter Name="vUnitId" Mode="In" Type="String" />
+          <Parameter Name="vUnitId" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="IsEmailIdVerifiedOfTenantInGivenUnitId" ReturnType="Collection(Boolean)">
-            <Parameter Name="vUnitId" Mode="In" Type="String" />
+          <Parameter Name="vUnitId" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="IsPhoneVerifiedOfTenantInGivenUnitId" ReturnType="Collection(Boolean)">
-            <Parameter Name="vUnitId" Mode="In" Type="String" />
+          <Parameter Name="vUnitId" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="IsRentPaidByTenantForGivenUnitId" ReturnType="Collection(Boolean)">
-            <Parameter Name="vUnitId" Mode="In" Type="String" />
+          <Parameter Name="vUnitId" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="SynapseBanksOfMembers" EntityType="NOOCHModel.SynapseBanksOfMember" />
           <FunctionImport Name="GetTenantsInGivenPropertyId" ReturnType="Collection(NOOCHModel.GetTenantsInGivenPropertyId_Result2)">
-            <Parameter Name="vPropertyId" Mode="In" Type="String" />
+          <Parameter Name="vPropertyId" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="MembersIPAddresses" EntityType="NOOCHModel.MembersIPAddress" />
           <EntitySet Name="Landlords" EntityType="NOOCHModel.Landlord" />
@@ -845,6 +857,7 @@
             <End Role="Transaction" EntitySet="Transactions" />
           </AssociationSet>
           <EntitySet Name="SynapseCreateUserResults" EntityType="NOOCHModel.SynapseCreateUserResult" />
+          <EntitySet Name="SynapseAddTransactionResults" EntityType="NOOCHModel.SynapseAddTransactionResult" />
         </EntityContainer>
         <EntityType Name="TenantsIdDocument">
           <Key>
@@ -1408,6 +1421,18 @@
           <Property Name="virtual_doc" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="extra_security" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
+        <EntityType Name="SynapseAddTransactionResult">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="TransactionId" Type="Guid" />
+          <Property Name="OidFromSynapse" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Status_DateTimeStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Status_Id" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Status_Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Status_Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1916,6 +1941,19 @@
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="MemberId" ColumnName="MemberId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SynapseAddTransactionResults">
+            <EntityTypeMapping TypeName="NOOCHModel.SynapseAddTransactionResult">
+              <MappingFragment StoreEntitySet="SynapseAddTransactionResults">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Status_Note" ColumnName="Status_Note" />
+                <ScalarProperty Name="Status_Text" ColumnName="Status_Text" />
+                <ScalarProperty Name="Status_Id" ColumnName="Status_Id" />
+                <ScalarProperty Name="Status_DateTimeStamp" ColumnName="Status_DateTimeStamp" />
+                <ScalarProperty Name="OidFromSynapse" ColumnName="OidFromSynapse" />
+                <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

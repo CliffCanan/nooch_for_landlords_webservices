@@ -338,6 +338,18 @@ namespace LanLordlAPIs.Controllers
                     {
                         #region Synapse Response Was Successful
 
+                        Logger.Info("RentTrans -> PayToTenants - SUCCESS Response From AddTransSynapseV3Reusable - " +
+                                                "Synapse TransID: [" + transactionResultFromSynapseAPI.responseFromSynapse.trans._id.oid + "]");
+
+
+                        using (NOOCHEntities obj = new NOOCHEntities())
+                        {
+                            Transaction trn = obj.Transactions.Where(t => t.TransactionId == tr.TransactionId).FirstOrDefault();
+                            // updating the transaction status to success.
+                            trn.TransactionStatus = "Success";
+                            trn.DateAccepted = DateTime.Now;
+                            int save = obj.SaveChanges();
+                        }
                         #region Send Email to Sender on transfer success
 
                         var sendersNotificationSets =

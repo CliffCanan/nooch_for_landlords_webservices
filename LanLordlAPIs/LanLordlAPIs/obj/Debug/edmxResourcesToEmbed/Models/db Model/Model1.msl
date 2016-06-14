@@ -506,5 +506,18 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="SynapseAddTransactionResults">
+      <EntityTypeMapping TypeName="NOOCHModel.SynapseAddTransactionResult">
+        <MappingFragment StoreEntitySet="SynapseAddTransactionResults">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Status_Note" ColumnName="Status_Note" />
+          <ScalarProperty Name="Status_Text" ColumnName="Status_Text" />
+          <ScalarProperty Name="Status_Id" ColumnName="Status_Id" />
+          <ScalarProperty Name="Status_DateTimeStamp" ColumnName="Status_DateTimeStamp" />
+          <ScalarProperty Name="OidFromSynapse" ColumnName="OidFromSynapse" />
+          <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
   </EntityContainerMapping>
 </Mapping>

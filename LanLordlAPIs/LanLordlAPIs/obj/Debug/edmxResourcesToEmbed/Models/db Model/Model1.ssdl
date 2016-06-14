@@ -293,6 +293,18 @@
     <Property Name="NoOfTimesToRecurr" Type="int" />
     <Property Name="UserPreferredDayOfMonthForAutoPay" Type="varchar(max)" />
   </EntityType>
+  <EntityType Name="SynapseAddTransactionResults">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="TransactionId" Type="uniqueidentifier" />
+    <Property Name="OidFromSynapse" Type="varchar(max)" />
+    <Property Name="Status_DateTimeStamp" Type="varchar(max)" />
+    <Property Name="Status_Id" Type="varchar(max)" />
+    <Property Name="Status_Text" Type="varchar(max)" />
+    <Property Name="Status_Note" Type="varchar(max)" />
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+  </EntityType>
   <EntityType Name="SynapseBanksOfMembers">
     <Key>
       <PropertyRef Name="Id" />
@@ -624,6 +636,7 @@
     <EntitySet Name="Properties" EntityType="Self.Properties" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PropertyUnits" EntityType="Self.PropertyUnits" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="RentTransactions" EntityType="Self.RentTransactions" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="SynapseAddTransactionResults" EntityType="Self.SynapseAddTransactionResults" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SynapseBanksOfMembers" EntityType="Self.SynapseBanksOfMembers" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SynapseCreateUserResults" EntityType="Self.SynapseCreateUserResults" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Tenants" EntityType="Self.Tenants" Schema="dbo" store:Type="Tables" />
