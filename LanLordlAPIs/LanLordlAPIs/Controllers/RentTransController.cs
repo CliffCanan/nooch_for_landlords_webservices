@@ -341,14 +341,22 @@ namespace LanLordlAPIs.Controllers
                         Logger.Info("RentTrans -> PayToTenants - SUCCESS Response From AddTransSynapseV3Reusable - " +
                                                 "Synapse TransID: [" + transactionResultFromSynapseAPI.responseFromSynapse.trans._id.oid + "]");
 
-
-                        using (NOOCHEntities obj = new NOOCHEntities())
+                        try
                         {
-                            Transaction trn = obj.Transactions.Where(t => t.TransactionId == tr.TransactionId).FirstOrDefault();
-                            // updating the transaction status to success.
-                            trn.TransactionStatus = "Success";
-                            trn.DateAccepted = DateTime.Now;
-                            int save = obj.SaveChanges();
+                            using (NOOCHEntities obj = new NOOCHEntities())
+                            {
+                                Transaction trn = obj.Transactions.Where(t => t.TransactionId == tr.TransactionId).FirstOrDefault();
+                                // updating the transaction status to success.
+                                trn.TransactionStatus = "Success";
+                                trn.DateAccepted = DateTime.Now;
+                                int save = obj.SaveChanges();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error(
+                                       "Landlords API -> RentTrans -> PayToTenant -> Updating Transaction status to success failed: TransactionID [" +
+                                       tr.TransactionId.ToString() + "], [Exception: " + ex + "]");
                         }
                         #region Send Email to Sender on transfer success
 
@@ -1163,6 +1171,7 @@ namespace LanLordlAPIs.Controllers
                                                c.RecipientId == landlordObj.MemberId)
                                         select c).FirstOrDefault();
 
+                        
                         if (transObj != null)
                         {
                             transObj.TransactionStatus = "Cancelled";

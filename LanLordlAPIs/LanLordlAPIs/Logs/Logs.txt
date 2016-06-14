@@ -3544,3 +3544,924 @@ INFO  2016-06-14 11:53:15,110 214286ms Logger                 Info              
 INFO  2016-06-14 11:53:17,386 216562ms Logger                 Info               - Landlords API -> RentTrans -> PayToTenant -> SUCCESS - Push notification sent to Recipient [3454 Tret] successfully.
 INFO  2016-06-14 11:53:17,388 216564ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: Nooch Receipts], [Address: receipts@nooch.com]
 INFO  2016-06-14 11:53:19,949 219125ms Logger                 Info               - Landlords API -> RentTrans -> PayToTenant -> TransferReceived Email sent to [surya@parkash.com] successfully
+INFO  2016-06-14 12:04:51,279 25396ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenant - Requested by [E003C765-CF86-4A09-A927-92E48A2B5077]
+INFO  2016-06-14 12:05:12,295 46413ms Logger                 Info               - Common Helper -> GetSynapseBankAndUserDetailsforGivenMemberId - Checkpoint #1 - SynapseCreateUserResults Record Found! - Now about to check if Synapse OAuth Key is expired or still valid.
+INFO  2016-06-14 12:05:12,303 46421ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey Initiated - User's Original OAuth Key (enc): [tGxqYT1DPTTvqnPV6fYbTjDiT3TkgOf8U2FQxqrh1o9VSr7H3QSuRaSqMX9HnQmz]
+INFO  2016-06-14 12:05:18,090 52208ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Payload to send to Synapse /v3/user/signin: [{"client":{"client_id":"Au4XMZuR83ZHYDC6DgrI","client_secret":"4DuoRwvfqyt2nz4FwuX64ow7Aew4YiQnYVibrkkP"},"login":{"email":"v3.test4@nooch.com","refresh_token":"refresh-cc604dcf-f0b0-4553-8a80-3371b273d2c7"},"user":{"_id":{"$oid":"57345a4386c27376b47c13cb"},"fingerprint":"qwertyuiop","ip":"54.201.43.89"}}]
+INFO  2016-06-14 12:05:21,698 55816ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Access_Token from Synapse MATCHES what we already had in DB.
+INFO  2016-06-14 12:05:23,948 58066ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - SUCCESS From Synapse and Successfully saved updates to Nooch DB.
+INFO  2016-06-14 12:07:12,109 166227ms Logger                 Info               - RequesterFirstName: [Land], RequesterLastName: [Lord], RequestReceiverFirstName: [3454], RequestReceiverLastName: [Tret], RequestReceiverFullName: [3454 Tret]
+INFO  2016-06-14 12:07:57,046 211164ms Logger                 Info               - RentTrans Ctrlr -> ChargeTenant - Memo: [for Testing], wholeAmount: [5.00], cancelLink: [https://www.noochme.com/noochweb/Nooch/CancelRequest?TransactionId=03be73c7-6f5f-437c-9677-72f111b3fb86&MemberId=E003C765-CF86-4A09-A927-92E48A2B5077&UserType=6KX3VJv3YvoyK+cemdsvMA==], toAddress: [rajat.puri@venturepact.com], fromAddress: [receipts@nooch.com]
+INFO  2016-06-14 12:08:02,060 216177ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: Nooch Receipts], [Address: receipts@nooch.com]
+INFO  2016-06-14 12:08:05,904 220021ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenant -> RequestSent email sent to [rajat.puri@venturepact.com] successfully.
+INFO  2016-06-14 12:08:27,217 241335ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: Nooch Receipts], [Address: receipts@nooch.com]
+INFO  2016-06-14 12:08:39,297 253415ms Logger                 Info               - RentTrans -> ChargeTenant ->  requestReceivedToNewUser email sent to [rajat.puri@venturepact.com] successfully
+INFO  2016-06-14 12:09:38,096 312214ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 12:09:39,412 313530ms Logger                 Error              - RentTrans Cntrlr -> Cancel Transaction FAILURE - Invalid Authentication Token - LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077], AccessToken: [E003C765-CF86-4A09-A927-92E48A2B5077]TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867]
+INFO  2016-06-14 12:09:45,196 319314ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 12:09:46,231 320349ms Logger                 Error              - RentTrans Cntrlr -> Cancel Transaction FAILURE - Invalid Authentication Token - LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077], AccessToken: [E003C765-CF86-4A09-A927-92E48A2B5077]TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867]
+INFO  2016-06-14 12:09:51,986 326104ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 12:09:53,033 327151ms Logger                 Error              - RentTrans Cntrlr -> Cancel Transaction FAILURE - Invalid Authentication Token - LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077], AccessToken: [E003C765-CF86-4A09-A927-92E48A2B5077]TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867]
+INFO  2016-06-14 12:11:03,449 397567ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 12:11:04,539 398657ms Logger                 Error              - RentTrans Cntrlr -> Cancel Transaction FAILURE - Invalid Authentication Token - LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077], AccessToken: [E003C765-CF86-4A09-A927-92E48A2B5077]TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867]
+INFO  2016-06-14 12:11:13,930 408048ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 12:11:43,348 437466ms Logger                 Error              - RentTrans Cntrlr -> CancelTransaction FAILED - Transaction Not Found - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867]
+INFO  2016-06-14 12:12:28,672 482789ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 12:12:36,819 490937ms Logger                 Error              - RentTrans Cntrlr -> Cancel Transaction FAILURE - Invalid Authentication Token - LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077], AccessToken: [E003C765-CF86-4A09-A927-92E48A2B5077]TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867]
+INFO  2016-06-14 12:13:08,274 522392ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 12:13:11,394 525512ms Logger                 Error              - RentTrans Cntrlr -> CancelTransaction FAILED - Transaction Not Found - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867]
+INFO  2016-06-14 12:13:34,380 548498ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 12:16:09,177 703295ms Logger                 Error              - RentTrans Cntrlr -> CancelTransaction FAILED - Outer Exception - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], Exception: [System.Data.EntityCommandExecutionException: An error occurred while executing the command definition. See the inner exception for details. ---> System.Data.SqlClient.SqlException: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding. ---> System.ComponentModel.Win32Exception: The wait operation timed out
+   --- End of inner exception stack trace ---
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   at System.Data.Objects.Internal.ObjectQueryExecutionPlan.Execute[TResultType](ObjectContext context, ObjectParameterCollection parameterValues)
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_1(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Controllers.RentTransController.CancelTransaction(CancelTransInput input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 1159]
+INFO  2016-06-14 12:16:42,028 736146ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 12:17:34,225 788343ms Logger                 Error              - RentTrans Cntrlr -> CancelTransaction FAILED - Outer Exception - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], Exception: [System.Data.EntityCommandExecutionException: An error occurred while executing the command definition. See the inner exception for details. ---> System.Data.SqlClient.SqlException: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding. ---> System.ComponentModel.Win32Exception: The wait operation timed out
+   --- End of inner exception stack trace ---
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   at System.Data.Objects.Internal.ObjectQueryExecutionPlan.Execute[TResultType](ObjectContext context, ObjectParameterCollection parameterValues)
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_1(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Controllers.RentTransController.CancelTransaction(CancelTransInput input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 1159]
+INFO  2016-06-14 12:18:44,027 858145ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 12:20:23,147 957264ms Logger                 Error              - RentTrans Cntrlr -> CancelTransaction FAILED - Outer Exception - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], Exception: [System.Data.EntityCommandExecutionException: An error occurred while executing the command definition. See the inner exception for details. ---> System.Data.SqlClient.SqlException: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding. ---> System.ComponentModel.Win32Exception: The wait operation timed out
+   --- End of inner exception stack trace ---
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   at System.Data.Objects.Internal.ObjectQueryExecutionPlan.Execute[TResultType](ObjectContext context, ObjectParameterCollection parameterValues)
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_1(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Controllers.RentTransController.CancelTransaction(CancelTransInput input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 1159]
+INFO  2016-06-14 12:23:47,629 195428ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 12:26:46,434 374234ms Logger                 Error              - RentTrans Cntrlr -> CancelTransaction FAILED - Outer Exception - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], Exception: [System.Data.EntityCommandExecutionException: An error occurred while executing the command definition. See the inner exception for details. ---> System.Data.SqlClient.SqlException: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding. ---> System.ComponentModel.Win32Exception: The wait operation timed out
+   --- End of inner exception stack trace ---
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   at System.Data.Objects.Internal.ObjectQueryExecutionPlan.Execute[TResultType](ObjectContext context, ObjectParameterCollection parameterValues)
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_1(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Controllers.RentTransController.CancelTransaction(CancelTransInput input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 1159]
+INFO  2016-06-14 12:26:49,369 377168ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenant - Requested by [E003C765-CF86-4A09-A927-92E48A2B5077]
+INFO  2016-06-14 12:27:00,724 388523ms Logger                 Info               - Common Helper -> GetSynapseBankAndUserDetailsforGivenMemberId - Checkpoint #1 - SynapseCreateUserResults Record Found! - Now about to check if Synapse OAuth Key is expired or still valid.
+INFO  2016-06-14 12:27:00,741 388540ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey Initiated - User's Original OAuth Key (enc): [tGxqYT1DPTTvqnPV6fYbTjDiT3TkgOf8U2FQxqrh1o9VSr7H3QSuRaSqMX9HnQmz]
+INFO  2016-06-14 12:27:04,857 392656ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Payload to send to Synapse /v3/user/signin: [{"client":{"client_id":"Au4XMZuR83ZHYDC6DgrI","client_secret":"4DuoRwvfqyt2nz4FwuX64ow7Aew4YiQnYVibrkkP"},"login":{"email":"v3.test4@nooch.com","refresh_token":"refresh-cc604dcf-f0b0-4553-8a80-3371b273d2c7"},"user":{"_id":{"$oid":"57345a4386c27376b47c13cb"},"fingerprint":"qwertyuiop","ip":"54.201.43.89"}}]
+INFO  2016-06-14 12:27:07,958 395757ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Access_Token from Synapse MATCHES what we already had in DB.
+INFO  2016-06-14 12:27:10,178 397977ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - SUCCESS From Synapse and Successfully saved updates to Nooch DB.
+ERROR 2016-06-14 12:27:59,889 447688ms Logger                 Error              - Landlords API -> RentTrans -> ChargeTenant FAILED - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: [ System.Data.EntityCommandExecutionException: An error occurred while executing the command definition. See the inner exception for details. ---> System.Data.SqlClient.SqlException: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding. ---> System.ComponentModel.Win32Exception: The wait operation timed out
+   --- End of inner exception stack trace ---
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   at System.Data.Objects.Internal.ObjectQueryExecutionPlan.Execute[TResultType](ObjectContext context, ObjectParameterCollection parameterValues)
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.SingleOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_2(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.SingleOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.getTransactionByTrackingId(String transTrackId) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 785
+   at LanLordlAPIs.Classes.Utility.CommonHelper.GetRandomTransactionTrackingId() in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 767
+   at LanLordlAPIs.Controllers.RentTransController.chargeTenant(ChargeTenantInputClass input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 799 ]
+INFO  2016-06-14 12:32:26,133 713932ms Logger                 Info               - UserController -> RegisterLandlord - ** NEW LANDLORD ** - Name: [land lord], Email: [newlandlord5@landlord.com], Fingerprint: [suasusau21324redakufejfjsf], IP: [192.168.0.1], Country: [US], isBusiness: [True], ShouldSendEmails: [True]
+INFO  2016-06-14 12:32:29,758 717557ms Logger                 Info               - UserController -> RegisterLandlord - ** NEW LANDLORD ** - MEMBER Created, about to save to DB - [MemberID: 125791fe-78e2-4f17-908f-ff949668f551]
+INFO  2016-06-14 12:32:43,617 731416ms Logger                 Info               - UserController -> RegisterLandlord - ** NEW LANDLORD ** - AUTH TOKEN Created and saved to DB - [MemberID: 125791fe-78e2-4f17-908f-ff949668f551]
+INFO  2016-06-14 12:32:43,647 731446ms Logger                 Info               - UserController -> RegisterLandlord - ** NEW LANDLORD ** - NOTIFICATIONS & PRIVACY SETTINGS Created and saved to DB - [MemberID: 125791fe-78e2-4f17-908f-ff949668f551]
+INFO  2016-06-14 12:32:43,649 731448ms Logger                 Info               - UserController -> RegisterLandlord - ** NEW LANDLORD ** - About to created new LANLDORD record - [MemberID: 125791fe-78e2-4f17-908f-ff949668f551]
+INFO  2016-06-14 12:32:46,271 734070ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: Nooch Support], [Address: support@nooch.com]
+INFO  2016-06-14 12:32:51,901 739700ms Logger                 Info               - UserController -> RegisterLandlord - Registration email sent to [newlandlord5@landlord.com] successfully.
+INFO  2016-06-14 12:34:20,369 828168ms Logger                 Info               - UserController -> RegisterLandlord - ** NEW LANDLORD ** - Name: [land lord], Email: [newlandlord5@landlord.com], Fingerprint: [suasusau21324redakufejfjsf], IP: [192.168.0.1], Country: [US], isBusiness: [True], ShouldSendEmails: [True]
+INFO  2016-06-14 12:34:41,914 849713ms Logger                 Info               - UserController -> RegisterLandlord - ** NEW LANDLORD ** - Name: [land lord], Email: [newlandlord51@landlord.com], Fingerprint: [suasusau21324redakufejfjsf], IP: [192.168.0.1], Country: [US], isBusiness: [True], ShouldSendEmails: [True]
+INFO  2016-06-14 12:34:52,729 860528ms Logger                 Info               - UserController -> RegisterLandlord - ** NEW LANDLORD ** - MEMBER Created, about to save to DB - [MemberID: 5d023b2c-ff12-490d-be94-7a9701b3b0b3]
+INFO  2016-06-14 12:35:02,019 869819ms Logger                 Info               - UserController -> RegisterLandlord - ** NEW LANDLORD ** - AUTH TOKEN Created and saved to DB - [MemberID: 5d023b2c-ff12-490d-be94-7a9701b3b0b3]
+INFO  2016-06-14 12:35:02,023 869823ms Logger                 Info               - UserController -> RegisterLandlord - ** NEW LANDLORD ** - NOTIFICATIONS & PRIVACY SETTINGS Created and saved to DB - [MemberID: 5d023b2c-ff12-490d-be94-7a9701b3b0b3]
+INFO  2016-06-14 12:35:02,024 869824ms Logger                 Info               - UserController -> RegisterLandlord - ** NEW LANDLORD ** - About to created new LANLDORD record - [MemberID: 5d023b2c-ff12-490d-be94-7a9701b3b0b3]
+INFO  2016-06-14 12:35:03,771 871570ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: Nooch Support], [Address: support@nooch.com]
+INFO  2016-06-14 12:35:11,943 879742ms Logger                 Info               - UserController -> RegisterLandlord - Registration email sent to [newlandlord51@landlord.com] successfully.
+INFO  2016-06-14 12:35:24,075 891874ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 12:36:16,634 944433ms Logger                 Error              - RentTrans Cntrlr -> CancelTransaction FAILED - Outer Exception - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], Exception: [System.Data.EntityCommandExecutionException: An error occurred while executing the command definition. See the inner exception for details. ---> System.Data.SqlClient.SqlException: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding. ---> System.ComponentModel.Win32Exception: The wait operation timed out
+   --- End of inner exception stack trace ---
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   at System.Data.Objects.Internal.ObjectQueryExecutionPlan.Execute[TResultType](ObjectContext context, ObjectParameterCollection parameterValues)
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_1(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Controllers.RentTransController.CancelTransaction(CancelTransInput input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 1159]
+INFO  2016-06-14 12:36:51,875 979674ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+INFO  2016-06-14 12:38:54,929 17606ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 12:39:23,718 46395ms Logger                 Error              - CommonHelper -> GetLandlordByLandlordId FAILED - Exception: [System.Data.EntityException: The underlying provider failed on Open. ---> System.Data.SqlClient.SqlException: A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: Named Pipes Provider, error: 40 - Could not open a connection to SQL Server) ---> System.ComponentModel.Win32Exception: The network path was not found
+   --- End of inner exception stack trace ---
+   at System.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, DbConnectionPool pool, String accessToken, Boolean applyTransientFaultHandling)
+   at System.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnection owningObject, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at System.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   at System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   at System.Data.SqlClient.SqlConnection.Open()
+   at System.Data.EntityClient.EntityConnection.OpenStoreConnectionIf(Boolean openCondition, DbConnection storeConnectionToOpen, DbConnection originalConnection, String exceptionCode, String attemptedOperation, Boolean& closeStoreConnectionOnFailure)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityConnection.OpenStoreConnectionIf(Boolean openCondition, DbConnection storeConnectionToOpen, DbConnection originalConnection, String exceptionCode, String attemptedOperation, Boolean& closeStoreConnectionOnFailure)
+   at System.Data.EntityClient.EntityConnection.Open()
+   at System.Data.Objects.ObjectContext.EnsureConnection()
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.SingleOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_2(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.SingleOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.GetLandlordByLandlordId(Guid landlordId) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 998]
+INFO  2016-06-14 12:42:25,852  2959ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 12:43:12,312 49419ms Logger                 Error              - RentTrans Cntrlr -> CancelTransaction FAILED - Outer Exception - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], Exception: [System.Data.EntityCommandExecutionException: An error occurred while executing the command definition. See the inner exception for details. ---> System.Data.SqlClient.SqlException: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding. ---> System.ComponentModel.Win32Exception: The wait operation timed out
+   --- End of inner exception stack trace ---
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   at System.Data.Objects.Internal.ObjectQueryExecutionPlan.Execute[TResultType](ObjectContext context, ObjectParameterCollection parameterValues)
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_1(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Controllers.RentTransController.CancelTransaction(CancelTransInput input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 1165]
+INFO  2016-06-14 12:44:08,050 105157ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 12:45:48,190 205296ms Logger                 Error              - RentTrans Cntrlr -> CancelTransaction FAILED - Outer Exception - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], Exception: [System.Data.EntityCommandExecutionException: An error occurred while executing the command definition. See the inner exception for details. ---> System.Data.SqlClient.SqlException: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding. ---> System.ComponentModel.Win32Exception: The wait operation timed out
+   --- End of inner exception stack trace ---
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   at System.Data.Objects.Internal.ObjectQueryExecutionPlan.Execute[TResultType](ObjectContext context, ObjectParameterCollection parameterValues)
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_1(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Controllers.RentTransController.CancelTransaction(CancelTransInput input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 1165]
+INFO  2016-06-14 12:45:57,962 215069ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+INFO  2016-06-14 12:48:36,902 11254ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 12:49:06,598 40949ms Logger                 Error              - CommonHelper -> GetLandlordByLandlordId FAILED - Exception: [System.Data.EntityException: The underlying provider failed on Open. ---> System.Data.SqlClient.SqlException: A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: Named Pipes Provider, error: 40 - Could not open a connection to SQL Server) ---> System.ComponentModel.Win32Exception: The network path was not found
+   --- End of inner exception stack trace ---
+   at System.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, DbConnectionPool pool, String accessToken, Boolean applyTransientFaultHandling)
+   at System.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnection owningObject, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at System.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   at System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   at System.Data.SqlClient.SqlConnection.Open()
+   at System.Data.EntityClient.EntityConnection.OpenStoreConnectionIf(Boolean openCondition, DbConnection storeConnectionToOpen, DbConnection originalConnection, String exceptionCode, String attemptedOperation, Boolean& closeStoreConnectionOnFailure)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityConnection.OpenStoreConnectionIf(Boolean openCondition, DbConnection storeConnectionToOpen, DbConnection originalConnection, String exceptionCode, String attemptedOperation, Boolean& closeStoreConnectionOnFailure)
+   at System.Data.EntityClient.EntityConnection.Open()
+   at System.Data.Objects.ObjectContext.EnsureConnection()
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.SingleOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_2(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.SingleOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.GetLandlordByLandlordId(Guid landlordId) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 998]
+ERROR 2016-06-14 12:49:27,354 61706ms Logger                 Error              - RentTrans Cntrlr -> CancelTransaction FAILED - Outer Exception - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], Exception: [System.Data.EntityException: The underlying provider failed on Open. ---> System.Data.SqlClient.SqlException: A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: Named Pipes Provider, error: 40 - Could not open a connection to SQL Server) ---> System.ComponentModel.Win32Exception: The network path was not found
+   --- End of inner exception stack trace ---
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   at System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   at System.Data.SqlClient.SqlConnection.Open()
+   at System.Data.EntityClient.EntityConnection.OpenStoreConnectionIf(Boolean openCondition, DbConnection storeConnectionToOpen, DbConnection originalConnection, String exceptionCode, String attemptedOperation, Boolean& closeStoreConnectionOnFailure)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityConnection.OpenStoreConnectionIf(Boolean openCondition, DbConnection storeConnectionToOpen, DbConnection originalConnection, String exceptionCode, String attemptedOperation, Boolean& closeStoreConnectionOnFailure)
+   at System.Data.EntityClient.EntityConnection.Open()
+   at System.Data.Objects.ObjectContext.EnsureConnection()
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_1(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.AuthTokenValidation(Guid LandlorId, String accesstoken) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 1604
+   at LanLordlAPIs.Controllers.RentTransController.CancelTransaction(CancelTransInput input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 1152]
+INFO  2016-06-14 12:49:35,698 70049ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 12:50:28,217 122569ms Logger                 Error              - RentTrans Cntrlr -> CancelTransaction FAILED - Outer Exception - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], Exception: [System.Data.EntityCommandExecutionException: An error occurred while executing the command definition. See the inner exception for details. ---> System.Data.SqlClient.SqlException: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding. ---> System.ComponentModel.Win32Exception: The wait operation timed out
+   --- End of inner exception stack trace ---
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   at System.Data.Objects.Internal.ObjectQueryExecutionPlan.Execute[TResultType](ObjectContext context, ObjectParameterCollection parameterValues)
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_1(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Controllers.RentTransController.CancelTransaction(CancelTransInput input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 1165]
+INFO  2016-06-14 12:51:34,134  6288ms Logger                 Info               - Rent Trans Cntrlr -> GetLandlordsPaymentHistory Initiated - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [MemberID: BCD280C0-0A1A-43A5-BFC5-1782FDF5CDED]
+ERROR 2016-06-14 12:51:43,867 16021ms Logger                 Error              - Rent Trans Cntrlr -> GetLandlordsPaymentHistory AUTH TOKEN FAILURE - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077]
+INFO  2016-06-14 12:52:22,764 54918ms Logger                 Info               - Rent Trans Cntrlr -> GetLandlordsPaymentHistory Initiated - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [MemberID: BCD280C0-0A1A-43A5-BFC5-1782FDF5CDED]
+INFO  2016-06-14 12:52:36,044 68199ms Logger                 Info               - GET HISTORY 1.) -> Properties Count in DB: [1]
+INFO  2016-06-14 12:52:38,877 71031ms Logger                 Info               - BEGIN PROPERTY...
+INFO  2016-06-14 12:52:42,147 74301ms Logger                 Info               - GET HISTORY 2a.) - UNITS Count [4] in this Property: [08e028e4-d26b-4a2c-a250-00f945048a5b]
+INFO  2016-06-14 12:52:44,923 77077ms Logger                 Info               - BEGIN UNIT...
+INFO  2016-06-14 12:52:45,116 77270ms Logger                 Info               - GET HISTORY 2b.) - UNIT [1] -> [178fc9d3-24ce-48bf-acb1-4b638ddcb0d9] in Property: [Sunshine_Estates]
+INFO  2016-06-14 12:52:47,613 79767ms Logger                 Info               - GET HISTORY 3a.) - UOBT Count [1] for Unit: [178fc9d3-24ce-48bf-acb1-4b638ddcb0d9]
+INFO  2016-06-14 12:52:50,107 82262ms Logger                 Info               - BEGIN UOBT...
+INFO  2016-06-14 12:52:50,336 82490ms Logger                 Info               - GET HISTORY 3b.) - UOBT # [1], UOBT ID -> [16] for Unit: [178fc9d3-24ce-48bf-acb1-4b638ddcb0d9]
+INFO  2016-06-14 12:52:51,349 83504ms Logger                 Info               - GET HISTORY 4.) - UOBT.TenantId is: [8b4b4983-f022-4289-ba6e-48d5affb5484]
+ERROR 2016-06-14 12:53:34,851 127005ms Logger                 Error              - Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: An error occurred while executing the command definition. See the inner exception for details. ]
+INFO  2016-06-14 12:54:11,738 163892ms Logger                 Info               - BEGIN UNIT...
+INFO  2016-06-14 12:54:11,740 163895ms Logger                 Info               - GET HISTORY 2b.) - UNIT [2] -> [59114ae4-e4ee-4c6a-bd86-e5a4e1552edc] in Property: [Sunshine_Estates]
+INFO  2016-06-14 12:54:12,167 164322ms Logger                 Info               - GET HISTORY 3a.) - UOBT Count [0] for Unit: [59114ae4-e4ee-4c6a-bd86-e5a4e1552edc]
+INFO  2016-06-14 12:54:12,169 164324ms Logger                 Info               - BEGIN UNIT...
+INFO  2016-06-14 12:54:12,170 164325ms Logger                 Info               - GET HISTORY 2b.) - UNIT [3] -> [34d22776-6cf1-49ce-9597-e9e1208d4e17] in Property: [Sunshine_Estates]
+INFO  2016-06-14 12:54:12,588 164742ms Logger                 Info               - GET HISTORY 3a.) - UOBT Count [1] for Unit: [34d22776-6cf1-49ce-9597-e9e1208d4e17]
+INFO  2016-06-14 12:54:12,590 164744ms Logger                 Info               - BEGIN UOBT...
+INFO  2016-06-14 12:54:12,591 164745ms Logger                 Info               - GET HISTORY 3b.) - UOBT # [1], UOBT ID -> [18] for Unit: [34d22776-6cf1-49ce-9597-e9e1208d4e17]
+INFO  2016-06-14 12:54:12,592 164746ms Logger                 Info               - GET HISTORY 4.) - UOBT.TenantId is: [893cf7aa-6e4b-4676-b1e8-3f8b9e4b202d]
+ERROR 2016-06-14 12:54:19,675 171830ms Logger                 Error              - Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: Non-static method requires a target. ]
+INFO  2016-06-14 12:54:24,370 176524ms Logger                 Info               - BEGIN UNIT...
+INFO  2016-06-14 12:54:24,371 176525ms Logger                 Info               - GET HISTORY 2b.) - UNIT [4] -> [a9d8605c-20c1-4244-a740-ed1d5f9d3d87] in Property: [Sunshine_Estates]
+INFO  2016-06-14 12:54:24,984 177138ms Logger                 Info               - GET HISTORY 3a.) - UOBT Count [5] for Unit: [a9d8605c-20c1-4244-a740-ed1d5f9d3d87]
+INFO  2016-06-14 12:54:24,985 177139ms Logger                 Info               - BEGIN UOBT...
+INFO  2016-06-14 12:54:24,986 177140ms Logger                 Info               - GET HISTORY 3b.) - UOBT # [1], UOBT ID -> [17] for Unit: [a9d8605c-20c1-4244-a740-ed1d5f9d3d87]
+INFO  2016-06-14 12:54:24,987 177141ms Logger                 Info               - GET HISTORY 4.) - UOBT.TenantId is: [7924c72b-1995-4483-95d8-8353a6dbd88e]
+ERROR 2016-06-14 12:54:27,829 179983ms Logger                 Error              - Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: Non-static method requires a target. ]
+INFO  2016-06-14 12:54:27,831 179985ms Logger                 Info               - BEGIN UOBT...
+INFO  2016-06-14 12:54:27,833 179987ms Logger                 Info               - GET HISTORY 3b.) - UOBT # [2], UOBT ID -> [78] for Unit: [a9d8605c-20c1-4244-a740-ed1d5f9d3d87]
+INFO  2016-06-14 12:54:27,836 179990ms Logger                 Info               - GET HISTORY 4.) - UOBT.TenantId is: [7acbbec8-068c-4019-bda7-f51cbbc585d2]
+INFO  2016-06-14 12:54:43,370 195525ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 12:54:59,720 211875ms Logger                 Error              - Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: An error occurred while executing the command definition. See the inner exception for details. ]
+INFO  2016-06-14 12:54:59,720 211875ms Logger                 Info               - BEGIN UOBT...
+INFO  2016-06-14 12:54:59,721 211876ms Logger                 Info               - GET HISTORY 3b.) - UOBT # [3], UOBT ID -> [79] for Unit: [a9d8605c-20c1-4244-a740-ed1d5f9d3d87]
+INFO  2016-06-14 12:54:59,721 211876ms Logger                 Info               - GET HISTORY 4.) - UOBT.TenantId is: [4f8dd855-6ccf-4289-8238-0650d01dabab]
+ERROR 2016-06-14 12:55:33,870 246024ms Logger                 Error              - RentTrans Cntrlr -> CancelTransaction FAILED - Outer Exception - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], Exception: [System.Data.EntityCommandExecutionException: An error occurred while executing the command definition. See the inner exception for details. ---> System.Data.SqlClient.SqlException: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding. ---> System.ComponentModel.Win32Exception: The wait operation timed out
+   --- End of inner exception stack trace ---
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   at System.Data.Objects.Internal.ObjectQueryExecutionPlan.Execute[TResultType](ObjectContext context, ObjectParameterCollection parameterValues)
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_1(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Controllers.RentTransController.CancelTransaction(CancelTransInput input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 1159]
+ERROR 2016-06-14 12:55:42,272 254426ms Logger                 Error              - Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: An error occurred while executing the command definition. See the inner exception for details. ]
+INFO  2016-06-14 12:55:42,273 254427ms Logger                 Info               - BEGIN UOBT...
+INFO  2016-06-14 12:55:42,274 254428ms Logger                 Info               - GET HISTORY 3b.) - UOBT # [4], UOBT ID -> [80] for Unit: [a9d8605c-20c1-4244-a740-ed1d5f9d3d87]
+INFO  2016-06-14 12:55:42,275 254429ms Logger                 Info               - GET HISTORY 4.) - UOBT.TenantId is: [4f8dd855-6ccf-4289-8238-0650d01dabab]
+INFO  2016-06-14 12:55:50,161 262316ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 12:58:40,729 432884ms Logger                 Error              - Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: An error occurred while executing the command definition. See the inner exception for details. ]
+INFO  2016-06-14 12:58:40,730 432885ms Logger                 Info               - BEGIN UOBT...
+INFO  2016-06-14 12:58:40,730 432885ms Logger                 Info               - GET HISTORY 3b.) - UOBT # [5], UOBT ID -> [81] for Unit: [a9d8605c-20c1-4244-a740-ed1d5f9d3d87]
+INFO  2016-06-14 12:58:40,730 432885ms Logger                 Info               - GET HISTORY 4.) - UOBT.TenantId is: [4f8dd855-6ccf-4289-8238-0650d01dabab]
+ERROR 2016-06-14 12:59:17,107 469261ms Logger                 Error              - RentTrans Cntrlr -> CancelTransaction FAILED - Outer Exception - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], Exception: [System.Data.EntityCommandExecutionException: An error occurred while executing the command definition. See the inner exception for details. ---> System.Data.SqlClient.SqlException: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding. ---> System.ComponentModel.Win32Exception: The wait operation timed out
+   --- End of inner exception stack trace ---
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   at System.Data.Objects.Internal.ObjectQueryExecutionPlan.Execute[TResultType](ObjectContext context, ObjectParameterCollection parameterValues)
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_1(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Controllers.RentTransController.CancelTransaction(CancelTransInput input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 1159]
+ERROR 2016-06-14 12:59:17,628 469782ms Logger                 Error              - Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: An error occurred while executing the command definition. See the inner exception for details. ]
+INFO  2016-06-14 12:59:39,882 492037ms Logger                 Info               - Rent Trans Cntrlr -> GetLandlordsPaymentHistory Initiated - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [MemberID: BCD280C0-0A1A-43A5-BFC5-1782FDF5CDED]
+ERROR 2016-06-14 12:59:51,217 503371ms Logger                 Error              - Rent Trans Cntrlr -> GetLandlordsPaymentHistory AUTH TOKEN FAILURE - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077]
+INFO  2016-06-14 13:00:33,630 545784ms Logger                 Info               - Rent Trans Cntrlr -> GetLandlordsPaymentHistory Initiated - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [MemberID: BCD280C0-0A1A-43A5-BFC5-1782FDF5CDED]
+INFO  2016-06-14 13:00:49,344 561498ms Logger                 Info               - GET HISTORY 1.) -> Properties Count in DB: [1]
+INFO  2016-06-14 13:00:52,195 564349ms Logger                 Info               - BEGIN PROPERTY...
+INFO  2016-06-14 13:00:55,288 567442ms Logger                 Info               - GET HISTORY 2a.) - UNITS Count [4] in this Property: [08e028e4-d26b-4a2c-a250-00f945048a5b]
+INFO  2016-06-14 13:00:58,764 570919ms Logger                 Info               - BEGIN UNIT...
+INFO  2016-06-14 13:00:59,179 571333ms Logger                 Info               - GET HISTORY 2b.) - UNIT [1] -> [178fc9d3-24ce-48bf-acb1-4b638ddcb0d9] in Property: [Sunshine_Estates]
+INFO  2016-06-14 13:01:02,596 574750ms Logger                 Info               - GET HISTORY 3a.) - UOBT Count [1] for Unit: [178fc9d3-24ce-48bf-acb1-4b638ddcb0d9]
+INFO  2016-06-14 13:01:06,590 578744ms Logger                 Info               - BEGIN UOBT...
+INFO  2016-06-14 13:01:06,877 579031ms Logger                 Info               - GET HISTORY 3b.) - UOBT # [1], UOBT ID -> [16] for Unit: [178fc9d3-24ce-48bf-acb1-4b638ddcb0d9]
+INFO  2016-06-14 13:01:08,487 580641ms Logger                 Info               - GET HISTORY 4.) - UOBT.TenantId is: [8b4b4983-f022-4289-ba6e-48d5affb5484]
+ERROR 2016-06-14 13:01:57,668 629822ms Logger                 Error              - Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: An error occurred while executing the command definition. See the inner exception for details. ]
+ERROR 2016-06-14 13:02:20,320 652475ms Logger                 Error              - Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: An error occurred while executing the command definition. See the inner exception for details. ]
+INFO  2016-06-14 13:02:20,323 652478ms Logger                 Info               - BEGIN UNIT...
+INFO  2016-06-14 13:02:20,325 652480ms Logger                 Info               - GET HISTORY 2b.) - UNIT [2] -> [59114ae4-e4ee-4c6a-bd86-e5a4e1552edc] in Property: [Sunshine_Estates]
+INFO  2016-06-14 13:02:20,911 653066ms Logger                 Info               - GET HISTORY 3a.) - UOBT Count [0] for Unit: [59114ae4-e4ee-4c6a-bd86-e5a4e1552edc]
+INFO  2016-06-14 13:02:20,913 653068ms Logger                 Info               - BEGIN UNIT...
+INFO  2016-06-14 13:02:20,915 653070ms Logger                 Info               - GET HISTORY 2b.) - UNIT [3] -> [34d22776-6cf1-49ce-9597-e9e1208d4e17] in Property: [Sunshine_Estates]
+INFO  2016-06-14 13:02:21,525 653679ms Logger                 Info               - GET HISTORY 3a.) - UOBT Count [1] for Unit: [34d22776-6cf1-49ce-9597-e9e1208d4e17]
+INFO  2016-06-14 13:02:21,527 653681ms Logger                 Info               - BEGIN UOBT...
+INFO  2016-06-14 13:02:21,528 653682ms Logger                 Info               - GET HISTORY 3b.) - UOBT # [1], UOBT ID -> [18] for Unit: [34d22776-6cf1-49ce-9597-e9e1208d4e17]
+INFO  2016-06-14 13:02:21,530 653684ms Logger                 Info               - GET HISTORY 4.) - UOBT.TenantId is: [893cf7aa-6e4b-4676-b1e8-3f8b9e4b202d]
+ERROR 2016-06-14 13:02:22,972 655126ms Logger                 Error              - Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: Non-static method requires a target. ]
+INFO  2016-06-14 13:02:22,972 655126ms Logger                 Info               - BEGIN UNIT...
+INFO  2016-06-14 13:02:22,973 655127ms Logger                 Info               - GET HISTORY 2b.) - UNIT [4] -> [a9d8605c-20c1-4244-a740-ed1d5f9d3d87] in Property: [Sunshine_Estates]
+INFO  2016-06-14 13:02:23,477 655631ms Logger                 Info               - GET HISTORY 3a.) - UOBT Count [5] for Unit: [a9d8605c-20c1-4244-a740-ed1d5f9d3d87]
+INFO  2016-06-14 13:02:23,478 655632ms Logger                 Info               - BEGIN UOBT...
+INFO  2016-06-14 13:02:23,480 655634ms Logger                 Info               - GET HISTORY 3b.) - UOBT # [1], UOBT ID -> [17] for Unit: [a9d8605c-20c1-4244-a740-ed1d5f9d3d87]
+INFO  2016-06-14 13:02:23,481 655635ms Logger                 Info               - GET HISTORY 4.) - UOBT.TenantId is: [7924c72b-1995-4483-95d8-8353a6dbd88e]
+ERROR 2016-06-14 13:02:25,098 657252ms Logger                 Error              - Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: Non-static method requires a target. ]
+INFO  2016-06-14 13:02:25,100 657254ms Logger                 Info               - BEGIN UOBT...
+INFO  2016-06-14 13:02:25,101 657255ms Logger                 Info               - GET HISTORY 3b.) - UOBT # [2], UOBT ID -> [78] for Unit: [a9d8605c-20c1-4244-a740-ed1d5f9d3d87]
+INFO  2016-06-14 13:02:25,103 657257ms Logger                 Info               - GET HISTORY 4.) - UOBT.TenantId is: [7acbbec8-068c-4019-bda7-f51cbbc585d2]
+INFO  2016-06-14 13:02:41,845 673999ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenant - Requested by [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 13:03:02,094 694248ms Logger                 Error              - Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: An error occurred while executing the command definition. See the inner exception for details. ]
+INFO  2016-06-14 13:03:02,096 694250ms Logger                 Info               - BEGIN UOBT...
+INFO  2016-06-14 13:03:02,097 694251ms Logger                 Info               - GET HISTORY 3b.) - UOBT # [3], UOBT ID -> [79] for Unit: [a9d8605c-20c1-4244-a740-ed1d5f9d3d87]
+INFO  2016-06-14 13:03:02,157 694311ms Logger                 Info               - GET HISTORY 4.) - UOBT.TenantId is: [4f8dd855-6ccf-4289-8238-0650d01dabab]
+INFO  2016-06-14 13:03:04,067 696221ms Logger                 Info               - Common Helper -> GetSynapseBankAndUserDetailsforGivenMemberId - Checkpoint #1 - SynapseCreateUserResults Record Found! - Now about to check if Synapse OAuth Key is expired or still valid.
+INFO  2016-06-14 13:03:04,085 696240ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey Initiated - User's Original OAuth Key (enc): [tGxqYT1DPTTvqnPV6fYbTjDiT3TkgOf8U2FQxqrh1o9VSr7H3QSuRaSqMX9HnQmz]
+INFO  2016-06-14 13:03:08,274 700428ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Payload to send to Synapse /v3/user/signin: [{"client":{"client_id":"Au4XMZuR83ZHYDC6DgrI","client_secret":"4DuoRwvfqyt2nz4FwuX64ow7Aew4YiQnYVibrkkP"},"login":{"email":"v3.test4@nooch.com","refresh_token":"refresh-cc604dcf-f0b0-4553-8a80-3371b273d2c7"},"user":{"_id":{"$oid":"57345a4386c27376b47c13cb"},"fingerprint":"qwertyuiop","ip":"54.201.43.89"}}]
+INFO  2016-06-14 13:03:10,884 703039ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Access_Token from Synapse MATCHES what we already had in DB.
+INFO  2016-06-14 13:03:12,939 705093ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - SUCCESS From Synapse and Successfully saved updates to Nooch DB.
+INFO  2016-06-14 13:03:22,352 714506ms Logger                 Info               - Common Helper -> GetSynapseBankAndUserDetailsforGivenMemberId - Checkpoint #1 - SynapseCreateUserResults Record Found! - Now about to check if Synapse OAuth Key is expired or still valid.
+INFO  2016-06-14 13:03:22,354 714508ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey Initiated - User's Original OAuth Key (enc): [GytqUNC00OO13gLRjr57laPG5EG/O8FD/B5r+tOFQj66HFaIBPmBczOOXNzZAQ1Y]
+INFO  2016-06-14 13:03:25,943 718098ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Payload to send to Synapse /v3/user/signin: [{"client":{"client_id":"Au4XMZuR83ZHYDC6DgrI","client_secret":"4DuoRwvfqyt2nz4FwuX64ow7Aew4YiQnYVibrkkP"},"login":{"email":"surya@parkash.com","refresh_token":"refresh-ee4c5d37-9129-42ae-8693-2d583bb8883b"},"user":{"_id":{"$oid":"5746686286c2731562d73ab8"},"fingerprint":"123567","ip":"115.249.130.58"}}]
+INFO  2016-06-14 13:03:27,784 719938ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Access_Token from Synapse MATCHES what we already had in DB.
+INFO  2016-06-14 13:03:29,727 721881ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - SUCCESS From Synapse and Successfully saved updates to Nooch DB.
+ERROR 2016-06-14 13:03:42,804 734958ms Logger                 Error              - Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: An error occurred while executing the command definition. See the inner exception for details. ]
+INFO  2016-06-14 13:03:43,692 735846ms Logger                 Info               - BEGIN UOBT...
+INFO  2016-06-14 13:03:43,696 735850ms Logger                 Info               - GET HISTORY 3b.) - UOBT # [4], UOBT ID -> [80] for Unit: [a9d8605c-20c1-4244-a740-ed1d5f9d3d87]
+INFO  2016-06-14 13:03:43,700 735854ms Logger                 Info               - GET HISTORY 4.) - UOBT.TenantId is: [4f8dd855-6ccf-4289-8238-0650d01dabab]
+ERROR 2016-06-14 13:04:16,819 768973ms Logger                 Error              - Landlords API -> RentTrans -> ChargeTenant FAILED - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: [ System.Data.EntityCommandExecutionException: An error occurred while executing the command definition. See the inner exception for details. ---> System.Data.SqlClient.SqlException: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding. ---> System.ComponentModel.Win32Exception: The wait operation timed out
+   --- End of inner exception stack trace ---
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   at System.Data.Objects.Internal.ObjectQueryExecutionPlan.Execute[TResultType](ObjectContext context, ObjectParameterCollection parameterValues)
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.SingleOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_2(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.SingleOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.getTransactionByTrackingId(String transTrackId) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 785
+   at LanLordlAPIs.Classes.Utility.CommonHelper.GetRandomTransactionTrackingId() in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 767
+   at LanLordlAPIs.Controllers.RentTransController.PayToTenants(ChargeTenantInputClass input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 199 ]
+ERROR 2016-06-14 13:04:17,323 769478ms Logger                 Error              - Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: An error occurred while executing the command definition. See the inner exception for details. ]
+INFO  2016-06-14 13:04:17,323 769478ms Logger                 Info               - BEGIN UOBT...
+INFO  2016-06-14 13:04:17,323 769478ms Logger                 Info               - GET HISTORY 3b.) - UOBT # [5], UOBT ID -> [81] for Unit: [a9d8605c-20c1-4244-a740-ed1d5f9d3d87]
+INFO  2016-06-14 13:04:17,324 769479ms Logger                 Info               - GET HISTORY 4.) - UOBT.TenantId is: [4f8dd855-6ccf-4289-8238-0650d01dabab]
+ERROR 2016-06-14 13:04:49,714 801869ms Logger                 Error              - Rent Trans Cntrlr -> GetLandlordsPaymentHistory EXCEPTION (Inner) - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: An error occurred while executing the command definition. See the inner exception for details. ]
+INFO  2016-06-14 13:05:37,023 849177ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenant - Requested by [E003C765-CF86-4A09-A927-92E48A2B5077]
+INFO  2016-06-14 13:05:53,899 866053ms Logger                 Info               - Common Helper -> GetSynapseBankAndUserDetailsforGivenMemberId - Checkpoint #1 - SynapseCreateUserResults Record Found! - Now about to check if Synapse OAuth Key is expired or still valid.
+INFO  2016-06-14 13:05:53,901 866055ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey Initiated - User's Original OAuth Key (enc): [tGxqYT1DPTTvqnPV6fYbTjDiT3TkgOf8U2FQxqrh1o9VSr7H3QSuRaSqMX9HnQmz]
+INFO  2016-06-14 13:05:57,386 869540ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Payload to send to Synapse /v3/user/signin: [{"client":{"client_id":"Au4XMZuR83ZHYDC6DgrI","client_secret":"4DuoRwvfqyt2nz4FwuX64ow7Aew4YiQnYVibrkkP"},"login":{"email":"v3.test4@nooch.com","refresh_token":"refresh-cc604dcf-f0b0-4553-8a80-3371b273d2c7"},"user":{"_id":{"$oid":"57345a4386c27376b47c13cb"},"fingerprint":"qwertyuiop","ip":"54.201.43.89"}}]
+INFO  2016-06-14 13:05:59,329 871483ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Access_Token from Synapse MATCHES what we already had in DB.
+INFO  2016-06-14 13:06:01,271 873425ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - SUCCESS From Synapse and Successfully saved updates to Nooch DB.
+INFO  2016-06-14 13:06:06,883 879037ms Logger                 Info               - Common Helper -> GetSynapseBankAndUserDetailsforGivenMemberId - Checkpoint #1 - SynapseCreateUserResults Record Found! - Now about to check if Synapse OAuth Key is expired or still valid.
+INFO  2016-06-14 13:06:06,885 879039ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey Initiated - User's Original OAuth Key (enc): [GytqUNC00OO13gLRjr57laPG5EG/O8FD/B5r+tOFQj66HFaIBPmBczOOXNzZAQ1Y]
+INFO  2016-06-14 13:06:11,101 883255ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Payload to send to Synapse /v3/user/signin: [{"client":{"client_id":"Au4XMZuR83ZHYDC6DgrI","client_secret":"4DuoRwvfqyt2nz4FwuX64ow7Aew4YiQnYVibrkkP"},"login":{"email":"surya@parkash.com","refresh_token":"refresh-ee4c5d37-9129-42ae-8693-2d583bb8883b"},"user":{"_id":{"$oid":"5746686286c2731562d73ab8"},"fingerprint":"123567","ip":"115.249.130.58"}}]
+INFO  2016-06-14 13:06:12,638 884792ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Access_Token from Synapse MATCHES what we already had in DB.
+INFO  2016-06-14 13:06:14,894 887048ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - SUCCESS From Synapse and Successfully saved updates to Nooch DB.
+ERROR 2016-06-14 13:07:04,638 936793ms Logger                 Error              - Landlords API -> RentTrans -> ChargeTenant FAILED - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: [ System.Data.EntityCommandExecutionException: An error occurred while executing the command definition. See the inner exception for details. ---> System.Data.SqlClient.SqlException: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding. ---> System.ComponentModel.Win32Exception: The wait operation timed out
+   --- End of inner exception stack trace ---
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   at System.Data.Objects.Internal.ObjectQueryExecutionPlan.Execute[TResultType](ObjectContext context, ObjectParameterCollection parameterValues)
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.SingleOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_2(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.SingleOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.getTransactionByTrackingId(String transTrackId) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 785
+   at LanLordlAPIs.Classes.Utility.CommonHelper.GetRandomTransactionTrackingId() in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 767
+   at LanLordlAPIs.Controllers.RentTransController.PayToTenants(ChargeTenantInputClass input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 199 ]
+INFO  2016-06-14 13:09:10,106 93349ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenant - Requested by [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 13:09:42,051 125295ms Logger                 Error              - CommonHelper -> GetLandlordsMemberIdFromLandlordId EXCEPTION - [System.Data.EntityException: The underlying provider failed on Open. ---> System.Data.SqlClient.SqlException: A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: Named Pipes Provider, error: 40 - Could not open a connection to SQL Server) ---> System.ComponentModel.Win32Exception: The network path was not found
+   --- End of inner exception stack trace ---
+   at System.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, DbConnectionPool pool, String accessToken, Boolean applyTransientFaultHandling)
+   at System.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnection owningObject, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at System.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   at System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   at System.Data.SqlClient.SqlConnection.Open()
+   at System.Data.EntityClient.EntityConnection.OpenStoreConnectionIf(Boolean openCondition, DbConnection storeConnectionToOpen, DbConnection originalConnection, String exceptionCode, String attemptedOperation, Boolean& closeStoreConnectionOnFailure)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityConnection.OpenStoreConnectionIf(Boolean openCondition, DbConnection storeConnectionToOpen, DbConnection originalConnection, String exceptionCode, String attemptedOperation, Boolean& closeStoreConnectionOnFailure)
+   at System.Data.EntityClient.EntityConnection.Open()
+   at System.Data.Objects.ObjectContext.EnsureConnection()
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.SingleOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_2(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.SingleOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.GetLandlordsMemberIdFromLandlordId(Guid landlorID) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 1044]
+ERROR 2016-06-14 13:09:47,898 131142ms Logger                 Error              - Landlords API -> RentTrans -> ChargeTenant FAILED - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: [ System.FormatException: Unrecognized Guid format.
+   at System.Guid.GuidResult.SetFailure(ParseFailureKind failure, String failureMessageID, Object failureMessageFormatArgument, String failureArgumentName, Exception innerException)
+   at System.Guid.TryParseGuid(String g, GuidStyles flags, GuidResult& result)
+   at System.Guid..ctor(String g)
+   at LanLordlAPIs.Controllers.RentTransController.PayToTenants(ChargeTenantInputClass input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 63 ]
+INFO  2016-06-14 13:09:56,090 139333ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenant - Requested by [E003C765-CF86-4A09-A927-92E48A2B5077]
+INFO  2016-06-14 13:10:38,467 181710ms Logger                 Info               - Common Helper -> GetSynapseBankAndUserDetailsforGivenMemberId - Checkpoint #1 - SynapseCreateUserResults Record Found! - Now about to check if Synapse OAuth Key is expired or still valid.
+INFO  2016-06-14 13:10:38,488 181731ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey Initiated - User's Original OAuth Key (enc): [tJv8Ag09DpTnapkTRVUQLvXVtOdU97q/tzTQKA0HKB1ArX6nkLva/Kge7oscgFN9]
+INFO  2016-06-14 13:10:41,910 185154ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Payload to send to Synapse /v3/user/signin: [{"client":{"client_id":"Au4XMZuR83ZHYDC6DgrI","client_secret":"4DuoRwvfqyt2nz4FwuX64ow7Aew4YiQnYVibrkkP"},"login":{"email":"v3.test4@nooch.com","refresh_token":"refresh-5e6f3196-1026-4920-8c75-6f9131aa7e37"},"user":{"_id":{"$oid":"57345a4386c27376b47c13cb"},"fingerprint":"qwertyuiop","ip":"54.201.43.89"}}]
+INFO  2016-06-14 13:10:44,367 187611ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Access_Token from Synapse MATCHES what we already had in DB.
+INFO  2016-06-14 13:10:46,411 189654ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - SUCCESS From Synapse and Successfully saved updates to Nooch DB.
+INFO  2016-06-14 13:10:56,247 199491ms Logger                 Info               - Common Helper -> GetSynapseBankAndUserDetailsforGivenMemberId - Checkpoint #1 - SynapseCreateUserResults Record Found! - Now about to check if Synapse OAuth Key is expired or still valid.
+INFO  2016-06-14 13:10:56,249 199493ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey Initiated - User's Original OAuth Key (enc): [GytqUNC00OO13gLRjr57laPG5EG/O8FD/B5r+tOFQj66HFaIBPmBczOOXNzZAQ1Y]
+INFO  2016-06-14 13:11:02,291 205534ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Payload to send to Synapse /v3/user/signin: [{"client":{"client_id":"Au4XMZuR83ZHYDC6DgrI","client_secret":"4DuoRwvfqyt2nz4FwuX64ow7Aew4YiQnYVibrkkP"},"login":{"email":"surya@parkash.com","refresh_token":"refresh-ee4c5d37-9129-42ae-8693-2d583bb8883b"},"user":{"_id":{"$oid":"5746686286c2731562d73ab8"},"fingerprint":"123567","ip":"115.249.130.58"}}]
+INFO  2016-06-14 13:11:03,820 207064ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Access_Token from Synapse MATCHES what we already had in DB.
+INFO  2016-06-14 13:11:06,074 209318ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - SUCCESS From Synapse and Successfully saved updates to Nooch DB.
+ERROR 2016-06-14 13:13:21,442 344685ms Logger                 Error              - Landlords API -> RentTrans -> ChargeTenant FAILED - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: [ System.Data.EntityCommandExecutionException: An error occurred while executing the command definition. See the inner exception for details. ---> System.Data.SqlClient.SqlException: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding. ---> System.ComponentModel.Win32Exception: The wait operation timed out
+   --- End of inner exception stack trace ---
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   at System.Data.Objects.Internal.ObjectQueryExecutionPlan.Execute[TResultType](ObjectContext context, ObjectParameterCollection parameterValues)
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.SingleOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_2(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.SingleOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.getTransactionByTrackingId(String transTrackId) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 785
+   at LanLordlAPIs.Classes.Utility.CommonHelper.GetRandomTransactionTrackingId() in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 767
+   at LanLordlAPIs.Controllers.RentTransController.PayToTenants(ChargeTenantInputClass input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 199 ]
+INFO  2016-06-14 13:13:38,205 361448ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenant - Requested by [E003C765-CF86-4A09-A927-92E48A2B5077]
+INFO  2016-06-14 13:13:56,627 379870ms Logger                 Info               - Common Helper -> GetSynapseBankAndUserDetailsforGivenMemberId - Checkpoint #1 - SynapseCreateUserResults Record Found! - Now about to check if Synapse OAuth Key is expired or still valid.
+INFO  2016-06-14 13:13:56,629 379872ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey Initiated - User's Original OAuth Key (enc): [tJv8Ag09DpTnapkTRVUQLvXVtOdU97q/tzTQKA0HKB1ArX6nkLva/Kge7oscgFN9]
+INFO  2016-06-14 13:14:00,722 383965ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Payload to send to Synapse /v3/user/signin: [{"client":{"client_id":"Au4XMZuR83ZHYDC6DgrI","client_secret":"4DuoRwvfqyt2nz4FwuX64ow7Aew4YiQnYVibrkkP"},"login":{"email":"v3.test4@nooch.com","refresh_token":"refresh-5e6f3196-1026-4920-8c75-6f9131aa7e37"},"user":{"_id":{"$oid":"57345a4386c27376b47c13cb"},"fingerprint":"qwertyuiop","ip":"54.201.43.89"}}]
+INFO  2016-06-14 13:14:02,566 385809ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Access_Token from Synapse MATCHES what we already had in DB.
+INFO  2016-06-14 13:14:04,720 387963ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - SUCCESS From Synapse and Successfully saved updates to Nooch DB.
+INFO  2016-06-14 13:16:40,179 543422ms Logger                 Info               - Common Helper -> GetSynapseBankAndUserDetailsforGivenMemberId - Checkpoint #1 - SynapseCreateUserResults Record Found! - Now about to check if Synapse OAuth Key is expired or still valid.
+INFO  2016-06-14 13:16:40,181 543424ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey Initiated - User's Original OAuth Key (enc): [cNAGAQGauLNRN0wZLYmZLW5N/1WB4WWCVMsxT7Ij8DRs6dXT4KHB/x6SWmHRK+uF]
+INFO  2016-06-14 13:16:44,418 547661ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Payload to send to Synapse /v3/user/signin: [{"client":{"client_id":"Au4XMZuR83ZHYDC6DgrI","client_secret":"4DuoRwvfqyt2nz4FwuX64ow7Aew4YiQnYVibrkkP"},"login":{"email":"surya@parkash.com","refresh_token":"refresh-ee4c5d37-9129-42ae-8693-2d583bb8883b"},"user":{"_id":{"$oid":"5746686286c2731562d73ab8"},"fingerprint":"123567","ip":"115.249.130.58"}}]
+INFO  2016-06-14 13:16:46,770 550014ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Access_Token from Synapse MATCHES what we already had in DB.
+INFO  2016-06-14 13:16:48,495 551738ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - SUCCESS From Synapse and Successfully saved updates to Nooch DB.
+ERROR 2016-06-14 13:17:53,636 616879ms Logger                 Error              - Landlords API -> RentTrans -> ChargeTenant FAILED - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: [ System.Data.EntityCommandExecutionException: An error occurred while executing the command definition. See the inner exception for details. ---> System.Data.SqlClient.SqlException: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding. ---> System.ComponentModel.Win32Exception: The wait operation timed out
+   --- End of inner exception stack trace ---
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   at System.Data.Objects.Internal.ObjectQueryExecutionPlan.Execute[TResultType](ObjectContext context, ObjectParameterCollection parameterValues)
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.SingleOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_2(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.SingleOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.getTransactionByTrackingId(String transTrackId) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 785
+   at LanLordlAPIs.Classes.Utility.CommonHelper.GetRandomTransactionTrackingId() in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 767
+   at LanLordlAPIs.Controllers.RentTransController.PayToTenants(ChargeTenantInputClass input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 199 ]
+INFO  2016-06-14 13:18:07,250 630493ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenant - Requested by [E003C765-CF86-4A09-A927-92E48A2B5077]
+INFO  2016-06-14 13:18:22,254 645497ms Logger                 Info               - Common Helper -> GetSynapseBankAndUserDetailsforGivenMemberId - Checkpoint #1 - SynapseCreateUserResults Record Found! - Now about to check if Synapse OAuth Key is expired or still valid.
+INFO  2016-06-14 13:18:22,256 645499ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey Initiated - User's Original OAuth Key (enc): [tJv8Ag09DpTnapkTRVUQLvXVtOdU97q/tzTQKA0HKB1ArX6nkLva/Kge7oscgFN9]
+INFO  2016-06-14 13:18:25,736 648980ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Payload to send to Synapse /v3/user/signin: [{"client":{"client_id":"Au4XMZuR83ZHYDC6DgrI","client_secret":"4DuoRwvfqyt2nz4FwuX64ow7Aew4YiQnYVibrkkP"},"login":{"email":"v3.test4@nooch.com","refresh_token":"refresh-5e6f3196-1026-4920-8c75-6f9131aa7e37"},"user":{"_id":{"$oid":"57345a4386c27376b47c13cb"},"fingerprint":"qwertyuiop","ip":"54.201.43.89"}}]
+INFO  2016-06-14 13:18:27,068 650312ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Access_Token from Synapse MATCHES what we already had in DB.
+INFO  2016-06-14 13:18:29,627 652870ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - SUCCESS From Synapse and Successfully saved updates to Nooch DB.
+INFO  2016-06-14 13:18:46,215 669458ms Logger                 Info               - Common Helper -> GetSynapseBankAndUserDetailsforGivenMemberId - Checkpoint #1 - SynapseCreateUserResults Record Found! - Now about to check if Synapse OAuth Key is expired or still valid.
+INFO  2016-06-14 13:18:46,217 669460ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey Initiated - User's Original OAuth Key (enc): [cNAGAQGauLNRN0wZLYmZLW5N/1WB4WWCVMsxT7Ij8DRs6dXT4KHB/x6SWmHRK+uF]
+INFO  2016-06-14 13:18:49,823 673067ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Payload to send to Synapse /v3/user/signin: [{"client":{"client_id":"Au4XMZuR83ZHYDC6DgrI","client_secret":"4DuoRwvfqyt2nz4FwuX64ow7Aew4YiQnYVibrkkP"},"login":{"email":"surya@parkash.com","refresh_token":"refresh-ee4c5d37-9129-42ae-8693-2d583bb8883b"},"user":{"_id":{"$oid":"5746686286c2731562d73ab8"},"fingerprint":"123567","ip":"115.249.130.58"}}]
+INFO  2016-06-14 13:18:51,195 674438ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Access_Token from Synapse MATCHES what we already had in DB.
+INFO  2016-06-14 13:18:52,982 676225ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - SUCCESS From Synapse and Successfully saved updates to Nooch DB.
+ERROR 2016-06-14 13:30:20,352 1363595ms Logger                 Error              - Landlords API -> RentTrans -> ChargeTenant FAILED - [LandlordID: E003C765-CF86-4A09-A927-92E48A2B5077], [Exception: [ System.Data.EntityCommandExecutionException: An error occurred while executing the command definition. See the inner exception for details. ---> System.Data.SqlClient.SqlException: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding. ---> System.ComponentModel.Win32Exception: The wait operation timed out
+   --- End of inner exception stack trace ---
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   at System.Data.Objects.Internal.ObjectQueryExecutionPlan.Execute[TResultType](ObjectContext context, ObjectParameterCollection parameterValues)
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.SingleOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_2(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.SingleOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.getTransactionByTrackingId(String transTrackId) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 785
+   at LanLordlAPIs.Classes.Utility.CommonHelper.GetRandomTransactionTrackingId() in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 767
+   at LanLordlAPIs.Controllers.RentTransController.PayToTenants(ChargeTenantInputClass input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 199 ]
+INFO  2016-06-14 13:34:37,064 1620307ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+INFO  2016-06-14 13:40:36,211 11859ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 14:21:06,841 2442490ms Logger                 Error              - RentTrans Cntrlr -> CancelTransaction FAILED - Outer Exception - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], Exception: [System.Data.EntityCommandExecutionException: An error occurred while executing the command definition. See the inner exception for details. ---> System.Data.SqlClient.SqlException: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding. ---> System.ComponentModel.Win32Exception: The wait operation timed out
+   --- End of inner exception stack trace ---
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   at System.Data.Objects.Internal.ObjectQueryExecutionPlan.Execute[TResultType](ObjectContext context, ObjectParameterCollection parameterValues)
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_1(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Controllers.RentTransController.CancelTransaction(CancelTransInput input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 1159]
+INFO  2016-06-14 14:23:02,934 2558582ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 14:23:31,861 2587509ms Logger                 Error              - CommonHelper -> GetLandlordByLandlordId FAILED - Exception: [System.Data.EntityException: The underlying provider failed on Open. ---> System.Data.SqlClient.SqlException: A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: Named Pipes Provider, error: 40 - Could not open a connection to SQL Server) ---> System.ComponentModel.Win32Exception: The network path was not found
+   --- End of inner exception stack trace ---
+   at System.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, DbConnectionPool pool, String accessToken, Boolean applyTransientFaultHandling)
+   at System.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnection owningObject, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at System.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   at System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   at System.Data.SqlClient.SqlConnection.Open()
+   at System.Data.EntityClient.EntityConnection.OpenStoreConnectionIf(Boolean openCondition, DbConnection storeConnectionToOpen, DbConnection originalConnection, String exceptionCode, String attemptedOperation, Boolean& closeStoreConnectionOnFailure)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityConnection.OpenStoreConnectionIf(Boolean openCondition, DbConnection storeConnectionToOpen, DbConnection originalConnection, String exceptionCode, String attemptedOperation, Boolean& closeStoreConnectionOnFailure)
+   at System.Data.EntityClient.EntityConnection.Open()
+   at System.Data.Objects.ObjectContext.EnsureConnection()
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.SingleOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_2(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.SingleOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Classes.Utility.CommonHelper.GetLandlordByLandlordId(Guid landlordId) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Classes\Utility\CommonHelper.cs:line 998]
+ERROR 2016-06-14 14:24:17,164 2632813ms Logger                 Error              - RentTrans Cntrlr -> CancelTransaction FAILED - Outer Exception - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], Exception: [System.Data.EntityCommandExecutionException: An error occurred while executing the command definition. See the inner exception for details. ---> System.Data.SqlClient.SqlException: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding. ---> System.ComponentModel.Win32Exception: The wait operation timed out
+   --- End of inner exception stack trace ---
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   --- End of inner exception stack trace ---
+   at System.Data.EntityClient.EntityCommandDefinition.ExecuteStoreCommands(EntityCommand entityCommand, CommandBehavior behavior)
+   at System.Data.Objects.Internal.ObjectQueryExecutionPlan.Execute[TResultType](ObjectContext context, ObjectParameterCollection parameterValues)
+   at System.Data.Objects.ObjectQuery`1.GetResults(Nullable`1 forMergeOption)
+   at System.Data.Objects.ObjectQuery`1.System.Collections.Generic.IEnumerable<T>.GetEnumerator()
+   at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.<>c__11`1.<GetElementFunction>b__11_1(IEnumerable`1 sequence)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.ExecuteSingle[TResult](IEnumerable`1 query, Expression queryRoot)
+   at System.Data.Objects.ELinq.ObjectQueryProvider.System.Linq.IQueryProvider.Execute[S](Expression expression)
+   at System.Data.Entity.Internal.Linq.DbQueryProvider.Execute[TResult](Expression expression)
+   at System.Linq.Queryable.FirstOrDefault[TSource](IQueryable`1 source)
+   at LanLordlAPIs.Controllers.RentTransController.CancelTransaction(CancelTransInput input) in c:\landlords_web_apis\LanLordlAPIs\LanLordlAPIs\Controllers\RentTransController.cs:line 1159]
+INFO  2016-06-14 14:25:06,535 2682184ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 14:25:13,411 2689060ms Logger                 Error              - RentTrans Cntrlr -> Cancel Transaction FAILURE - Invalid Authentication Token - LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077], AccessToken: [E003C765-CF86-4A09-A927-92E48A2B5077]TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867]
+INFO  2016-06-14 14:33:35,510  6791ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenant - Requested by [E003C765-CF86-4A09-A927-92E48A2B5077]
+INFO  2016-06-14 14:33:47,614 18895ms Logger                 Info               - Common Helper -> GetSynapseBankAndUserDetailsforGivenMemberId - Checkpoint #1 - SynapseCreateUserResults Record Found! - Now about to check if Synapse OAuth Key is expired or still valid.
+INFO  2016-06-14 14:33:47,636 18917ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey Initiated - User's Original OAuth Key (enc): [tJv8Ag09DpTnapkTRVUQLvXVtOdU97q/tzTQKA0HKB1ArX6nkLva/Kge7oscgFN9]
+INFO  2016-06-14 14:33:53,101 24382ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Payload to send to Synapse /v3/user/signin: [{"client":{"client_id":"Au4XMZuR83ZHYDC6DgrI","client_secret":"4DuoRwvfqyt2nz4FwuX64ow7Aew4YiQnYVibrkkP"},"login":{"email":"v3.test4@nooch.com","refresh_token":"refresh-5e6f3196-1026-4920-8c75-6f9131aa7e37"},"user":{"_id":{"$oid":"57345a4386c27376b47c13cb"},"fingerprint":"qwertyuiop","ip":"54.201.43.89"}}]
+INFO  2016-06-14 14:33:55,422 26704ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Access_Token from Synapse MATCHES what we already had in DB.
+INFO  2016-06-14 14:33:58,942 30223ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - SUCCESS From Synapse and Successfully saved updates to Nooch DB.
+INFO  2016-06-14 14:34:02,018 33299ms Logger                 Info               - Common Helper -> GetSynapseBankAndUserDetailsforGivenMemberId - Checkpoint #1 - SynapseCreateUserResults Record Found! - Now about to check if Synapse OAuth Key is expired or still valid.
+INFO  2016-06-14 14:34:02,019 33300ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey Initiated - User's Original OAuth Key (enc): [cNAGAQGauLNRN0wZLYmZLW5N/1WB4WWCVMsxT7Ij8DRs6dXT4KHB/x6SWmHRK+uF]
+INFO  2016-06-14 14:34:07,546 38828ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Payload to send to Synapse /v3/user/signin: [{"client":{"client_id":"Au4XMZuR83ZHYDC6DgrI","client_secret":"4DuoRwvfqyt2nz4FwuX64ow7Aew4YiQnYVibrkkP"},"login":{"email":"surya@parkash.com","refresh_token":"refresh-ee4c5d37-9129-42ae-8693-2d583bb8883b"},"user":{"_id":{"$oid":"5746686286c2731562d73ab8"},"fingerprint":"123567","ip":"115.249.130.58"}}]
+INFO  2016-06-14 14:34:10,720 42001ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Access_Token from Synapse MATCHES what we already had in DB.
+INFO  2016-06-14 14:34:13,695 44976ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - SUCCESS From Synapse and Successfully saved updates to Nooch DB.
+INFO  2016-06-14 14:36:05,838 43479ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 14:36:11,045 48686ms Logger                 Error              - RentTrans Cntrlr -> Cancel Transaction FAILURE - Invalid Authentication Token - LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077], AccessToken: [E003C765-CF86-4A09-A927-92E48A2B5077]TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867]
+INFO  2016-06-14 14:36:19,425 57066ms Logger                 Info               - RentTrans Cntrlr -> CancelTransaction Initiated - TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867], LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077]
+ERROR 2016-06-14 14:36:46,436 84077ms Logger                 Error              - RentTrans Cntrlr -> Cancel Transaction FAILURE - Invalid Authentication Token - LandlordID: [E003C765-CF86-4A09-A927-92E48A2B5077], AccessToken: [E003C765-CF86-4A09-A927-92E48A2B5077]TransactionID: [B9163EE8-C02E-41CD-99A0-942275CE1867]
+INFO  2016-06-14 14:37:08,895 106536ms Logger                 Info               - UserController -> RegisterLandlord - ** NEW LANDLORD ** - Name: [land lord], Email: [newlandlord@landlord.com], Fingerprint: [suasusau21324redakufejfjsf], IP: [192.168.0.1], Country: [US], isBusiness: [True], ShouldSendEmails: [True]
+INFO  2016-06-14 14:37:27,572 125213ms Logger                 Info               - UserController -> RegisterLandlord - ** NEW LANDLORD ** - MEMBER Created, about to save to DB - [MemberID: 5d552acd-2be3-4d9e-93ae-8d80add86588]
+INFO  2016-06-14 14:37:28,260 125902ms Logger                 Info               - UserController -> RegisterLandlord - ** NEW LANDLORD ** - AUTH TOKEN Created and saved to DB - [MemberID: 5d552acd-2be3-4d9e-93ae-8d80add86588]
+INFO  2016-06-14 14:37:28,281 125923ms Logger                 Info               - UserController -> RegisterLandlord - ** NEW LANDLORD ** - NOTIFICATIONS & PRIVACY SETTINGS Created and saved to DB - [MemberID: 5d552acd-2be3-4d9e-93ae-8d80add86588]
+INFO  2016-06-14 14:37:28,282 125924ms Logger                 Info               - UserController -> RegisterLandlord - ** NEW LANDLORD ** - About to created new LANLDORD record - [MemberID: 5d552acd-2be3-4d9e-93ae-8d80add86588]
+INFO  2016-06-14 14:37:28,360 126002ms Logger                 Info               - CommonHelper -> SendEmail [DisplayName: Nooch Support], [Address: support@nooch.com]
+INFO  2016-06-14 14:37:30,905 128547ms Logger                 Info               - UserController -> RegisterLandlord - Registration email sent to [newlandlord@landlord.com] successfully.
+INFO  2016-06-14 14:40:47,529 325171ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenant - Requested by [B3A6CF7B-561F-4105-99E4-406A215CCF60]
+INFO  2016-06-14 14:40:56,593 334234ms Logger                 Info               - Common Helper -> GetSynapseBankAndUserDetailsforGivenMemberId - Checkpoint #1 - SynapseCreateUserResults Record Found! - Now about to check if Synapse OAuth Key is expired or still valid.
+INFO  2016-06-14 14:40:56,607 334248ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey Initiated - User's Original OAuth Key (enc): [opIXaXVVt8w6SnoAxFzEmXjzrnLEfNmmQJ5ZwDvpDhsdde/5VwdG4QGnfvzNNUpM]
+INFO  2016-06-14 14:40:56,869 334510ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Payload to send to Synapse /v3/user/signin: [{"client":{"client_id":"Au4XMZuR83ZHYDC6DgrI","client_secret":"4DuoRwvfqyt2nz4FwuX64ow7Aew4YiQnYVibrkkP"},"login":{"email":"cliff@nooch.com","refresh_token":"refresh-0e161eee-c17b-4d3c-b241-58350b1f2441"},"user":{"_id":{"$oid":"863"},"fingerprint":"dfgdfertertzasdash3efssdf","ip":"54.201.43.89"}}]
+ERROR 2016-06-14 14:40:59,522 337164ms Logger                 Error              - Common Helper -> refreshSynapseV3OautKey FAILED (Exception)- [Synapse Error Code: 110], [Error Msg: Incorrect refresh token.]
+ERROR 2016-06-14 14:40:59,523 337165ms Logger                 Error              - Common Helper -> synapseV3checkUsersOauthKey FAILED (Exception) - HTTP Code: [Unauthorized], Error Msg: [Incorrect refresh token.]
+ERROR 2016-06-14 14:40:59,525 337167ms Logger                 Error              - Common Helper -> GetSynapseBankAndUserDetailsforGivenMemberId FAILED on Checking User's Synapse OAuth Token - CheckTokenResult.msg: [Incorrect refresh token.], MemberID: [b3a6cf7b-561f-4105-99e4-406a215ccf60]
+INFO  2016-06-14 14:41:18,974 356616ms Logger                 Info               - Common Helper -> GetSynapseBankAndUserDetailsforGivenMemberId - Checkpoint #1 - SynapseCreateUserResults Record Found! - Now about to check if Synapse OAuth Key is expired or still valid.
+INFO  2016-06-14 14:41:20,613 358254ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey Initiated - User's Original OAuth Key (enc): [opIXaXVVt8w6SnoAxFzEmXjzrnLEfNmmQJ5ZwDvpDhsdde/5VwdG4QGnfvzNNUpM]
+INFO  2016-06-14 14:41:20,796 358437ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Payload to send to Synapse /v3/user/signin: [{"client":{"client_id":"Au4XMZuR83ZHYDC6DgrI","client_secret":"4DuoRwvfqyt2nz4FwuX64ow7Aew4YiQnYVibrkkP"},"login":{"email":"cliff@nooch.com","refresh_token":"refresh-0e161eee-c17b-4d3c-b241-58350b1f2441"},"user":{"_id":{"$oid":"863"},"fingerprint":"dfgdfertertzasdash3efssdf","ip":"54.201.43.89"}}]
+ERROR 2016-06-14 14:41:22,498 360140ms Logger                 Error              - Common Helper -> refreshSynapseV3OautKey FAILED (Exception)- [Synapse Error Code: 110], [Error Msg: Incorrect refresh token.]
+ERROR 2016-06-14 14:41:22,500 360142ms Logger                 Error              - Common Helper -> synapseV3checkUsersOauthKey FAILED (Exception) - HTTP Code: [Unauthorized], Error Msg: [Incorrect refresh token.]
+ERROR 2016-06-14 14:41:31,811 369452ms Logger                 Error              - Common Helper -> GetSynapseBankAndUserDetailsforGivenMemberId FAILED on Checking User's Synapse OAuth Token - CheckTokenResult.msg: [Incorrect refresh token.], MemberID: [b3a6cf7b-561f-4105-99e4-406a215ccf60]
+ERROR 2016-06-14 14:41:31,813 369454ms Logger                 Error              - Landlords API -> RentTrans -> PayToTenants FAILED -> Trans ABORTED: Sender's Synapse bank account NOT FOUND - Trans Creator MemberId is: [b3a6cf7b-561f-4105-99e4-406a215ccf60]
+INFO  2016-06-14 14:41:36,756 374397ms Logger                 Info               - Landlords API -> RentTrans -> ChargeTenant - Requested by [B3A6CF7B-561F-4105-99E4-406A215CCF60]
+INFO  2016-06-14 14:41:52,965 390606ms Logger                 Info               - Common Helper -> GetSynapseBankAndUserDetailsforGivenMemberId - Checkpoint #1 - SynapseCreateUserResults Record Found! - Now about to check if Synapse OAuth Key is expired or still valid.
+INFO  2016-06-14 14:41:53,851 391492ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey Initiated - User's Original OAuth Key (enc): [opIXaXVVt8w6SnoAxFzEmXjzrnLEfNmmQJ5ZwDvpDhsdde/5VwdG4QGnfvzNNUpM]
+INFO  2016-06-14 14:41:54,112 391753ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Payload to send to Synapse /v3/user/signin: [{"client":{"client_id":"Au4XMZuR83ZHYDC6DgrI","client_secret":"4DuoRwvfqyt2nz4FwuX64ow7Aew4YiQnYVibrkkP"},"login":{"email":"cliff@nooch.com","refresh_token":"refresh-0e161eee-c17b-4d3c-b241-58350b1f2441"},"user":{"_id":{"$oid":"863"},"fingerprint":"dfgdfertertzasdash3efssdf","ip":"54.201.43.89"}}]
+ERROR 2016-06-14 14:41:55,956 393598ms Logger                 Error              - Common Helper -> refreshSynapseV3OautKey FAILED (Exception)- [Synapse Error Code: 110], [Error Msg: Incorrect refresh token.]
+ERROR 2016-06-14 14:41:55,957 393599ms Logger                 Error              - Common Helper -> synapseV3checkUsersOauthKey FAILED (Exception) - HTTP Code: [Unauthorized], Error Msg: [Incorrect refresh token.]
+INFO  2016-06-14 14:42:03,344 400985ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey Initiated - User's Original OAuth Key (enc): [opIXaXVVt8w6SnoAxFzEmXjzrnLEfNmmQJ5ZwDvpDhsdde/5VwdG4QGnfvzNNUpM]
+INFO  2016-06-14 14:42:16,042 413684ms Logger                 Info               - Common Helper -> refreshSynapseV3OautKey - Payload to send to Synapse /v3/user/signin: [{"client":{"client_id":"Au4XMZuR83ZHYDC6DgrI","client_secret":"4DuoRwvfqyt2nz4FwuX64ow7Aew4YiQnYVibrkkP"},"login":{"email":"cliff@nooch.com","refresh_token":"refresh-0e161eee-c17b-4d3c-b241-58350b1f2441"},"user":{"_id":{"$oid":"863"},"fingerprint":"dfgdfertertzasdash3efssdf","ip":"54.201.43.89"}}]

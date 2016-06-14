@@ -2643,17 +2643,25 @@ namespace LanLordlAPIs.Classes.Utility
                         {
                             res.success = true;
                             res.ErrorMessage = "OK";
-                            // save changes into synapseTransactionResult table in db
-                            SynapseAddTransactionResult satr = new SynapseAddTransactionResult();
-                            satr.TransactionId =  ConvertToGuid(suppID_or_transID);
-                            satr.OidFromSynapse = synapseResponse.trans._id.oid.ToString();
-                            satr.Status_DateTimeStamp = synapseResponse.trans.recent_status.date.date.ToString();
-                            satr.Status_Id = synapseResponse.trans.recent_status.status_id;
-                            satr.Status_Note = synapseResponse.trans.recent_status.note;
-                            satr.Status_Text = synapseResponse.trans.recent_status.status;
+                            try
+                            {
+                                // save changes into synapseTransactionResult table in db
+                                SynapseAddTransactionResult satr = new SynapseAddTransactionResult();
+                                satr.TransactionId = ConvertToGuid(suppID_or_transID);
+                                satr.OidFromSynapse = synapseResponse.trans._id.oid.ToString();
+                                satr.Status_DateTimeStamp = synapseResponse.trans.recent_status.date.date.ToString();
+                                satr.Status_Id = synapseResponse.trans.recent_status.status_id;
+                                satr.Status_Note = synapseResponse.trans.recent_status.note;
+                                satr.Status_Text = synapseResponse.trans.recent_status.status;
 
-                            _dbContext.SynapseAddTransactionResults.Add(satr);
-                            _dbContext.SaveChanges();
+                                _dbContext.SynapseAddTransactionResults.Add(satr);
+                                _dbContext.SaveChanges();
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error("Landlords API -> Common Helper -> AddTransSynapseV3Reusable FAILED to save add transaction response into SynapseAddTransactionResult table. [Exception: " + ex.ToString() + "]");
+
+                            }
                         }
                         else
                         {
