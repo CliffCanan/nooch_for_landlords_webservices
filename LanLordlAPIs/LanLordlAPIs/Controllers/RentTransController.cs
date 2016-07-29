@@ -891,7 +891,7 @@ namespace LanLordlAPIs.Controllers
                 //"trans/CancelRequest.aspx?TransactionId=" + requestId + "&MemberId=" + input.User.LandlordId +
                 //"&UserType=6KX3VJv3YvoyK+cemdsvMA==");
 
-                string cancelLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),                   
+                string cancelLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
                      "Nooch/CancelRequest?TransactionId=" + requestId + "&MemberId=" + input.User.LandlordId +
                     "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
 
@@ -1171,7 +1171,7 @@ namespace LanLordlAPIs.Controllers
                                                c.RecipientId == landlordObj.MemberId)
                                         select c).FirstOrDefault();
 
-                        
+
                         if (transObj != null)
                         {
                             transObj.TransactionStatus = "Cancelled";
@@ -2143,8 +2143,8 @@ namespace LanLordlAPIs.Controllers
                 string cancelLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
                     "Nooch/CancelRequest?TransactionId=" + requestId + "&MemberId=" + input.User.LandlordId +
                     "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
-                 //"trans/CancelRequest.aspx?TransactionId=" + requestId + "&MemberId=" + input.User.LandlordId +
-                 //   "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
+                //"trans/CancelRequest.aspx?TransactionId=" + requestId + "&MemberId=" + input.User.LandlordId +
+                //   "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
 
                 string wholeAmount = Convert.ToDecimal(input.TransRequest.Amount).ToString("n2");
                 string[] amountArray = wholeAmount.Split('.');
@@ -2229,7 +2229,7 @@ namespace LanLordlAPIs.Controllers
                 // I recomment separate landing page for handing these types if requests... what you think @Cliff ?
 
                 // this link wouble take user to some new page or modified code if existing page.
-                string rejectLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),                   
+                string rejectLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
                       "Nooch/RejectMoney?TransactionId=" + requestId +
                     "&UserType=6KX3VJv3YvoyK+cemdsvMA==&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==&TransType=T3EMY1WWZ9IscHIj3dbcNw==");
                 //"trans/rejectMoney.aspx?TransactionId=" + requestId +
@@ -2240,8 +2240,8 @@ namespace LanLordlAPIs.Controllers
                 string paylink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
                     "Nooch/PayRequest?TransactionId=" + requestId + "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
 
-                    //"trans/payRequest.aspx?TransactionId=" + requestId + "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
-                      
+                //"trans/payRequest.aspx?TransactionId=" + requestId + "&UserType=6KX3VJv3YvoyK+cemdsvMA==");
+
 
                 var tokens2 = new Dictionary<string, string>
                 {
@@ -2644,7 +2644,7 @@ namespace LanLordlAPIs.Controllers
                                 // id in Transactions table..... that code will fail in this case... page will never get any transaction with this transaction id.
                                 string payLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
                                     "Nooch/PayRequest?TransactionId=" + transObj.RentTransactionId);
-                                      //"trans/payRequest.aspx?TransactionId=" + transObj.RentTransactionId);
+                                //"trans/payRequest.aspx?TransactionId=" + transObj.RentTransactionId);
                                 // or link to some new landing page here
                                 //string payLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),"trans/payRent.aspx?TransactionId=" + transObj.RentTransactionId);
 
@@ -2945,7 +2945,7 @@ namespace LanLordlAPIs.Controllers
                                 }
                             }
 
-                            bool isForRentScene = Convert.ToBoolean( CommonHelper.GetValueFromConfig("isForRentScene"));
+                            bool isForRentScene = Convert.ToBoolean(CommonHelper.GetValueFromConfig("isForRentScene"));
                             fromAddress = "payments@rentscene.com";
                             var templateToUse_Recip = isForRentScene ? "requestReceivedToExistingNonRegUser_RentScene" : "requestReceivedToExistingNonRegUser";
 
@@ -2961,14 +2961,14 @@ namespace LanLordlAPIs.Controllers
                             #region Email To Requester
 
                             var tokens = new Dictionary<string, string>
-                    {
-					    {Constants.PLACEHOLDER_FIRST_NAME, RequesterFirstName},
-					    {Constants.PLACEHOLDER_NEWUSER, RequestReceiverFirstName + " " + RequestReceiverLastName},
-					    {Constants.PLACEHOLDER_TRANSFER_AMOUNT, amountArray[0].ToString()},
-					    {Constants.PLACEHLODER_CENTS, amountArray[1].ToString()},
-					    {Constants.PLACEHOLDER_OTHER_LINK, cancelLink},
-					    {Constants.MEMO, memo}
-				    };
+                            {
+					            {Constants.PLACEHOLDER_FIRST_NAME, RequesterFirstName},
+					            {Constants.PLACEHOLDER_NEWUSER, RequestReceiverFirstName + " " + RequestReceiverLastName},
+					            {Constants.PLACEHOLDER_TRANSFER_AMOUNT, amountArray[0].ToString()},
+					            {Constants.PLACEHLODER_CENTS, amountArray[1].ToString()},
+					            {Constants.PLACEHOLDER_OTHER_LINK, cancelLink},
+					            {Constants.MEMO, memo}
+				            };
 
                             var toAddress = isTesting ? "testing_request-sender@nooch.com"
                                                       : CommonHelper.GetDecryptedData(landlordMemberObject.UserName);
@@ -3000,40 +3000,31 @@ namespace LanLordlAPIs.Controllers
                             // Check if both user's are actually "Active" and not NonRegistered...
                             string userType = "mx5bTcAYyiOf9I5Py9TiLw=="; // "Existing"
 
-
-                            //string rejectLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
-                            //                                  "trans/rejectMoney.aspx?TransactionId=" + rentTrans.TransactionId +
-                            //                                  "&UserType=" + userType +
-                            //                                  "&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==" +
-                            //                                  "&TransType=EnOIzpmFFTEaAP16hm9Wsw==");
                             string rejectLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
                                                               "Nooch/RejectMoney?TransactionId=" + rentTrans.TransactionId +
                                                               "&UserType=" + userType +
                                                               "&LinkSource=75U7bZRpVVxLNbQuoMQEGQ==" +
                                                               "&TransType=EnOIzpmFFTEaAP16hm9Wsw==");
 
-                            //string paylink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
-                            //                               "trans/payRequest.aspx?TransactionId=" + rentTrans.TransactionId +
-                            //                               "&UserType=" + userType + "&TransType="+CommonHelper.GetEncryptedData("RENT"));
-
                             string paylink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
                                                           "Nooch/PayRequest?TransactionId=" + rentTrans.TransactionId +
                                                           "&UserType=" + userType + "&TransType=" + CommonHelper.GetEncryptedData("RENT"));
 
                             var tokens2 = new Dictionary<string, string>
-                    {
-                        {Constants.PLACEHOLDER_FIRST_NAME, RequestReceiverFirstName},
-                        {"$UserPicture$", requesterPic},
-                        {Constants.PLACEHOLDER_SENDER_FULL_NAME, RequesterFirstName + " " + RequesterLastName},
-                        {Constants.PLACEHOLDER_TRANSFER_AMOUNT, amountArray[0].ToString()},
-                        {Constants.PLACEHLODER_CENTS, amountArray[1].ToString()},
-                        {Constants.MEMO, memo},
-                        {Constants.PLACEHOLDER_REJECT_LINK, rejectLink},
-                        {Constants.PLACEHOLDER_PAY_LINK, paylink},
-                        {Constants.PLACEHOLDER_FRIEND_FIRST_NAME, RequesterFirstName}
-                    };
+                            {
+                                {Constants.PLACEHOLDER_FIRST_NAME, RequestReceiverFirstName},
+                                {"$UserPicture$", requesterPic},
+                                {Constants.PLACEHOLDER_SENDER_FULL_NAME, RequesterFirstName + " " + RequesterLastName},
+                                {Constants.PLACEHOLDER_TRANSFER_AMOUNT, amountArray[0].ToString()},
+                                {Constants.PLACEHLODER_CENTS, amountArray[1].ToString()},
+                                {Constants.MEMO, memo},
+                                {Constants.PLACEHOLDER_REJECT_LINK, rejectLink},
+                                {Constants.PLACEHOLDER_PAY_LINK, paylink},
+                                {Constants.PLACEHOLDER_FRIEND_FIRST_NAME, RequesterFirstName}
+                            };
 
-                            toAddress = (isTesting) ? "testing_request-recip@nooch.com" : CommonHelper.GetDecryptedData(tenantsMemberObject.UserName);
+                            toAddress = isTesting ? "testing_request-recip@nooch.com"
+                                                  : CommonHelper.GetDecryptedData(tenantsMemberObject.UserName);
 
                             try
                             {

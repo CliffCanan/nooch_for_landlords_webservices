@@ -195,7 +195,7 @@ namespace LanLordlAPIs.Controllers
                                         var fromAddress = CommonHelper.GetValueFromConfig("welcomeMail");
                                         var link = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
                                                    "Nooch/Activation?tokenId=" + tokenId + "&type=ll&llem=" + userNameLowerCase);
-                                                    //"Registration/Activation.aspx?tokenId=" + tokenId + "&type=ll&llem=" + userNameLowerCase);
+                                        //"Registration/Activation.aspx?tokenId=" + tokenId + "&type=ll&llem=" + userNameLowerCase);
                                         var tokens = new Dictionary<string, string>
                                         {
                                             {
@@ -232,7 +232,7 @@ namespace LanLordlAPIs.Controllers
 
                                     result.IsSuccess = true;
                                     result.ErrorMessage = "OK";
-                                   
+
                                 }
                                 else
                                 {
@@ -260,7 +260,7 @@ namespace LanLordlAPIs.Controllers
                         Landlord l = CommonHelper.AddNewLandlordEntryInDb(llDetails.FirstName,
                             llDetails.LastName, llDetails.eMail, llDetails.Password, true, true,
                             llDetails.ip, llDetails.isBusiness, mem.MemberDetails.MemberId);
-                        
+
 
                         if (l != null)
                         {
@@ -293,7 +293,7 @@ namespace LanLordlAPIs.Controllers
             return result;
         }
 
-    
+
 
         [HttpPost]
         [ActionName("Login")]
@@ -355,7 +355,7 @@ namespace LanLordlAPIs.Controllers
                         var landlordEntity = (from ll in obj.Landlords
                                               where ll.LandlordId == userCheckResult.LandlordId
                                               select ll).FirstOrDefault();
-                        
+
                         if (!String.IsNullOrEmpty(User.Ip))
                         {
                             CommonHelper.saveLandlordIp(userCheckResult.LandlordId, User.Ip);
@@ -676,7 +676,7 @@ namespace LanLordlAPIs.Controllers
                                 var fromAddress = CommonHelper.GetValueFromConfig("welcomeMail");
                                 var link = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
                                            "Nooch/Activation?tokenId=" + tokenId + "&type=ll&llem=" + userNameLowerCase);
-                                         //"Registration/Activation.aspx?tokenId=" + tokenId + "&type=ll&llem=" + userNameLowerCase);
+                                //"Registration/Activation.aspx?tokenId=" + tokenId + "&type=ll&llem=" + userNameLowerCase);
 
                                 var tokens = new Dictionary<string, string>
                                         {
@@ -1095,7 +1095,7 @@ namespace LanLordlAPIs.Controllers
                                     var fromAddress = CommonHelper.GetValueFromConfig("welcomeMail");
                                     var link = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
                                                "Nooch/Activation?tokenId=" + tokenId + "&type=ll&llem=" + userNameLowerCase);
-                                                //"Registration/Activation.aspx?tokenId=" + tokenId + "&type=ll&llem=" + userNameLowerCase);
+                                    //"Registration/Activation.aspx?tokenId=" + tokenId + "&type=ll&llem=" + userNameLowerCase);
 
                                     var tokens = new Dictionary<string, string>
                                         {
@@ -1340,7 +1340,7 @@ namespace LanLordlAPIs.Controllers
         [ActionName("GetUserInfo")]
         public LandlordProfileInfoResult GetUserInfo(GetProfileDataInput User)
         {
-            //Logger.Info("UsersController -> GetUserInfo Initiated [" + User.LandlorId + "]");
+            //Logger.Info("UsersCntrlr -> GetUserInfo Initiated [" + User.LandlorId + "]");
 
             LandlordProfileInfoResult res = new LandlordProfileInfoResult();
             res.IsSuccess = false;
@@ -1355,7 +1355,7 @@ namespace LanLordlAPIs.Controllers
                 {
                     using (NOOCHEntities obj = new NOOCHEntities())
                     {
-                        // Reading Landlord's details from Landlords Table in  DB
+                        // Get Landlord's details from Landlords Table in DB
                         var landlordObj = (from c in obj.Landlords
                                            where c.LandlordId == landlordguidId
                                            select c).FirstOrDefault();
@@ -1470,20 +1470,26 @@ namespace LanLordlAPIs.Controllers
 
                             if (memberObj != null)
                             {
-                                if (memberObj.IsVerifiedWithSynapse == true)
-                                {
-                                    res.isIdVerified = true;
-                                }
+                                if (memberObj.IsVerifiedWithSynapse == true) res.isIdVerified = true;
 
                                 // Now check the values in the Member Table and use them if they are verified
-                                // NOTE:  In general, let's try to use the Member Table info b/c all the existing services for Synapse, email/phone verification, etc. use that table.
+                                // NOTE: In general, let's try to use the Member Table info b/c all the existing services for Synapse, email/phone verification, etc. use that table.
                                 res.MobileNumber = !String.IsNullOrEmpty(memberObj.ContactNumber) ? CommonHelper.FormatPhoneNumber(memberObj.ContactNumber) : "";
                                 res.IsPhoneVerified = (memberObj.IsVerifiedPhone == true) ? true : res.IsPhoneVerified;
+                                res.memberStatus = memberObj.Status;
+
                                 if (res.IsEmailVerified != true)
-                                {
                                     res.IsEmailVerified = (memberObj.Status == "Active") ? true : false;
-                                }
                             }
+                            else
+                            {
+                                Logger.Error("UsersCntrlr -> GetUserInfo - Member Not Found - LandlordID: [" + User.LandlorId + "]");
+                            }
+                        }
+                        else
+                        {
+                            Logger.Error("UsersCntrlr -> GetUserInfo - Landlord Not Found - LandlordID: [ " + User.LandlorId + "]");
+                            res.ErrorMessage = "Landlord ID not found";
                         }
 
                         return res;
@@ -1491,7 +1497,6 @@ namespace LanLordlAPIs.Controllers
                 }
                 else
                 {
-                    res.IsSuccess = false;
                     res.ErrorMessage = "Auth token failure";
                     return res;
                 }
@@ -1499,7 +1504,7 @@ namespace LanLordlAPIs.Controllers
             catch (Exception ex)
             {
                 Logger.Error("Landlords API -> Users -> GetUserInfo. Error while GetUserInfo request from LandlorgId - [ " + User.LandlorId + " ] . Exception details [ " + ex + " ]");
-                res.IsSuccess = false;
+
                 res.ErrorMessage = "Error while logging on. Retry.";
                 return res;
             }
@@ -2142,7 +2147,7 @@ namespace LanLordlAPIs.Controllers
 
                             if (landlordDetails != null)
                             {
-                                
+
                                 result.LandlordId = landlordDetails.LandlordId.ToString();
                                 result.MemberId = landlordDetails.MemberId.ToString();
                                 result.AccessToken = CommonHelper.GetDecryptedData(landlordDetails.WebAccessToken);
@@ -2499,7 +2504,7 @@ namespace LanLordlAPIs.Controllers
                             // CLIFF (4/26/16): We have to use a "@nooch.com" email address as the fromAddress b/c the upgrade to MailChimp now requires using only "verified domains"
                             //string fromAddress = CommonHelper.GetDecryptedData(landlordObj.eMail);
                             string fromAddress = CommonHelper.GetValueFromConfig("transfersMail");
-                            
+
                             string landlordFullName = CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.FirstName)) + " " +
                                                       CommonHelper.UppercaseFirst(CommonHelper.GetDecryptedData(landlordObj.LastName));
 

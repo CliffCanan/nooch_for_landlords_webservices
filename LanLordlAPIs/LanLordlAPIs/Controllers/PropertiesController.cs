@@ -1456,7 +1456,7 @@ namespace LanLordlAPIs.Controllers
                             // Get all units of this property
                             #region Get All Units For This Property
 
-                            Logger.Info("Properties Cntrlr -> GetPropertyDetailsPageData - About to attempt to get All Units - [PropertyID: " + Property.PropertyId + "]");
+                            Logger.Info("Properties Cntrlr -> GetPropertyDetailsPageData - About to attempt to get All Units - PropertyID: [" + Property.PropertyId + "]");
 
                             var allUnits = (from d in obj.PropertyUnits
                                             where d.PropertyId == propertyInDb.PropertyId &&
@@ -1554,23 +1554,39 @@ namespace LanLordlAPIs.Controllers
                                     // Get Tenant Member Info From Members Table (CLIFF: Added 4/3/16 because of all the problems with the above section)
                                     #region Get Tenant Member Info From Members Table
 
+                                    // CC (7/28/16): unitX.MemberID is actually the TenantID, NOT the MemberID... was causing the following Member lookup to always fail
                                     if (unitX.MemberId != null)
                                     {
-                                        Logger.Info("Properties Cntrlr -> GetPropertyDetailsPageData - About to attempt to get Member Info for this Unit - [PropertyID: " + currentUnit.UnitId + "]");
+                                        Logger.Info("Properties Cntrlr -> GetPropertyDetailsPageData - About to attempt to get Member Info for this Unit - PropertyID: [" + currentUnit.UnitId +
+                                                    "], MemberID (really TenantID): [" + unitX.MemberId + "]");
 
                                         Guid memberGuid = new Guid(currentUnit.MemberId);
 
-                                        var memberObj = (from d in obj.Members
-                                                         where d.MemberId == unitX.MemberId &&
-                                                              (d.IsDeleted == false || d.IsDeleted == null)
-                                                         select d).FirstOrDefault();
+                                        var memberObj = (from mem in obj.Members
+                                                         join ten in obj.Tenants on mem.MemberId equals ten.MemberId
+                                                         where ten.TenantId == unitX.MemberId &&
+                                                               ten.IsDeleted == false &&
+                                                               mem.IsDeleted == false
+                                                         select
+                                                         new
+                                                         {
+                                                             mem.MemberId,
+                                                             mem.Status,
+                                                             mem.IsVerifiedPhone,
+                                                             mem.IsVerifiedWithSynapse,
+                                                         }
+                                                               ).FirstOrDefault();
+
+                                        //var memberObj = (from d in obj.Members
+                                        //                 where d.MemberId == unitX.MemberId &&
+                                        //                      (d.IsDeleted == false || d.IsDeleted == null)
+                                        //                 select d).FirstOrDefault();
 
                                         if (memberObj != null)
                                         {
-
+                                            currentUnit.MemberId = memberObj.MemberId.ToString();
                                             currentUnit.IsEmailVerified = memberObj.Status == "Active" || memberObj.Status == "Accepted" ? true : false;
-
-                                            currentUnit.IsPhoneVerified = memberObj.IsVerifiedPhone == true ? true : false;
+                                            currentUnit.IsPhoneVerified = memberObj.IsVerifiedPhone ?? false;
 
 
                                             // Now check if this Tenant has a Synapse Bank Account

@@ -74,6 +74,7 @@ namespace LanLordlAPIs.Models.Output_Models
         //auth token and validation result
         public AccessTokenValidationOutput AuthTokenValidation { get; set; }
         public string MemberId { get; set; }
+        public string memberStatus { get; set; }
         public bool IsSuccess { get; set; }
         public string ErrorMessage { get; set; }
 
