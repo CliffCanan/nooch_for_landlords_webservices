@@ -86,7 +86,7 @@ namespace LanLordlAPIs.Controllers
                                 IsVerifiedWithSynapse = false,
                                 UDID1 = !String.IsNullOrEmpty(llDetails.fingerprint) ? llDetails.fingerprint : null,
                                 Country = !String.IsNullOrEmpty(llDetails.country) ? llDetails.country : "US",
-
+                                cipTag = "landlord",
                                 // some blanks as default
                                 Address = CommonHelper.GetEncryptedData(""),
                                 State = CommonHelper.GetEncryptedData(""),
@@ -98,7 +98,7 @@ namespace LanLordlAPIs.Controllers
 
                             obj.Members.Add(member);
 
-                            Logger.Info("UserController -> RegisterLandlord - ** NEW LANDLORD ** - MEMBER Created, about to save to DB - [MemberID: " + member.MemberId + "]");
+                            Logger.Info("UserController -> RegisterLandlord - **NEW LANDLORD** - MEMBER Created, about to save to DB - MemberID: [" + member.MemberId + "]");
                             try
                             {
                                 obj.SaveChanges();

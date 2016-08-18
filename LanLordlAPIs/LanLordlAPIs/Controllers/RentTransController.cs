@@ -19,21 +19,21 @@ namespace LanLordlAPIs.Controllers
 {
     public class RentTransController : ApiController
     {
-
         // Method for sending payment reminders
         public CreatePropertyResultOutput SendRentRemindersToTenants(ReminderMailInputClass input)
         {
-            Logger.Info("Landlords API -> SendRentRemindersToTenants Initiated. TenantId: [" + input.Trans.TenantId +
-                        "]. TransactionId: [" + input.Trans.TransactionId + "]. ReminderType: [" +
+            Logger.Info("Landlords API -> SendRentRemindersToTenants Fired - TenantID: [" + input.Trans.TenantId +
+                        "], TransID: [" + input.Trans.TransactionId + "], ReminderType: [" +
                         input.Trans.ReminderType + "]");
+
             CreatePropertyResultOutput result = new CreatePropertyResultOutput();
             result.IsSuccess = false;
+
             try
             {
                 NOOCHEntities noochConnection = new NOOCHEntities();
 
                 return result;
-
             }
             catch (Exception ex)
             {
@@ -1581,16 +1581,6 @@ namespace LanLordlAPIs.Controllers
                                 }
 
 
-
-
-
-
-
-
-
-
-
-
                                 // Get all PROPERTIES for given Landlord
                                 var allProps = (from prop in obj.Properties
                                                 where prop.LandlordId == landlordGuidId
@@ -1815,9 +1805,7 @@ namespace LanLordlAPIs.Controllers
                     }
                 }
                 else
-                {
                     result.msg = result.AuthTokenValidation.ErrorMessage;
-                }
             }
             catch (Exception ex)
             {
@@ -2794,15 +2782,11 @@ namespace LanLordlAPIs.Controllers
                             #endregion Preparing and sending reminder email
                         }
                         else
-                        {
                             result.msg = "Invalid Transaction Id or Transaction no more pending.";
-                        }
                     }
                 }
                 else
-                {
                     result.msg = "Invalid access token.";
-                }
             }
             catch (Exception ex)
             {
@@ -3052,16 +3036,12 @@ namespace LanLordlAPIs.Controllers
                             result.msg = "Request made successfully.";
                         }
                         else
-                        {
                             // failure while saving
                             result.msg = "Error while saving Transaction. Retyr!";
-                        }
                     }
                 }
-                else
-                {
-                    result.msg = "Invalid access token.";
-                }
+
+                result.msg = "Invalid access token.";
             }
             catch (Exception ex)
             {
