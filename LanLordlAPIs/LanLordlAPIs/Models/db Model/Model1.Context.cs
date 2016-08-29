@@ -35,7 +35,6 @@ namespace LanLordlAPIs.Models.db_Model
         public DbSet<InviteCode> InviteCodes { get; set; }
         public DbSet<AuthenticationToken> AuthenticationTokens { get; set; }
         public DbSet<PasswordResetRequest> PasswordResetRequests { get; set; }
-        public DbSet<SynapseBanksOfMember> SynapseBanksOfMembers { get; set; }
         public DbSet<MembersIPAddress> MembersIPAddresses { get; set; }
         public DbSet<Landlord> Landlords { get; set; }
         public DbSet<Property> Properties { get; set; }
@@ -45,8 +44,9 @@ namespace LanLordlAPIs.Models.db_Model
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<UnitsOccupiedByTenant> UnitsOccupiedByTenants { get; set; }
         public DbSet<Member> Members { get; set; }
-        public DbSet<SynapseCreateUserResult> SynapseCreateUserResults { get; set; }
         public DbSet<SynapseAddTransactionResult> SynapseAddTransactionResults { get; set; }
+        public DbSet<SynapseBanksOfMember> SynapseBanksOfMembers { get; set; }
+        public DbSet<SynapseCreateUserResult> SynapseCreateUserResults { get; set; }
     
         public virtual ObjectResult<Nullable<int>> GetTenantsCountInGivenPropertyId(string vPropertyId)
         {

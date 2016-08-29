@@ -198,6 +198,9 @@
     <Property Name="TransferLimit" Type="varchar(max)" />
     <Property Name="FacebookUserId" Type="varchar(max)" />
     <Property Name="GoogleUserId" Type="varchar(max)" />
+    <Property Name="cipTag" Type="varchar(max)" />
+    <Property Name="isRentScene" Type="bit" />
+    <Property Name="DeviceType" Type="char" MaxLength="1" />
   </EntityType>
   <EntityType Name="MembersIPAddresses">
     <Key>
@@ -291,34 +294,36 @@
     <Property Name="NoOfTimesToRecurr" Type="int" />
     <Property Name="UserPreferredDayOfMonthForAutoPay" Type="varchar(max)" />
   </EntityType>
+  <EntityType Name="SynapseAddTransactionResults">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="TransactionId" Type="uniqueidentifier" />
+    <Property Name="OidFromSynapse" Type="varchar(max)" />
+    <Property Name="Status_DateTimeStamp" Type="varchar(max)" />
+    <Property Name="Status_Id" Type="varchar(max)" />
+    <Property Name="Status_Text" Type="varchar(max)" />
+    <Property Name="Status_Note" Type="varchar(max)" />
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+  </EntityType>
   <EntityType Name="SynapseBanksOfMembers">
     <Key>
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="account_class" Type="int" />
     <Property Name="account_number_string" Type="varchar(max)" />
-    <Property Name="account_type" Type="int" />
-    <Property Name="address" Type="varchar(max)" />
-    <Property Name="balance" Type="varchar(max)" />
     <Property Name="bank_name" Type="varchar(max)" />
     <Property Name="bankAdddate" Type="varchar" MaxLength="100" />
-    <Property Name="email" Type="varchar" MaxLength="100" />
     <Property Name="bankid" Type="int" />
-    <Property Name="is_buyer_default" Type="bit" />
-    <Property Name="is_seller_default" Type="bit" />
     <Property Name="mfa_verifed" Type="bit" />
     <Property Name="name_on_account" Type="varchar(max)" />
     <Property Name="nickname" Type="varchar(max)" />
-    <Property Name="phone_number" Type="varchar" MaxLength="100" />
-    <Property Name="resource_uri" Type="varchar(max)" />
     <Property Name="routing_number_string" Type="varchar(max)" />
     <Property Name="IsDefault" Type="bit" />
     <Property Name="AddedOn" Type="datetime" />
     <Property Name="MemberId" Type="uniqueidentifier" />
     <Property Name="Status" Type="varchar" MaxLength="50" />
     <Property Name="VerifiedOn" Type="datetime" />
-    <Property Name="VerificationCode" Type="varchar(max)" />
     <Property Name="oid" Type="varchar(max)" />
     <Property Name="allowed" Type="varchar(max)" />
     <Property Name="supp_id" Type="varchar(max)" />
@@ -326,6 +331,7 @@
     <Property Name="type_bank" Type="varchar(max)" />
     <Property Name="type_synapse" Type="varchar(max)" />
     <Property Name="is_active" Type="bit" />
+    <Property Name="IsAddedUsingRoutingNumber" Type="bit" />
   </EntityType>
   <EntityType Name="SynapseCreateUserResults">
     <Key>
@@ -340,7 +346,7 @@
     <Property Name="refresh_token" Type="varchar(max)" />
     <Property Name="success" Type="bit" />
     <Property Name="username" Type="varchar(max)" />
-    <Property Name="user_id" Type="int" />
+    <Property Name="user_id" Type="varchar(max)" />
     <Property Name="IsDeleted" Type="bit" />
     <Property Name="ModifiedOn" Type="datetime" />
     <Property Name="IsForNonNoochUser" Type="bit" />
@@ -353,6 +359,15 @@
     <Property Name="permission" Type="varchar(max)" />
     <Property Name="Phone_number" Type="varchar(max)" />
     <Property Name="photos" Type="varchar(max)" />
+    <Property Name="expires_at" Type="varchar" MaxLength="50" />
+    <Property Name="physical_doc" Type="varchar(max)" />
+    <Property Name="virtual_doc" Type="varchar(max)" />
+    <Property Name="extra_security" Type="varchar(max)" />
+    <Property Name="cip_tag" Type="varchar(max)" />
+    <Property Name="social_doc" Type="varchar(max)" />
+    <Property Name="phys_doc_lastupdated" Type="datetime" />
+    <Property Name="virt_doc_lastupdated" Type="datetime" />
+    <Property Name="soc_doc_lastupdated" Type="datetime" />
   </EntityType>
   <EntityType Name="Tenants">
     <Key>
@@ -428,6 +443,8 @@
     <Property Name="InvitationSentTo" Type="varchar" MaxLength="500" />
     <Property Name="IsPhoneInvitation" Type="bit" />
     <Property Name="PhoneNumberInvited" Type="varchar" MaxLength="50" />
+    <Property Name="SynapseStatus" Type="varchar" MaxLength="50" />
+    <Property Name="DateAccepted" Type="datetime" />
   </EntityType>
   <EntityType Name="UnitsOccupiedByTenants">
     <Key>
@@ -615,6 +632,7 @@
     <EntitySet Name="Properties" EntityType="Self.Properties" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PropertyUnits" EntityType="Self.PropertyUnits" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="RentTransactions" EntityType="Self.RentTransactions" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="SynapseAddTransactionResults" EntityType="Self.SynapseAddTransactionResults" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SynapseBanksOfMembers" EntityType="Self.SynapseBanksOfMembers" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SynapseCreateUserResults" EntityType="Self.SynapseCreateUserResults" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Tenants" EntityType="Self.Tenants" Schema="dbo" store:Type="Tables" />

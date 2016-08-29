@@ -118,7 +118,6 @@
     <FunctionImport Name="IsRentPaidByTenantForGivenUnitId" ReturnType="Collection(Boolean)">
       <Parameter Name="vUnitId" Mode="In" Type="String" />
     </FunctionImport>
-    <EntitySet Name="SynapseBanksOfMembers" EntityType="NOOCHModel.SynapseBanksOfMember" />
     <FunctionImport Name="GetTenantsInGivenPropertyId" ReturnType="Collection(NOOCHModel.GetTenantsInGivenPropertyId_Result2)">
       <Parameter Name="vPropertyId" Mode="In" Type="String" />
     </FunctionImport>
@@ -167,8 +166,9 @@
       <End Role="Member" EntitySet="Members" />
       <End Role="Transaction" EntitySet="Transactions" />
     </AssociationSet>
-    <EntitySet Name="SynapseCreateUserResults" EntityType="NOOCHModel.SynapseCreateUserResult" />
     <EntitySet Name="SynapseAddTransactionResults" EntityType="NOOCHModel.SynapseAddTransactionResult" />
+    <EntitySet Name="SynapseBanksOfMembers" EntityType="NOOCHModel.SynapseBanksOfMember" />
+    <EntitySet Name="SynapseCreateUserResults" EntityType="NOOCHModel.SynapseCreateUserResult" />
   </EntityContainer>
   <EntityType Name="TenantsIdDocument">
     <Key>
@@ -249,43 +249,6 @@
     <Property Type="String" Name="UnitNumber" Nullable="true" MaxLength="50" />
     <Property Type="String" Name="TenantEmail" Nullable="true" />
   </ComplexType>
-  <EntityType Name="SynapseBanksOfMember">
-    <Key>
-      <PropertyRef Name="Id" />
-    </Key>
-    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="account_class" Type="Int32" />
-    <Property Name="account_number_string" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="account_type" Type="Int32" />
-    <Property Name="address" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="balance" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="bank_name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="bankAdddate" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-    <Property Name="email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-    <Property Name="bankid" Type="Int32" />
-    <Property Name="is_buyer_default" Type="Boolean" />
-    <Property Name="is_seller_default" Type="Boolean" />
-    <Property Name="mfa_verifed" Type="Boolean" />
-    <Property Name="name_on_account" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="nickname" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="phone_number" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-    <Property Name="resource_uri" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="routing_number_string" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="IsDefault" Type="Boolean" />
-    <Property Name="AddedOn" Type="DateTime" Precision="3" />
-    <Property Name="MemberId" Type="Guid" />
-    <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="VerifiedOn" Type="DateTime" Precision="3" />
-    <Property Name="VerificationCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="oid" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="allowed" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="supp_id" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="class" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="type_bank" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="type_synapse" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="is_active" Type="Boolean" />
-    <Property Name="IsAddedUsingRoutingNumber" Type="Boolean" />
-  </EntityType>
   <ComplexType Name="GetTenantsInGivenPropertyId_Result2">
     <Property Type="Guid" Name="TenantId" Nullable="false" />
     <Property Type="Guid" Name="MemberId" Nullable="false" />
@@ -640,6 +603,7 @@
     <NavigationProperty Name="PasswordResetRequests" Relationship="NOOCHModel.FK_PasswordResetRequests_Members" FromRole="Member" ToRole="PasswordResetRequest" />
     <NavigationProperty Name="Transactions" Relationship="NOOCHModel.FK_Transactions_Members2" FromRole="Member" ToRole="Transaction" />
     <NavigationProperty Name="Transactions1" Relationship="NOOCHModel.FK_Transactions_Members3" FromRole="Member" ToRole="Transaction" />
+    <Property Name="DeviceType" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
   </EntityType>
   <Association Name="FK_MemberNotifications_Members">
     <End Type="NOOCHModel.Member" Role="Member" Multiplicity="1" />
@@ -701,6 +665,45 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <EntityType Name="SynapseAddTransactionResult">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="TransactionId" Type="Guid" />
+    <Property Name="OidFromSynapse" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="Status_DateTimeStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="Status_Id" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="Status_Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="Status_Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+  </EntityType>
+  <EntityType Name="SynapseBanksOfMember">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="account_number_string" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="bank_name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="bankAdddate" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="bankid" Type="Int32" />
+    <Property Name="mfa_verifed" Type="Boolean" />
+    <Property Name="name_on_account" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="nickname" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="routing_number_string" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="IsDefault" Type="Boolean" />
+    <Property Name="AddedOn" Type="DateTime" Precision="3" />
+    <Property Name="MemberId" Type="Guid" />
+    <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="VerifiedOn" Type="DateTime" Precision="3" />
+    <Property Name="oid" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="allowed" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="supp_id" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="class" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="type_bank" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="type_synapse" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="is_active" Type="Boolean" />
+    <Property Name="IsAddedUsingRoutingNumber" Type="Boolean" />
+  </EntityType>
   <EntityType Name="SynapseCreateUserResult">
     <Key>
       <PropertyRef Name="Id" />
@@ -731,17 +734,10 @@
     <Property Name="physical_doc" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
     <Property Name="virtual_doc" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
     <Property Name="extra_security" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-  </EntityType>
-  <EntityType Name="SynapseAddTransactionResult">
-    <Key>
-      <PropertyRef Name="Id" />
-    </Key>
-    <Property Name="TransactionId" Type="Guid" />
-    <Property Name="OidFromSynapse" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="Status_DateTimeStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="Status_Id" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="Status_Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="Status_Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="cip_tag" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="social_doc" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="phys_doc_lastupdated" Type="DateTime" Precision="3" />
+    <Property Name="virt_doc_lastupdated" Type="DateTime" Precision="3" />
+    <Property Name="soc_doc_lastupdated" Type="DateTime" Precision="3" />
   </EntityType>
 </Schema>

@@ -15,29 +15,19 @@ namespace LanLordlAPIs.Models.db_Model
     public partial class SynapseBanksOfMember
     {
         public int Id { get; set; }
-        public Nullable<int> account_class { get; set; }
         public string account_number_string { get; set; }
-        public Nullable<int> account_type { get; set; }
-        public string address { get; set; }
-        public string balance { get; set; }
         public string bank_name { get; set; }
         public string bankAdddate { get; set; }
-        public string email { get; set; }
         public Nullable<int> bankid { get; set; }
-        public Nullable<bool> is_buyer_default { get; set; }
-        public Nullable<bool> is_seller_default { get; set; }
         public Nullable<bool> mfa_verifed { get; set; }
         public string name_on_account { get; set; }
         public string nickname { get; set; }
-        public string phone_number { get; set; }
-        public string resource_uri { get; set; }
         public string routing_number_string { get; set; }
         public Nullable<bool> IsDefault { get; set; }
         public Nullable<System.DateTime> AddedOn { get; set; }
         public Nullable<System.Guid> MemberId { get; set; }
         public string Status { get; set; }
         public Nullable<System.DateTime> VerifiedOn { get; set; }
-        public string VerificationCode { get; set; }
         public string oid { get; set; }
         public string allowed { get; set; }
         public string supp_id { get; set; }

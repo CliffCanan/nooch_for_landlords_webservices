@@ -13,7 +13,6 @@
         <EntityTypeShape EntityType="NOOCHModel.InviteCode" Width="1.5" PointX="12.375" PointY="0.75" />
         <EntityTypeShape EntityType="NOOCHModel.AuthenticationToken" Width="1.5" PointX="12.375" PointY="4.75" />
         <EntityTypeShape EntityType="NOOCHModel.PasswordResetRequest" Width="1.5" PointX="3" PointY="15.625" />
-        <EntityTypeShape EntityType="NOOCHModel.SynapseBanksOfMember" Width="1.5" PointX="12.375" PointY="8.75" />
         <EntityTypeShape EntityType="NOOCHModel.MembersIPAddress" Width="1.5" PointX="14.375" PointY="0.75" />
         <EntityTypeShape EntityType="NOOCHModel.Landlord" Width="1.5" PointX="5.375" PointY="19.375" />
         <EntityTypeShape EntityType="NOOCHModel.Property" Width="1.5" PointX="9.375" PointY="0.75" />
@@ -28,13 +27,14 @@
         <AssociationConnector Association="NOOCHModel.FK_PasswordResetRequests_Members" />
         <AssociationConnector Association="NOOCHModel.FK_Transactions_Members2" />
         <AssociationConnector Association="NOOCHModel.FK_Transactions_Members3" />
-        <EntityTypeShape EntityType="NOOCHModel.SynapseCreateUserResult" Width="1.5" PointX="14.375" PointY="9.75" />
         
         <EntityTypeShape EntityType="NOOCHModel.RentTransaction" Width="1.5" PointX="7.625" PointY="22.125" />
         <AssociationConnector Association="NOOCHModel.FK_RentTransactions_Landlords" />
         <AssociationConnector Association="NOOCHModel.FK_RentTransactions_Tenants" />
         <AssociationConnector Association="NOOCHModel.FK_RentTransactions_UnitsOccupiedByTenants" />
         <EntityTypeShape EntityType="NOOCHModel.SynapseAddTransactionResult" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="NOOCHModel.SynapseBanksOfMember" Width="1.5" PointX="12.375" PointY="9.75" />
+        <EntityTypeShape EntityType="NOOCHModel.SynapseCreateUserResult" Width="1.5" PointX="9.375" PointY="13.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

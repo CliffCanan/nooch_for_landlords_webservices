@@ -90,6 +90,7 @@ namespace LanLordlAPIs.Models.db_Model
         public string GoogleUserId { get; set; }
         public string cipTag { get; set; }
         public Nullable<bool> isRentScene { get; set; }
+        public string DeviceType { get; set; }
     
         public virtual ICollection<MemberNotification> MemberNotifications { get; set; }
         public virtual ICollection<MemberPrivacySetting> MemberPrivacySettings { get; set; }

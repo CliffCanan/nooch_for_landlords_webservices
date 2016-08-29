@@ -40,5 +40,10 @@ namespace LanLordlAPIs.Models.db_Model
         public string physical_doc { get; set; }
         public string virtual_doc { get; set; }
         public string extra_security { get; set; }
+        public string cip_tag { get; set; }
+        public string social_doc { get; set; }
+        public Nullable<System.DateTime> phys_doc_lastupdated { get; set; }
+        public Nullable<System.DateTime> virt_doc_lastupdated { get; set; }
+        public Nullable<System.DateTime> soc_doc_lastupdated { get; set; }
     }
 }
