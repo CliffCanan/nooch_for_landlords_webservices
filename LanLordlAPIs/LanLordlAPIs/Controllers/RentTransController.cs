@@ -2618,52 +2618,38 @@ namespace LanLordlAPIs.Controllers
                             {
                                 #region Setup Common Variables
 
-                                string fromAddress = CommonHelper.GetValueFromConfig("transfersMail");
+                                var fromAddress = CommonHelper.GetValueFromConfig("transfersMail");
 
-                                string senderFirstName =
+                                var senderFirstName =
                                     CommonHelper.UppercaseFirst(
                                         CommonHelper.GetDecryptedData(landlordMemberObject.FirstName));
-                                string senderLastName =
+                                var senderLastName =
                                     CommonHelper.UppercaseFirst(
                                         CommonHelper.GetDecryptedData(landlordMemberObject.LastName));
 
-
-                                // TBD with Cliff about new landing page for handling play rent transactions of modify existing because rent transactions are now stored in separate table and existing landling page check given transaction
-                                // id in Transactions table..... that code will fail in this case... page will never get any transaction with this transaction id.
-                                string payLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
+                                var payLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),
                                     "Nooch/PayRequest?TransactionId=" + transObj.RentTransactionId);
-                                //"trans/payRequest.aspx?TransactionId=" + transObj.RentTransactionId);
-                                // or link to some new landing page here
-                                //string payLink = String.Concat(CommonHelper.GetValueFromConfig("ApplicationURL"),"trans/payRent.aspx?TransactionId=" + transObj.RentTransactionId);
 
-                                string s22 = Convert.ToDecimal(transObj.Amount.ToString()).ToString("n2");
-                                string[] s32 = s22.Split('.');
+                                var amount = Convert.ToDecimal(transObj.Amount.ToString()).ToString("n2");
+                                string[] s32 = amount.Split('.');
 
-                                string memo = "";
+                                var memo = "";
                                 if (!string.IsNullOrEmpty(transObj.Memo))
                                 {
                                     if (transObj.Memo.Length > 3)
                                     {
-                                        string firstThreeChars = transObj.Memo.Substring(0, 3).ToLower();
+                                        var firstThreeChars = transObj.Memo.Substring(0, 3).ToLower();
                                         bool startWithFor = firstThreeChars.Equals("for");
 
                                         if (startWithFor)
-                                        {
                                             memo = transObj.Memo.ToString();
-                                        }
                                         else
-                                        {
                                             memo = "For " + transObj.Memo.ToString();
-                                        }
                                     }
                                     else
-                                    {
                                         memo = "For " + transObj.Memo.ToString();
-                                    }
                                 }
 
-                                // this solved landling page problem I thought above
-                                bool isForRentScene = true;
                                 var logoToDisplay = "noochlogo";
                                 senderFirstName = "Rent Scene";
                                 senderLastName = "";
@@ -2718,7 +2704,7 @@ namespace LanLordlAPIs.Controllers
                                     CommonHelper.SendEmail("requestReminderToExistingUser", fromAddress,
                                         senderFirstName + " " + senderLastName,
                                         toAddress,
-                                        senderFirstName + " " + senderLastName + " requested " + "$" + s22.ToString() +
+                                        senderFirstName + " " + senderLastName + " requested " + "$" + amount.ToString() +
                                         " with Nooch - Reminder",
                                         tokens2, null, null);
 

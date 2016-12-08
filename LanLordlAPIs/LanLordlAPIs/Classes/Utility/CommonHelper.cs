@@ -1165,24 +1165,15 @@ namespace LanLordlAPIs.Classes.Utility
                         var inviteMember = (from c in noochConnection.InviteCodes where c.InviteCodeId == v select c).FirstOrDefault();
 
                         if (inviteMember != null)
-                        {
                             return inviteMember.code;
-                        }
                         else
-                        {
                             return "";
-                        }
                     }
-                    else
-                    {
-                        //No referal code
+                    else //No referal code
                         return "";
-                    }
                 }
                 else
-                {
                     return "Invalid";
-                }
             }
         }
 
@@ -1198,23 +1189,22 @@ namespace LanLordlAPIs.Classes.Utility
                     if (noochMember != null)
                     {
                         //Check if the user already has an invite code generted or not
-                        string existing = getReferralCode(memberId.ToString());
+                        var existing = getReferralCode(memberId.ToString());
                         if (existing == "")
                         {
                             //Generate random code
                             Random rng = new Random();
                             int value = rng.Next(1000);
-                            string text = value.ToString("000");
-                            string fName = GetDecryptedData(noochMember.FirstName);
+                            var text = value.ToString("000");
+                            var fName = GetDecryptedData(noochMember.FirstName);
 
                             // Make sure First name is at least 4 letters
                             if (fName.Length < 4)
                             {
-                                string lname = CommonHelper.GetDecryptedData(noochMember.LastName);
-
+                                var lname = CommonHelper.GetDecryptedData(noochMember.LastName);
                                 fName = fName + lname.Substring(0, 4 - fName.Length).ToUpper();
                             }
-                            string code = fName.Substring(0, 4).ToUpper() + text;
+                            var code = fName.Substring(0, 4).ToUpper() + text;
 
                             //Insert into invites
                             InviteCode obj = new InviteCode();
@@ -1231,17 +1221,14 @@ namespace LanLordlAPIs.Classes.Utility
                             return "Success";
                         }
                         else
-                        {
                             return "Invite Code Already Exists";
-                        }
                     }
                     else
-                    {
                         return "Invalid";
-                    }
                 }
                 catch (Exception ex)
                 {
+                    Logger.Error("CommonHelper -> setReferralCode FAILED - MemberID: [" + memberId + "], Exception: [" + ex.Message + "]");
                     return "Error";
                 }
             }
@@ -1252,6 +1239,8 @@ namespace LanLordlAPIs.Classes.Utility
         {
             try
             {
+                Logger.Info("CommonHelper -> AddNewLandlordEntryInDb Fired - Name: [" + fName + " " + lName + "], Email: [" + email + "]");
+
                 using (NOOCHEntities obj = new NOOCHEntities())
                 {
                     Landlord ll = new Landlord();
@@ -1872,14 +1861,14 @@ namespace LanLordlAPIs.Classes.Utility
         }
 
 
-        public static CheckAndRegisterLandlordByEmailResult checkAndRegisterLandlordByemailId(string eMailID)
+        public static CheckAndRegisterLandlordByEmailResult checkIfLandlordExistsForGivenEmail(string email)
         {
             CheckAndRegisterLandlordByEmailResult result = new CheckAndRegisterLandlordByEmailResult();
             result.IsSuccess = false;
 
             try
             {
-                string email = eMailID.Trim().ToLower();
+                email = email.Trim().ToLower();
                 email = CommonHelper.GetEncryptedData(email);
 
                 using (NOOCHEntities obj = new NOOCHEntities())
@@ -1902,7 +1891,7 @@ namespace LanLordlAPIs.Classes.Utility
             }
             catch (Exception ex)
             {
-                Logger.Error("Landlord Common Helper -> checkAndRegisterLandlordByemailId FAIELD - [Exception: " + ex.Message + "], [Email: " + eMailID + "]");
+                Logger.Error("Landlord Common Helper -> checkAndRegisterLandlordByemailId FAIELD - [Exception: " + ex.Message + "], [Email: " + email + "]");
                 result.ErrorMessage = "Server Error.";
             }
 
