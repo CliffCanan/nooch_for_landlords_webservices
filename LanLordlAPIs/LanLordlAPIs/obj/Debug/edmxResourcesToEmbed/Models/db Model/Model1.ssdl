@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Schema Namespace="NOOCHModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+<Schema Namespace="NOOCHModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
   <EntityType Name="AuthenticationTokens">
     <Key>
       <PropertyRef Name="TokenId" />
@@ -200,6 +200,7 @@
     <Property Name="GoogleUserId" Type="varchar(max)" />
     <Property Name="cipTag" Type="varchar(max)" />
     <Property Name="isRentScene" Type="bit" />
+    <Property Name="DeviceType" Type="char" MaxLength="1" />
   </EntityType>
   <EntityType Name="MembersIPAddresses">
     <Key>
@@ -310,29 +311,19 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="account_class" Type="int" />
     <Property Name="account_number_string" Type="varchar(max)" />
-    <Property Name="account_type" Type="int" />
-    <Property Name="address" Type="varchar(max)" />
-    <Property Name="balance" Type="varchar(max)" />
     <Property Name="bank_name" Type="varchar(max)" />
     <Property Name="bankAdddate" Type="varchar" MaxLength="100" />
-    <Property Name="email" Type="varchar" MaxLength="100" />
     <Property Name="bankid" Type="int" />
-    <Property Name="is_buyer_default" Type="bit" />
-    <Property Name="is_seller_default" Type="bit" />
     <Property Name="mfa_verifed" Type="bit" />
     <Property Name="name_on_account" Type="varchar(max)" />
     <Property Name="nickname" Type="varchar(max)" />
-    <Property Name="phone_number" Type="varchar" MaxLength="100" />
-    <Property Name="resource_uri" Type="varchar(max)" />
     <Property Name="routing_number_string" Type="varchar(max)" />
     <Property Name="IsDefault" Type="bit" />
     <Property Name="AddedOn" Type="datetime" />
     <Property Name="MemberId" Type="uniqueidentifier" />
     <Property Name="Status" Type="varchar" MaxLength="50" />
     <Property Name="VerifiedOn" Type="datetime" />
-    <Property Name="VerificationCode" Type="varchar(max)" />
     <Property Name="oid" Type="varchar(max)" />
     <Property Name="allowed" Type="varchar(max)" />
     <Property Name="supp_id" Type="varchar(max)" />
@@ -372,6 +363,11 @@
     <Property Name="physical_doc" Type="varchar(max)" />
     <Property Name="virtual_doc" Type="varchar(max)" />
     <Property Name="extra_security" Type="varchar(max)" />
+    <Property Name="cip_tag" Type="varchar(max)" />
+    <Property Name="social_doc" Type="varchar(max)" />
+    <Property Name="phys_doc_lastupdated" Type="datetime" />
+    <Property Name="virt_doc_lastupdated" Type="datetime" />
+    <Property Name="soc_doc_lastupdated" Type="datetime" />
   </EntityType>
   <EntityType Name="Tenants">
     <Key>
