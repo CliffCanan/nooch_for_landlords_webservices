@@ -150,7 +150,7 @@ namespace LanLordlAPIs.Classes.Utility
 
                     SynapseV3RefreshOauthKeyAndSign_Input input = new SynapseV3RefreshOauthKeyAndSign_Input();
 
-                    List<string> clientIds =  getClientSecretId(noochMemberObject.MemberId.ToString());
+                    List<string> clientIds = getClientSecretId(noochMemberObject.MemberId.ToString());
 
                     string SynapseClientId = clientIds[0];
                     string SynapseClientSecret = clientIds[1];
@@ -507,7 +507,7 @@ namespace LanLordlAPIs.Classes.Utility
                         inputNoPin.login = login;
                     }
 
-                    string UrlToHit = Convert.ToBoolean( GetValueFromConfig("IsRunningOnSandBox")) ? "https://sandbox.synapsepay.com/api/v3/user/signin" : "https://synapsepay.com/api/v3/user/signin";
+                    string UrlToHit = Convert.ToBoolean(GetValueFromConfig("IsRunningOnSandBox")) ? "https://sandbox.synapsepay.com/api/v3/user/signin" : "https://synapsepay.com/api/v3/user/signin";
                     string parsedContent = isPinIncluded ? JsonConvert.SerializeObject(inputWithPin) : JsonConvert.SerializeObject(inputNoPin);
 
                     Logger.Info("Common Helper -> SynapseV3SignIn - isPinIncluded: [" + isPinIncluded + "] - Payload to send to Synapse /v3/user/signin: [" + parsedContent + "]");
@@ -691,7 +691,7 @@ namespace LanLordlAPIs.Classes.Utility
 
 
 
-         public static Member GetMemberDetails(string memberId)
+        public static Member GetMemberDetails(string memberId)
         {
             try
             {
@@ -711,6 +711,8 @@ namespace LanLordlAPIs.Classes.Utility
             }
             return new Member();
         }
+
+
         public static bool isOverTransactionLimit(decimal amount, string senderMemId, string recipMemId)
         {
             var maxTransferLimitPerPayment = GetValueFromConfig("MaximumTransferLimitPerTransaction");
@@ -721,19 +723,6 @@ namespace LanLordlAPIs.Classes.Utility
                     recipMemId.ToLower() == "00bd3972-d900-429d-8a0d-28a5ac4a75d7")
                 {
                     Logger.Info("*****  Landlords WEB API -> isOverTransactionLimit - Transaction for TEAM NOOCH, so allowing transaction - [Amount: $" + amount + "]  ****");
-                    return false;
-                }
-                if (senderMemId.ToLower() == "852987e8-d5fe-47e7-a00b-58a80dd15b49" || // Marvis Burns (RentScene)
-                    recipMemId.ToLower() == "852987e8-d5fe-47e7-a00b-58a80dd15b49")
-                {
-                    Logger.Info("*****  Landlords WEB API -> isOverTransactionLimit - Transaction for RENT SCENE, so allowing transaction - [Amount: $" + amount + "]  ****");
-                    return false;
-                }
-
-                if (senderMemId.ToLower() == "c9839463-d2fa-41b6-9b9d-45c7f79420b1" || // Sherri Tan (RentScene - via Marvis Burns)
-                    recipMemId.ToLower() == "c9839463-d2fa-41b6-9b9d-45c7f79420b1")
-                {
-                    Logger.Info("*****  Landlords WEB API -> isOverTransactionLimit - Transaction for RENT SCENE, so allowing transaction - [Amount: $" + amount + "]  ****");
                     return false;
                 }
                 else if (senderMemId.ToLower() == "8b4b4983-f022-4289-ba6e-48d5affb5484" || // Josh Detweiler (AppJaxx)
@@ -749,34 +738,33 @@ namespace LanLordlAPIs.Classes.Utility
             return false;
         }
 
+
         public static string GetRandomTransactionTrackingId()
         {
-
             const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             var random = new Random();
             int j = 1;
+
             using (NOOCHEntities obj = new NOOCHEntities())
             {
                 for (int i = 0; i <= j; i++)
                 {
-                    var randomId = new string(
-                        Enumerable.Repeat(chars, 9)
-                            .Select(s => s[random.Next(s.Length)])
-                            .ToArray());
+                    var randomId = new string(Enumerable.Repeat(chars, 9)
+                                             .Select(s => s[random.Next(s.Length)])
+                                             .ToArray());
 
                     var memberEntity = getTransactionByTrackingId(randomId);
 
                     if (memberEntity == null)
-                    {
                         return randomId;
-                    }
 
                     j += i + 1;
                 }
             }
-            return null;
 
+            return null;
         }
+
 
         public static Transaction getTransactionByTrackingId(string transTrackId)
         {
@@ -789,6 +777,7 @@ namespace LanLordlAPIs.Classes.Utility
             }
         }
 
+
         public static List<string> getClientSecretId(string memId)
         {
             List<string> clientIds = new List<string>();
@@ -796,20 +785,10 @@ namespace LanLordlAPIs.Classes.Utility
             {
                 Member member = GetMemberDetails(memId);
 
-                if (member.isRentScene == true)
-                {
-                    string SynapseClientId =  GetValueFromConfig("SynapseClientIdRentScene");
-                    string SynapseClientSecret =  GetValueFromConfig("SynapseClientSecretRentScene");
-                    clientIds.Add(SynapseClientId);
-                    clientIds.Add(SynapseClientSecret);
-                }
-                else
-                {
-                    string SynapseClientId =  GetValueFromConfig("SynapseClientId");
-                    string SynapseClientSecret =  GetValueFromConfig("SynapseClientSecret");
-                    clientIds.Add(SynapseClientId);
-                    clientIds.Add(SynapseClientSecret);
-                }
+                string SynapseClientId = GetValueFromConfig("SynapseClientId");
+                string SynapseClientSecret = GetValueFromConfig("SynapseClientSecret");
+                clientIds.Add(SynapseClientId);
+                clientIds.Add(SynapseClientSecret);
             }
             catch (Exception ex)
             {
@@ -818,12 +797,14 @@ namespace LanLordlAPIs.Classes.Utility
 
             return clientIds;
         }
+
+
         public static string GetEncryptedData(string sourceData)
         {
             try
             {
                 var aesAlgorithm = new AES();
-                string encryptedData = aesAlgorithm.Encrypt(sourceData, string.Empty);
+                var encryptedData = aesAlgorithm.Encrypt(sourceData, string.Empty);
                 return encryptedData.Replace(" ", "+");
             }
             catch (Exception ex)
@@ -839,7 +820,7 @@ namespace LanLordlAPIs.Classes.Utility
             try
             {
                 var aesAlgorithm = new AES();
-                string decryptedData = aesAlgorithm.Decrypt(sourceData.Replace(" ", "+"), string.Empty);
+                var decryptedData = aesAlgorithm.Decrypt(sourceData.Replace(" ", "+"), string.Empty);
                 return decryptedData;
             }
             catch (Exception ex)
@@ -852,11 +833,7 @@ namespace LanLordlAPIs.Classes.Utility
 
         public static string UppercaseFirst(string s)
         {
-            // Check for empty string.
-            if (string.IsNullOrEmpty(s))
-            {
-                return string.Empty;
-            }
+            if (string.IsNullOrEmpty(s)) return string.Empty;
             // Return char and concat substring.
             return char.ToUpper(s[0]) + s.Substring(1);
         }
@@ -868,12 +845,13 @@ namespace LanLordlAPIs.Classes.Utility
                 return sr.ReadToEnd();
         }
 
-        
+
         public static string GetRandomNoochId()
         {
             const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             var random = new Random();
             int j = 1;
+
             using (NOOCHEntities obj = new NOOCHEntities())
             {
                 for (int i = 0; i <= j; i++)
@@ -886,17 +864,16 @@ namespace LanLordlAPIs.Classes.Utility
                     var memberEntity = getMemberByNoochId(randomId);
 
                     if (memberEntity == null)
-                    {
                         return randomId;
-                    }
 
                     j += i + 1;
                 }
             }
+
             return null;
         }
 
-        
+
         public static string GetRandomPinNumber()
         {
             const string chars = "0123456789";
@@ -909,13 +886,13 @@ namespace LanLordlAPIs.Classes.Utility
             return randomId;
         }
 
-        
+
         public static string GetValueFromConfig(string key)
         {
             return ConfigurationManager.AppSettings[key];
         }
 
-        
+
         public static Member GetMemberByEmailId(string eMailID)
         {
             Member memberObj = new Member();
@@ -924,7 +901,7 @@ namespace LanLordlAPIs.Classes.Utility
             {
                 using (NOOCHEntities obj = new NOOCHEntities())
                 {
-                    string email = eMailID.Trim().ToLower();
+                    var email = eMailID.Trim().ToLower();
                     email = CommonHelper.GetEncryptedData(email);
 
                     memberObj = (from c in obj.Members
@@ -986,7 +963,7 @@ namespace LanLordlAPIs.Classes.Utility
             return memberObj;
         }
 
-        
+
         public static Landlord GetLandlordByLandlordId(Guid landlordId)
         {
             Landlord landlordObj = new Landlord();
@@ -1035,7 +1012,7 @@ namespace LanLordlAPIs.Classes.Utility
 
         public static string GetLandlordsMemberIdFromLandlordId(Guid landlorID)
         {
-            string result = string.Empty;
+            var result = string.Empty;
 
             try
             {
@@ -1054,9 +1031,10 @@ namespace LanLordlAPIs.Classes.Utility
             return result;
         }
 
+        
         public static string GetTenantsMemberIdFromTenantId(string tenantId)
         {
-            string result = string.Empty;
+            var result = string.Empty;
 
             try
             {
@@ -1074,6 +1052,7 @@ namespace LanLordlAPIs.Classes.Utility
 
             return result;
         }
+
 
         public static string GetMemberNameByUserName(string userName)
         {
@@ -1103,6 +1082,7 @@ namespace LanLordlAPIs.Classes.Utility
             return null;
         }
 
+ 
         public static Property GetPropertyByPropId(Guid propId)
         {
             Property prop = new Property();
@@ -1123,6 +1103,7 @@ namespace LanLordlAPIs.Classes.Utility
 
             return prop;
         }
+
 
         public static PropertyUnit GetUnitByUnitId(string unitId)
         {
@@ -1177,6 +1158,7 @@ namespace LanLordlAPIs.Classes.Utility
             }
         }
 
+        
         public static string setReferralCode(Guid memberId)
         {
             using (var noochConnection = new NOOCHEntities())
@@ -1815,7 +1797,7 @@ namespace LanLordlAPIs.Classes.Utility
             }
         }
 
-        
+
         public static CheckIfTenantExistsResult CheckIfTenantExistsWithGivenEmailId(string email)
         {
             CheckIfTenantExistsResult result = new CheckIfTenantExistsResult();
@@ -1952,9 +1934,9 @@ namespace LanLordlAPIs.Classes.Utility
             {
                 MailMessage mailMessage = new MailMessage();
 
-                string template;
-                string subjectString = subject;
-                string content = string.Empty;
+                var subjectString = subject;
+                var template = string.Empty; 
+                var content = string.Empty;
 
                 if (!String.IsNullOrEmpty(templateName))
                 {
@@ -1973,9 +1955,7 @@ namespace LanLordlAPIs.Classes.Utility
                     mailMessage.Body = content;
                 }
                 else
-                {
                     mailMessage.Body = bodyText;
-                }
 
                 if (!String.IsNullOrEmpty(fromAddress))
                 {
@@ -1990,37 +1970,33 @@ namespace LanLordlAPIs.Classes.Utility
                         default:
                             mailMessage.From = !String.IsNullOrEmpty(fromName)
                                                ? new MailAddress(fromAddress, fromName)
-                                               : new MailAddress(fromAddress, "Nooch Admin");
+                                               : new MailAddress(fromAddress, "Team Nooch");
                             break;
                     }
                 }
                 else
-                {
-                    mailMessage.From = new MailAddress("team@nooch.com", "Nooch Admin");
-                }
-                Logger.Info("CommonHelper -> SendEmail [DisplayName: " + mailMessage.From.DisplayName.ToString() + "], [Address: " + mailMessage.From.Address.ToString() + "]");
+                    mailMessage.From = new MailAddress("team@nooch.com", "Team Nooch");
+
+                Logger.Info("CommonHelper -> SendEmail - DisplayName: [" + mailMessage.From.DisplayName.ToString() + "], Address: [" + mailMessage.From.Address.ToString() + "]");
                 mailMessage.IsBodyHtml = true;
                 mailMessage.Subject = subjectString;
                 mailMessage.To.Add(toAddress);
 
                 if (!String.IsNullOrEmpty(bccEmail))
-                {
                     mailMessage.Bcc.Add(bccEmail);
-                }
 
                 SmtpClient smtp = new SmtpClient();
 
                 smtp.Host = "smtp.mandrillapp.com";
-                smtp.Port = 25;
+                smtp.UseDefaultCredentials = false;
+                smtp.Port = 587;// 25;
 
-                //smtp.Timeout = 6000;
-                smtp.UseDefaultCredentials = true;
-                smtp.Credentials = new NetworkCredential("cliff@nooch.com", "7UehAJkEBJJas0EpQKWppQ");
+                smtp.Credentials = new NetworkCredential("cliff@nooch.com", "dxcLRQMoNNKoON8q8I1nqw");// "7UehAJkEBJJas0EpQKWppQ");
                 smtp.EnableSsl = false;
 
-                mailMessage.From = new MailAddress(fromAddress, fromAddress);
+                //mailMessage.From = new MailAddress(fromAddress, fromAddress);
 
-                mailMessage.Priority = MailPriority.High;
+                mailMessage.Priority = MailPriority.Normal;
                 smtp.Send(mailMessage);
                 mailMessage.Dispose();
 
@@ -2028,8 +2004,7 @@ namespace LanLordlAPIs.Classes.Utility
             }
             catch (Exception ex)
             {
-                Logger.Error("CommonHelper -> SendEmail ERROR -> [Template: " + templateName + "], " +
-                             "[ToAddress: " + toAddress + "],  [Exception: " + ex + "]");
+                Logger.Error("CommonHelper -> SendEmail ERROR -> Template: [" + templateName + "], To: [" + toAddress + "], Exception: [" + ex + "]");
 
                 return false;
             }
@@ -2173,7 +2148,7 @@ namespace LanLordlAPIs.Classes.Utility
                         // send registration email to member with autogenerated token 
                         var link = String.Concat(GetValueFromConfig("ApplicationURL"),
                             "Nooch/Activation?tokenId=" + noochMember.TokenId + "&type=ll&llem=" + Username);
-                         //"Registration/Activation.aspx?tokenId=" + noochMember.TokenId + "&type=ll&llem=" + Username);
+                        //"Registration/Activation.aspx?tokenId=" + noochMember.TokenId + "&type=ll&llem=" + Username);
 
 
                         var tokens = new Dictionary<string, string>
@@ -2223,13 +2198,9 @@ namespace LanLordlAPIs.Classes.Utility
                         .OrderByDescending(m => m.ModifiedOn).FirstOrDefault();
 
                 if (defaultIp != null)
-                {
                     RecentIpOfUser = defaultIp.Ip;
-                }
                 else
-                {
                     RecentIpOfUser = "54.201.43.89";
-                }
 
             }
             return RecentIpOfUser;
@@ -2256,7 +2227,7 @@ namespace LanLordlAPIs.Classes.Utility
 
             try
             {
-                
+
                 synapseSearchUserInputClass input = new synapseSearchUserInputClass();
 
                 synapseSearchUser_Client client = new synapseSearchUser_Client();
@@ -2271,9 +2242,9 @@ namespace LanLordlAPIs.Classes.Utility
                 input.client = client;
                 input.filter = filter;
 
-               string UrlToHit = GetValueFromConfig("Synapse_Api_User_Search");                                                                                     
+                string UrlToHit = GetValueFromConfig("Synapse_Api_User_Search");
 
-                Logger.Info("CommonHelper -> getUserPermissionsForSynapseV3 - About to query Synapse's /user/search API - [UrlToHit: " + UrlToHit + "]");
+                Logger.Info("CommonHelper -> getUserPermissionsForSynapseV3 - About to query Synapse's /user/search API - UrlToHit: [" + UrlToHit + "]");
 
                 var http = (HttpWebRequest)WebRequest.Create(new Uri(UrlToHit));
                 http.Accept = "application/json";
@@ -2322,7 +2293,6 @@ namespace LanLordlAPIs.Classes.Utility
                             // If there are more pages left, loop back into this same method (I assume this is safe to do?)
                             if (res.page < res.page_count)
                                 getUserPermissionsForSynapseV3(userEmail);
-
                         }
                     }
                     else
@@ -2370,12 +2340,10 @@ namespace LanLordlAPIs.Classes.Utility
             }
 
             res.users = SEARCHED_USERS.ToArray();
-            
+
             return res;
         }
 
-
-        
 
 
         public static NodePermissionCheckResult IsNodeActiveInGivenSetOfNodes(synapseSearchUserResponse_Node[] allNodes, string nodeToMatch)
@@ -2386,7 +2354,7 @@ namespace LanLordlAPIs.Classes.Utility
 
             foreach (synapseSearchUserResponse_Node node in allNodes)
             {
-                if (node._id != null && node._id.oid == nodeToMatch || node._id.oid==CommonHelper.GetDecryptedData(nodeToMatch))
+                if (node._id != null && node._id.oid == nodeToMatch || node._id.oid == CommonHelper.GetDecryptedData(nodeToMatch))
                 {
                     if (!String.IsNullOrEmpty(node.allowed))
                     {
@@ -2558,7 +2526,7 @@ namespace LanLordlAPIs.Classes.Utility
                         currency = "USD"
                     };
                     transMain.amount = amountMain;
-                    string webhooklink =  GetValueFromConfig("NoochWebHookURL") + suppID_or_transID;
+                    string webhooklink = GetValueFromConfig("NoochWebHookURL") + suppID_or_transID;
 
                     SynapseV3AddTransInput_trans_extra extraMain = new SynapseV3AddTransInput_trans_extra()
                     {
@@ -2680,7 +2648,6 @@ namespace LanLordlAPIs.Classes.Utility
                     }
 
                     #endregion Calling Synapse V3 TRANSACTION ADD
-
                 }
                 catch (Exception ex)
                 {
@@ -2704,13 +2671,12 @@ namespace LanLordlAPIs.Classes.Utility
 
             using (var noochConnection = new NOOCHEntities())
             {
-
-
                 Guid memId = ConvertToGuid(memberId);
 
-
-                var notifSettings =
-                    (from c in noochConnection.MemberNotifications where c.MemberId == memId select c).FirstOrDefault();
+                var notifSettings = (from c in noochConnection.MemberNotifications
+                                     where c.MemberId == memId
+                                     select c)
+                                     .FirstOrDefault();
 
                 return notifSettings;
             }

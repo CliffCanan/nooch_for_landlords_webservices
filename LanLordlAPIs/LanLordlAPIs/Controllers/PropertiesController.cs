@@ -1598,14 +1598,10 @@ namespace LanLordlAPIs.Controllers
                                             Logger.Info("Checkpoint #4");
 
                                             if (bankObj != null)
-                                            {
                                                 currentUnit.IsBankAccountAdded = true;
-                                            }
                                         }
                                         else
-                                        {
                                             Logger.Info("No Member record found for this unit's tenant!");
-                                        }
                                     }
 
                                     #endregion Get Tenant Member Info From Members Table
@@ -1669,13 +1665,9 @@ namespace LanLordlAPIs.Controllers
                                     //trc.IsDocumentsVerified = v.IsVerifiedWithSynapse?? false;
 
                                     if (v.IsVerifiedWithSynapse ?? false)
-                                    {
                                         trc.IsBankAccountAdded = true;
-                                    }
                                     else
-                                    {
                                         trc.IsBankAccountAdded = false;
-                                    }
 
                                     TenantsListForThisPropertyPrepared.Add(trc);
                                 }
@@ -1692,11 +1684,8 @@ namespace LanLordlAPIs.Controllers
                             result.IsSuccess = true;
                             result.ErrorMessage = "OK";
                         }
-                        else
-                        {
-                            // Invalid property ID or no data found
+                        else // Invalid property ID or no data found
                             result.ErrorMessage = "No properties found for given Landlord.";
-                        }
                     }
                 }
             }
@@ -1809,9 +1798,7 @@ namespace LanLordlAPIs.Controllers
                                         fileName);
 
                             if (File.Exists(path))
-                            {
                                 File.Delete(path);
-                            }
 
                             file.SaveAs(path);
 
@@ -1828,22 +1815,14 @@ namespace LanLordlAPIs.Controllers
                                 result.ErrorMessage = propDetails.PropertyImage;
                             }
                             else
-                            {
                                 result.ErrorMessage = "Invalid property Id passed.";
-                            }
                         }
                     }
-                    else
-                    {
-                        // Prop ID was invalid
+                    else // Prop ID was invalid
                         result.ErrorMessage = "No or invalid property id passed.";
-                    }
                 }
-                else
-                {
-                    // No file selected
+                else // No file selected
                     result.ErrorMessage = "No or invalid file passed.";
-                }
             }
             catch (Exception ex)
             {
@@ -1926,18 +1905,12 @@ namespace LanLordlAPIs.Controllers
                                 result.IsSuccess = true;
                                 result.ErrorMessage = "OK";
                             }
-                            else
-                            {
-                                // Invalid property id or no data found
+                            else // Invalid property id or no data found
                                 result.ErrorMessage = "No property unit found for given Id.";
-                            }
                         }
                     }
-                    else
-                    {
-                        // Invalid data sent error
+                    else // Invalid data sent error
                         result.ErrorMessage = "No property Id passed. Retyr!";
-                    }
                 }
                 return result;
             }
@@ -2003,20 +1976,14 @@ namespace LanLordlAPIs.Controllers
                                         fileNameToUse = propertyName.Replace("-", "_").Replace("'", "").Replace(" ", "_").Trim();
 
                                         if (!String.IsNullOrEmpty(propUnitObj.UnitNumber))
-                                        {
                                             fileNameToUse = fileNameToUse + "_unit" + propUnitObj.UnitNumber.Trim();
-                                        }
                                         else if (!String.IsNullOrEmpty(propUnitObj.UnitNickName))
-                                        {
                                             fileNameToUse = fileNameToUse + propUnitObj.UnitNickName.Trim();
-                                        }
 
                                         fileNameToUse = fileNameToUse + DateTime.Now.ToString("MM_dd_yy_HH_mm");
                                     }
                                     else
-                                    {
                                         fileNameToUse = propUnitId.ToString().Replace("-", "_").Replace("'", "").Trim();
-                                    }
 
                                     var fileExtension = Path.GetExtension(file.FileName);
 
@@ -2029,12 +1996,9 @@ namespace LanLordlAPIs.Controllers
                                                 fullFileName);
 
                                     if (File.Exists(path))
-                                    {
                                         File.Delete(path);
-                                    }
 
                                     file.SaveAs(path);
-
 
                                     propUnitObj.LeaseDocumentPath = CommonHelper.GetValueFromConfig("LeaseDocumentsUrl") + fullFileName;
                                     obj.SaveChanges();
@@ -2043,23 +2007,15 @@ namespace LanLordlAPIs.Controllers
                                     result.ErrorMessage = propUnitObj.LeaseDocumentPath;
                                 }
                                 else
-                                {
                                     result.ErrorMessage = "Invalid property unit Id passed.";
-                                }
                             }
                         }
-                        else
-                        {
-                            // Prop ID was invalid
+                        else // Prop ID was invalid
                             result.ErrorMessage = "No or invalid property unit id passed.";
-                        }
                     }
                 }
-                else
-                {
-                    // No file selected
+                else // No file selected
                     result.ErrorMessage = "No or invalid file passed.";
-                }
             }
             catch (Exception ex)
             {

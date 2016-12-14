@@ -123,7 +123,7 @@ namespace LanLordlAPIs.Controllers
                                 obj.AuthenticationTokens.Add(token);
                                 int authTokenAddedToDB = obj.SaveChanges();
 
-                                Logger.Info("UserController -> RegisterLandlord - ** NEW LANDLORD ** - AUTH TOKEN Created and saved to DB - [MemberID: " + member.MemberId + "]");
+                                Logger.Info("UserController -> RegisterLandlord - ** NEW LANDLORD ** - AUTH TOKEN Created and saved to DB - MemberID: [" + member.MemberId + "]");
 
                                 #endregion Create Authentication Token
 
@@ -175,11 +175,11 @@ namespace LanLordlAPIs.Controllers
                                 };
                                 obj.MemberPrivacySettings.Add(memberPrivacySettings);
 
-                                Logger.Info("UserController -> RegisterLandlord - ** NEW LANDLORD ** - NOTIFICATIONS & PRIVACY SETTINGS Created and saved to DB - [MemberID: " + member.MemberId + "]");
+                                Logger.Info("UserController -> RegisterLandlord - ** NEW LANDLORD ** - NOTIFICATIONS & PRIVACY SETTINGS Created and saved to DB - MemberID: [" + member.MemberId + "]");
 
                                 #endregion Privacy Settings
 
-                                Logger.Info("UserController -> RegisterLandlord - ** NEW LANDLORD ** - About to created new LANLDORD record - [MemberID: " + member.MemberId + "]");
+                                Logger.Info("UserController -> RegisterLandlord - ** NEW LANDLORD ** - About to created new LANLDORD record - MemberID: [" + member.MemberId + "]");
 
                                 // Finally, make an entry in Landlords Table 
                                 Landlord l = CommonHelper.AddNewLandlordEntryInDb(llDetails.FirstName,
@@ -565,13 +565,13 @@ namespace LanLordlAPIs.Controllers
                             catch (Exception)
                             {
 
-                                Logger.Error("UserController -> LoginWithGoogle - Error occurred while getting user image from url - [MemberID: " + member.MemberId + "]");
+                                Logger.Error("UserController -> LoginWithGoogle - Error occurred while getting user image from url - MemberID: [" + member.MemberId + "]");
                             }
                         }
 
                         obj.Members.Add(member);
 
-                        Logger.Info("UserController -> LoginWithFB - ** NEW LANDLORD ** - MEMBER Created, about to save to DB - [MemberID: " + member.MemberId + "]");
+                        Logger.Info("UserController -> LoginWithFB - ** NEW LANDLORD ** - MEMBER Created, about to save to DB - MemberID: [" + member.MemberId + "]");
 
                         try
                         {
@@ -596,7 +596,7 @@ namespace LanLordlAPIs.Controllers
                             obj.AuthenticationTokens.Add(token);
                             int authTokenAddedToDB = obj.SaveChanges();
 
-                            Logger.Info("UserController -> LoginWithFB - ** NEW LANDLORD ** - AUTH TOKEN Created and saved to DB - [MemberID: " + member.MemberId + "]");
+                            Logger.Info("UserController -> LoginWithFB - ** NEW LANDLORD ** - AUTH TOKEN Created and saved to DB - MemberID: [" + member.MemberId + "]");
 
                             #endregion Create Authentication Token
 
@@ -648,11 +648,11 @@ namespace LanLordlAPIs.Controllers
                             };
                             obj.MemberPrivacySettings.Add(memberPrivacySettings);
 
-                            Logger.Info("UserController -> LoginWithFB - ** NEW LANDLORD ** - NOTIFICATIONS & PRIVACY SETTINGS Created and saved to DB - [MemberID: " + member.MemberId + "]");
+                            Logger.Info("UserController -> LoginWithFB - ** NEW LANDLORD ** - NOTIFICATIONS & PRIVACY SETTINGS Created and saved to DB - MemberID: [" + member.MemberId + "]");
 
                             #endregion Privacy Settings
 
-                            Logger.Info("UserController -> LoginWithFB - ** NEW LANDLORD ** - About to created new LANLDORD record - [MemberID: " + member.MemberId + "]");
+                            Logger.Info("UserController -> LoginWithFB - ** NEW LANDLORD ** - About to created new LANLDORD record - MemberID: [" + member.MemberId + "]");
 
                             // Finally, make an entry in Landlords Table 
                             Landlord l = CommonHelper.AddNewLandlordEntryInDb(User.FirstName.Trim().ToLower(),
@@ -960,14 +960,14 @@ namespace LanLordlAPIs.Controllers
                         }
                         catch (Exception)
                         {
-                            Logger.Error("UserController -> LoginWithGoogle - Error occurred while getting user image from url - [MemberID: " + member.MemberId + "]");
+                            Logger.Error("UserController -> LoginWithGoogle - Error occurred while getting user image from url - MemberID: [" + member.MemberId + "]");
                         }
 
                         #endregion Create Member Object
 
                         obj.Members.Add(member);
 
-                        Logger.Info("UserController -> LoginWithGoogle - ** NEW LANDLORD ** - MEMBER Created, about to save to DB - [MemberID: " + member.MemberId + "]");
+                        Logger.Info("UserController -> LoginWithGoogle - ** NEW LANDLORD ** - MEMBER Created, about to save to DB - MemberID: [" + member.MemberId + "]");
 
                         try
                         {
@@ -1370,7 +1370,8 @@ namespace LanLordlAPIs.Controllers
                                 res.SSN = CommonHelper.GetDecryptedData(landlordObj.SSN);
                                 res.SSN = "**** - " + res.SSN.Substring(res.SSN.Length - 4);
                             }
-                            else if (!String.IsNullOrEmpty(x.SSN)){
+                            else if (!String.IsNullOrEmpty(x.SSN))
+                            {
                                 res.SSN = CommonHelper.GetDecryptedData(x.SSN);
                                 res.SSN = "**** - " + res.SSN.Substring(res.SSN.Length - 4);
                             }
